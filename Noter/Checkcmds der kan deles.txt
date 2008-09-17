@@ -1,0 +1,23 @@
+HELP
+IF
+LET
+writenote
+consistencyblock: CHECK
+
+
+HELP "xxxxx" KEYS="1234" TYPE=CONFIRMATION
+
+
+HELP "xxxxxxxxxx" /
+     "xxxxxxxxxx" /
+     "xxxx" KEYS="1234"  /
+     TYPE=CONFIRMATION
+
+Læs næste
+ - forudsæt at det er helpstring
+Læs næste
+ - Hvis <>KEYS and <>TYPE THEN
+   - Hvis <>"/" THEN error
+     ELSE læs næste linie
+ - Hvis Keys så sæt keys
+ - hvis type så sæt type

@@ -1,0 +1,51 @@
+PeekCheckUnit
+=============
+RetrieveKey
+GetCommand (cmdRelate - kun check om KEY UNIQUE)
+StringsToChecks (pakker indexfield liste)
+FieldBlockToStrings (skriver KEY ...)
+
+
+
+MainUnit
+========
+VariableInfo1Click (document datafile) - bruges kun til at skrive KEY n
+
+
+DataformUnit
+============
+onExitEvent - checker for indtastning af exist. nøgleværdi
+
+
+FileUnit
+========
+MakeIndexFile
+ApplyIndex
+peWriteRecord
+
+
+ListDataUnit
+============
+ListData - bruger ComIndex sorteret
+
+
+ValDupUnit
+==========
+DoValidate ???
+
+
+EpiTypes
+========
+Diverse erklæringer
+ResetDatafile
+GetDatafilepointer
+
+FindRecord
+==========
+DoFindRecord
+FindAgain
+
+
+STEDER HVOR DER SKIFTES RECORD
+
+HandleJumps (JUMPS Write)

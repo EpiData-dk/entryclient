@@ -1,0 +1,155 @@
+:Base VCLZIP.hlp
+:Title Help
+:include delphi3.cfg
+:include delphi4.cfg
+
+1 VCLZip, The Native Delphi Zip/UnZip Component=PG1
+1 Installing VCLZip and its Help Files=PG1000
+1 What's New This Version=PG65
+1 What's New Previous Versions=PG9
+1 Registering VCLZip=PG2000
+1 Acknowledgments=PG176
+1 Quick Start
+2 Creating a Zip File=PG87
+2 UnZipping Files=PG3
+2 Using Streams=PG88
+2 Creating Spanned Disk Zip Files=PG700
+2 Creating Blocked Zip Files=PG2
+2 Creating a Self Extracting Zip File=PG174
+2 Working with wildcards=PG18
+2 Streamlining Your Application=PG152
+2 Frequently Asked Questions=PG175
+2 Compiler Options Settings=PG23
+1 TVCLZip Component=PG157
+1 TVCLUnZip Component=PG7
+1 VCLUnZip Properties
+2  Public
+3   Indexed (apply to each compressed file)
+4    Filename=PG34
+4    Pathname=PG37
+4    FullName=PG40
+4    CompressMethod=PG43
+4    CompressMethodStr=PG46
+4    DateTime=PG49
+4    Crc=PG52
+4    CompressedSize=PG55
+4    UnCompressedSize=PG58
+4    IsEncrypted=PG61
+4    FileHasComment=PG64
+4    FileComment=PG67
+4    ExternalFileAttributes=PG312
+4    DiskNo=PG70
+4    Selected=PG44
+4    DecryptHeader=PG45
+4    FileIsOK=PG27
+3   Non-Indexed (apply to entire archive)
+4    ZipHasComment=PG79
+4    ZipComment=PG73
+4    Password=PG76
+4    Count Property=PG31
+4    NumDisks=PG82
+4    CheckDiskLabels=PG705
+4    MultiMode=PG229
+4    ArchiveStream=PG11
+4    Busy Property=PG12
+4    NumSelected=PG68
+4    BufferLength=PG66
+2  Published
+3   DestDir=PG94
+3   DoAll=PG109
+3   DoProcessMessages=PG118
+3   FilesList=PG106
+3   IncompleteZipMode=PG112
+3   KeepZipOpen=PG115
+3   OverwriteMode=PG103
+3   RecreateDirs=PG100
+3   ReplaceReadOnly=PG33
+3   RetainAttributes=PG315
+3   RootDir=PG223
+3   SortMode=PG97
+3   ThisVersion=PG177
+3   ZipName=PG91
+1 VCLUnZip Methods
+2  CancelTheOperation=PG25
+2  CheckArchive=PG54
+2  ClearSelected=PG53
+2  ClearZip=PG16
+2  FillList=PG19
+2  GetDecryptHeaderByteByPtr=PG62
+2  GetDecryptHeaderPtr=PG63
+2  ReadZip=PG10
+2  Sort=PG22
+2  UnZip=PG13
+2  UnZipSelected=PG48
+2  UnZipToStream=PG28
+2  UnZipToStreamByIndex=PG47
+2  UnZipToBuffer=PG24
+2  UnZipToBufferByIndex=PG50
+1 VCLUnZip Events
+2  OnBadCRC=PG145
+2  OnBadPassword=PG142
+2  OnEndUnZip=PG133
+2  OnFilePercentDone=PG124
+2  OnGetNextDisk=PG151
+2  OnInCompleteZip=PG148
+2  OnPromptForOverwrite=PG136
+2  OnSkippingFile=PG139
+2  OnStartUnZip=PG130
+2  OnStartUnzipInfo=PG121
+2  OnTotalPercentDone=PG127
+2  OnUnZipComplete=PG36
+2  OnGetNextBuffer=PG17
+1 VCLZip Properties
+2  Public
+3   IsModified=PG181
+3   FileComment=PG67
+3   ZipComment=PG73
+3   Pathname=PG37
+3   Filename=PG34
+2  Published
+3   AddDirEntriesOnRecurse=PG51
+3   Dispose=PG211
+3   ExcludeList=PG20
+3   FileOpenMode=PG78
+3   FlushFilesOnClose=PG77
+3   MultZipInfo Properties
+4    MultiMode=PG229
+4    BlockSize=PG226
+4    FirstBlockSize=PG702
+4    SaveOnFirstDisk=PG59
+4    SaveZipInfoOnFirstDisk=PG57
+4    CheckDiskLabels=PG705
+4    WriteDiskLabels=PG704
+3   NoCompressList=PG21
+3   PackLevel=PG205
+3   Recurse=PG208
+3   RelativePaths=PG8
+3   ResetArchiveBitOnZip=PG72
+3   SkipIfArchiveBitNotSet=PG96
+3   Store83Names=PG178
+3   StorePaths=PG214
+3   StoreVolumes=PG217
+3   TempPath=PG182
+3   ZipAction=PG220
+3   PreserveStubs=PG29
+1 VCLZip Methods
+2  Zip=PG160
+2  DeleteEntries=PG163
+2  SaveModifiedZipFile=PG166
+2  ZipFromStream=PG169
+2  ZipFromBuffer=PG26
+2  FixZip=PG172
+2  MakeSFX=PG173
+2  MakeNewSFX=PG41
+2  SFXToZip=PG30
+1 VCLZip Events
+2  OnStartZipInfo=PG300
+2  OnStartZip=PG256
+2  OnEndZip=PG303
+2  OnDeleteEntry=PG306
+2  OnDisposeFile=PG259
+2  OnNoSuchFile=PG309
+2  OnZipComplete=PG38
+2  OnUpdate=PG56
+2  OnRecursingFile=PG93
+

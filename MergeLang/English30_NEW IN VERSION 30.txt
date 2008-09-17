@@ -1,0 +1,137 @@
+1105=Open chec&kfile
+1110=Show values
+1112=Show labels
+1114=Sort by index
+1116=Sort by record no.
+1403=Vie&w data
+1524=Create &Archive
+1526=Restore &Arc&hive
+1709=&Introduction to EpiData
+3328=Criteria
+3330=Field  (F4=Find field)
+3723=Export to Stata version 8
+3776=Export file
+4635=&Encryption field
+4643=<&yyyy/mm/dd>
+4647=<Tod&ay-ymd>
+5550=Viewer
+5552=Rec.no.
+5858=Reverse style (&yyyy/mm/dd)
+
+
+[Password form]
+9000=Enter password
+9002=The datafile contains one or more encrypted fields.
+9004=Please enter password for the datafile:
+9006=Enter password
+9008=Retype password
+9020=Incorrect password entered
+9022=Error encouted during decryption of password
+9024=The passwords are not identical
+9026=Password must be 6 or more characters
+
+
+[Zip-unzip form]
+9200=Create Archive
+9202=Restore Archive
+9204=Archive
+9206=&Directory:
+9208=Files to include:
+9210=&Include subdirectories
+9212=All &files in directory
+9214=Only &EpiData files (*.rec, *.qes, *.chk, *.log, *.inc, *.not)
+9215=Sin&gle file
+9216=Encrypt
+9218=Encr&ypt
+9220=&Archive to decrypt and/or restore
+9222=Decrypt
+9224=&Decrypt archive
+9226=Unzip
+9228=&Unzip archive
+9230=Restore i&n:
+9232=Repla&ce existing files
+
+20216=The epdintro.pdf file was not found.~~Please get an updated version from www.EpiData.dk
+
+20460=%d attempts of writing current record failed~~Retry?
+20462=Current record not saved!
+20464=Error reading record
+
+20429=Encrypt field in line %d exceeds maximum length of 60 characters:
+21520=Backup not completed
+21607='yyyymmdd' or 'yyyy/mm/dd'
+21633=Date (ymd): 0-9 and / allowed
+21635=Encryptfield: All entries allowed
+21702=Record exists.~~Edit this record?
+21704=Select record in %s
+
+22384=Please use brackets in filters containing AND or OR~E.g. (field1=2) AND (field44=2)
+
+
+22408=Searchcritiria is missing for field %s
+22410=Error in critiria %s~~The wildcard * can only be used with this syntax:
+22412=Error in critiria %s~~Field is numeric
+22414=Criteria samples:
+
+22773=A global DEFINE with same fieldname but different fieldtype or length is allready defined
+
+22868=Checkfiles with INCLUDE commands cannot be revised with the Add/Revise function
+22870=Includefile %s not found
+22872=Error reading includefile %s
+22874=Commented line is too long
+22876=Only numbers can be used as MISSINGVALUES ALL
+22878=One to three MISSINGVALUEs can be defined
+22880=ALL or fieldnames must follow MISSINGVALUE
+
+
+[Zip-unzip messages]
+24300=Error during archive operation
+24302=Error during encryption:~Cannot open %s
+24304=Error during encryption:~Cannot create %s
+24306=Error during encryption.
+24308=Files in %s ~has been archived
+24310=and encrypted.
+24312=Result saved as %s
+24314=Error during decryption of %s
+24316=Error during unzip operation
+24318=%s has been
+24320=decrypted and unzipped to %s~
+24322=decrypted to ~%s
+24324=unzipped to ~%s
+24326=Please enter password for the encrypted file
+24328=The directory does not exist.
+24330=Please specify a file name for the archive
+24332=Error in password. The same password must be entered twice.
+
+
+
+50118=Encryptfield
+50119=Date (ymd)
+50120=Today (ymd)
+50218=Temporary variables in %s
+50220=Global temporary variables:
+50222=DATAFILE %2d: %s
+50224=%d keyfields defined.
+50226=No global variables defined.
+50228=Local variables in %s:
+50230=No local variables defined.
+50232=%d files open.
+50234=Current datafile:
+50236=Current record:
+
+50300=Incorrect version of language file.
+50302=Search www.EpiData.dk for update.
+50304=Do you want to use english instead?
+50306=Do not show this warning again
+
+
+
+
+CHANGES:
+
+3003 must be changed to
+3003=Credits and version information
+
+3004 must be changed to
+3004=Funding of development
+

@@ -1,0 +1,64 @@
+
+ BEFORE FILE          (The first field in the questionnaire)
+   UPDATE OFF
+   COLOR QUESTION 62
+   COLOR DATA  63
+   COLOR BACKGROUND 3
+   SET ALL FIELDCHAR "  "
+   UPDATE
+ END
+
+ COLOR
+
+ Syntax:  COLOR QUESTION <colorno>
+          COLOR DATA <colorno>
+          COLOR BACKGROUND <colorno 0-7 only>
+          COLOR <field name> <color of data> <color of question>
+
+ The COLOR command specifies the color for either the entire questionnaire
+ (with QUESTION, DATA, or BACKGROUND), or for a single field. <Colorno> is an
+ integer from 0 to 255 that specifies the color of text and background that
+ will be used on the screen. To see the possibilities, press <F9> from the
+ main menu to view the Setup screen where all 256 combinations are displayed.
+
+ The word QUESTION refers to text on the screen outside of data entry blanks.
+ DATA is the text inside entry blanks.  BACKGROUND is the background area.
+
+ The colors specified do not take effect until the screen is next updated,
+ usually when the bottom of a screen is reached.  To produce an immediate
+ effect, the UPDATE command should follow the COLOR command.  COLOR commands
+ applying to an entire questionnaire should be placed in a BEFORE FILE or
+ BEFORE RECORD block.
+
+0	0	clBlack
+1	1	clNavy
+2	2	clGreen
+3	3	clTeal
+4	4	clMaroon
+5	5	clPurple
+6	6	clOlive
+7	7	clSilver
+8	8	clGray
+9	9	clBlue
+A	10	clLime
+B	11	clAqua
+C	12	clRed
+D	13	clFuchsia
+E	14	clYellow
+F	15	clWhite
+
+0	clBlack
+1	clNavy
+2	clGreen
+3	clAqua
+4	clRed
+5	clPurple
+6	clOlive
+7	clSilver
+
+color data 45
+color data green red
+color data green
+
+color data colornumber
+color data textcolor [bg-color]

@@ -1,0 +1,38 @@
+
+1. Build index hvis mindst eet index-felt er valgt
+	Hvis kun indexerede felter valgt, så applyindex
+	og byg fælles index
+	ellers læs alle records i begge filer og byg
+	fælles index
+	HUSK højrestilling af numeriske felter
+
+2. Skriv liste over hvilke felter der ikke findes i begge datafiler
+
+3. Lav løkke med Rec1 som udgangspunkt
+
+   IF NoIndex then CurRec:=1 TO Rec1^.NumRecords
+     Husk check for om CurRec>Rec2^.NumRecords
+     Hvis Rec2^.NumRecords>Rec1^.NumRecords så
+       forsæt med for CurRec:=Rec1.Numrecords to Rec2^.NumRecords
+
+   Indlæs aktuelle record i Rec1 og i Rec2
+   Hvis Rec1^.CurRecDeleted så læs næste i Rec1
+   Hvis Rec2^.CurRecDeleted så læs næste i Rec2
+
+   For CurField:=0 TO ValDupForm.FieldSelectList.Items.Count-1
+     {Der sammenlignes kun på felter som findes i begge filer}
+     Sammenlign hvis
+      - Sammenlign IKKE hvis (FieldSelectList.UnChecked) OR (IgnoreTextFields AND ( (felttype=Alfa) or (felttype=UpperAfa) ))
+      Afield1:=PeField(FieldSelectList.Items.Objects[Curfield]);
+      n:=Fields2.IndexOf(trim(AField1^.FName));
+      AField2:=PeField(Fields2.Objects[n]);
+
+      Hvis Ignore letter case then OK:=(ANSIUpperCase(AField1^.FFieldtext) = ANSIUpperCase(AField2^.FFieldText))
+      ELSE ok:=(AField1^.FFieldText = AField2^.FFieldText);
+
+      Hvis NOT ok THEN skriv afvigelsesmelding
+   END;  //for
+   
+
+
+

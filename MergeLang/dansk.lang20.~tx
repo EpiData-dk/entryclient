@@ -1,0 +1,1208 @@
+
+100=Dansk
+***101=2.0
+105=DK
+110=JM.Lauritsen og M.Bruus
+120=http://www.EpiData.dk
+
+1000=MainForm
+[Workprocess toolbar]
+1010=&1. Definér Data
+1011=&2. Opret/vis Dataform
+1012=&3. Tilføj check
+1013=&4. Indtast data
+1014=&5. Dokumentation
+1015=&6. Eksport
+
+[Editor toolbar - hints]
+11020=Ny
+11021=Åben
+11022=Gem
+11023=Udskriv
+11024=Fortryd
+11025=Klip
+11026=Kopier
+11027=Sæt ind
+11028=Vis Dataform
+11029=Felt værktøj
+11030=Felt hjælper
+
+[Main menu]
+1100=&Fil
+1102=&Ny
+1104=Å&ben
+1106=&Indstillinger
+1108=&Afslut
+
+1200=&Kontrollér data
+1202=&Tilføj Check
+1204=&Slet alle Check
+
+1300=&Data ind/ud
+1302=&Indtast/Rediger data
+1304=E&ksportér data
+1306=Eksport til tekst-fil
+1308=Eksport til dBase III
+***1309=Export to SPSS
+1310=Eksport til Excel
+***1311=Export to SAS
+1312=Eksport til Stata
+***1313=Export to new EpiData file
+1314=&Sikkerhedskopiering
+1316=&Opret ny Datafil fra QES-fil
+
+***1318=&Import
+***1320=Import from &text-file
+***1322=Import from &dBase file
+***1324=Import from &Stata file
+***1326=&Append/Merge datafiles
+1400=D&okumentation
+1402=&Datafil Struktur
+1404=&Vis data
+1406=&Kodebog (grundtabeller)
+1408=Indtastnings&noter
+
+***1410=C&onsistency check
+***1412=Count records by &field
+1500=Vær&ktøjer
+1502=&Kopier datafil struktur
+1504=&Sammenlign dobbelt tastede datafiler
+1506=Gendan &index
+1508=&Rediger fil label
+1510=&Tilpas datafil til ændret QES-fil
+1512=&Opret QES-fil fra datafil
+
+***1514=&Pack datafile
+***1516=Compres&s datafile
+***1518=Rename &fields
+***1520=Recode &datafile
+1600=&Vindue
+1602=Side om side, &vandret
+1604=Side om side, &lodret
+1606=&Overlappet
+1608=&Arranger alle
+1610=&Værktøjslinier
+1612=Arbejdsproceslinie
+1614=Editor linie
+1616=Begge
+1618=Skjul værktøjslinier under dataindtastning
+
+1700=&Hjælp
+1702=&Indhold
+1704=&Felttyper
+1706=&Rundtur i EpiData (EpiTour)
+1708=EpiData &hjemmeside
+1710=&Registrer on-line
+1712=Om re&gistrering
+1714=&Om EpiData
+
+[Define data popup]
+2000=&Ny QES-fil
+2002=Å&ben QES-fil
+
+[Make datafil popup]
+2010=Opret datafil
+2012=Vis Dataform
+
+[Add/revise checks popup]
+2020=&Tilføj Check
+2022=&Slet alle definerede Check
+
+[Document popup]
+2030=&Datafil struktur
+2032=&Vis data
+2034=&Kodebog (grundtabeller)
+2036=&Indtastningsnoter
+
+[Export data popup]
+2040=&Sikkerhedskopiering
+2042=Eksport til &tekst-fil
+2044=Eksport til &dBase III
+2046=Eksport til &Excel
+2048=Eksport til &Stata
+
+[Toolbars popup menu]
+2065=Ingen
+
+[fil types]
+2102=EpiData Spørgeskema (*.qes)
+2104=EpiData Datafil (*.rec)
+2106=EpiData Checkfil  (*.chk)
+2108=Dataentry notes  (*.not)
+2110=Datafil dokumentation (*.log)
+2112=Alle (*.*)
+2114=Tekst fil  (*.txt)
+2116=dBase III fil  (*.dbf)
+2118=Excel fil  (*.xls)
+2120=Stata datafil  (*.dta)
+
+
+***2122=SPSS file  (*.sps)
+***2124=SAS file  (*.sas)
+[About form]
+3000=Version
+3001=Program design:
+3002=Programmering af:
+3003=Mere information om EpiData
+3004=Bidragydere til udviklingen
+3005=Luk
+3006=Om EpiData
+3008=Oversat til %s af:
+3010=Lokal hjemmeside:
+
+[Back-up form]
+3100=Back-up af datafil
+3110=Hvilken datafil skal &kopieres?
+3112=&Der kopieres til:
+3114=OK
+3116=Annullér
+
+[Error on open checkfil form]
+3200=Fejl
+3210=Kunne ikke anvende checks.
+3212=Checkfilen har en eller flere fejl. 
+3214=Brug venligst editoren til at rette fejlene.
+3216=Ønsker du at se en liste over fejlene?
+3218=&Ja
+3220=&Nej
+3222=&Vis Checkfilen i editoren
+
+[Copy datafil struktur form]
+3300=Kopiér datafil struktur
+3310=Eksisterende datafil
+3312=Filnavn
+3314=Fil label
+3316=Ny datafil
+3318=&Filnavn
+3320=&Datafil label
+3322=Indstillinger
+3324=Kopiér IKKE tekst felter
+3326=Kopiér også &checkfilen
+
+[Dataform]
+3400=Dataform
+3410=&Fil
+3412=Indtastnings &noter
+***3413=&Print dataform
+3414=&Luk Dataform
+3416=&Afslut EpiData
+3420=&Gå til
+3422=&Ny observation
+3424=&Slet observation
+3426=&Næste observation
+3428=Fore&gående observation
+3430=&Første observation
+3432=Si&dste observation
+3434=Fø&rste felt
+3436=S&idste felt
+3437=Gå &til observation nr...
+3438=Søg &observation
+3439=Søg ig&en
+3440=F&elter
+3446=Rul &Op
+3448=Rul &Ned
+3450=&Redigér alle check for dette felt
+
+[Dataform - navigation buttons' hints]
+13460=Første observation
+13462=Foregående observation
+13464=Næste observation
+13466=Sidste observation
+13468=Tilføj observation
+13470=Slet observation
+
+***3460=Fil&ter
+***3462=Define &filter
+***3464=&Deactivate filter
+[Editor form]
+3500=EPI Editor
+3516=&Gem
+3518=Gem so&m ...
+3520=&Luk
+3522=L&uk alle
+3524=&Print
+3526=Printer opsæt&ning
+
+3540=&Rediger
+3542=&Fortryd
+3544=&Kopi
+3546=Kl&ip
+3548=Sæt i&nd
+3550=Vælg &alt
+3552=&Gå til linie..
+3554=&Søg...
+3556=Søg og &Erstat...
+3558=Felt &værktøj
+3560=Felt h&jælper
+3562=A&uto indryk
+3564=&Juster indtastningsfelter
+
+3570=&Datafil
+3572=&Vis Dataform
+3574=&Opret datafil
+
+3580=D&okumentation
+3582=&Datafil Struktur
+3584=&Vis data
+3586=&Kodebog (grundtabeller)
+3588=Indtastnings&noter
+
+[Editor pop-up menu]
+3590=Kopiér
+3592=Klip
+3594=Sæt ind
+3596=Vælg alt
+3598=Gå til linie...
+3600=Vis Dataform
+
+[Editor savefilDialog title]
+3612=Gem QES-fil
+
+[Export form]
+3700=Eksport data
+***3702=Select records and fields
+3710=Datafil som skal eksporteres
+3712=Eksportér til
+3714=Felt separator
+3716=Brug tekst adskiller (")
+3718=Eksportér IKKE slettede records
+3720=Eksport til Stata version 4/5
+3721=Eksport til Stata version 6
+
+***3722=Export to Stata version 7
+***3730=Select records
+***3732=All &records
+***3734=&From record #
+***3736=to
+***3738=Skip &deleted records
+***3740=&Use record filter
+***3742=Fil&ter
+***3750=&Select fields
+***3760=Export to text-file options
+***3762=Export to Stata options
+***3770=Codebook options
+***3772=Show only &basic checks
+***3774=Show &all checks
+[Find record form]
+3800=Find record
+3812=Skeln &store/små bogstaver
+3814=&Kun hele ord
+3816=S&pring slettede obs. over
+3818=Retning
+3819=&Fra første record
+3820=&Baglæns til første record
+3821=&Alle records
+3826=&Nulstil
+3828=&OK
+3830=&Annullér
+
+[LabelEditForm]
+4000=Redigér værdilabels
+4010=&Godkend og Luk
+
+[LegalPickForm]
+4100=Vælg værdi
+
+[ListDataForm]
+4200=Lav dataliste
+4210=&Vælg felter
+4212=&Alle
+4214=&Ingen
+4216=Dimensioner for listen
+4218=&Maksimal bredde (antal tegn):
+4220=Antal &kolonner:
+4222=Bredden af kolonner: 14
+4224=&Indstillinger
+4226=&Sortér efter indeks
+4228=Skriv &værdilabels i stedet for data
+4230=Spring slettede &observationer over
+
+[Options]
+
+[Editor page]
+4310=Editor
+4312=Skrifttype i editor
+4314=&Vælg Skrifttype
+4316=&Baggrund
+4318=Tabulator
+4320=&Tab Tasten indsætter
+4322=mellemrum 
+
+[Show dataform page]
+4340=Vis Dataform
+4342=Skrifttype og baggrundsfarve på dataformen
+4344=Aktivt felt - farve
+4346=&Felt farve
+4348=&Fremhæv aktivt felt
+4350=&Farve
+4352=Aktivt felt t&ype
+4353=&3D-udseende
+4354=Fladt &med kantlinie
+4355=Fladt u&den kantlinie
+4360=Lineafstand
+4361=&1 linie
+4362=1½ li&nie
+4363=&2 linier
+4368=&Tabulator stop i Dataform for hver
+4370=pixel
+
+[Create datafil page]
+4380=Opret datafil
+4382=Sådan dannes feltnavne
+4383=&Feltnavn tages fra "første ord"
+4384=Au&tomatisk navngivning
+4386=&Tilret spørgsmål til reelt feltnavn
+4388=S&må/store bogstaver for feltnavne
+4389=&Kun Store
+4390=Kun &små
+4391=Ingen æ&ndring
+
+[Documentation page]
+4400=Dokumentation
+4402=Skrifttype ved dokumentation
+
+[Advanced page]
+4420=Avanceret
+4422=ID-nummer felter
+4424=&Første ID-nummer i datafiler:
+4426=Fejl meddelelser
+4428=&Vis fejl under beregninger
+4430=i Checkfilen under indtastning
+4432=Standard opsætning
+4434=Vælg standard opsætning
+
+
+[File associations page]
+***4440=File associations
+***4442=&Select filetypes
+***4444=*.QES   (EpiData questionnaire)
+***4446=*.REC   (EpiData datafile)
+***4448=*.CHK   (EpiData checkfile)
+***4450=*.NOT   (EpiData dataentry notes)
+***4452=*.LOG   (EpiData documentation file)
+***4460=&Associate filetypes
+***4462=&Remove association
+[Add/revise checks form]
+4500=Gem
+4510=Ret
+4512=Afslut
+
+[Field pick list form]
+4600=Felt værktøj
+
+[Numeric page]
+4610=Numerisk
+4612=Cifre &før decimal tegn
+4614=Cifre &efter decimal tegn
+4616=Indsæt felt:
+4618=Felt længde: 0
+4620=Indsæt
+
+[Text page]
+4630=Tekst
+4632=Tekst type
+4633=&Tekst
+4634=&Kun store bogstaver
+4636=&Længde
+
+[Date page]
+4640=Dato
+4641=<&dd/mm/yyyy>
+4642=<&mm/dd/yyyy>
+4644=Automatiske datoer
+4645=<&Today-dmy>
+4646=<T&oday-mdy>
+
+
+[Other page]
+4650=Andet
+4652=Felt type
+4653=&Auto ID-nummer
+4654=&Soundex (lydkode)
+4655=&Logisk (ja/nej felt)
+
+[Create datafil - filnames dialog]
+4700=Opret datafil fra QES-fil
+4710=Navn på QES-fil
+4712=Navn på datafil
+
+[Validate duplicate datafils - options dialog]
+4800=Sammenlign dobbelt tastede filer
+4810=Datafil 1
+4812=Filnavn:
+4814=Datafil label:
+4816=Antal observationer:
+4820=Datafil 2
+4830=&Vælg nøgle felter
+4840=&Valg
+4842=Udela&d slettede observationer
+4844=Spring &tekst felter over
+4846=Se bort fra store/små &bogstaver
+4848=Vis forskelle i felt typer
+***4849=Ignore missing records in datafile 2
+4850=&Hjælp
+
+[Warning]
+4900=Advarsel
+
+[Welcome form]
+5000=Velkommen til EpiData
+5010=Vis ikke dette vindue igen
+
+
+[Rename fields form]
+***5500=Rename fields
+***5502=&Save and close
+
+[Count records by field form]
+***5600=Count records by field
+***5602=&Enter filename(s)
+***5604=&Add to list
+***5606=&Remove from list
+***5608=&Files to evaluate
+***5610=Fiel&d to evaluate
+
+[Import form]
+***5800=Import
+***5810=&File to import:
+***5812=&Import to datafile:
+***5814=&QES-file to base import on:
+***5820=Text-file options
+***5822=&Delimited format
+***5824=Deli&miter:
+***5826=&Text is enclosed in quotes (")
+***5828=&All fields are enclosed in quotes
+***5830=&No fields are enclosed in quotes
+***5832=Fi&xed format
+***5834=I&gnore first line in text-file
+***5840=Datef&ormat:
+***5842=Date &separator character
+***5844=Dates have prefixed &zero
+***5846=&Years have 4 digits
+***5850=dBase-file options
+***5852=Import dates as
+***5854=European style (&dd/mm/yyyy)
+***5856=American style (&mm/dd/yyyy)
+
+[Append/merge form]
+***6000=Append / merge datafiles
+***6002=Datafile A:
+***6004=Datafile B:
+***6006=&Result datafile:
+***6008=Append
+***6010=Merge
+***6012=Append &only data from fields in datafile B
+***6014=that also exists in datafile A
+***6016=Append data from &all fields in datafile B
+***6020=Merge &only records from datafile B
+***6022=that matches a record in datafile A
+***6024=Merge &all records from datafile B
+***6026=Data in common fields taken from
+***6027=File A
+***6028=File B
+***6030=&Select key field(s)
+[Open datafil messages]
+20100=Luk alle filer før en datafil åbnes.
+20102=Kun %d datafil kan være åbne på samme tid.
+20104=Fejl under opbygning af dataform fra %s.
+20106=Fejl i checkfilen
+20108=Datafil %s kunne ikke åbnes.
+20110=Datafil %s findes ikke.
+20112=Fejl i formatet af datafilen %s.
+20114=Læser felt information
+20116=Fejl i datafilen %s.~~Felt definitionen i linie %d kunne ikke læses eller fortolkes.
+20118=Fejl i datafilen %s.~~En eller flere observationer er ødelagt.
+20120=Fejl under læsning af datafilen %s.
+20122=Indeksfilen %s er i brug eller findes ikke.
+20124=Indlæser indeks...
+20126=Feltet %s er KEY UNIQUE, men to ens nøgleværdier er fundet i observationerne %d og %d
+20128=Fejl under læsning af indeksfilen %s
+20130=Fejl under læsning af checkfilen %s
+20132=Indtast venligst et filnavn for den første datafil.
+20134=Indtast venligst et filnavn for den anden datafil.
+
+
+
+***20136=Please enter name of the first file
+***20138=Please enter name of the second file
+***20140=The first file must have the extension %s
+***20142=The second file must have the extension %s
+***20144=Datafile %s contains a %s field ~This fieldtype is not supported by EpiData.
+[Misc. errormessages]
+20200=Fejl under skrivning til Registry.
+20202=Hjælpefil ikke fundet.
+20204=Hukommelsen er fyldt (reference kode %d)
+20206=Undersøg om filnavnet er lovligt og om disken er skrivebeskyttet eller fuld.
+20208=Undersøg om filen er i brug og at filnavnet er lovligt.
+20210=Ja
+20212=Nej
+20214=Filen ReadMe.rtf blev ikke fundet.~~Få en opdateret version af EpiData på www.EpiData.dk
+
+
+[Editor messages]
+20300=Gem ændringer i %s?
+
+
+[Create datafil messages]
+20400=Datafiler kan kun laves fra QES-filer.
+20402=Lav datafil fra QES-fil
+20406=QES-filen %s kan ikke findes eller åbnes.
+20408=Indtast beskrivelse af datafilen (datafil label)
+20410=Datafil label for
+20412=Fejl log
+20414=QES-filen %s indeholder ikke nogen indtastningsfelter.~~Datafilen er ikke dannet.
+20416=Datafilen med navnet %s kan ikke dannes.
+20418=Datafilen %s er dannet.
+20420=Nummer-feltet i linie %d er større end den maksimale længde på 18 tegn:
+20422=Fejl i decimaltals-feltet i linie %d:
+20424=Tekst-feltet i linie %d er større end den maksimale længde på 80 tegn:
+20426=Fejl i <TAB EVERY n> kommando. Et tal mangler i linie %d:
+20428=Tekst-feltet i linie %d er større end den maksimale længde på 80 tegn:
+20430=IDNUM feltet i linie %d er større end den maksimale længde på 18 tegn:
+20432=Et <...> felt uden lukke-parantes i linie %d:
+20434=Ukendt kode fundet i linie %d:
+20436=QES-filen indeholder fejl.
+20438=De følgende fejl blev fundet:
+20440=Danner dataformens linie %d
+20442=Ingen indtastningsfelter fundet i QES-filen
+20444=Datafil %s
+20446=findes allerede.
+20448=Overskriv den eksisterende fil?
+20450=bliver slettet!
+20452=Er du sikker?
+
+[Add/Revise checks messages]
+20500=Vælg den datafil, som checkfilen skal baseres på
+20502=Fejl fundet i checkfilen %s
+20504=Tilføj/rediger checks - %s
+20506=Vælg den datafil, som checks er baseret på
+20508=Dette vil slette alle checks tilføjet til datafilen
+20510=Slet alle checks?
+20512=Alle checks er er tilføjet i datafilen vil blive slettet!
+
+[Document datafil]
+20600=DATAFIL: %s
+20602=Fillabel: %s
+20604=[ingen]
+20606=bytes
+20608=kb
+20610=Filstørrelse:
+20612=Sidste ændring:
+20614=Antal felter:
+***20615=(only %d is shown)
+20616=Antal observationer:
+20618=Fejl i datafilen. Antal observationer kan ikke tælles.
+20619=Checks tilføjet:
+20620=Ja (Sidste ændring %s)
+20622=Nej
+20624=Advarsel: En checkfil eksisterer, men den indeholder fejl.
+20626=Felter i datafilen:
+20628=Nr.
+20630=Navn
+20632=Variabel label
+20634=Felttype
+20636=Bredde
+20638=Checks
+20640=Værdi labels
+20642=Mere: Se checkfilen
+20644=Ukendt type
+20646=Datafil dokumentation for %s
+
+[Dataentry notes messages]
+20700=Vælg den datafil, du vil tilføje noter til
+20702=Indtastningsnoter til %s
+20704=Indtastningsnote filen %s kan ikke dannes.
+
+[Datafil label messages]
+20750=Vælg den datafil som skal have ændret sin datafil label
+20752=Indtast datafil label (højst 50 tegn):
+20754=Datafil label for %s
+20756=Fejl under forsøg på danne den temporære fil %s
+20758=Skriver ændringer til datafilen.
+20760=Datafil label for %s er opdateret.
+
+
+[Codebook messages]
+20800=Checkfilen %s indeholder fejl og kan ikke anvendes.
+20802=Hvis du vælger at fortsætte vil information om checks og værdi labels ikke være indeholdt i kodebogen.
+20804=Vil du fortsat lave en kodebog?
+20806=Der er ikke nok hukommelse til at danne en kodebog for %s
+20808=KODEBOG
+20810=Rapport genereret
+20811=Datafil:
+20812=Fil label:
+20814=Fil dato:
+20816=Checkfilen har fejl og er ikke anvendt
+20818=Obs. totalt:
+***20819=Included records:
+20820=Slettede obs.:
+20822=Anvendt i kodebogen:
+20824=observationer
+20826=Danner kodebog
+20828=Skriver felt nr. %d af %d
+20830=type
+***20831=decimals
+20832=Unavngivet værdi label sæt
+20834=værdi labels
+20836=Kommandoer fundet (se checkfilen)
+20838=uoplyst
+20840=interval
+20842=unikke værdier
+20844=tabel
+20846=Frekv.
+20848=Pct.
+20850=Værdi
+20852=Label
+20854=Eksempler:
+20856=middelværdi
+20858=std.afv.
+20860=Afbryd kodebog?
+20862=Kodebog baseret på %s
+
+[Revise datafil from revised QES-fil messages]
+20900=Tilpas datafil til ændret QES-fil
+20902=Navn på ændret QES-fil
+20904=Datafil der tilpasses
+20906=Datafilen %s er dannet med Automatiske Feltnavne, men den nuværende indstilling er Brug Første Ord som Feltnavn.
+20908=Vil du fortsat bruge Automatiske Feltnavne?
+20910=Datafilen %s er dannet med Første Ord som Feltnavn, men den nuværende instilling er automatiske Feltnavne.
+20912=Vil du fortsat bruge Første Ord som Feltnavn?
+20914=Datafilen %s er dannet med Epi Info og har et eller flere felter der er bredere end 8 tegn.
+20916=EpiData kan ikke tilpasse stukturen i sådanne filer - brug venligt Epi Info i stedet.
+20918=Overfører data
+20922=Den reviderede QES-fil medfører tab af data i observation nr. %d, felt %s
+20924=Tilpas Datafil afsluttes.
+20926=Et felt med navnet '%s' findes i både den gamle datafil og i den ændrede QES-fil
+20928=men felterne er ikke kompatible.
+20930=Felt type i datafilen: %s~Felt type i de reviderede QES-fil: %s
+20932=Afslut Revider Datafil?
+20934=Den ændrede QES-fil medfører tab af data i disse felter:
+20936=Den tilpassede datafil %s er dannet.~~Den originale datafil er omdøbt til %s
+
+***20938=The field %s has %d decimals in revised QES, but %d decimals in the datafile
+***20940=This could lead to a loss of data.
+***20942=Writing record no. %d of %d
+***20944=A non-valid fixed decimal number found in record %d, field %s
+[Copy datafil struktur messages]
+21000=Vælg den datafil der skal kopieres
+21002=Checkfilen %s kunne ikke kopieres
+21004=Datafilen %s er kopieret til %s
+21006=Fejl under forsøg på at gemme den ny datafil med navnet %s
+21008=Angiv et filnavn for den ny datafil.
+
+
+[Rebuild Index messages]
+21100=Vælg den datafil der skal gendannes indeks for
+21102=Gendan Indeks afsluttes.
+21104=Ingen nøgle felter blev fundet.~~For at kunne danne et indeks skal et eller flere felter have kommandoen KEY i checkfilen.
+21106=Indeks for %s er blevet gendannet
+21108=Kunne ikke danne indeks for %s
+21110=Checkfil blev ikke fundet.~~For at kunne danne et indeks skal et eller flere felter have kommandoen KEY i en checkfil.
+21112=Indeks fil kunne ikke dannes
+21114=Opbygger indeks...
+
+
+[Back-up datafil messages]
+21500=En fil med navnet %s findes allerede.~~Overskriv den eksisterende fil?
+21502=Sikkerhedskopiering gennemført
+21504=Drev %s: er ikke klar
+21506=Angiv en datafil som skal sikkerhedskopieres.
+21508=Angiv et destinationsbibliotek.
+21510=Destinationsbiblioteket findes ikke.
+
+[Dataform messages]
+21600=Tilføjet indtastningsfelt nr.
+21602=Ugyldig dato indtastet.
+21604='mmddåååå' or 'mm/dd/åååå'
+21606='ddmmåååå' or 'dd/mm/åååå'
+21608=Indtast datoer i dette felt som
+21610=%s er ikke en gyldig heltalsværdi
+21612=For mange decimaltegn indtastet.
+21614=Kun tal og decimaltegn er tilladt i dette felt.
+21616=Det indtastede tal er for stort.
+21618=Heltal: 0-9 tilladt
+21620=Decimaltal: 0-9 og komma tilladt
+21622=Tekst: Alle tegn tilladt
+21624=Tekst: Alle tegn tilladt
+21626=ID nummer: 0-9 tilladt
+21628=Boolsk: Y,1,N,0 tilladt
+21630=Dato (mdå): 0-9 og / tilladt
+21632=Date (dmå): 0-9 og / tilladt
+21634=Soundex: Alle tegn tilladt
+21636=tilladt
+21638=Længde:
+21640=Tast + eller F9 for tilladte værdier
+21642=Der skal indtastes data i dette felt.
+21644=Ugyldig indtastning.
+21646=Tilladte værdier er %s
+21648=og Comment Legal værdierne (tast + eller F9 for at se liste)
+21650=Gentaget nøgleværdi. Værdi er allerede indtastet i observation
+21652=Ny
+21654=&Gendan observation
+21656=&Slet observation
+21658=Gå til observation
+21660=Indtast observationsnummer
+21662=Det indtastede tal er større end det totale antal observationer.
+21664=Luk dataformen for %s
+21666=Gem observationen?
+21668=Identifikator %s kræver ikke parametre
+21670=Fejl i LET-udtryk:
+21672=Fejl i IF-udtryk:
+
+
+***21674=Read only
+***21676=Filter:
+***21678=Select value
+***21680=Relate error. The field %s not found in the datafile %s
+***21682=Record: New
+***21684=Record
+***21686=Filter can only be applied to KEY-fields
+***21688=Activate filter
+***21690=Enter filter string
+[Dataentry notes]
+22000=Indtastningsnoter for %s
+22002=Indtastningsnote fil med navnet %s kan ikke dannes.
+22004=Indtastningsnotefilen %s kan ikke åbnes.
+
+[Editor messages]
+22100=Unavngivet
+22102=Fejl i QES-fil
+22104=Filen %s kan ikke åbnes.
+22106=Fejl: %s kan ikke gemmes
+22108=Gem ændringer i %s?
+22110=Pos %d  Lin %d
+22112=tegn markeret
+22114='%s' ikke fundet
+22116=Der er ikke fundet flere forekomster
+22118=%d forekomster blev erstattet
+22120=Udskriv %s?
+22122=Skift til linie nummer...
+22124=Indtast linie nummer
+22126=Filen %s findes ikke.
+22128=Indtast felt længde:
+22130=Erstatter TAB-tegn. Vent venligst.
+
+***22132=The current line has no entryfield.
+[Export datafil messages]
+22300=Eksporterer observation nr. %d
+22302=Afbryd eksport?
+22304=Fejl opstod under eksport af observation nr. %d
+22306=Ugyldig dato fundet i observation nr. %d, felt %s~Eksport afsluttes.
+22308=Datafil dannet af EpiData baseret på %s
+22310=Datafil dannet af EpiData
+22312=Ukendt felttype anvendt i datafilen.~~Eksport afsluttes.
+22314=Stata version 4 og 5 kan kun håndtere værdi labels med~en længde på op til 8 tegn.
+22316=%s indeholder værdi labels med en længde på mere~end 8 tegn og disse er blevet trunkeret til 8 tegn.
+22318=Eksporter datafil til dBase III fil
+22320=Eksporter datafil til Excel fil
+22322=Eksporter datafil til Stata fil
+22324=Eksporter datafil til tekstfil
+22326=Lav QES-fil fra datafil
+22328=Eksporterer
+22330=Datafilen %s er eksporteret til %s.~~%d observationer blev eksporteret~%d slettede observationer blev udeladt
+22332=Datafilen %s er eksporteret til %s.~~%d observationer blev eksporteret.
+22334=Datafilen %s indeholder ingen observationer.
+22336=Angiv et filenavn for datafilen.
+22338=Angiv et navn for QES-filen
+22340=Angiv et navn for eksportfil.
+22342=Datafilens navn skal slutte med .rec
+22344=Eksportfilens navn skal slutte med %s
+22346=Eksportfilen %s findes allerede.~~Overskriv den eksisterende fil?
+22348=En fil med navnet %s kan ikke dannes.
+22350=QES-filen %s er dannet.
+22352=QES-filen %s kunne ikke gemmes.
+
+***22354=The datafile %s contains fieldnames longer than 8 characters. Cannot be exported to %s.
+***22356=Rename the long fieldnames before exporting to %s-format
+***22358=The file %s cannot be deleted.
+***22360=EpiData created two files by exporting
+***22362=is this %s command file
+***22364=is an ASCII text file with the raw data
+***22366=You may modify the commands before running it
+***22368=Uncomment (remove the *) the last command (SAVE) if the
+***22370=command file should save the data as a SPSS datafile
+***22372=Uncomment next line to save file
+***22374=You may modify the statements file before submitting them.
+***22376=Export terminates
+***22378=Create from datafile:
+***22380=Name of new QES-file:
+***22382=Press a key to enter the field separator character
+[Find record messages]
+22400=Søger observation
+22402=Søge teksten er ikke fundet.
+22404=Søger i observation %d
+22406=Fejl under søgning. Søgning afsluttes.
+
+[Edit value labels messages]
+22500=Labeldefinitionen skal begynde med ordet LABEL
+22502=En labeldefinition i en feltblok skal begynde med COMMENT LEGAL
+22504=Ingen tilladte værdier angivet.
+22506=En label mangler til den angivne værdi.
+22508=Angiv et navn for denne label.
+22510=En label med navnet %s findes allerede.~~Erstat den eksisterende label?
+22512=En label med navnet %s findes allerede i label biblioteket.~~Skal den ny label bruges i stedet?
+22514=Fortryd ændringerne?
+
+[List data messages]
+22600=Datakolonnernes bredde: %d
+22602=Advarsel: Bredden af datakolonnerne er for lille (%d)
+22604=Der er ikke valgt nogle felter.~Vælg mindst eet felt.
+22606=Datakolonnernes bredder er for lille.~Rediger venligst listens dimensioner.
+22608=Hvis du fortsætter med denne funktion vil felternes værdier blive vist og ikke værdi labels.
+22610=Vil du fortsætte?
+22612=Danner data liste
+22614=Oversigt over observationer i %s
+22616=Liste dannet %s
+22618=Nummer %d  (observation nr. %d)
+22620=Afbryd funktionen?
+
+***22622=List data of %s
+***22624=Records in file: %d
+***22626=Records in list: All
+***22628=Records in list: %d-%d
+***22630=Records in list limited by filter:
+***22632=Deleted records are skipped.
+[Apply checks messages]
+22700=%s i linie %d:
+22702=Linie %d: %s
+22704=Mangler END i LEGAL-blok.
+22706=LEGAL USE kommando uden feltnavn
+22708=Ukendt feltnavn
+22710=Værdi er ikke tilladt med denne felttype
+22712=RANGE kommando uden mininum værdi
+22714=RANGE kommando uden maksimum værdi
+22716=Minimum værdi er ikke tilladt med denne felttype
+22718=Maksimum værdi er ikke tilladt med denne felttype
+22720=Mangler END i JUMPS-blok
+22722=Ugyldig datatype
+22724=Jumps kommando uden angivelse af felt der skal springes til
+22726=Ukendt feltnavn i JUMPS blok
+22728=AUTOJUMP kommand uden angivelse af felt der skal springes til
+22730=Ukendt feltnavn i AUTOJUMP kommando
+22732=Ukendt kommando i linie
+22733=Ukendt kommando
+22734=Uventet afslutning på COMMENT LEGAL blok
+22736=labels i felt
+22738=COMMENT LEGAL USE kommando uden labelnavn eller feltnavn
+22740=Ukendt labelnavn eller feltnavn
+22741=Kommando ikke tilladt i IF, AFTER ENTRY og BEFORE ENTRY blokke
+22742=USE forventet efter COMMENT LEGAL
+22743=Ugyldig farve
+22744=Ugyldig syntaks i TYPE COMMENT/STATUSBAR kommando
+22745=Ukendt feltnavn eller farve
+22746=Teksten der skal TYPEs mangler
+22747=Ugyldig syntaks i KEY UNIQUE kommando
+22748=Ugyldig syntaks i KEY kommando
+22750=Kun %d nøgler (KEY) er tilladt
+22752=Ugyldigt nummer efter KEY. Kun tallene 1 til %d er tilladt.
+22754=KEY nummmer er allerede anvendt
+22756=Mangler felt- eller variabelnavn til venstre for lighedstegnet
+22758=Ukendt felt- eller variabelnavn til venstre for lighedstegnet
+22760=Mangler THEN efter IF
+22762=IF..THEN kommand uden ENDIF
+22764=ENDIF forventet men END fundet
+22766=DEFINE uden variabelnavn
+22768=Variabelnavn i DEFINE må højst være 16 tegn
+22770=Dobbelt navn: Variabelnavnet er anvendt af en indtastningsfelt
+22772=Dobbelt navn: Variabelnavnet er allerede anvendt
+22774=Felttype mangler i DEFINE kommando
+22776=Fejl i felttype. Brug # og højst eet punktum for at definere numeriske felter
+22778=Ugyldig felttype i DEFINE kommando
+22780=Ugyldig rækkeviddeangivelse i DEFINE kommando. Brug GLOBAL eller CUMULATIVE
+22782=CODEFIELD/CODES er ikke undersøttet. Brug venligst TYPE COMMENT feltnavn.
+22784=ENTER kommando er ikke understøttet. Brug BEFORE/AFTER ENTRY i stedet.
+22786=ENTRY ventet
+22788=Ukendt feltnavn fundet i checkfilen %s
+22790=Ønsker du at gemme det ukendte felts checks~som kommentarlinier i checkfilen?
+22792=Hvis du vælger Nej vil alle checks i det ukendte felt~blive slettet når den reviderede checkfil gemmes.
+22794=Checkfilen %s indeholder følgende fejl:
+22796=Ændret
+22798=Ukendt kommando efter BEFORE
+22800=Ukendt kommando efter AFTER
+22802=Gyldigt interval og/eller gyldige værdier
+22804=Definer JUMPS betingelser
+22806=Fejl i RANGE/LEGAL definition.~~Ugyldige værdier indtastet.
+22808=Fejl i JUMPS definition. Feltnavn findes ikke.
+22810=Definer JUMPS betingelser
+22812=Piletegn (>) mangler.
+22814=Fejl i JUMPS definition.
+22816=labelnavn
+22818=Ret check for dette felt
+22820=Ukendt kommando fundet i en feltblok i checkfilen %s.
+22822=Vil du gemme den ukendte kommando som
+22824=kommentarlinier i feltblokken?
+22826=Hvis du vælger Nej vil alle ukendte kommandoer i feltblokkene
+22828=blive slettet når de reviderede checks gemmes.
+
+***22830=RESET expected but %s found
+***22832=Datafile %s must contain two KEY-fields
+***22834=Rebuild index
+***22836=Could not read datafile %s as a comment legal.~This could be caused by low memory
+***22838=Can only TYPE COMMENTs to textfields
+***22840=Error in RELATE command
+***22842=RELATE field must be KEY UNIQUE
+***22844=No consistencyblock found in %s
+***22846=Error in file %s~Unknown fieldname %s found after REPORT in line %d
+***22848=Error in file %s~No name found for consistency check in line %d
+***22850=Error in file %s~No consistency check expression found in line %d
+[Fieldtype pick list]
+22900=Ugyldig
+22902=Fejl: 1 eller flere cifre før
+22904=decimaltegnet kræves.
+22906=Fejl: Største lovlige længde er 14 tegn.
+22908=Felt længde: %d
+
+[Expression evaluator messages]
+23000=Operator %s kan ikke anvendes med %s
+23002=Type %s kan ikke anvendes med type %s
+23004=Intern parser fejl. Kode %d
+23006=Kan ikke læse %s som STRING
+23008=Kan ikke læse %s som FLOAT
+23010=Kan ikke læse %s som INTEGER
+23012=Kan ikke læse %s som BOOLEAN
+23014=Kan ikke læse %s som OBJECT
+23016=%s er ikke en gyldig værdi for %s
+23018=kan ikke anvende %s med boolske operander
+23020=%s er ikke en forholds-operator
+23022=Kan ikke konvertere %s til FLOAT
+23024=Kan ikke konvertere %s til INTEGER
+23026=Kan ikke konvertere %s til BOOLEAN
+23028=Ugyldige parametre i typeændring
+23030=IF skal have 3 parametre
+23032=Første parameter i IF skal være en boolsk betingelse
+23034=IF betingelser skal være samme type
+23036=Dårligt numerisk format
+23038=Uafsluttet tekststreng
+23040=Tekststreng for lang
+23042=Hex streng for lang
+23044=Ugyldigt tegn i hex-nummer
+23046=%s er ikke tilladt her
+23048=ugyldigt under-udtryk
+23050=) ventet
+23052=Forkert formede parametre
+23054=Ukendt felt eller variablenavn %s
+23056=Ulovlige parametre til %s
+23058=Syntaks fejl
+23060=%s er ikke passende
+
+[Validate duplicate datafils messages]
+23100=Højst %d kan vælges.
+23102=Navn på første datafil
+23104=Navn på anden datafil
+23106=Sammenligning af dobbelttastede datafiler afsluttes
+23108=RAPPORT FOR SAMMENLIGNING AF DOBBELTASTEDE DATAFILER
+23110=Indstillinger for sammenligning:
+23112=Udelad slettede observationer:
+23114=Ignorer tekstfelter:
+23116=Ignorer store/små bogstaver:
+23118=Rapporter forskelle i felttyper:
+***23119=Ignore missing records in datafile 2
+23120=Felter i begge datafiler som blev brugt i sammenligningen:
+23122=Felter udeladt fra datafil 1:
+23124=Felter udeladt fra datafil 2:
+23126=Felter anvendt som indeks nøgler:
+23128=RESULTAT AF SAMMENLIGNINGEN:
+23130=Forskelle i datatyper:
+23132=%s er %s felt
+23134=Ens nøgler fundet i %s~Nøgler i observation %d er de samme som observation %d
+23136=Obs. nøgle felter: (Obs.nr. %d)
+23138=Observation nr. %d
+23140=Observation ikke fundet i datafil 2
+23142=Observation ikke fundet
+23144=Observation ikke fundet i datafil 1
+23146=Data i de to datafiler er med de valgte indstillinger ens
+23148=Obs. der mangler i datafil 1        %6d
+23150=Obs. der mangler i datafil 2        %6d
+23152=Antal ens observationer fundet:     %6d
+23154=Antal testede felter pr. obs.:      %6d
+23156=Total antal testede felter:         %6d
+23158=%d ud af %d observationer har fejl (%5.2f pct.)
+23160=%d ud af %d felter har fejl        (%5.2f pct.)
+23162=Sammenlignings rapport
+***23164=Validating duplicate datafiles
+***23166=Abort validation of duplicate datafiles?
+***23168=Record #
+
+[Pack datafile messages]
+***23200=This will permanently remove records marked as deleted in %s
+***23202=%s contains %d records
+***23204=%d records will permanently be deleted
+***23206=%s has been packed and contains now %d records
+***23208=Original datafile before Pack saved as %s
+***23210=Pack datafile cancelled
+***23212=No changes are made to the datafile %s
+***23214=An error occured during the Pack operation.
+
+[Consistency check messages]
+***23300=Consistency check
+***23302=Datafile to check
+***23304=File containing checks
+***23306=Consistency check terminates.
+***23308=No consistency checks found in %s
+***23310=Reading record %d of %d
+***23312=Invalid numeric value found in field %s, record %d
+***23314=Invalid date value found in field %s, record %d
+***23316=Error in file %s~CHECK %s
+***23318=is not a valid boolean expression
+***23320=Abort Consistency Check?
+***23322=Consistency checks for %s
+***23324=Based on %s
+***23326=Records identified by
+***23328=recordnumber
+***23330=field
+***23332=Records where %s = missing indicated as (#recordnumber)
+***23334=Consistency check failed for
+***23336=No failures.
+***23338=Checking
+
+[Recode datafile]
+***23500=Error in LET-expression~%s~Result can not be assigned to %s
+***23502=Result is too wide to fit %s
+***23504=Recode datafile
+***23506=Datafile to recode:
+***23508=Recode command file:
+***23510=The recodefile %s has errors and cannot be applied
+***23512=No recodeblock was found in %s
+***23514=recoding
+***23516=Recoding record %d of %d
+***23518=Abort Recode?
+***23520=Recoding of %s ready'~~'%d records will be changed
+***23522=%s has been recoded~%d records changed~~Backup of original datafile saved as %s
+***23524=Recode datafile was cancelled~~No changes were made in %s
+***23526=Datafile recoded. %d records were changed
+
+[Compress datafile}
+***23600=Compressing datafile
+***23602=Abort compress datafile?
+***23604=Compress datafile terminates
+***23606=Datafile %s compressed by narrowing input fields to fit current data.~~The orginal datafile renamed to %s
+***23608=Compress data will narrow input fields to width of current data~If you want to delete records use PACK instead.
+***23610=Continue?
+
+[Count Records by field]
+***23700=Count of records based on field
+***23702=Selected files:
+***23704=COULD NOT BE OPENED
+***23706=CONTAINS NO RECORDS
+***23708=File %d = %-s
+***23710=%d different values for %s found
+***23712=Files
+***23714=Count values
+***23716=Max %d files at the same time
+***23718=Only REC-files can be evaluated
+***23720=No files are selected for evaluation
+***23722=No fields common to all the files were found
+***23724=Please select a field to evaluate
+
+[Rename fields messages]
+***23800=Change fieldnames of %s
+***23802=Fieldname
+***23804=New fieldname
+***23806=Fieldnames changed in the datafile %s~~Original datafile saved as %s
+***23808=Checkfile %s adapted to new fieldnames~Original checkfile saved as %s
+***23810=New fieldname is too long
+***23812=Fieldnames must begin with a letter
+***23814=Illegal fieldname
+***23816=Duplicate fieldname: %s
+***23818=Fieldname %s already exists in the datafile
+
+[Import messages]
+***23900=Import from text-file
+***23902=Import from dBase
+***23904=Import from Stata
+***23906=The datafile to import to must have the extension .REC
+***23908=%s is not a plain dBase III or IV file.
+***23910=Import terminates
+***23912=Incorrect format of %s
+***23914=The variable %s is a text variable with more than 80 characters.
+***23916=This variable cannot be imported to EpiData.
+***23918=The variable %s is of the type %s.~This variabletype is not supported by EpiData.
+***23920=Importing record no. %d of %d
+***23922=Unknown dataformat %s found
+***23924=Error in record %d, field %s: data too wide to fit the field in EpiData
+***23926=Use fixed format (e.g. %9.2f) in Stata to optimize the fieldsize
+***23928=Data in record %d, field %s will be rounded to 4 decimals
+***23930=Continue import?
+***23932=Abort import?
+***23934=Error reading data from Stata-file
+***23936=Duplicate value label name found
+***23938=Checkfile created from import of the Stata-file %s
+***23940=Value labels in the Stata-file will be imported to a checkfile
+***23942=Overwrite existing checkfile %s?
+***23944=Datafile created by importing stata file %s
+***23946=Stata-file %s imported~to %s~~%d records were imported
+***23948=Stata-file %s imported~to %s~~Valuelabels imported to checkfile %s~~%d records imported
+***23950=Error in line %d in the file %s:
+***23952=The data ('%s') for the field %s are too short.
+***23954=Missing start-quote for the field %s.
+***23956=Missing end-quote for the field %s.
+***23958=Data ('%s') cannot be imported to field %s (%s) (Incompatible type).
+***23960=Data ('%s') too wide to fit in the field %s
+***23962=Datafile created by importing text file %s
+***23964=Text-file %s is imported~to %s~~%d records were imported
+***23966=Error in record %d, variable %s.~The data ('%s') is too wide to fit in the field.
+***23968=Error in record %d, variable %s.~Incompatible data ('%s') for this variable
+***23970=Datafile created by importing dBase file %s
+***23972=The dBase file %s har been imported~to %s~~%d records were imported
+***23974=Name of Stata-file:
+***23976=Import to:
+***23978=Unknown version of Stata-file
+***23980=Incorrect format of Stata-file
+***23982=The stata-file contains %d variables.~A maximum of 800 variables can be imported.
+***23984=Unknown variable type found in Stata-file
+***23986=Unknown format specified for variable %s
+***23988=The field %s uses value label '%s' which is undefined.
+
+[Append/merge messages]
+***24000=The three datafiles must all be different files
+***24002=Please select one or more key fields
+***24004=A maximum of 3 key fields can be selected
+***24006=%d fields, %d records
+***24008=Append could lead to a loss of data in the field %s
+***24010=because the field in datafile A has fewer decimals than in datafile B
+***24012=The fields with the name %s are not compatible
+***24014=The numeric field %s too long (>14 characters)~Compress datafiles
+***24016=Append terminates
+***24018=Appending the two files would exceed the maximum of 999 lines to describe all fields.
+***24020=Merging the two files would exceed the maximum of 999 lines to describe all fields.
+***24022=Merge terminates
+***24024=Appending datafiles
+***24026=Merging datafile
+***24028=Abort append datafiles?
+***24030=Examining record %d of %d
+***24032=Abort merge datafiles?
+***24034=Files:~%s (%d records, %d fields)~%s (%d records, %d fields)
+***24036=Appended
+***24038=Merged
+***24040=and saved as:~%s (%d records, %d fields)
+***24042=Data in common fields (except key fields) are taken from file %s
+***24044=This resumé is added to the notesfile~%s
+***24046=Datafile B must contain data.
+
+[Misc.]
+***50000=Confirmation
+***50002=Ignore
+***50004=Help
+***50006=Abort
+***50008=All
+***50010=Information
+***50100=Numeric
+***50101=Text
+***50102=Date (mdy)
+***50103=Uppercase text
+***50105=Boolean
+***50110=Today (mdy)
+***50111=Date (dmy)
+***50112=ID-number
+***50115=Question
+***50116=Today (dmy)
+***50117=Soundex
+***50200=EpiData Questionnaire
+***50202=EpiData Check file
+***50204=EpiData Datafile
+***50206=EpiData dataentry notes
+***50208=EpiData documentation file
+***50210=Marked file extensions associated with EpiData
+***50212=Select which filetypes should be associated with EpiData
+***50214=Marked file extensions no longer associated with EpiData
+***50216=Select filetypes for removal of association with EpiData

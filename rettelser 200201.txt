@@ -1,0 +1,37 @@
+
+ÆNDRINGER I EPIDATA FRA VERSION 1.3 TIL VERSION 1.5 BETA
+
+
+Tilføjelser til check-sproget:
+GOTO WRITEREC tilføjet (ud over GOTO WRITE)
+Checkfunktioner WeekNum(date) og DayOfWeek(date) tilføjet (NB! Mandag=1, Søndag=7)
+Tilføjet TYPE COMMENT fieldname
+Tilføjet TYPE "Her er en tilfældig tekst"
+Flere fejlmeldinger ifm. TYPE tilføjet (f.eks. hvis TYPE COMMENT bruges i AFTER ENTRY blok)
+
+
+Andre tilføjelser:
+Håndtering af sprog tilføjet (incl. engelsk indbygget i EXE-filen)
+Print Selection fra Edform tilføjet
+Help tilføjet til LabelEditForm
+Align entryfields tilføjet
+Oversætters navn m.v. tilføjet i Aboutbox
+Håndtering af internationale hjælpefiler og EpiTour tilføjet (f.eks. EpiTour_dk.hlp og EpiData_dk.hlp)
+Første værdi i comment legal pick list fremhæves automatisk
+
+
+Rettede fejl:
+Fejl med citationstegn omkring LEGALS med mellemrum rettet
+Fejl med at LEGALS blev til UpperCase rettet
+Fejl med skrivning i checkfil af type-colors rettet
+Fejl med håndtering af Type Statusbar i forbindelse med LET assignments rettet
+Fejl i advarselsbox om at alle checks er ved at blive slettet
+Fejl med at Fieldblok med index giver "Index number already used" rettet
+Fejl med håndtering af Range i forbindelse med LEGAL USE tilføjet
+Fejl vedr. farve i HIDE felter rettet
+Fejl med brug fra editor af Alt+2 for at vælge Make Datafile rettet
+Fejl med koloenorm message box ved "Illegal value entered" ifm. LEGAL rettet
+Fejl med at LEGALs i tekstfelter konverteres til store bogstaver rettet
+Tekst på EXIT knap i Add/Revise Checks rettet til CLOSE
+Font valg for editor er sat til fast spatieret som default
+Fejl med at LET assignments af datoer til tekstfelter gav datonummer

@@ -1,0 +1,16 @@
+Label Sex
+  1 Male
+  2 Female
+  9 Unknown
+End
+
+Label Agegroups
+  1 "0-15 years"
+  2 "16-19 years"
+  3 "20-29 years"
+  4 "30-39 years"
+  5 "40-49 years"
+  6 "50-59 years"
+  7 "60-69 years"
+  8 ">69 years"
+End

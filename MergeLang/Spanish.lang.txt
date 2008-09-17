@@ -1,0 +1,871 @@
+
+[Language and translator information - for About box]
+100=Español
+101=2.0
+105=SP
+110=Perón y PArias
+120=www.cica.es/epiinfo
+
+1000=MainForm
+[Workprocess toolbar]
+1010=&1. Definir datos
+1011=&2. Crear archivo de datos
+1012=&3. Añadir controles
+1013=&4. Introducir datos
+1014=&5. Documentar
+1015=&6. Exportar datos
+
+[Editor toolbar - hints]
+11020=Nuevo
+11021=Abrir
+11022=Guardar
+11023=Imprimir
+11024=Deshacer
+11025=Cortar
+11026=Copiar
+11027=Pegar
+11028=Vista Previa
+11029=Lista de campos
+11030=Editor de código
+
+[Main menu]
+1100=&Archivo
+1102=&Nuevo
+1104=&Abrir
+1106=O&pciones
+1108=&Salir
+
+1200=&Control de entrada
+1202=&Añadir/revisar controles
+1204=&Eliminar controles
+
+1300=&Datos Introducir/exportar
+1302=&Introducir / editar datos
+1304=E&xportar datos
+1306=Exportar a archivo texto
+1308=Exportar a dBase III
+1310=Exportar a Excel
+1312=Exportar a Stata
+1314=Copia de &seguridad
+1316=&Crear archivo de datos desde Cuestionario
+
+1400=D&ocumentar
+1402=&Documentar base de datos
+1404=&Listar datos
+1406=Libro de &códigos
+1408=&Notas de trabajo
+
+1500=&Herramientas
+1502=Copiar estructura de &datos
+1504=&Validar entrada duplicada
+1506=Reconstruir &índices
+1508=&Modificar descripción del archivo
+1510=&Revisar estructura desde cuestionario
+1512=&Crear Cuestionario desde archivo .REC
+
+1600=&Ventana
+1602=Mosaico &horizontal
+1604=Mosaico &vertical
+1606=&Cascada
+1608=&Organizar todo
+1610=&Barra herramientas
+1612=Barra de procesos
+1614=Barra de edición
+1616=Ambas
+1618=Ocultar barras durante entrada de datos
+
+1700=A&yuda
+1702=Conte&nido
+1704=&Tipos de campos
+1706=Tour de &EpiData
+1708=Página &Web EpiData 
+1710=&Registro en línea
+1712=A&cerca del registro
+1714=&Acerca de EpiData
+
+[Define data popup]
+2000=&Nuevo Cuestionario
+2002=&Abrir Cuestionario
+
+[Make datafile popup]
+2010=Crear archivo de datos
+2012=Vista previa
+
+[Add/revise checks popup]
+2020=&Añadir/revisar controles
+2022=&Eliminar controles
+
+[Document popup]
+2030=&Documentar datos
+2032=&Listar datos
+2034=Libro de &códigos
+2036=&Notas de trabajo
+
+[Export data popup]
+2040=&Copia de seguridad
+2042=Exportar a archivo &texto
+2044=Exportar a &dBase III
+2046=Exportar a &Excel
+2048=Exportar a &Stata
+
+[Toolbars popup menu]
+2065=Ninguna
+
+[File types]
+2102=Cuestionarios (*.qes)
+2104=Archivos de datos (*.rec)
+2106=Archivos de control  (*.chk)
+2108=Notas  (*.not)
+2110=Documentación (*.log)
+2112=Todos (*.*)
+2114=Archivo texto  (*.txt)
+2116=Archivo dBase III   (*.dbf)
+2118=Archivo Excel   (*.xls)
+2120=Archivo Stata  (*.dta)
+
+
+[About form]
+3000=Versión
+3001=Programa diseñado por:
+3002=Programado por:
+3003=Más información sobre EpiData
+3004=Financiado por estas organizaciones
+3005=Cerrar
+3006=Acerca de EpiData
+3008=Traducido al  %s por:
+3010=Pagina de Internet local:
+
+[Back-up form]
+3100=Copia de &seguridad de los datos
+3110=Archivo a &almacenar:
+3112=&Carpeta destino:
+3114=Aceptar
+3116=Cancelar
+
+[Error on open checkfile form]
+3200=Error
+3210=No se pueden aplicar controles.
+3212=El archivo Check tiene uno o más errores.
+3214=Use el editor para corregir los errores.
+3216=¿Desea ver una lista de errores?
+3218=&Si
+3220=&No
+3222=&Mostrar el archivo Check en el editor
+
+[Copy datafile structure form]
+3300=Copiar estructura
+3310=Archivo-REC existente
+3312=Nombre de archivo
+3314=Datafilelabel
+3316=Archivo-REC nuevo
+3318=&Nombre de archivo
+3320=&Descripción
+3322=Opciones
+3324=No copiar campos de &texto
+3326=Copiar archivo &check
+
+
+[Dataform]
+3400=Cuestionario
+3410=&Archivo
+3412=&Notas de trabajo
+3414=&Cerrar cuestionario
+3416=&Salir de EpiData
+3420=&Ir a
+3422=&Nuevo registro
+3424=&Marcar para borrar
+3426=&Siguiente
+3428=&Anterior
+3430=&Primer registro
+3432=&Último registro
+3434=P&rimer campo
+3436=Ú&ltimo campo
+3437=Ir a &registro
+3438=&Buscar restro
+3439=Buscar siguiente
+3440=&Campos
+3446=Ir &arriba
+3448=Ir a&bajo 
+3450=&Editar controles del campo actual
+
+[Dataform - navigation buttons' hints]
+13460=Primer registro
+13462=Registro Anterior
+13464=Siguiente Registro
+13466=Último registro
+13468=Registro nuevo
+13470=Borrar registro
+
+[Editor form]
+3500=EPI Editor
+3516=&Guardar
+3518=Guardar &como...
+3520=&Cerrar
+3522=C&errar todo
+3524=&Imprimir
+3526=Configurar Impresora
+
+3540=&Editar
+3542=&Deshacer
+3544=&Copiar
+3546=Cor&tar
+3548=&Pegar
+3550=Se&leccionar todo
+3552=&Ir a línea...
+3554=&Buscar...
+3556=&Reemplazar...
+3558=&Lista de campos
+3560=Editor de Código
+3562=Auto &sangrado
+3564=Alinear &campos
+
+3570=&Archivo-REC
+3572=&Vista Previa
+3574=&Crear archivo
+
+3580=D&ocumentar
+3582=&Documentar archivo de datos
+3584=&Listar datos
+3586=Libro de &códigos
+3588=&Notas de trabajo
+
+[Editor pop-up menu]
+3590=Copiar
+3592=Cortar
+3594=Pegar
+3596=Seleccionar todo
+3598=Ir a línea...
+3600=Vista previa
+
+[Editor saveFileDialog title]
+3612=Guardar Cuestionario
+
+[Export form]
+3700=Exportar datos
+3710=Archivo-REC a exportar
+3712=Exportar a
+3714=Separador de campos
+3716=Usar cualificador de texto (")
+3718=No exportar registros borrados
+3720=Exportar a Stata versión 4/5
+3721=Exportar a Stata versión 6
+
+[Find record form]
+3800=Buscar registro
+3812=&Sensible a Mayúsculas
+3814=&Palabra completa
+3816=&Ignorar registros borrados
+3818=Dirección
+3819=&Hacia el último registro
+3820=&Hacie el primer registro
+3821=&Todos los registros
+3826=&Reiniciar
+3828=&Aceptar
+3830=&Cancelar
+
+[LabelEditForm]
+4000=Editar descripción
+4010=&Aceptar y cerrar
+
+[LegalPickForm]
+4100=Seleccionar valor
+
+[ListDataForm]
+4200=Listar datos
+4210=&Seleccionar campos
+4212=&Todos
+4214=&Ninguno
+4216=Medidas de la lista
+4218=&Ancho máximo (en caracteres):
+4220=Número de &columnas:
+4222=Ancho de columna de datos: 14
+4224=&Opciones
+4226=&Usar índices para ordenar
+4228=&Insertar etiquetas en lugar de códigos
+4230=&Ignorar registros borrados
+
+[Options]
+
+[Editor page]
+4310=Editor
+4312=Fuente y color de fondo del editor
+4314=&Fuente
+4316=Fo&ndo
+4318=Tabulador
+4320=&El tabulador inserta
+4322=espacios
+
+[Show dataform page]
+4340=Mostrar cuestionario
+4342=Fuente y color de fondo en el cuestionario
+4344=Color del campo
+4346=Co&lor 
+4348=Marcar campo activo
+4350=Colo&r
+4352=Estilo del campo
+4353=Apariencia &3D
+4354=Plano con &marco
+4355=Plano &sin marco
+4360=Ancho de &línea
+4361=&1 línea
+4362=1½ lí&nea
+4363=&2 líneas
+4368=&Tabulación cada
+4370=pixel(es)
+
+[Create datafile page]
+4380=Crear archivo de datos
+4382=Como generar nombres de campos
+4383=Primera palabra de la pregunta como &nombre 
+4384=Nombres de campos Au&tomáticos
+4386=Pasar los datos si cambia el nombre
+4388=Tipo de letra para los campos
+4389=&Mayúsculas
+4390=Mi&núsculas
+4391=&Dejar como está
+
+[Documentation page]
+4400=Documentación
+4402=Fuente en documentación
+
+[Advanced page]
+4420=Avanzadas
+4422=Campos ID
+4424=Em&pezar la numeración desde:
+4426=Mensajes de error 
+4428=&Mostrar mensajes de error que ocurran en 
+4430=cálculos durante la introducción de datos
+4432=Restaurar opciones por defecto
+4434=Restaurar 
+
+[Add/revise checks form]
+4500=&Guardar
+4510=E&ditar
+4512=&Salir
+
+[Field pick list form]
+4600=Lista de campos
+[Numeric page]
+4610=Numérico
+4612=Dígitos &antes del punto
+4614=Dígitos &después del punto
+4616=Campo a insertar:
+4618=Longitud: 0
+4620=Insertar
+
+[Text page]
+4630=Texto
+4632=Tipo
+4633=&Texto
+4634=Texto &mayúsculas
+4636=&Longitud
+
+[Date page]
+4640=Fechas
+4641=<&dd/mm/yyyy>
+4642=<&mm/dd/yyyy>
+4644=Fechas automáticas
+4645=<&Today-dmy>
+4646=<T&oday-mdy>
+
+
+[Other page]
+4650=Otros
+4652=Tipo de campo
+4653=&Auto ID
+4654=&Soundex
+4655=&Lógico (campo si/no)
+
+[Create datafile - filenames dialog]
+4700=Crear archivo de datos desde cuestionario
+4710=Cuestionario
+4712=Archivo de datos
+
+[Validate duplicate datafiles - options dialog]
+4800=Validar entrada duplicada de datos
+4810=Archivo-REC 1
+4812=Nombre:
+4814=Descripción:
+4816=Nº de resgistros:
+4820=Archivo-REC 2
+4830=&Seleccionar campo clave
+4840=&Opciones
+4842=Ignorar registros borra&dos
+4844=Ignorar campos &texto
+4846=Ignorar tipo de letra en &campos de texto
+4848=Notificar diferencias en los tipos de campo
+4850=&Ayuda
+
+[Warning]
+4900=Aviso
+
+[Welcome form]
+5000=Bienvenido a EpiData
+5010=No mostrar esta ventana la próxima vez
+
+[Open datafile messages]
+20100=Cierre todos los archivos-REC abiertos antes de abrir uno.
+20102=Solo se pueden abrir %d archivos-REC al mismo tiempo.
+20104=Error al crear el cuestionario desde %s.
+20106=El archivo-REC Check contiene errores
+20108=No se pudo abrir el archivo-REC %s. 
+20110=El archivo-REC %s no existe.
+20112=Formato incorrecto en el archivo %s.
+20114=Leer información del campo
+20116=Error en el archivo %s.~~La definición de campo en la línea %d no se puede leer o interpretar.
+20118=Error en el archivo %s.~~Uno o más registros están corruptos.
+20120=Error leyendo el archivo %s.
+20122=El índice del archivo %s está en uso o no existe.
+20124=Leyendo índice...
+20126=El campo %s es clave única, pero se encuentran claves duplicadas en los registros %d y %d
+20128=Error al leer el índice del archivo %s
+20130=Error al leer el archivo Check %s
+20132=Indique el nombre del primer archivo.
+20134=Indique el nombre del segundo archivo.
+
+
+
+[Misc. errormessages]
+20200=Error escribiendo en el registro.
+20202=No se encuentra el archivo de ayuda.
+20204=No hay memoria (códigoi de referencia %d)
+20206=Compruebe el nombre o si el disco está protegido o lleno.
+20208=Compruebe si el archivo está en uso y es legal.
+20210=Si
+20212=No
+20214=No se encuentra el archivo ReadMe.rtf .~~Por favor, obtenga una copia actualizada de EpiData en www.EpiData.dk
+
+
+[Editor messages]
+20300=¿Guardar cambios en %s?
+
+
+[Create datafile messages]
+20400=Solo pueden crearse archivos de datos desde cuestionarios.
+20402=Crear archivo de datos desde cuestionario
+20406=El cuestionario %s no se encuentra o no puede abrirse.
+20408=Escriba la descripción del archivo
+20410=Descripción del archivo 
+20412=Error de log
+20414=El archivo QES %s no contiene definiciones de campos.~~No se ha creado el archivo de datos.
+20416=No se puede crear un archivo con el nombre %s 
+20418=Archivo %s creado.
+20420=El campo numérico de la línea %d excede la longitud máxima de 18 caracteres:
+20422=Error de campo de coma flotante en la línea %d:
+20424=El campo de texto de la línea %d excede la longitud máxima de 80 caracteres:
+20426=Error en la orden <TAB EVERY n>. Se requiere un número en la línea %d:
+20428=El campo de texto en mayúsculas de la línea %d excede la longitud máxima de 80 caracteres:
+20430=El campo IDNUM de la línea %d excede la longitud máxima de 18 caracteres:
+20432=Un campo <...> sin cerrar en la línea %d:
+20434=Código desconocido en la línea %d:
+20436=El archivo QES contiene errores.
+20438=Se han hallado los siguientes errores:
+20440=Construyendo la línea del formulario %d
+20442=No hay campos en el archivo QES
+20444=El archivo %s
+20446=ya existe.
+20448=¿Sobreescribir el archivo existente?
+20450=se borrará!
+20452=¿Seguro?
+
+[Add/Revise checks messages]
+20500=Seleccionar el archivo al que se aplican controles
+20502=Errores encontrados en el archivo check %s
+20504=Añadir/revisar controles - %s
+20506=Seleccionar el archivo al que se aplican controles
+20508=Esto eliminará los controles añadidos al archivo
+20510=¿Eliminar todos los controles?
+20512=¡Todos los controles serán eliminados!
+
+[Document datafile]
+20600=ARCHIVO:           %s
+20602=Descripción:       %s
+20604=[none]
+20606=bytes
+20608=kb
+20610=Tamaño:
+20612=Última revisión:
+20614=Nº de campos:
+20616=Nº de registros:
+20618=Error en el archivo. No puede contarse el número de registros.
+20619=¿Incluye controles?:
+20620=Si (Última revisión %s)
+20622=No
+20624=Aviso: Existe un archivo Check, pero contiene errores.
+20626=Campos del archivo:
+20628=Nº
+20630=Nombre
+20632=Texto del campo
+20634=Campo tipo
+20636=Ancho
+20638=Controles
+20640=Valores
+20642=Consulte el archivo Check
+20644=Tipo desconocido
+20646=Documentación del archivo %s
+
+[Dataentry notes messages]
+20700=Indique el archivo para el que quiere añadir notas
+20702=Notas durante la introducción de datos en %s
+20704=No se puede crear archivo de notas para el archivo %s .
+
+[Datafile label messages]
+20750=Indique el archivo para el que quiere añadir una descripción
+20752=Descripción del archivo (max. 50 caracteres):
+20754=Descripción del archivo %s
+20756=Error al crear archivo de salida temporal %s
+20758=Escribiendo los datos en archivo
+20760=Actualizada la descripción del archivo %s .
+
+
+[Codebook messages]
+20800=El archivo Check  %s contiene errores y no puede ser usado.
+20802=Si elije continuar se excluirán del libro de códigos la información de checks y valores de etiquetas
+20804=Quiere continuar creando el librop de códigos?
+20806=No hay memoria suficiente para crear codebook de %s
+20808=CODEBOOK
+20810=Informe generado
+20811=Archivo de datos:
+20812=Descripción del archivo:
+20814=Fecha del archivo:
+20816=El archivo Check contiene errores y no se usará
+20818=Registros totales:
+20820=Registros borrados:
+20822=Usados en codebook:
+20824=registros
+20826=Creando codebook
+20828=Escribiendo campo %d de %d
+20830=tipo
+20832=Valor de etiqueta no definido
+20834=etiquetas de valores
+20836=Ordenes encontradas (ver archivo check)
+20838=desconocido
+20840=rango
+20842=valores únicos
+20844=tabulación
+20846=Freq.
+20848=Porcent.
+20850=Valor
+20852=Etiqueta
+20854=Ejemplos:
+20856=media
+20858=desv. tip.
+20860=Cancelar libro de códigos?
+20862=Libro de códigos basado en %s
+
+[Revise datafile from revised QES-file messages]
+20900=Revisar archivo-REC a partir de un cuestionario
+20902=Cuestionario revisado
+20904=Archivo a modificar
+20906=El archivo %s se creó con la opción Nombres Automáticos, pero la configuración actual es Usar Primera Palabra.
+20908=¿Quiere continuar usando Nombres Automáticos?
+20910=El archivo %s se creó usando la opción Usar Primera Palabra, pero la configuración actual es Nombres Automáticos.
+20912=¿Desea continar con Usar Primera Palabra?
+20914=El archivo %s se creó con Epi Info y tiene algun nombre de campo de más de 8 letras.
+20916=EpiData no puede revisar la estructura de estos archivos - Use Epi Info.
+20918=Transfiriendo datos
+20922=El archivo-QES revisado podría producir una pérdida de datos en el registro no. %d, campo %s
+20924=Revisión del archivo completada.
+20926=Existe un campo con el nombre '%s' en el archivo antiguo y en el Cuestionario revisado
+20928=pero los campos no son compatibles.
+20930=Tipo de campo en el archivo: %s~Tipo de campo en el archivo-QES revisado: %s
+20932=Parar la revisión del archivo?
+20934=El archivo-QES revisado le hará perder datos en estos campos:
+20936=Se ha creado el archivo %s.~~El archivo original se ha renombrado como %s
+
+[Copy datafile structure messages]
+21000=Indique el archivo a copiar
+21002=No se pudo copiar el archivo %s
+21004=Archivo %s copiada como %s
+21006=Error al guardar el archivo nuevo con el nombre %s
+21008=Indique un nombre para el archivo nuevo.
+
+
+
+[Rebuild Index messages]
+21100=Seleccione el archivo para el que se revisará el índice
+21102=Reconstrucción de índices terminada.
+21104=No se encontraron campos claves.~~In order to build an index one or more fields need to have the command KEY in a checkfile.
+21106=El índice del archivo %s ha sido reconstruido
+21108=No se puede crear el índice para %s
+21110=No se encontró el archivo Check.~~Para poder construir un índice para uno o más campos necesita una orden KEY en el archivo Check.
+21112=No se puede crear el archivo índice
+21114=Reconstruyendo índice...
+
+
+
+[Back-up datafile messages]
+21500=Ya existe un archivo llamado %s .~~¿Sobreescribir este archivo?
+21502=Copia de seguridad completada
+21504=Unidad %s: no preparada
+21506=Indique un archivo de copia de seguridad.
+21508=Indique una carpeta de destino.
+21510=La carpeta de destino no existe.
+
+[Dataform messages]
+21600=Añadiendo en el campo no.
+21602=Fecha introducida ilegal.
+21604='mmddyyyy' o 'mm/dd/yyyy'
+21606='ddmmyyyy' o 'dd/mm/yyyy'
+21608=Escriba la fecha en este campo como 
+21610=%s no es un valor entero válido
+21612=Demasiados decimales.
+21614=Solo se permiten números y el punto decimal.
+21616=El número entrado es demasiado grande.
+21618=Enteros: valores posibles 0-9 
+21620=Punto flotante: Permitidos 0-9 y comas
+21622=Alfanumérico: Cualquier carácter
+21624=Mayúsculas: Cualquier carácter
+21626=Número ID: 0-9 
+21628=Lógico: Y,1,N,0 
+21630=Fecha (mda): Permitidos 0-9 y / 
+21632=Fecha (dma): Permitidos 0-9 y / 
+21634=Soundex: Cualquier carácter
+21636=permitido
+21638=Longitud:
+21640=Pulse + o F9 para ver los valores permitidos
+21642=Debe introducir datos. No puede quedar en blanco.
+21644=Valor no válido.
+21646=Los valores permitidos son %s
+21648=y los valores definmidos por comment legal (pulse + o F9 para ver la lista)
+21650=Clave duplicada. Este valor ya se ha asignado a un registro
+21652=Nuevo
+21654=Registro no borrado
+21656=Registro borrado
+21658=Ir a registro
+21660=Indique Nº de registro
+21662=El número indicado excede el número de registros total.
+21664=Cerrar el cuestionario de %s
+21666=¿Guardar el registro en disco?
+21668=El identificador %s no requiere parámetros
+21670=Error en la expresión LET:
+21672=Error en la expresión IF:
+
+
+[Dataentry notes]
+22000=Notas de trabajo de %s
+22002=No se puede crear un archivo de datos con el nombre %s
+22004=No se puede abrir el archivo de notas %s 
+
+[Editor messages]
+22100=Sin nombre
+22102=Errores en Cuestionario
+22104=No puede abrirse el archivo %s .
+22106=Error al guardar %s
+22108=¿Guardar cambios en %s?
+22110=Col. %d  Línea %d
+22112=caracteres seleccionados
+22114='%s' no encontrado
+22116=No se encontraron más ocurrencias.
+22118=%d sustituciones realizadas
+22120=¿Imprimir %s?
+22122=Ir a línea número...
+22124=Indique número de línea
+22126=El archivo %s no existe.
+22128=Longitud de campo:
+22130=Reemplazando caracteres TAB. Espere por favor.
+
+[Export datafile messages]
+22300=Exportando registro nº %d
+22302=¿Cancelar exportar?
+22304=Error ocurrido al exportar el registro #%d
+22306=Fecha ilegal en el registro # %d, campo %s~Exportación terminada.
+22308=Archivo creado por EpiData basado en %s
+22310=Archivo creado por EpiData
+22312=Tipo de campo desconocido usado en el archivo.~~Exportación terminada.
+22314=Las versiones 4 y 5 de Stata sólo pueden manejar etiquetas de hasta~8 caracteres de longitud.
+22316=%s contiene etiquetas con más de~8 caracteres y éstos se han truncado a 8 caracteres.
+22318=Exportar .REC a archivo dBase III
+22320=Exportar .REC a archivo Excel
+22322=Exportar .REC a archivo Stata 
+22324=Exportar .REc a archivo texto
+22326=Crear Cuestionario desde un .REC
+22328=Exportando
+22330=Archivo %s exportada a %s.~~%d registros exportados~%d resgistros borrados fueron ignorados
+22332=Archivo %s exportada a %s.~~%d registros exportados
+22334=El archivo %s no contiene registros.
+22336=Indique un nombre para el archivo de datos.
+22338=Indique un nombre para el Cuestionario
+22340=Indique el nombre del archivo resultado.
+22342=El archivo debe tener extensión .rec
+22344=El archivo resultado debe tener extensión %s
+22346=El archivo  %s ya existe.~~¿Sobreescribir este archivo?
+22348=No se puede crear un archivo con el nombre %s.
+22350=Se ha creado el cuestionario %s 
+22352=El cuestionario %s no pudo guardarse.
+
+[Find record messages]
+22400=Buscando registros
+22402=Cadena de búsqueda no encontrada.
+22404=Buscando en el registro %d
+22406=Error durante la búsqueda. Cancelada.
+
+[Edit value labels messages]
+22500=La definición de etiquetas debe empezar con la palabra LABEL
+22502=Una definicióon de valores debe empezar con COMMENT LEGAL en el bloque
+22504=No se han especificado valores legales.
+22506=Se ha perdido la etiqueta de un valor especificado.
+22508=Especifique el nombre de la etiqueta.
+22510=Ya existe una etiqueta con el nombre %s.~~Sustituir la etiqueta existente?
+22512=Existe una etiqueta con el nombre %s en el archivo librería de etiquetas.~~Debe usarse la nueva etiqueta?
+22514=¿Desechar cambios?
+
+[List data messages]
+22600=Ancho de columna de datos: %d
+22602=Aviso: La anchura de la columna de datos es muy pequeña (%d)
+22604=No se han seleccionado campos para el listado.~Seleccione al menos un campo.
+22606=La anchura de la columna es muy pequeño.~Cambie las dimensiones del listado.
+22608=Si continua con el listado se mostrarán los valores de los datos, pero no las etiquetas.
+22610=Quiere continuar con el listado?
+22612=Creando el listado de los datos
+22614=Lista de observaciones en %s
+22616=Lista creada %s
+22618=Observació %d  (registro #%d)
+22620=Anular el listado?
+
+[Apply checks messages]
+22700=%s en línea %d:
+22702=Línea %d: %s
+22704=Falta el END de un bloque LEGAL.
+22706=Orden LEGAL USE sin indicar campo
+22708=Nombre de campo desconocido
+22710=Valor incompatible con el tipo de campo
+22712=Orden RANGE sin valor mínimo
+22714=Orden RANGE sin valor máximo
+22716=Valor mínimo incompatible con este tipo de campo
+22718=Valor máximo incompatible con este tipo de campo
+22720=Falta el END de un bloque JUMPS
+22722=Tipo de datos prohibido
+22724=Orden JUMPS sin indicar a donde saltar
+22726=Nombre de campo desconocido en un bloque JUMP
+22728=Orden AUTOJUMP sin campo a donde saltar
+22730=Nombre de campo desconocido en orden AUTOJUMP
+22732=Orden desconocida en línea
+22733=Orden desconocida
+22734=Final inesperado de un COMMENT LEGAL
+22736=etiquetas en campo
+22738=Orden COMMENT LEGAL USE sin nombre de etiqueta o de campo
+22740=Nombre de etiqueta o de campo desconocido
+22741=Orden no permitida en blouques IF, AFTER ENTRY, y BEFORE ENTRY
+22742=Se esperaba la palabra USE despues de COMMENT LEGAL
+22743=Color desconocido
+22744=Sintaxis errónea en una orden TYPE COMMENT/STATUSBAR 
+22745=Nombre de campo o color desconocido
+22746=Falta el texto a escribir(TYPE)
+22747=Sintaxis errónea en una orden KEY UNIQUE
+22748=Sintaxis errónea en una orden KEY
+22750=Solo se permiten %d claves (KEYs)
+22752=Nº de clave erróneo. Solo se permiten números del 1 al %d
+22754=Número de CLAVE en uso
+22756=Falta el campo a la izquierda de un signo igual
+22758=Campo desconocido a la izquierda del signo igual
+22760=Falta el THEN después de un IF
+22762=Orden IF..THEN sin un ENDIF
+22764=Se esperaba un ENDIF y hay un END
+22766=DEFINE sin nombre de variable
+22768=El nombre de la varable en un DEFINE no puede tener más de 16 caracteres
+22770=Nombre Duplicado: Ya está siendo utilizado
+22772=Nombre duplicado: Ya está siendo utilizado
+22774=Falta el tipo de campo en una orden DEFINE 
+22776=Error en tipo de campo. Use # y máximo un . para definir numérico
+22778=Tipo de campo ilegal en la orden DEFINE
+22780=Ambito ilegal en la orden DEFINE. Use GLOBAL o CUMULATIVE
+22782=CODEFIELD/CODES no soportado. Use TYPE COMMENT en vez de eso.
+22784=orden ENTER no soportada. Use BEFORE/AFTER ENTRY en vez de eso.
+22786=Se espera ENTRY
+22788=Se ha encontrado un campo desconocido en el archivo check %s
+22790=Quiere guardar los controles del campo desconocido~como líneas de domentario en el archivo check?
+22792=Si elige NO se borrarán los controles del campo desconocido~cuando se guarde el archivo modificado.
+22794=El archivo-check %s contiene los siguientes errores:
+22796=Revisada
+22798=Orden desconocida después de BEFORE
+22800=Orden desconocida después de AFTER
+22802=Rango legal y/o valores legales
+22804=Define condiciones de salto
+22806=Error en la definición de rango/legal.~~Se han introducido valor(s) ilegales.
+22808=Error en la definición de salto. No existe el nombre del campo.
+22810=Definición de condiciones de salto
+22812=Signo mayor (>) perdido.
+22814=Error en la definición del salto
+22816=etiqueta
+22818=Edición de controles para este campo
+22820=Orden desconocida en el bloque de campo del archivo-check %s
+22822=Quiere guardat la orden desconocida encontrada en el bloque de campo
+22824=como comentario?
+22826=Si elige NO se borrará la orden desconocida en el bloque
+22828=~cuando se guarde el archivo modificado.
+
+[Fieldtype pick list]
+22900=Ilegal
+22902=Error: 1 o más dígitos antes
+22904=punto decimal requerido.
+22906=Error: La longitud máxima es 14 caracteres.
+22908=Longitud de campo: %d
+
+[Expression evaluator messages]
+23000=El operador %s es incompatible con %s
+23002=El tipo %s es incompatible con el tipo %s
+23004=Error interno. Código %d
+23006=No se puede leer %s como cadena
+23008=No se puede leer %s como decimal
+23010=No se puede leer %s como entero
+23012=No se puede leer %s como booleano
+23014=No se puede leer %s como objeto
+23016=%s no es un valor válido de %s
+23018=no se puede aplicar %s en operandos booleanos
+23020=%s no es un operador relacional
+23022=No se puede convertir %s en flotante
+23024=No se puede convertir %s en entero
+23026=No se puede convertir %s en Booleano
+23028=Parámetros no válidos 
+23030=IF debe tener 3 parámetros
+23032=El primer parámetro de If debe ser Booleano
+23034=Las opciones IF deben ser del mismo tipo
+23036=Formato numérico incorrecto
+23038=Cadena indeterminada
+23040=Cadena muy larga
+23042=Cadena Hex muy larga
+23044=Carácter no válido en el número hexadecimal
+23046=%s no está permitida aquí
+23048=sub-expresión no válida
+23050=) esperados
+23052=Parámetros formados incorrectamente
+23054=Identificador desconocido %s
+23056=Parámetro no válido en  %s
+23058=Error de sintaxis
+23060=%s no es adecuado
+
+[Validate duplicate datafiles messages]
+23100=Se puede seleccionar un máximo de %d .
+23102=Nombre del primer archivo
+23104=Nombre del segundo archivo
+23106=Terminada la validación de datos duplicados
+23108=INFORME DE VALIDACIÓN DE DATOS DUPLICADOS
+23110=Opciones de validación:
+23112=Ignorar registros borrados:
+23114=Ignorar campos de texto:
+23116=Ignorar tipo de letra:
+23118=Informe de diferencias en tipos de campo:
+23120=Campos que se usaron en la validación de los dos archivos:
+23122=Campos excluidos del archivo  1:
+23124=Campos excluidos del archivo  2:
+23126=Campos usados como claves índices:
+23128=RESULTADOS DE LA VALIDACIÓN:
+23130=Diferencias en los archivos:
+23132=%s es campo %s 
+23134=Claves duplicadas en %s~La clave del registro %d es la misma que la del %d
+23136=Registro campo clave: (Rec.#%d)
+23138=Registro #%d
+23140=Registro no encontrado en el archivo 2
+23142=Registro no encontrado
+23144=Registro no encontrado in datafile 1
+23146=Los datos de los dos archivos son iguales, con las opciones seleccionadas
+23148=Registros perdidos en archivo 1:      %6d
+23150=Registros perdidos en archivo 2:      %6d
+23152=Número de registros comunes:     %6d
+23154=Número de campos/registro comprobados: %6d
+23156=Número total de campos comprobados:      %6d
+23158=%d de %d registros tenían errores (%5.2f pct.)
+23160=%d de %d campos tenían errores (%5.2f pct.)
+23162=Informe de validación
+

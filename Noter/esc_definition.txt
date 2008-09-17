@@ -1,0 +1,37 @@
+FOriginalQuest=FQuestion
+FVariableLabel:=trim(FQuestion)
+
+
+FQuestTop
+FQuestLeft
+FFieldLeft
+FFieldTop
+FFieldWidth
+
+screen dimensioner
+font -size -style -pixelsPerInch -name sammenlignes med EpiDataFormFont
+Antal felter
+Felter checksum length(question)+FLength+Ftype
+
+esc (epidata screen coordinates)
+
+record
+  scrHeight: Integer;
+  scrWidth:  Integer;
+  fntSize:	Integer;
+  fntStyle:	byte;  (brug fontstyleToByte og ByteToFontStyle)
+  fntPPI:	Integer;
+  fntName:	str[30];
+  numFields:	Integer;
+  chkFields:	Integer;
+end;
+
+record
+  FQuestTop: Integer;
+  FQuestLeft: Integer;
+  FFieldLeft: Integer;
+  FFieldTop: Integer;
+  FFieldWidth: Integer;
+end
+  
+ 

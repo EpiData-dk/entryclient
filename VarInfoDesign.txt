@@ -1,0 +1,12 @@
+1   5          16                    38              54     61
+--------------------------------------------------------------------------------
+NUM Name       Variable label        Type            Width  Checks
+--------------------------------------------------------------------------------
+100 andekeltke Abcdefghijklmnopqrst  Integer                Must enter, repeat
+               uvxyzæøp              Upper-case text        Legal: 5-10,14,45,
+                                     Boolean                  46,50
+                                     Floating point  7:3    Jumps: 
+                                     US date                  2>IFDLE
+                                     Today's date             3>IUWLW
+
+3   10         20                    15              5      20

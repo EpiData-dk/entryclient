@@ -1,0 +1,107 @@
+The Structure of Epi Info .REC Files
+
+For programmers wishing to write Epi Info-compatible programs, the structure
+of Epi Info .REC files is illustrated by the files FSTRUC.QES and FSTRUC.REC
+on the Epi Info disks.  FSTRUC.QES was designed to illustrate all of Epi
+Info's field types.  After two records have been entered, FSTRUC.REC has the
+following structure:
+
+  For the Prompt             For the Data Entry Field
+  ------------------------   ------------------------
+  Name           X   Y Color X   Y Type Len Color Prompt or question
+  ----           -   - ----- -   - ---- --- ----- ------------------
+  21 1
+  #EPIINFO      36   1  14  44   1   0   0  15 Epi Info
+  #SAMPLEQUES   15   2  14  65   2   0   0  15 Sample Questionnaire To
+                                                 Show File Structure
+  _TEXTFIELD     1   4  14  12   4   1  21  15 Text Field
+  _UPPERCASEF   36   4  14  52   4   3  15  15 Uppercase Field
+  #NUMERICFIE    1   6  14  15   6   0   1  15 Numeric Field
+  #FOURPLACEN   21   6  14  40   6   0   4  15 Four-Place Numeric
+  #SIXPLACENU   47   6  14  65   6   6   6  15 Six-Place Numeric
+  #FIXEDDECIM    1   8  14  16   8 102   6  15 Fixed Decimal
+  _USDATE       27   8  14  37   8   2   8  15 U.S. Date
+  _USSHORTDAT   49   8  14  65   8   2   5  15 U.S. Short Date
+  _EUROPEANDA    1  10  14  15  10  11   8  15 European Date
+  _EUROPEANSH   28  10  14  48  10  11   5  15 European Short Date
+  _YESNOFIELD    1  12  14  14  12   5   1  15 Yes/No Field
+  _LOCALPHONE   19  12  14  38  12   9   8  15 Local Phone Number
+  _LONGDISTAN    1  14  14  33  14   7  13  15 Long Distance U.S. Phone Number
+  _DATESLASTC    1  16  14  22  16  10   5  15 Dates of last change
+  _D1TESLASTC   31  16  14  31  16  10   8  15 _
+  _D2TESLASTC   43  16  14  43  16  10  10  15 _
+  _AUTOMATICI    1  18  14  21  18  12   5  15 Automatic ID number
+  _TENPLACEID   33  18  14  49  18  12  10  15 Ten place Idnum
+  _COMMENT       1  20  14   9  20   1  58  15 Comment
+  Contents of Txt FieldUPPERCASE      12222333333444.4401/02/8901/0202/01/8902/0!
+  1Y456-2271(404)639-3311                       1    1         This is a sample !
+                          questionnaire to demonstrate file struct.!
+                                                                   !
+                       09/0909/09/8909/09/19892      2         This record demon!
+  strates missing data and a deleted record?
+
+The Header
+
+The first number on the top line indicates the number of lines of header
+material that precede the data records.  The second number is the color of
+the background on the screen for this questionnaire, 1 for dark blue, for
+example.
+
+Each line of text or data-entry field in the questionnaire has a line of
+information in the file "header".  The header describes both the data
+records and the appearance of the screen when the questionnaire is
+displayed.  In order across each line of the header are the following data
+items:
+
+The character to be displayed in the entry field.  Number signs are used for
+text lines even though they are not displayed.
+
+The field name, up to 10 uppercase characters, without punctuation or
+spaces.  The name must begin with an alpha character, but may contain
+digits.
+
+The column in which the text preceding the entry field begins.  If the line
+is only text, it is displayed in this column.  The first column on the left
+of the screen is column 1.
+The line from the top of the screen where the text and/or field is
+displayed.  The top line of the questionnaire is line 1.
+
+The color of the text.  The color numbers are illustrated on the Epi Menu
+Setup screen.
+
+The column where the data-entry field begins.
+
+The line where the data-entry field begins.
+
+A code number for the field type.  Note that code numbers for numeric fields
+also give the number of digits.
+
+The number of characters in the field, or field width.  This is 0 if the
+field contains only text without one of the designated Epi Info field types.
+
+The color of the entry field itself.
+
+The text that will be displayed on the screen at the location specified in
+the third and fourth items above.  This may be up to 80 characters wide.
+
+Data Records
+
+After the header, any number of data records can be arranged in lines of 78
+columns with a termination character in column 79 or after the last variable
+on the last line of the record.  Normally the terminator is an exclamation
+point(!).  For deleted records the final terminator is a question mark(?)
+and for verified records a caret mark (^).  The terminators were added to
+Epi Info records because some word processors like WordStar delete trailing
+blanks when a sequential file is edited.
+
+Note that missing data items are represented by spaces, and that the format
+is that of fixed-length fields.  The location of any data item can be
+calculated from the field lengths in the header, since the data items are in
+the same order as those in the header.
+
+Other Details
+
+Epi Info .REC files are handled in Pascal as a File of Byte, although they
+may be treated in other systems as sequential files.  Each line is
+terminated by standard DOS end-of-line markers (Hex 0D 0A).  An End of File
+marker is optional.

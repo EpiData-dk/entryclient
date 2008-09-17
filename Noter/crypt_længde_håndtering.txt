@@ -1,0 +1,8 @@
+Brug fieldcolor til kodning af encrypt-felts indtastningslængde.
+
+Hvis længde < (127-112) så er fieldcolor = 111 + indtastninglængde
+else fieldcolor = indtastningslængde
+
+Læsning:
+Hvis fieldcolor>111 then indtastningslængde:=fieldcolor-111
+else indtastningslængde:=fieldcolor

@@ -1,0 +1,12 @@
+OQESICON  ICON    d:\pas\epidata\ny_qes_icon.ico
+PCHKICON  ICON    d:\pas\epidata\ny_chk_icon.ico
+QNOTICON  ICON    d:\pas\epidata\ny_not_icon.ico
+RLOGICON  ICON    d:\pas\epidata\ny_log_icon.ico
+KEYBITMAP BITMAP  d:\pas\epidata\key.bmp
+ADDSEL    BITMAP  d:\pas\epidata\add2.bmp
+ADDALL    BITMAP  d:\pas\epidata\add1.bmp
+MERGEALLA BITMAP  d:\pas\epidata\merge1a.bmp
+MERGEALLB BITMAP  d:\pas\epidata\merge1b.bmp
+MERGESELA BITMAP  d:\pas\epidata\merge2a.bmp
+MERGESELB BITMAP  d:\pas\epidata\merge2b.bmp
+EPILOGO   AVI     d:\pas\epidata\EpiLogo.Avi

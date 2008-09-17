@@ -1,0 +1,868 @@
+[Language and translator information - for About box]
+100=Slovensko
+105=SLO
+110=Marko Kovaèeviæ
+120=WWW.EpiData.dk
+
+1000=GlavniObrazec
+[Kažipot poteka dela]
+1010=&1. Definiranje podatkov
+1011=&2. Oblikovanje podatkovne datoteke
+1012=&3. Dodajanje kontrol
+1013=&4. Vnos podatkov
+1014=&5. Dokumentiranje
+1015=&6. Eksport podatkov
+
+[Kažipot urejevalca - nasveti]
+11020=Nova
+11021=Odpri
+11022=Shrani
+11023=Natisni
+11024=Preklièi
+11025=Izreži
+11026=Kopiraj
+11027=Nalepi
+11028=Predpogled obrazca
+11029=Vzemi seznam polj
+11030=Pisalnik šifer
+
+[Glavni meni]
+1100=&Datoteka
+1102=&Nova
+1104=&Odpri
+1106=Op&cije
+1108=&Izhod
+
+1200=&Kontrola podatkov
+1202=&Dodaj/revidiraj kontrole
+1204=&Poèisti vse kontrole
+
+1300=&Podatki v/iz
+1302=&Vnos / urejanje podatkov
+1304=E&ksport podatkov
+1306=Eksport v test-datoteko
+1308=Eksport v dBase III
+1310=Eksport v Excel
+1312=Eksport v Stata
+1314=&Backup datoteke
+1316=&Nova podatkovana datoteka iz QES-datoteke
+
+1400=D&okumentiranje
+1402=&Dokumentiranje datoteke
+1404=&Seznam podatkov
+1406=&Širant
+1408=Vnos podatkov &opombe
+
+1500=Oro&dja
+1502=&Kopiraj strukturo datoteke
+1504=&Validiraj dvojne datoteke
+1506=Ponovna izgraditev &indeks
+1508=&Uredi oznako datoteke
+1510=&Revizija datoteke iz revidirane QES-datoteke
+1512=&Oblikuj QES-datoteko iz podatkovne datoteke
+
+1600=O&kno
+1602=Tile &horizontalno
+1604=Tile &verticalno
+1606=&Kascade
+1608=&Uredi Vse
+1610=&Kažipoti
+1612=Kažipot delovnega procesa
+1614=Kažipot urejevalca
+1616=Oboje
+1618=Skrij Kažipote v teku vnosa podatkov
+
+1700=&Pomoè
+1702=&Vsebine
+1704=&Vrste poljl
+1706=&Potovanje po EpiData
+1708=EpiData &domaèa stran
+1710=&Registracija on-line
+1712=O& registraciji
+1714=&O EpiData
+
+[Definiraj podatkovno okno]
+2000=&Nova QES-datoteka
+2002=&Odpri QES-datoteko
+
+[Oblikuj okno za podatkovno datoteko]
+2010=Oblikuj podatkovno datoteko
+2012=Predpogled obrazca za podatke
+
+[Dodaj/revidiraj okno za kontrole]
+2020=&Dodaj/revidiraj kontrole
+2022=&Poèisti vse kontrole
+
+[Okno za dokumentiranje]
+2030=&Dokumentacija podatkovne datoteke
+2032=&Seznam podatkov
+2034=&Šifrant
+2036=Vnos podatkov &opombe
+
+[Okno za eksport podatkov]
+2040=&Back-up datatoteke
+2042=Eksport v &tekst-datoteko
+2044=Eksport v &dBase III
+2046=Eksport v &Excel
+2048=Eksport v &Stata
+
+[Okno za meni Kažipotov]
+2065=Nobeden
+
+[Vrste datotek]
+2102=EpiData Vprašalnik (*.qes)
+2104=EpiData podatkovana datoteka (*.rec)
+2106=EpiData datoteka za kontrolo (*.chk)
+2108=Opombe ob vnosu podatkov  (*.not)
+2110=Dokumentacija podatkovne datoteke (*.log)
+2112=Vse (*.*)
+2114=Testualna datoteka  (*.txt)
+2116=dBase III datoteka  (*.dbf)
+2118=Excel datoteka  (*.xls)
+2120=Stata datoteka  (*.dta)
+
+
+[O obrazcu]
+3000=Verzija
+3001=Program oblikovali:
+3002=Programiral:
+3003=Veè informacija o EpiData
+3004=Financirale so nas naslednje ustanove
+3005=Zapri
+3006=O EpiData
+3008=Prevedel v %s :
+3010=Lokalna domaèa stran:
+
+[Back-up obrazec]
+3100=Naredi back-up podatkoven dateoteke
+3110=Datoteka, ki bo &back-up:
+3112=&Destinacijska direktorija:
+3114=OK
+3116=Preklièi
+
+[Napaka ob odpiranju obrazca kontrolne datoteke]
+3200=Napaka
+3210=Ne morem uporabiti kontrole.
+3212=Kontrolna datoteka vsebuje eno ali veè napak.
+3214=Prosim, da s pomoèjo urejevalca popravite napake .
+3216=Ali želite videti seznam napak?
+3218=&Da
+3220=&Ne
+3222=&Prikaži kontrolno datoteko v urejevalcu
+
+[Kopiraj strukturo obrazca podatkovne datoteke]
+3300=Kopiraj strukturo datoteke
+3310=Obstojeèa datoteka
+3312=Naziv datoteke
+3314=Oznaka datotekt
+3316=Nova datoteka
+3318=&Naziv datoteke
+3320=&Oznaka datoteke
+3322=Opcije
+3324=Ne kopiraj  &tekstualna polja
+3326=Kopiraj &kontrolno datoteko tudi
+
+
+[Obrazec za podatke]
+3400=Obrazec
+3410=&Datoteka
+3412=Vnos podatkov &opombe
+3414=&Zapri obrazec
+3416=I&zhod iz EpiData
+3420=&Pojdi na...
+3422=&Nnovi zapis
+3424=&Oznaèi zapis za brisanje
+3426=&Naslednji zapis
+3428=&Prdhodni zapis
+3430=&Prvi zapis
+3432=&Zadnji zapis
+3434=P&rvo polje
+3436=Z&adnje polje
+3437=Pojdi na &zapis
+3438=Naj&di zapis
+3439=Najdi spet
+3440=P&olja
+3446=Na&vzgor
+3448=Na&vzdol
+3450=&Uredi vse kontrole za tekoèe polje
+
+[Obrazec - nasveti navigacijskih gumbov]
+13460=Prvi zapis
+13462=Predhodni zapis
+13464=Naslednji zapis
+13466=Zadnji zapis
+13468=Novi zapis
+13470=Briši zapis
+
+[Obrazec urejevalca]
+3500=EPI Editor
+3516=&Shrani
+3518=Shrani &kot...
+3520=&Zapri
+3522=Z&apri vse
+3524=&Natisni
+3526=Tskalnik Set&up
+
+3540=&Uredi
+3542=&Preklièi
+3544=&Kopiraj
+3546=Iz&reži
+3548=&Nalepi
+3550=Iz&beri vse
+3552=&Pojdi na vrstico...
+3554=&Najdi...
+3556=&Zamenjaj...
+3558=&Seznam polj
+3560=Pisalnik &šifer
+3562=Avto &uvlaka
+3564=Poravnaj &polja za vnos
+
+3570=&Podatkovan datoteka
+3572=&Predpogled obrazca
+3574=&Naredi podatkovno datoteko
+
+3580=D&okumentiranje
+3582=&Dokumentiraj datoteko
+3584=&Seznam podatkov
+3586=&Šifrant
+3588=Vnos podatkov &opombe
+
+[Okno menija editorja]
+3590=Kopiraj
+3592=Izreži
+3594=Prilepi
+3596=Izberi vse
+3598=pojdi na vrstico...
+3600=Predpogled obrazca
+
+[Dialog editorja za shranjevanje naziva datoteke]
+3612=Shrani vprašalnik
+
+[Eksport obrazca]
+3700=Eksport podatkov
+3710=Datoteka, ki se izvaža
+3712=Eksport v
+3714=Separator polj
+3716=Uporabi tekstualni kvalifajer (")
+3718=Ne eksportiraj brisanih zapisov
+3720=Eksport v Stata verzija 4/5
+3721=Export v Stata verzija 6
+
+[Najdi obrazec zapisa]
+3800=Najdi zapis
+3812=Obèutljiv na &zaèetnice
+3814=&Samo cele besede
+3816=&Ignoriraj brisane zapise
+3818=Smer
+3819=&Naprej do najnovejšega zapisa
+3820=&Nazaj do najstarejšega zapisa
+3821=&Vse zapise
+3826=&Resetiraj
+3828=&OK
+3830=&preklièi
+
+[Urejanje oznak obrazca]
+4000=Urejanje oznak vrednosti
+4010=&Sprejmi in Zapri
+
+[Obrazec odobrenih vrednosti]
+4100=Izberi vrednost
+
+[Seznam obrazca podatkov]
+4200=Seznam podatkov
+4210=&Izberi polja
+4212=&Vsa
+4214=&Nobeno
+4216=Dimenzije seznama
+4218=&Maksimalna širina (v znakih):
+4220=Število &Stolpcev:
+4222=Širina stolpcev: 14
+4224=&Opcije
+4226=&Uporabi indeks kot zaporedje
+4228=&Vpiši oznake vrednosti namosto podatkov
+4230=&Preskoèi brisane zapise
+
+[Opcije]
+
+[Stran urejevalca]
+4310=Urejevalec
+4312=Èrke v urejevalcu
+4314=&Izberi èrke
+4316=&Ozadje
+4318=Tabulator
+4320=&Tabulatorske tipke
+4322=Presledki
+
+[Pokaži strano podatkovnega obrazca]
+4340=Pokaži podatkovni obrazec
+4342=Èrke in ozadje v obrazcih 
+4344=Barva polja za vnos podatkov
+4346=&Barva polja
+4348=&Posvetli aktivno polje
+4350=&Barva
+4352=st&il polja za vnos
+4353=&3D-look
+4354=Ravno &z okvirjem
+4355=Ravno bre&z okvirja
+4360=Višina èrte
+4361=&1 èrta
+4362=1½ èr&ta
+4363=&2 èrti
+4368=&Ustavi tabulator v obrazcu na svakih
+4370=pixel
+
+[Oblikuj stran podatkovne datoteke]
+4380=Oblikuj datoteko
+4382=Kako generirati nazive polj
+4383=&Prva beseda v vprašaju je naziv polja
+4384=Av&tomatièni nazivi polj
+4386=Až&uriraj vprašanje po aktualnem nazivu polja
+4388=Navadne èrke za nazive polj
+4389=&Velike èrke
+4390=&Male èrke
+4391=Posti &kot je
+
+[Documentacijaka stran]
+4400=Documentacija
+4402=Vrsta èrk v documentaciji
+
+[Napredna stran]
+4420=Napredna
+4422=Polja z ID-številko
+4424=&Prva ID-številka v novih datotekah:
+4426=Sporoèila o napakah
+4428=&Pokaži napake, ki so se pojavile v izraèunih
+4430=v kontrolni datotokiv teku vnosa podatkov
+4432=Obnovi vse opcije na zastavljene veljavne vrednosti
+4434=Obnovi obstojeèe opcije
+
+[Dodaj/revidiraj kontrolni obrazec]
+4500=&Shrani
+4510=Ure&di
+4512=Iz&hod
+[Obrazec za seznam polj]
+4600=Seznam polj
+[Numerièna stran]
+4610=Numerièno
+4612=Mest &pred decimalko
+4614=Mest &za decimalko
+4616=Polje, ki se vstavi:
+4618=Dolžina polja: 0
+4620=Vstavi
+
+[Tekstualna stran]
+4630=Tekst
+4632=Vrsta teksta
+4633=&Tekst
+4634=&Velike èrke teksta
+4636=&Dolžina
+
+[Datumska stran]
+4640=Datum
+4641=<&dd/mm/llll>
+4642=<&mm/dd/llll>
+4644=Avtomatièno datumi
+4645=<&Danes-dml>
+4646=<D&anes-mdl>
+
+
+[Ostale strani]
+4650=Ostalo
+4652=Vrsta polja
+4653=&Auto ID-številka
+4654=&Soundex
+4655=&Boolean (da/ne polje)
+
+[Olikuj podatkovno datoteko - dialog za nazive polj]
+4700=Oblikuj podatkovno datotekoiz QES-datoteke
+4710=Vpiši naziv QES-datoteke
+4712=Vpiši naziv podatkovne datoteke
+
+[Validiranje dvojne podatkovne datoteke - dialog opcij]
+4800=Validiraj dvojne podatkovne datoteke
+4810=Datoteka 1
+4812=Naziv datoteke:
+4814=Oznaka datoteke:
+4816=Št. zapisov:
+4820=Datoteka 2
+4830=&Izberi kljuèna polja
+4840=&Opcije
+4842=Ignoriraj &brisane zapise
+4844=Ignoriraj &tekstualna polja
+4846=Ignoraj &zaèetne èrke v tekstualnih poljih
+4848=Sporoèi o razlikah v vrstah polj
+4850=&Pomoè
+
+[Opozorilo]
+4900=Opozorilo
+
+[Obrazec pozdrava]
+5000=Dobrodošli v EpiData
+5010=tega okna ne pokaži veè
+
+[Sporoèila iu odpiranja datotek]
+20100=Prosim, zaprite vse odprte datoteke predno odprete podatkkovno datoteko.
+20102=Samo  %d datotek je možno odpreti soèasno.
+20104=Napaka v oblikovanju podatkovnega obrazca od %s.
+20106=Najdene napake v kontrolni datoteki
+20108=Datoteke  %s ni možno odpreti.
+20110=Datoteka  %s ne obstaja.
+20112=Netoèna oblika podatkovne datoteke %s.
+20114=Berem informacije o poljih
+20116=Napaka v datoteki  %s.~~Definicija polja v vrstici %d ni možno brati ali prevesti.
+20118=Napaka v datoteki  %s.~~Eden ali veè zapisov je pokvarjenih.
+20120=Napaka v branju datoteke %s.
+20122=Indesna datoteka %s je v uporabi ali pa ne obstaja.
+20124=Nalagam indeks...
+20126=Polje  %s je KEY UNIQUE, toda so v zapisih %d in %d najdeni dvojni kljuèi
+20128=Napaka v branju indeks datoteke %s
+20130=Napaka v branju kontrolne datoteke %s
+20132=Prosim vnesite naziv datoteke za prvo datoteko.
+20134=Prosim vnesite naziv datoteke za drugo datoteko.
+
+
+
+[Razlièna sporoèila o napakah]
+20200=Napaka zapisovanja v Register.
+20202=Ni najdena datoteka za pomoè.
+20204=Out of memory (reference code %d)
+20206=Prosim, preverite ali je naziv datoteke dovoljen ali pa je disketa zašèitena za zapisovanje ali pa polna.
+20208=Prosi, preverite ali je datoteka že v uporabi in ali je naziv dovoljen-veljaven.
+20210=Da
+20212=Ne
+20214=Ni najdena datoteka ReadMe.rtf.~~Prosim prezamite inovirano verzijo EpiData na www.EpiData.dk
+
+
+[Sporoèila editorja]
+20300=Shrani spremembe v  %s?
+
+
+[Oblikuj sporoèila o datoteki]
+20400=Podatkovne datoteke je možno oblikovati edino iz QES-datotek.
+20402=Oblikuj podatkovno datoteko iz QES-datoteke
+20406=QES-datoteka %s ni možno najti ali odpreti.
+20408=Vnesi opis podatkovne datoteke (oznako datoteke)
+20410=Oznaka datoteke za 
+20412=Napaèen log
+20414=QES-datoteka %s ne vsebuje nobenih polj za vnos.~~Datoteka ni oblikovana.
+20416=Ni možno oblikovati datoteke z nazivom  %s.
+20418=Datoteka  %s je oblikovana.
+20420=Število polj v vrstivci  %d presega maksimalno dolžino 18 znakov:
+20422=Napaka v plavajoèi vejici polja v vrstici %d:
+20424=Tekstualno polje v vrstici %d presega maksimalno dolžino 80 znakov:
+20426=Napaka v ukazu  <TAB EVERY n>. Nujno je vnesti število v vrstici %d:
+20428=Tekstualno polje z velikimi èrkamo v vrstici %d presega maksimum 80 znakov:
+20430=IDNUM polje v vrstici %d presega maksimalno dolžino 18 znakov:
+20432=A <...> polje je brez zaklepaja v vrstici %d:
+20434=Nepoznana šifra je najdena v vrstici %d:
+20436=QES-datoteka vsebuje napake.
+20438=Najdene so naslednje napake:
+20440=Oblikujem podatkovni obrazec vrstica %d
+20442=Niso najdena polja v QES-datoteki
+20444=Datoteka %s
+20446=že obstaja.
+20448=Povozim obstojeèo datoteko?
+20450=bo brisana!
+20452=Ali ste sigurni?
+
+[Dodaj/Revidiraj sporoèila kontrol]
+20500=Izberi datoteko na kateri bo temeljila kontrolna datoteka
+20502=V kontrolni datoteki  %s so najdene napake
+20504=Dodaj/revidiraj kontrole - %s
+20506=Izberi podatkovno datoteko na kateri bojo temeljile kontrole
+20508=Z tem bojo poèišèene vse kontrole. ki so bile dodane v datoteko 
+20510=POèistiti vse kontrole?
+20512=Vse kontrole, ki so bile dodane datoteki bojo zbrisane!
+
+[Dokumentacijska datoteka]
+20600=DATOTEKA:          %s
+20602=Oznaka dateoteke:         %s
+20604=[noobena]
+20606=bytes
+20608=kb
+20610=Velikos datoteke:
+20612=Zadnja revizija:
+20614=Število polj:
+20616=Število zapisov:
+20618=Napaka v datoteki. Ni možno ugotoviti števila zapisov.
+20619=Uporabljene kontrole:
+20620=Da (Zadnja revizija %s)
+20622=Ne
+20624=Opozorilo: Kontrolna datoteka obstaja toda vsebuje napake.
+20626=Polj v datoteki:
+20628=Št.
+20630=Naziv
+20632=Oznaka spremenljivke
+20634=Vrsta polja
+20636=Širina
+20638=Kontrole
+20640=Oznake vrednosti
+20642=Veè: Glej kontrolno datoteko
+20644=Nepoznaka oblika
+20646=Datoteka dokumentacije za %s
+
+[Sporoèila opomb vpisanih v teku vnašanja]
+20700=Izberi datoteko v katero želiš dodati opombe
+20702=Opombe vnosa za %s
+20704=Datoteke opomb ob vnosu podatkov z nazivom %s ni možno oblikovati.
+
+[Sporoèila oznak datotek]
+20750=Izberi datokteko kateri želiš dodeliti datoteèno oznako
+20752=Vnesi oznako dateoteke (max. 50 znakov):
+20754=Datoteèna oznaka za %s
+20756=Napaka v oblikovanju zaèasne izhodne datoteke %s
+20758=Vpisujem spremebe v datoteko
+20760=Datoteèna oznaka %s je ažurirana.
+
+
+[Sporoèila šifranta]
+20800=Kontrolna datoteka %s vsebuje napake i jo ni možno uporabiti.
+20802=Vkolikor izberete nadaljevanje bojo informacije o kontrolah in oznake vrednosti izloèene iz šifranta.
+20804=Ali želite nadaljevati z oblikovanjem šifranta?
+20806=Ni dovoljno pomnilnika za oblikovanje šifranta za %s
+20808=ŠIFRANT
+20810=Poroèilo je konèano
+20811=Datoteka:
+20812=Oznaka datoteke:
+20814=Datum shranjevanja:
+20816=Kontrolna datoteka vsebuje napaka in ni uporabljena
+20818=Skupaj zapisov:
+20820=Brisanih zapisov:
+20822=Uporabljenih v šifrantu:
+20824=zapisov
+20826=Oblikujem šifrant
+20828=Vpisujem polje št. %d od %d
+20830=vrsta
+20832=Vstavljena je neimenovana oznaka vrednosti
+20834=oznake vrednosti
+20836=Najdeni ukazi (glej kontrolno datoteko)
+20838=menjkajoèe
+20840=rang
+20842=unique vrednosti
+20844=tabulacija
+20846=Freq.
+20848=Pct.
+20850=Vrednost
+20852=Oznaka
+20854=Primeri:
+20856=povpreèje
+20858=std. dev
+20860=Zapustim šifrant?
+20862=Šifrant temelji na  %s
+
+[Sporoèila revizije datoteke na osnovi revidirane QES-datoteke]
+20900=Revidiraj datoteko iz revidirane QES-datoteke
+20902=Naziv revidirane QES-datoteke
+20904=Datoteka, ki naj se revidira
+20906=Oblikovana je datoteka %s z opcijo Avtomatiènega imenovanja polj, toda obstojeèi pogoji v Opcijah uporabljajo kot naziv polja Prvo besedo.
+20908=Ali želite nadaljevati z uporabo Avtomatiènega imenovanja polj?
+20910=Oblikovana je datoteka %s z opcijo uporabe prve besede kot naziva polja, toda obstojeèi pogoji v opcijah uporabljajo Avtomatièno imenovanje polj.
+20912=Ali želite nadaljevati z uporabo prve besede kot naziva polja?
+20914=Oblikovana je datoteka %s z pomoèjo Epi Info in vsebuje eden ali veè nazivov polj, ki so dolga veè kot 8 znakov.
+20916=EpiData ni zmožen revidirati strukture take datoteke - prosi, da za to uporabite Epi Info.
+20918=Izvajam transfer podatkov
+20922=Revidirana QES-datoteka bo povzroèila izgugljanje podatkov v zapisih št. %d, polje %s
+20924=Revizija datoteke se konèuje.
+20926=Polje z nazivom  '%s' obstaja v obeh datotekah stariin revidirani QES-datoteki
+20928=toda polja nista kompatibilna.
+20930=Vrsta polja v datoteki : %s~Vrsta polja v revidirani QES-datoteki: %s
+20932=Prekinitev revizije datoteke?
+20934=Revidirana QES-datoteka bo povzroèila izgubo podatkov v teh poljih:
+20936=Oblikovana je revidirana datoteka %s.~~Originalna datoteka je preimenovana v %s
+
+[Sporoèila kopiranja strukture podatkovne datoteke]
+21000=Izberi datoteko, ki naj se kopira
+21002=Ni bilo možno kopirati kontrolne datoteke  %s
+21004=Datoteka %s je kopirana v %s
+21006=Napaka shranjevanja nove podatkovne datoteke z nazivom %s
+21008=Prosim specificirajte naziv za novo datoteko.
+
+
+
+[Sporoèila obnovitve indeksov]
+21100=Izberi za datoteko katero naj obnovim indekse
+21102=Obnovitev indeksov se konèuje.
+21104=Ni najdeno kljuènih polj.~~Da bi izgradil indeks za eno ali veè polj potrebujem, da v kontrolni datoteki obstaja ukaza KEY.
+21106=Indeks  %s je obnovljen
+21108=Ne morem oblikovati indeks za %s
+21110=Ni najdena kontrolna datoteka.~~Da izgradil indeks za eno alli veè polj potrebijem da v kontrolni datoteki obstaja ukaz KEY.
+21112=Indeksne datoteke ni bilo možno oblikovati
+21114=Gradim indeks...
+
+
+
+[Sporoèila za Back-up datoteke]
+21500=Datoteka z nazivom %s že obstaja.~~Naj povozimobstojeèo datoteko?
+21502=Back-up narejen
+21504=Drive %s: ni pripravljen
+21506=Prosim specificirajte datoteko, ki jej naj naredim backup.
+21508=Prosi specificirajte destinacijsko direktorijo.
+21510=Destinacijska direktorija ne obstaja.
+
+[Sporoèila podatkovnega obrazca]
+21600=Dodajam polje za vsno št.
+21602=Vnesen je nedovoljeni datum.
+21604='mmddllll' ali 'mm/dd/llll'
+21606='ddmmyyyy' or 'dd/mm/yyyy'
+21608=Prosim, da podatke v to polje vnesete kot
+21610=%s ni veljavna vrednost celega števila
+21612=Vnešeno je preveè decimalnih vejic.
+21614=V to polje je dovoljeno vnesti le števila in deimalne vejice.
+21616=Vnešeno šteilo je preveliko.
+21618=Celo število: 0-9 dovoljeno
+21620=Plavajoèa vejica: 0-9 in veijce so dovoljeni
+21622=Alfa: dovoljen vnos sveh znakov
+21624=Velike èrke Alfa: dovoljen vnos sveh znakov
+21626=ID število: 0-9 dovoljeno
+21628=Boole: D,1,N,0 dovoljeno
+21630=Datum (mdl): 0-9 in / dovoljeno
+21632=Datum (dml): 0-9 in / dovoljeno
+21634=Soundex: dovoljen vnos sveh znakov
+21636=dovoljeno
+21638=Dolžina
+21640=Pritisni + ali F9 za pregled dovoljenoh vrednosti
+21642=V to polje se mora vnesti  podatek.
+21644=Nedovoljen vnos.
+21646=Dovoljene vrednosti so %s
+21648=in vrednosti, ki so definirane s pomoèjo ukaza comment legal (pritisni + ali F9 za pregled seznama)
+21650=Duplicirana tipka. Vrednost je v zapis že vnešena
+21652=Nova
+21654=Preklièi brisanje zapisa
+21656=Briši zapis
+21658=Pojdi na zapis
+21660=Prosim vtipkajte številko zapisa
+21662=Vnešena številka presega skupno število zapisov.
+Zapri podatkovni obrazec za %s
+21666=Shranim zapi na disk?
+21668=Identifajer %s ne zahteva prametre
+21670=Napaka v izrazu LET:
+21672=Napaka v izraz IF:
+
+
+[Opombe vnosa podatkov]
+22000=Opombe vnosa podatkov za %s
+22002=Ni možno oblikovati datoteke opomb vnosa podatkov %s.
+22004=Opombe vnosa podatkov %s ni bilo mižno odpreti.
+
+[Sporoèila urejevalca]
+22100=Brez naslova
+22102=Napake v QES-datoteki
+22104=Datoteke %s ni možno odpreti.
+22106=Napaka shranjevanja %s
+22108=Shraniti spremembe v %s?
+22110=Pozicija %d  vrstica %d
+22112=izbranih znakov
+22114='%s' ni najden
+22116=Ni veè pojavov najdeno.
+22118=%d nerejenih zamenjav
+22120=Natisnem %s?
+22122=Pojdi na vrstico številka...
+22124=Prosim vnesite številko vrstice
+22126=Datoteka %s ne obstaja.
+22128=Vnesite dolžino polja:
+22130=Zamenjava TAB-znakov. Prosim poèakajte.
+
+[Sporoèila Eksport datoteke]
+22300=Eksportiram zapis št. %d
+22302=Zapistim naj eksport?
+22304=Pojavila se je napaka v teku eksportiranja zapisa #%d
+22306=Najden nedovoljeni datum v zapisu # %d, polje %s~Eksport se konèuje.
+22308=Datoteka oblikovana s pomoèjo EpiData basirana na %s
+22310=Datoteka oblikocana z EpiData
+22312=Nepoznana vrsta polja je uporabljena v datoteki.~~Eksport se konèuje.
+22314=Stata verzija 4 in 5 lahko dela z oznakami vrednosti dolgim~do 8 znakov.
+22316=%s vsebuje oznake vtrednosti, ki so dakljše kot ~ 8 znakov in skrajšana na 8 znakov.
+22318=Eksport datoteke v dBase III datoteko
+22320=Eksport datoteke v Excel datoteko
+22322=Eksport datoteke v Stata datoteko
+22324=Eksport datoteke v tekst datoteko
+22326=Oblikuj QES-datoeko iz podatkovne datoteke
+22328=Eksportiram
+22330=Datoteka %s je eksportirana v %s.~~%d zapisov je eksportiranih~%d brisanih zapisov je izvzeto
+22332=Datoteka %s je bila eksportirana v %s.~~%d zapisov je ekspotriranih
+22334=Datoteka %s ne vsebije nobenih zapisov.
+22336=Prosim vnesite naziv podatkovne datoteke.
+22338=Prosim vnesite naziv QES-datoteke
+22340=Prosim vnesite naziv eksportirane datoteke.
+22342=Datoteka mora imeti ekstenzijo .rec
+22344=Eksportirana datoteka mora imeti ekstenzijo %s
+22346=Eksportirana datoteka %s že obstaja.~~Povozim naj obstojeèo datoteko?
+22348=Datoteke z nazivom %s ni možno oblikovati.
+22350=QES-datoteka %s je oblikovana
+22352=QES-datoteke %s ni možno shraniti.
+
+[Sporoèila Najdi zapis]
+22400=Išèem zapis
+22402=Iskani niz(i) ne najdem.
+22404=Iskanje v Zapisu %d
+22406=Napaka v teku iskanje. Iskanje konèujem.
+
+[Sporoèila Urejanje oznak vrednosti]
+22500=Definicija oznake se mora zaèeti z besedo LABEL
+22502=Definicija oznake v bloku poljaa se mora zaèeti z COMMENT LEGAL
+22504=Nobena odobrena vrednost ni specificirana.
+22506=Manjka oznaka za specificirano vrednost.
+22508=Prosim specificirajte naziv oznake.
+22510=Oznaka z nazivom %s že obstaja.~~Zamenjam obstojeèo oznako?
+22512=Oznaka z nazivom  %s obstaja v datoteki z biblioteko oznak.~~Naj uporabim novo oznako namesto stare?
+22514=Zapusti spremembe?
+
+[Sporoèila Seznama podatkov]
+22600=Širina stolpcev s podatki: %d
+22602=Opozorilo: Širina stolpcev za podatke je premajhna (%d)
+22604=Ni izbrano nobeno polje za seznam podatkov.~Prosim izberite najmanj eno polje.
+22606=Širine stolpcev za podatke so premajhne.~Prosim spremenite dimenzije seznamov.
+22608=Èe nadaljujete s seznamom podatkov se bojo pokazale vrednosti polj na pa oznake vrednosti.
+22610=Ali želite nadaljevati s pregledom seznama podatkov?
+22612=Oblikujem seznam podatkov
+22614=Seznam obsetvacij v %s
+22616=Oblikovan je seznam %s
+22618=Observacije %d  (zapis #%d)
+22620=Zapustim naj seznam podatkov?
+
+[Sporoèila uporabljenih kontrol]
+22700=%s je v vrstici %d:
+22702=Vrstica %d: %s
+22704=Manjka END LEGAL-odobrenaga bloka.
+22706=ukaz LEGAL USE je brez naziva polja
+22708=Nepoznani naziv polja
+22710=Vrednost ni združljiva z to vrsto polja
+22712=ukaz RANGE je brez minimalne vrednosti
+22714=ukaz RANGE je brez maksimalne vredosti
+22716=Vrednost za minimum ni združljiva z to vrsto polja
+22718=Vrednost maksimum ni združljiva z to vrsto polja
+22720=Manjka END v bloku JUMPS
+22722=Nedovoljena vrsta podatka
+22724=Ukaz Jumps je brez polja v katero naj se skoèi
+22726=Nepoznani naziv polja v bloku JUMP
+22728=Ukaz AUTOJUMP je brez naziva polja v katero naj se skoèi
+22730=Nepoznani naziv polja v ukazu AUTOJUMP
+22732=Nepoznani ukaz v vrstici
+22733=Nepoznani ukaz
+22734=Neprièakovani konec v ukazu COMMENT LEGAL
+22736=oznake v polju
+22738=ukaz COMMENT LEGAL USE je brez naziva oznake ali pa brez naziva polja
+22740=Nepoznani naziv oznake ali nepoznani naziv polja
+22741=Ukaz ni dovoljen v blokih IF, AFTER ENTRY, in BEFORE ENTRY
+22742=Prièakovan je ukaz USE po ukazu COMMENT LEGAL
+22743=Nepoznana barva
+22744=Nedovoljena sintaksa v ukazu TYPE COMMENT/STATUSBAR
+22745=Nepoznan zaziv polja ali barva
+22746=Manjka tekst, ki naj bi se vpisal- TYPE 
+22747=Nedovoljena sintaksa v ukazu KEY UNIQUE 
+22748=Nedovoljena sintaksa v ukazu KEY
+22750=Dovoljeni so samo %d KEYs -kljuèi
+22752=Nedovoljena številka KEY kljuèa. Dovoljene so samo številke kljuèev od 1 do %d
+22754=Številka kluèa - KEY je že uporabljena
+22756=Manjka naziv spremenljivke ali polja - na levi strani znaka za enako
+22758=Nepoznano polje - ali naziv spremenljivke levo od znaka za enako
+22760=Ni najden nobeden THEN, ki bi bil za IF
+22762=Ukaz IF..THEN je brez ENDIF
+22764=Prièakovan je ukaz ENDIF toda je najden END
+22766=Ukaz DEFINE je brez naziva spremenljivke
+22768=Naziv spremenljivke v ukazu DEFINE lahko vsebuje le 16 znakov
+22770=Duplicirani naziv: Naziv spremenljivke je uporabljen za polje za vnos
+22772=Duplicirani naziv: Naziv spremenljivke je že uporabljen
+22774=V ukazu DEFINE manjka vrsta polja
+22776=Napaka v vrsti polja. Uporabite # in maksimalno eno . za definiranje števila
+22778=V ukazu DEFINE je nedovoljena vrsta polja
+22780=Nedovoljen obseg v ukazu DEFINE. Uporabite ukaz GLOBAL ali CUMULATIVE
+22782=Ukaz CODEFIELD/CODES ne sprejmem. Prosim zamenjajte z ukazom TYPE COMMENT za naziv polja.
+22784=Ukaz ENTER ne sprejmem. Procim zamenjajte z ukazom BEFORE/AFTER ENTRY.
+22786=Prièakovano je ENTRY
+22788=V kontrolni datoteki je najden nepoznani naziv polja %s
+22790=Ali želite skratniti kontrole za nepoznano polje ~kot vrstice s komentejem, ki bojo v kontrolni datoteki?
+22792=Vklikor izberete Ne bojo kotrole za polje z nepoznanim nazivom ~izbrisane, ko bojo po reviziji kontrole shranjene.
+22794=Kontrolna datoteka %s vsebuje nslednje napake:
+22796=Revidirana
+22798=Nepoznani ukaz po ukazu BEFORE
+22800=Nepoznani ukaz po ukazu AFTER
+22802=Odobreni razpon in/ali odobrene vrednosti
+22804=Definirajte pogoje za skok
+22806=Napaka v definiciji razpon/odobreno.~~Vnešene so nedovoljene vrednosti.
+22808=Napaka v defijiciji skokov. Naziv polja ne obstaja.
+22810=Definirajte pogoje za skok
+22812=Manjka znak pušèice (>).
+22814=Napaka v definicijah skokov.
+22816=naziv oznake
+22818=Uredi kontrole za to polje
+22820=Najden je nepoznani ukaz v bloku polja v kontrolni datoteki %s
+22822=Ali želite shraniti nepoznane kontrolne ukaze, ki so bile najdene 
+22824=v blokih polj kot komentarje v bloku polja?
+22826=Vklokor izberete Ne nepoznani ukazi v blokih polj bojo
+22828=izbrisani ob shranjevanju revidiranih kontrol.
+
+[Seznam vrste polj]
+22900=Nedovoljeno
+22902=Napaka: obvezno je 1 ali veè števil pred
+22904=decimalno toèko.
+22906=Napaka: Maksimalna dolžina je 14 znakov.
+22908=Dolžina polja: %d
+
+[Sporoèila evalvatorja izrazov]
+23000=Operator %s ni združljiv z %s
+23002=Type %s ni združljivo z type %s
+23004=Internal parser error. Code %d
+23006=Ni možno brati %s kot niz
+23008=Ni možno brati %s kot plavajoèe
+23010=Ni možno brati %s kot celo število
+23012=Ni možno brati %s kot boolean
+23014=ni možno brati %s kot objekt
+23016=%s ni veljavna vrednost za %s
+23018=ni možno uporabiti %s v boolean operandih
+23020=%s ni relacijski operator
+23022=Ni možno konvertirati %s v plavajoèe
+23024=Ni možno konvertirati %s v celo število
+23026=Ni možno konvertirati %s v Boolean
+23028=Invalid parameters to typecast
+23030=IF mora imeti 3 parametri
+23032=Prvi parameter za If mora biti Boolean
+23034=IF opcije morajo biti istega tipa
+23036=Slab numerièni format
+23038=Nedokonèani niz
+23040=Niz je preveè dolg
+23042=Hex niz je predolg
+23044=Napaèen char v hex številu
+23046=%s ni dovoljen tukaj
+23048=napaèen sub-expression
+23050=) prièakovano
+23052=Nekorektno oblikovani parametri
+23054=Nepoznani Identifier %s
+23056=Popoplni parametri za %s
+23058=Napaka v sintaksi
+23060=%s ni odgovarjajoèe
+
+[Poroèila Validacije dvojnih datotek]
+23100=A maksimum %d je možno izbrati.
+23102=Naziv prve datoteke
+23104=Nativ druge datoteke
+23106=Validacija Dvojnih Datotek se konèuje.
+23108=PORÈILO VALIDACIJE DVOJNIH DATOTEK
+23110=Opcije za validacijo:
+23112=Ignoriraj brisane zapise:
+23114=Ignoriraj tekstualna polja:
+23116=Ignoriraj velike èrke v tekstualnih poljih:
+23118=Sporoèi o razlikah v vrstah polj:
+23120=Polja v obeh datotekah, ki so bila uporabljena v validaciji:
+23122=Polja, ki su bila iskljuèena iz datoteke 1:
+23124=Polja, ki su bila iskljuèena iz datoteke 2:
+23126=Polja, ki so bila uporabljena kot indeksi:
+23128=REZULTATI VALIDACIJE:
+23130=Razlike v vrstah podatkov:
+23132=%s je %s polje
+23134=Najdeni dvojni kljuèi v %s~Kljuèi v zapisu %d so enaki kot v zapisu %d
+23136=Polja kljuèev zapisov: (Rec.#%d)
+23138=Zapis #%d
+23140=Zapis ni najden v datoteki 2
+23142=Zapis ni najden
+23144=Zapis ni najden v datoteki 1
+23146=Podatki v dveh podatkovnih datotekah so enaki, za izbrane opcije
+23148=V datoteki 1 manjka :      %6d zapisov 
+23150=V datoteki 2 manjka :      %6d zapisov
+23152=Število najdenih skupnih zapisov:     %6d
+23154=Število testiranih polj na zapis: %6d
+23156=Skupaj testiranih polj:      %6d
+23158=%d od %d zapisov vsebuje napake (%5.2f pct.)
+23160=%d od %d polj vsebuje napake (%5.2f pct.)
+23162=Sporoèilo validacije
+

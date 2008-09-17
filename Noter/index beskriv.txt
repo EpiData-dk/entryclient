@@ -1,0 +1,55 @@
+Index
+
+Tilføj i apply-checkfile
+ - Hvis index-fil ikke findes, så lav den
+ - Hvis antal keys ønsket <> antal i index-fil, så genskab
+ - Hvis antal records <> antal records i index-fil, så genskab
+ - Lav Array[1..3] of TStringList til indecis
+ - Init. 1-3 TStringLists
+
+
+Tilføj i GetDatafilepointer
+ - Sæt Array[1..3] of TSTringList til NIL
+
+Tilføj i DisposeDatafilePointer
+ - Free index-stringlists
+
+Tilføj i WriteRecord
+ - Skriv til index-fil
+ - Skriv til index stringlist
+
+OM INDEX-FIL
+Data gemmes i file of str30.
+Record nr i index-fil = record nr i REC-fil
+Record 0 angiver antal keys i index-filen+Keyfelt1+Keyfelt2+Keyfelt3
+Hvis der f.eks. er 3 keys er formatet således:
+  record 0 - descriptor=Antal keys
+  record 1 - key 1 for rec-fils første record
+  record 2 - key 2 for rec-fils første record
+  record 3 - key 3 for rec-fils første record
+  record 4 - key 1 for rec-fils anden record
+  record 5 - key 2 for rec-fils anden record
+  record 6 - key 3 for rec-fils anden record
+  ....
+  record n - n:= ((recnr-1)*Antal keys)+KeyNo
+
+OM stringlist
+  Stings[n] indeholder en index værdi
+  Integer(Objects[n]) indeholder REC-fil record nr.
+  Strings[0] indeholder feltnummeret på key-feltet
+
+============================================================
+
+EpiTypes: Const MaxIndices=3
+EpiTypes: Type TeField.FIndex
+EpiTypes: Type   TIndex: Array[1..MaxIndices] OF TStringList;
+EpiTypes: TDatafileInfo.IndexCount: Byte;            //Number of indices used
+EpiTypes: TDatafileInfo.Index: TIndex;               //Index - array of TStringList
+EpiTypes:  ResetDatafile:
+      FOR n:=1 TO MaxIndices DO
+        BEGIN
+          IF Index[n]<>NIL THEN Index[n].Free;
+          Index[n]:=NIL;
+        END;
+
+

@@ -1,0 +1,144 @@
+Translation principles in EpiData
+
+
+The translation principle is based on two things: 1) The TStringList's ability to act as a look-up table and 2) The Tag-property that all decendants of TComponent has.
+
+Re 1)
+If a TStringList contains lines in the form: Name=Value (e.g. 1234=EpiData) then the method TStringList.Values[Name] will return the value of the line that contains the specified name. This makes it possible to let the language file (*.lang.txt) have names (in this case code-numbers) that are unsorted and uncontinual.
+
+Re 2)
+The tag-property of all decendants of TComponent is unused by Delphi and can therefore be used in a fashion determined by the programmer. I've given all components on all forms a unique tag-number. All menuitems, all buttons, all TPanels, etc. have a unique tag-number. This tag-number corresponds to the code-number found in the languagefile.
+
+
+The translation uses two procedures, one function and these global variables:
+
+CurLanguage:String	is the currently used language (e.g. "Dansk" (=Danish) or "Francais")). The value of CurLanguage is used to find a languagefile with the name CurLanguage+'.lang.txt'
+
+LanStr: TStringList	contains the full CurLanguage.lang.txt file
+
+UsesEnglish:Boolean	is a flag used to indicate if the "native language" of EpiData is used. The english version of the *.lang.txt file is made into a resource-file and is compiled into the EpiData.Exe. Therefore use of English requires special handling.
+
+
+The procedure InitLanguage is called in the MainForm.Create event and after the user has selected another language (in the options-page). Note that InitLanguage also sets the property Application.HelpFile.
+
+All forms that are part of EpiData calls the procedure TranslateForm from the Form.Create event. The procedure TranslateForm check all components on the form. If the component's tag-property is not equeal to zero then the caption (or the items in case of a radiogroup or a combobox) are translated with a call to Lang(tag-value). TranslateForm is quite fast and it hasn't slowed down EpiData noticably.
+
+This takes care of the menus, buttons, and other components.
+
+Strings that are part of the programming are translated with a call to Lang(code-number). It is a good idea to keep the string in the native language as a comment. Example:
+
+IF NOT FileExists(HelpfileName) THEN ErrorMsg(Lang(20202));   //'Help file not found.'
+
+Note that Lang(code-number) returns the string '**code-number**' if the code-number is not found in the language file. This makes it easy for the translator to find out what strings he has forgotten to add to the language-file.
+
+
+That's all there is to it....   :-)
+
+Michael Bruus
+Programmer, EpiData Development Team
+
+
+
+Procedure InitLanguage;
+VAR
+  s:String;
+BEGIN
+  IF UsesEnglish THEN LanStr.Clear
+  ELSE
+    BEGIN
+      s:=ExtractFileDir(ParamStr(0))+'\'+CurLanguage+'.lang.txt';
+      TRY
+        LanStr.LoadFromFile(s);
+      EXCEPT
+        ErrorMsg(Format('Could not open languagefile %s',[s]));
+        UsesEnglish:=True;
+        CurLanguage:='English';
+      END;
+      IF NOT UsesEnglish THEN
+        BEGIN
+          IF Lang(105)<>'**105**' THEN s:=ExtractFileDir(ParamStr(0))+'\EpiData_'+Lang(105)+'.hlp';
+          IF FileExists(s) THEN Application.HelpFile:=s;
+        END;
+    END;
+END;
+
+
+Function Lang(no: Integer):String;
+VAR
+  n: Integer;
+  a: Array[0..255] OF Char;
+BEGIN
+  IF UsesEnglish THEN
+    BEGIN
+      {English is the native language of EpiData and the translation-strings
+       are made into a resource-files and compiled into EpiData.Exe}
+      IF LoadString(hInstance,no,a,SizeOf(a))<>0 THEN
+        BEGIN
+          Result:=StrPas(a);
+          WHILE Pos('~',Result)>0             //Replace tildes (~) with NewLine
+          DO Result[Pos('~',Result)]:=#13;
+        END
+      ELSE Result:='**'+IntToStr(no)+'**'
+    END
+  ELSE
+    BEGIN
+      Result:=LanStr.Values[IntToStr(no)];
+      IF Result='' THEN Result:='**'+IntToStr(no)+'**'
+      ELSE
+        BEGIN
+          WHILE Pos('~',Result)>0
+          DO Result[Pos('~',Result)]:=#13;
+        END;
+    END;
+END;
+
+
+
+Procedure TranslateForm(AForm: TForm);
+VAR
+  n,n2,aTag: Integer;
+  s: String;
+  AComp: TComponent;
+BEGIN
+  IF AForm.Tag<>0 THEN AForm.Caption:=Lang(AForm.Tag);
+  FOR n:=0 TO AForm.ComponentCount-1 DO
+    BEGIN
+      aTag:=AForm.Components[n].Tag;
+      IF aTag=0 then CONTINUE;
+      s:=Lang(aTag);
+      if trim(s)='' then CONTINUE;
+      AComp:=AForm.Components[n];
+
+      IF AComp is TSpeedButton THEN
+        BEGIN
+          IF aTag>10000 THEN (AComp AS TSpeedButton).Hint:=s
+          ELSE (AComp AS TSpeedButton).Caption:=s;
+        END
+      ELSE IF AComp is TLabel       THEN (AComp AS TLabel).Caption:=s
+      ELSE IF AComp is TStaticText  THEN (AComp AS TStaticText).Caption:=s
+      ELSE IF AComp is TPanel       THEN (AComp AS TPanel).Caption:=s
+      ELSE IF AComp is TMenuItem    THEN (AComp AS TMenuItem).Caption:=s
+      ELSE IF AComp is TGroupBox    THEN (AComp AS TGroupBox).Caption:=s
+      ELSE IF AComp is TCheckBox    THEN (AComp AS TCheckBox).Caption:=s
+      ELSE IF AComp is TButton      THEN (AComp AS TButton).Caption:=s
+      ELSE IF AComp is TBitBtn      THEN (AComp AS TBitBtn).Caption:=s
+      ELSE IF AComp is TPageControl THEN
+        BEGIN
+          //Translate all pages
+          FOR n2:=0 TO (AComp AS TPageControl).PageCount-1 DO
+            IF (AComp AS TPageControl).Pages[n2].Tag<>0
+            THEN (AComp AS TPageControl).Pages[n2].Caption:=Lang( (AComp AS TPageControl).Pages[n2].Tag );
+        END
+      ELSE IF AComp is TRadioGroup THEN
+        BEGIN
+          (AComp AS TRadiogroup).Caption:=s;
+          FOR n2:=0 TO (AComp AS TRadiogroup).Items.Count-1 DO
+            (AComp AS TRadiogroup).Items[n2]:=Lang(aTag+1+n2);
+        END
+      ELSE IF AComp is TComboBox THEN
+        BEGIN
+          FOR n2:=0 TO (AComp AS TComboBox).Items.Count-1 DO
+            (AComp AS TComboBox).Items[n2]:=Lang(aTag+n2);
+        END;
+    END;  //for
+END;

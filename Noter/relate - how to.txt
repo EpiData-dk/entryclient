@@ -1,0 +1,81 @@
+RELATE
+
+MainUnit.DoOpenDatafile
+=======================
+
+Hvis Assigned(Relatefiles):
+  GetDatafilePointer(Relatefile);
+  Gemmer datafilePointer for Relatefile i RelateFiles.Objects
+  Kaldes OpenRelateFile(Relatefilnavn,Pointer til moderfil,pointer til relatefil.df)
+
+  Herefter sættes alle relatefiler til readonly
+
+
+
+MainUnit.OpenRelatefile
+=======================
+  Sætter relateDf^.RelateMother  og .IsRelateFile=true
+  Kalder PeekDatafile
+  TranslateQes
+  PeekApplycheckfile
+  ApplyIndex
+  Dataform.Create
+  PutfieldsOnDataform
+  
+  Mangler markering af mother til RelateFiles
+
+
+
+
+PeekCheckUnit.GetCommand
+========================
+
+Checks: Findes relatefil?
+        Findes relatefeltet i moderfilen?
+	Er feltet i moderfilen KEY QNIQUE?
+
+Kalder RelateFiles:TStringList.Create
+Tilføjer relatefilen til RelateFiles[n] (pointer=NIL)
+Tilføjer df til RelateMothers[n]
+
+
+
+NÅR RELATE SKAL KALDES
+======================
+
+Mother har ansvaret (fra ExecCommandList: Case cmdRelate) 
+  Kalder RelDataform.restoreReadOnly
+  Sætter filter i RelDataform til RelField=...
+  Skifter til første relevante record
+  Sætter indholdet af ReDataform's relField=MotherDataforms relField
+  Sætter RelDataform's relfield.Enabled:=False
+  Gør klar til exekvering af manglende commands i MotherDataform
+
+Mangler:
+  Reset af DEF-variable i RelDataform  OK  (gøres i updateCurRecEdit)
+  Kald af RelDataform's BeforeFile     OK  (gøres i Exec cmdRelate)
+  Kald af RelDataform's BeforeRecord   OK  (gøres i updateCurRecEdit)
+  Sæt et flag: IsInRelate              OK
+  Gem Currecordnr for Mother           OK
+
+  
+NÅR RELATE FORLADES
+===================
+
+Relatefil har ansvaret (fra FormCloseQuery)
+  Sætter relatefil til readonly
+  Kalder MotherDataform.RestoreReadOnly
+  Udfører resterende commands i MotherDataform
+
+Mangler:
+  Fjerne filter i RelDataForm     OK
+  Gør RelField.Enabled:=True      OK
+  Køre RelDataform's AfterFile
+  Slette flaget: IsInRelate       OK
+  Gendag CurRecordnr for Mother   OK
+  Køre "Save Record" hvis mother blev forladt fra sidste felt
+
+
+HUSK check af om modtagerfelt kan rumme relatefelt (length)
+PROBLEMER hvis filerne ikke åbnes ordentligt
+MANGLER one2one håndtering
