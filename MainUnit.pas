@@ -1873,6 +1873,8 @@ type
     IntroduktiontoEpiData1: TMenuItem;
     Doubleentry1: TMenuItem;
     EpiDataAnalysis1: TMenuItem;
+    GCPAdministration1: TMenuItem;
+    N15: TMenuItem;
     procedure Afslut1Click(Sender: TObject);
     procedure Tile1Click(Sender: TObject);
     procedure Cascade1Click(Sender: TObject);
@@ -1976,6 +1978,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure Doubleentry1Click(Sender: TObject);
     procedure EpiDataAnalysis1Click(Sender: TObject);
+    procedure GCPAdministration1Click(Sender: TObject);
   protected
     procedure WMDropFiles(var Msg: TWMDropFiles);  message WM_DROPFILES;
   private
@@ -2011,7 +2014,7 @@ USES
   PeekCheckUnit, InputFormUnit, CheckErrorUnit,
   ProgressUnit,ValDupUnit, CopyStrucUnit, ImportUnit, GridUnit,
   MergeUnit, CountValuesUnit, epiUDFTypes, RelateTreeUnit, ColorTabelUnit, CheckObjUnit, searchunit,
-  ZipFormUnit, SearchformUnit;
+  ZipFormUnit, SearchformUnit, unitGCPInit, unitGCPAdmin;
 
 {$R *.DFM}
 
@@ -7877,6 +7880,28 @@ begin
   IF FileExists(Prog)
   THEN ExecuteFile(Prog,'',ExtractFileDir(ParamStr(0)),SW_SHOW)
   ELSE eDlg(Format(Lang(22126),[Prog]),mtError,[mbOK],0);   //22126=The file %s does not exist.
+end;
+
+procedure TMainForm.GCPAdministration1Click(Sender: TObject);
+  VAR
+    OldOpenDialogTitle:string;
+    n:integer;
+begin
+  formGCPAdminInit:=TformGCPAdminInit.Create(self);
+  n:=formGCPAdminInit.ShowModal;
+  if n=mrCancel then exit;
+  try
+    formGCPAdmin:=tformGCPAdmin.Create(self);
+    try
+      if n=mrYes then formGCPAdmin.filename:=formGCPAdminInit.editSecFilename.text;
+      formGCPAdmin.ShowModal;
+    finally
+      formGCPAdmin.Free;
+    end;
+  finally
+    formGCPAdminInit.Free;
+  end;
+
 end;
 
 end.

@@ -2,7 +2,8 @@ program EPIData;
 
 uses
   Forms,
-  classes, sysUtils,
+  classes,
+  sysUtils,
   MainUnit in 'MainUnit.pas' {MainForm},
   EdUnit in 'EdUnit.pas' {EdForm},
   PickListUnit in 'PickListUnit.pas' {PickListForm},
@@ -53,7 +54,9 @@ uses
   kpMatch in 'VCLZip\kpMatch.pas',
   kpZipObj in 'VCLZip\kpZipObj.pas',
   kpCntn in 'VCLZip\kpCntn.pas',
-  ShellBrowser in 'ShellBrowser.pas';
+  ShellBrowser in 'ShellBrowser.pas',
+  unitGCPInit in 'unitGCPInit.pas' {formGCPAdminInit},
+  unitGCPAdmin in 'unitGCPAdmin.pas' {formGCPAdmin};
 
 
 {$R *.RES}
@@ -75,6 +78,7 @@ begin
     Application.HelpFile:='EpiData.Hlp';
     Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TPickListForm, PickListForm);
+  Application.CreateForm(TformGCPAdmin, formGCPAdmin);
   Repeat
       Application.ProcessMessages;
     Until SplashForm.CloseQuery;
