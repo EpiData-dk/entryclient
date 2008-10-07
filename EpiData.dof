@@ -39,7 +39,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=..\..\..\test
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -86,6 +86,9 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 Count=2
 Item0=d:\zip\vcl
 Item1=..\..\smLib\Common
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=..\..\..\test
 [HistoryLists\hlRunParameters]
 Count=6
 Item0=/NOSPLASH /FINDid=9997 "C:\Pas\edmstat\test\validate\estimates\bromar.rec"

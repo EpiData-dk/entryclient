@@ -665,7 +665,7 @@ VAR
   Function  mibIsDate(VAR s:String; Style:TFelttyper):Boolean;
   Function  mibDateToStr(d:TDateTime; Style:TFelttyper):String;
   Function  GetCommentLegalText(CONST s:String; ComLegRec: PlabelRec):String;
-  Function GetValueFromCommentLegal(CONST s:String; ComLegRec: PLabelRec):String;  
+  Function  GetValueFromCommentLegal(CONST s:String; ComLegRec: PLabelRec):String;
   Procedure ResetCheckProperties(VAR AField: PeField);
   Procedure CopyCheckProperties(VAR Source,Destination: PeField);  
   Function  HasCheckProperties(VAR AField: PeField):Boolean;
@@ -707,7 +707,7 @@ VAR
   Function  InsertFieldContents(VAR df: PDatafileInfo; CONST tmpStr:String):String;
   Function  ProgressStep(CONST MaxVal,CurVal: Integer):Boolean;
   Function  FormatNumberToIndex(s:String):str30;
-  Function GetColors(s:String; VAR txtcolor,bgcolor, HighLightColor:Byte; VAR IsEpiInfo:Boolean):Boolean;
+  Function  GetColors(s:String; VAR txtcolor,bgcolor, HighLightColor:Byte; VAR IsEpiInfo:Boolean):Boolean;
   Procedure SaveScreenCoords(VAR df: PDatafileInfo);
   Function  LoadScreenCoords(VAR df: PDatafileInfo):Boolean;
   Procedure InitCryptograph;   //&&
@@ -720,6 +720,10 @@ VAR
   Procedure StorePw(Filename, pw:String);
   Procedure ResetVarifiedFlag(df:PDatafileInfo);
   Procedure SetVarifiedFlag(df:PDataFileInfo);
+  function  PasswordIslegal(const pw: string):boolean;
+  function  getRandomPadding(len: integer):string;
+  function  boolean2string(val: boolean):string;
+  function  string2boolean(val: string):boolean;
 
 implementation
 
@@ -3032,5 +3036,43 @@ BEGIN
     PeField(df^.FieldList.Items[n])^.FIsVarified:=True;
 END;
 
+function  PasswordIslegal(const pw: string):boolean;
+var
+  hasNumChars,hasLower,hasUpper:boolean;
+  n:integer;
+begin
+  hasNumChars:=false;
+  hasLower:=false;
+  hasUpper:=false;
+  result:=false;
+  if length(pw)<6 then exit;
+  for n:=1 to length(pw) do
+    begin
+      if (pw[n] in NumChars) then hasNumChars:=true
+      else if (pw[n] in ['A'..'Z','Æ','Ø','Å']) then hasUpper:=true
+      else if (pw[n] in ['a'..'z','æ','ø','å']) then hasLower:=true;
+    end;
+  result:=(hasNumChars and hasLower and hasUpper);
+end;
+
+function  getRandomPadding(len: integer):string;
+CONST
+  chars='23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?/*+-';
+begin
+  result:='';
+  Randomize;
+  if len=0 then exit;
+  while (length(result)<len) do result:=result+chars[Random(length(chars))+1];
+end;
+
+function  boolean2string(val: boolean):string;
+begin
+  if val=true then result:='true' else result:='false';
+end;
+
+function  string2boolean(val: string):boolean;
+begin
+  if AnsiLowerCase(val)='true' then result:=true else result:=false;
+end;
 
 end.

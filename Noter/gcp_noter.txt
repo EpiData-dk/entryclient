@@ -1,0 +1,62 @@
+VALIDERING AF GCP ADMINISTRATION
+
+editProjectName 
+  <> ''
+  file editProjectName + .sec må ikke findes
+
+editAdminUsername
+  <>''
+  length > 3
+
+editAdminPw1
+  <>''
+  =editAdminPw2
+  length > 6
+  Både små og store bogstaver og tal
+
+editLogFilename
+  <>''
+  hvis comboLogWhere.ItemIndex=0 (local file), så skal file findes eller kunne skabes
+
+Users
+  Hvis eet felt i en række er udfyldt skal alle to første felter være udfyldt
+  Usernames skal være unikke
+  Usernames length>3
+  users pw > 6, små/store/tal
+
+EvalList
+  rec-filerne må ikke indeholde kodeord
+
+____________________________________________________________
+
+Opret secfile:
+  project name m.v.
+  Options
+  I toppen findes alle brugere krypteret, incl. brugernavn, pw og masterpw
+
+Hvis encrypt check file:
+  Hvis allerede encrypted:
+    indlæs checkfil og decrypt
+  Tilføj ny første linie som angiver secfile=secfilename
+  Krypter hele checkfilen og gem som ..chk
+
+Hvis ikke-encrypt check file:
+  Hvis allerede encrypted:
+    indlæs checkfil og decrypt
+    fjern første linie (secfile=secfilename)
+    gem som ..chk
+  Hvis ikke allerede encrypted: do nothing
+
+Hvis encrypt rec file:
+  Hvis allerede encrypted:
+    indlæs og dekrypter
+  Første linie i rec i klartext: sec:secfilename:sec
+  Krypter alle øvrige linier
+  Gem som ..rec
+
+Hvis encrypt rec file, så check om der findes .not file, hvis ja, så krypter den
+
+Slet log fil
+Tilføj ny record: oprettet, num-recs=0
+
+

@@ -56,7 +56,8 @@ uses
   kpCntn in 'VCLZip\kpCntn.pas',
   ShellBrowser in 'ShellBrowser.pas',
   unitGCPInit in 'unitGCPInit.pas' {formGCPAdminInit},
-  unitGCPAdmin in 'unitGCPAdmin.pas' {formGCPAdmin};
+  unitGCPAdmin in 'unitGCPAdmin.pas' {formGCPAdmin},
+  unitGCPClasses in 'unitGCPClasses.pas';
 
 
 {$R *.RES}
