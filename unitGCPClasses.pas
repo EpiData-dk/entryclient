@@ -11,16 +11,23 @@ const
 type
   TGCPUsers=record
     name:string;
+    utype: string;
     pw:string;
     note:string;
   end;
+
+  TUserTypes=(utUnknown,utSuperAdmin,utAdmin,utUser);
+  TUsers=array[1..MAXGCPUSERS] of TGCPUsers;
 
 TGCPsecfile=class(TObject)
   private
     FMasterPw:string;
     FMasterUsername: string;
+    FLoginusername: string;
+    FLoginPassword: string;
+    FCuruserType: TUserTypes;
     FNumUsers:integer;
-    FUsers:array[1..MAXGCPUSERS] of TGCPUsers;
+    FUsers:TUsers;
     FProjDesc:string;
     FProjfilename:string;
     FEncryptCheckFile: boolean;
@@ -35,14 +42,22 @@ TGCPsecfile=class(TObject)
     FDataFiles: TStringList;
     Lin: TStringList;
     MaxLen: integer;
-    function RandomPad(len:integer):string;
+    Fencrypt: boolean;
+    function  RandomPad(len:integer):string;
     procedure AddLine(s:string);
     procedure SetLogWhere(value: string);
-    function Boolean2string(value: boolean):string;
-    function String2Boolean(value: string):boolean;
+    function  Boolean2string(value: boolean):string;
+    function  String2Boolean(value: string):boolean;
+    function  GetUser(index: Integer): TGCPUsers;
+    procedure Clear;
   public
     property MasterPassword:string read FMasterPw write FMasterPw;
     property MasterUsername:string read FMasterUsername write FMasterUsername;
+    property LoginUsername:string read FLoginUsername write FLoginUsername;
+    property LoginPassword:string read FLoginPassword write FLoginPassword;
+    property CurUserType: TUsertypes read FCurUserType write FCurUserType;
+    property numUsers:integer read FnumUsers write FnumUsers;
+    property Users[Index: integer]: TGCPUsers read GetUser;
     property ProjectDescription:string read FProjDesc write FProjDesc;
     property ProjectFilename:string read FProjfilename write FProjfilename;
     property EncryptDataFile:boolean read FEncryptDatafile write FEncryptDatafile;
@@ -55,7 +70,7 @@ TGCPsecfile=class(TObject)
     property LogRead:boolean read FLogRead write FLogRead;
     property LogFind:boolean read FLogFind write FLogFind;
     property Datafiles:TStringList read FDatafiles write FDatafiles;
-    procedure AddUser(username,userpw,usernote:string);
+    procedure AddUser(username,usertype,userpw,usernote:string);
     procedure Save;
     procedure Load;
     constructor create;
@@ -103,6 +118,7 @@ begin
   Randomize;
   FDataFiles:=TStringList.create;
   FNumUsers:=0;
+  Fencrypt:=true;
 end;
 
 destructor TGCPsecfile.destroy;
@@ -110,6 +126,25 @@ begin
   FDataFiles.Free;
   inherited destroy;
 end;
+
+procedure TGCPsecfile.clear;
+var
+  n:integer;
+begin
+  for n:=1 to MAXGCPUSERS do
+    begin
+      FUsers[n].name:='';
+      FUsers[n].utype:='';
+      FUsers[n].pw:='';
+      FUsers[n].note:='';
+    end;
+  FNumUsers:=0;
+  FMasterPw:='';
+  FMasterUsername:='';
+  FCurUserType:=utUnknown;
+  FDataFiles.Clear;
+end;
+
 
 function TGCPsecfile.RandomPad(len:integer):string;
 CONST
@@ -136,11 +171,13 @@ begin
   if AnsiLowerCase(value)='true' then result:=true else result:=false;
 end;
 
-procedure TGCPsecfile.AddUser(username,userpw,usernote:string);
+procedure TGCPsecfile.AddUser(username,usertype,userpw,usernote:string);
 begin
   if FNumUsers=MAXGCPUSERS then exit;
   inc(FNumUsers);
+  if (usertype<>'User') and (usertype<>'Administrator') then usertype:='User';
   FUsers[FNumUsers].name:=username;
+  FUsers[FNumUsers].utype:=usertype;
   FUsers[FNumUsers].pw:=userpw;
   FUsers[FNumUsers].note:=usernote;
 end;
@@ -152,25 +189,40 @@ begin
   else FLogWhere:=value;
 end;
 
+function TGCPsecfile.GetUser(index: Integer): TGCPUsers;
+begin
+  result:=FUsers[index];
+end;
+
 procedure TGCPsecfile.Save;
 var
   s: string;
-  n,t: integer;
+  n,t,numUsers: integer;
 begin
   lin:=TStringList.create;
+  numUsers:=0;
+  FEncrypt:=true;
   try
     lin.append('numusers='+IntToStr(MAXGCPUSERS));
-    s:=FMasterUsername+'¤'+FMasterPw+'¤'+FMasterPw+'¤'+RandomPad(10);
+    s:=FMasterUsername+'¤superadmin¤'+FMasterPw+'¤'+FMasterPw+'¤'+RandomPad(10);
     lin.append(s);
     maxlen:=length(s);
     for n:=1 to MAXGCPUSERS do
       begin
-        if FUsers[n].name=''
-        then s:='noone¤'+RandomPad(10)+'¤'+RandomPad(12)
-        else s:=FUsers[n].name+'¤'+FUsers[n].pw+'¤'+FUsers[n].note;
+        if FUsers[n].name='' then
+          begin
+            s:=RandomPad(7)+'¤'+RandomPad(10)+'¤'+RandomPad(8)+'¤'+RandomPad(12)
+          end
+        else
+          begin
+            inc(numUsers);
+            s:=FUsers[n].name+'¤'+FUsers[n].utype+'¤'+FUsers[n].pw+'¤'+FMasterPw+'¤'+FUsers[n].note;
+          end;
         lin.append(s);
         if length(s)>maxlen then maxlen:=length(s);
       end;
+
+    lin[0]:='numusers='+intToStr(numUsers);
 
     for n:=1 TO MAXGCPUSERS do
       begin
@@ -196,25 +248,25 @@ begin
     AddLine('logfind='+boolean2string(FLogFind));
     AddLine('Datafiles');
     for n:=0 to FDatafiles.Count-1 do
-      AddLine('datafile'+IntToStr(n)+'='+ExtractFilename(FDatafiles[n]));
+      AddLine(FDatafiles[n]);
 
-    //encrypt lines
-    lin[0]:=EncryptString(lin[0],Fmasterpw);  //numusers=
-    lin[1]:=EncryptString(lin[1],Fmasterpw);  //administrator
-    for n:=1 to MAXGCPUSERS do
+    if Fencrypt then
       begin
-        if FUsers[n].pw='' then s:=RandomPad(10) else s:=FUsers[n].pw;
-        lin[n]:=EncryptString(lin[n],s);
-      end;
+        //encrypt lines
+        lin[0]:=EncryptString(lin[0],Fmasterpw);  //numusers=
+        lin[1]:=EncryptString(lin[1],Fmasterpw);  //administrator
+        for n:=2 to MAXGCPUSERS+1 do
+          begin
+            if FUsers[n-1].pw='' then s:=RandomPad(10) else s:=FUsers[n].pw;
+            lin[n]:=EncryptString(lin[n],s);
+          end;
 
-    //encrypt users with masterpw
-    for n:=1 to MAXGCPUSERS do
-      begin
-        lin[n+MAXGCPUSERS+2]:=EncryptString(lin[n+MAXGCPUSERS+2],FmasterPw);
+        //encrypt users with masterpw + rest of the lines with masterpw
+        for n:=MAXGCPUSERS+2 to lin.count-1 do
+          begin
+            lin[n]:=EncryptString(lin[n],FmasterPw);
+          end;
       end;
-
-    for n:=(MAXGCPUSERS*2)+3 to lin.count-1 do
-      lin[n]:=EncryptString(lin[n],Fmasterpw);
 
     lin.SaveToFile(FProjFilename);
 
@@ -224,7 +276,137 @@ begin
 end;
 
 procedure TGCPsecfile.Load;
+{
+Input: brugernavn og kodeord og projekctfilename
+
+
+For hver linie:
+  dekrypt linien med kodeord
+  Hvis linien starter med brugernavn+¤ så er brugeren fundet: indlæs brugeroplysninger, hent MasterPW
+
+Afkod linie 1: antal brugere
+Indlæs alle brugere: start i linie 3+maxusers og læs antalbrugere linier - dekrypt med MasterPW
+
+Læs derefter projektoptions: start i linie 3+(2*maxusers) - dekrypt med MasterPW
+Når kommer til linie med 'Datafiles', så er hver efterfølgende linie en datafil
+}
+var
+  n,foundline,searchlen,numUsers:integer;
+  s: string;
+  aUser: TGCPUsers;
+  aArray: TdynArrayString;
 begin
+  if(not FileExists(FProjFilename)) then exit;
+  if (FLoginUsername='') OR (FLoginPassword='') then exit;
+  lin:=TStringList.create;
+  try
+    lin.LoadFromFile(FProjfilename);
+    clear;
+    n:=0;
+    foundline:=0;
+    searchlen:=length(FLoginUsername)+1;
+    while (n<lin.count) and (foundline=0) do
+      begin
+        s:=lin[n];
+        if FEncrypt then s:=DecryptString(s,FLoginPassword);
+        if copy(s,1,searchlen)=FLoginUsername+'¤' then foundline:=n;
+        inc(n);
+      end;
+    if foundline=0 then exit;
+    s:=lin[foundline];
+    if FEncrypt then s:=DecryptString(s,FLoginPassword);
+    //FUsers[n].name+'¤'+FUsers[n].utype+'¤'+FUsers[n].pw+'¤'+FMasterPw+'¤'+FUsers[n].note;
+    aArray:=explode(s,'¤');
+    if length(aArray)>=5 then
+      begin
+        if (aArray[0]=FLoginUsername) and (aArray[2]=FLoginPassword) then
+          begin
+            s:=AnsiLowerCase(aArray[1]);
+            if s='user' then FCurUserType:=utUser
+            else if s='administrator' then FCurUserType:=utAdmin
+            else if s='superadmin' then FCurUserType:=utSuperAdmin
+            else FCurUserType:=utUnknown;
+
+            if FCurUserType<>utUnknown then
+              begin
+                //Brugeren er fundet - hent Masterpw og alle øvrige oplysninger
+                FMasterPw:=aArray[3];
+                s:=lin[0];
+                if FEncrypt then s:=DecryptString(s,FMasterPw);
+                s:=copy(s,1,pos('¤',s)-1);
+                try
+                  numUsers:=StrToInt(copy(s,pos('=',s)+1,length(s)));
+                except
+                  FCurUserType:=utUnknown;
+                  exit;
+                end;
+                s:=lin[1];  //Hent superadmin record
+                if FEncrypt then s:=DecryptString(s,FMasterPw);
+                aArray:=explode(s,'¤');
+                FMasterUsername:=aArray[0];
+
+                //Indlæs alle brugere: start i linie 3+maxusers og læs antalbrugere linier - dekrypt med MasterPW
+                for n:=2+MAXGCPUSERS to 1+MAXGCPUSERS+numUsers do
+                  begin
+                    s:=lin[n];
+                    if Fencrypt then s:=DecryptString(s,FMasterPw);
+                    aArray:=explode(s,'¤');
+                    AddUser(aArray[0],aArray[1],aArray[2],aArray[4]);
+                  end;
+
+                //Læs derefter projektoptions: start i linie 3+(2*maxusers) - dekrypt med MasterPW
+                //Når kommer til linie med 'Datafiles', så er hver efterfølgende linie en datafil
+    {
+    AddLine('projectfilename='+FProjfilename);
+    AddLine('projectdescription='+FProjDesc);
+    AddLine('encryptcheckfile='+boolean2string(FEncryptCheckfile));
+    AddLine('encryptdatafile='+boolean2string(FEncryptDatafile));
+    AddLine('logwhere='+FLogWhere);
+    AddLine('logfilename='+ExtractFilename(FLogFilename));
+    AddLine('lognew='+boolean2string(FLogNew));
+    AddLine('logchanges='+boolean2string(FLogEdit));
+    AddLine('logdeletions='+boolean2string(FLogDel));
+    AddLine('logread='+boolean2string(FLogRead));
+    AddLine('logfind='+boolean2string(FLogFind));
+    AddLine('Datafiles');
+    }
+                n:=2+(2*MAXGCPUSERS);
+                while n<lin.count do
+                  begin
+                    s:=lin[n];
+                    if FEncrypt then s:=DecryptString(s,FMasterPw);
+                    s:=copy(s,1,pos('¤',s)-1);
+                    //if copy(s,1,pos('=',s)-1)='projectfilename' then FProjfilename:=copy(s,pos('=',s)+1,length(s))
+                    if      copy(s,1,pos('=',s)-1)='projectdescription' then FProjDesc:=copy(s,pos('=',s)+1,length(s))
+                    else if copy(s,1,pos('=',s)-1)='encryptcheckfile' then FEncryptCheckfile:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='encryptdatafile' then FEncryptDatafile:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='logwhere' then FLogWhere:=copy(s,pos('=',s)+1,length(s))
+                    else if copy(s,1,pos('=',s)-1)='logfilename' then FLogFilename:=copy(s,pos('=',s)+1,length(s))
+                    else if copy(s,1,pos('=',s)-1)='lognew' then FLogNew:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='logchanges' then FLogEdit:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='logdeletions' then FLogDel:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='logread' then FLogRead:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if copy(s,1,pos('=',s)-1)='logfind' then FLogFind:=string2boolean(copy(s,pos('=',s)+1,length(s)))
+                    else if s='Datafiles' then
+                      begin
+                        inc(n);
+                        while n<lin.count do
+                          begin
+                            s:=lin[n];
+                            if FEncrypt then s:=DecryptString(s,FMasterPw);
+                            s:=copy(s,1,pos('¤',s)-1);
+                            FDataFiles.Append(s);
+                            inc(n);
+                          end;
+                      end;
+                    inc(n);
+                  end;
+              end;
+          end;
+      end;
+  finally
+    lin.free;
+  end;
 end;
 
 

@@ -1,3 +1,17 @@
+Undersøge:
+Gentagne forgæves loginforsøg: tidforsinkelse, større for hvert forsøg. Efter tre forsøg lukkes EpiData.
+Tilføj i admin: debugfeature, som giver dobbelt logfil (klartext + crypt)
+Importerede filer "låses" fast i krypteret kopi af orig-fil.
+Låse for indtastningsfunktion?
+
+Tre niveauer:
+superadmin - project manager
+admin - kan ændre kodeord for admin, user
+user - kan kun taste data (og fx. ikke eksport)
+
+
+
+
 VALIDERING AF GCP ADMINISTRATION
 
 editProjectName 

@@ -47,17 +47,23 @@ type
     OpenDialog1: TOpenDialog;
     Label9: TLabel;
     editProjectDesc: TEdit;
+    combo: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure SearchBtnClick(Sender: TObject);
     procedure AddBtnClick(Sender: TObject);
     procedure RemoveBtnClick(Sender: TObject);
     procedure EvalListClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure comboChange(Sender: TObject);
+    procedure sgSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
+    procedure FormPaint(Sender: TObject);
   private
     { Private declarations }
     FFilename: string;
     FIsNew: Boolean;
+    IntroDone: boolean;
     procedure SetFilename(filename: string);
+    procedure CMDialogKey(var msg: TCMDialogKey);  message CM_DIALOGKEY;
   public
     { Public declarations }
     property filename:string read FFilename write SetFilename;
@@ -73,7 +79,7 @@ implementation
 {$R *.DFM}
 
 USES
-  EpiTypes,unitGCPClasses;
+  EpiTypes,unitGCPClasses,uCredentials;
 
 CONST
   MaxFiles=50;
@@ -91,6 +97,7 @@ procedure TformGCPAdmin.FormCreate(Sender: TObject);
 var
   n,t: integer;
 begin
+  IntroDone:=false;
   TranslateForm(self);
   OpenDialog1.Filter:=Lang(2104)+'|*.rec|'+Lang(2112)+'|*.*';
   OpenDialog1.Filterindex:=1;
@@ -102,16 +109,38 @@ begin
       IsActive[n]:=False;
     END;
 
+  sg.DefaultRowHeight:=combo.Height;
   sg.RowCount:=MAXGCPUSERS+1;
   sg.Cells[1,0]:='Username';
-  sg.Cells[2,0]:='Password';
-  sg.Cells[3,0]:='Notes';
+  sg.Cells[2,0]:='Type';
+  sg.Cells[3,0]:='Password';
+  sg.Cells[4,0]:='Notes';
   for n:=1 to sg.RowCount-1 do
     sg.Cells[0,n]:='User '+IntToStr(n);
   PageControl1.ActivePage:=tabProject;
 
   comboLogWhere.ItemIndex:=0;
   FIsNew:=True;
+end;
+
+
+procedure TformGCPAdmin.CMDialogKey(var msg: TCMDialogKey);
+begin
+if (ActiveControl = combo) then
+  begin
+    if (msg.CharCode = VK_TAB) or (msg.CharCode = VK_LEFT) or (msg.CharCode = VK_RIGHT) then
+    begin
+      //set focus back to the grid and pass the tab key to it
+      combo.visible:=false;
+      //combo.Perform(WM_KEYDOWN, msg.CharCode, msg.KeyData);
+      if (msg.CharCode=VK_LEFT) then sg.col:=2 else sg.col:=3;
+      sg.SetFocus;
+      msg.result := 1;
+      Exit;
+    end;
+  end;
+
+  inherited;
 end;
 
 procedure TformGCPAdmin.SearchBtnClick(Sender: TObject);
@@ -128,7 +157,9 @@ procedure TformGCPAdmin.AddBtnClick(Sender: TObject);
 VAR
   n:Integer;
   tmplist: TStringList;
+  basename: string;
 begin
+  basename:=extractfilepath(ExpandFilename(editProjectname.text));
   tmplist:=TStringList.create;
   try
     IF trim(FilenameEdit.Text)='' THEN Exit;
@@ -139,6 +170,8 @@ begin
         ErrorMsg(Format(Lang(23716),[MaxFiles]));  //'A maximum of %d files can be evaluated'
         Exit;
       END;
+    for n:=0 to tmpList.Count-1 do
+      tmpList[n]:=ExtractRelativePath(basename,ExpandFilename(tmpList[n]));
     EvalList.Items.AddStrings(tmpList);
     FilenameEdit.Text:='';
     FOR n:=EvalList.Items.Count-1 DOWNTO 0 DO
@@ -150,10 +183,9 @@ begin
             EvalList.Items.Delete(n);
             Continue;
           END;
-        EvalList.Items[n]:=ExpandFilename(EvalList.items[n]);
-        IF NOT FileExists(EvalList.Items[n]) THEN
+        IF NOT FileExists(basename+EvalList.Items[n]) THEN
           BEGIN
-            ErrorMsg(Format(Lang(20110),[EvalList.Items[n]]));   //20110=Datafile %s does not exist.
+            ErrorMsg(Format(Lang(20110),[basename+EvalList.Items[n]]));   //20110=Datafile %s does not exist.
             EvalList.Items.Delete(n);
             Continue;
           END;
@@ -188,15 +220,19 @@ end;
 
 procedure TformGCPAdmin.FormCloseQuery(Sender: TObject;  var CanClose: Boolean);
 var
-  tmpFilename,s,username,userpw,usernote,masterpw:string;
+  tmpFilename,s,username,usertype,userpw,usernote,masterpw:string;
   maxlen,n,t: integer;
   lin: TStringList;
   secfile: TGCPsecfile;
-
-
 begin
   CanClose:=true;
   if ModalResult=mrCancel then exit;
+
+  tmpFilename:=Expandfilename(editProjectname.text);
+  if FileExists(tmpFilename) then
+    begin
+      if WarningDlg('Project file '+tmpFilename+' already exists'#13#13'Overwrite existing file?')=mrCancel then exit;
+    end;
 
   //Validation
   if  trim(editProjectName.Text)='' then
@@ -206,7 +242,7 @@ begin
       CanClose:=false;
       exit;
     end;
-  tmpFilename:=Expandfilename(editProjectname.text);
+
   s:=editAdminUsername.Text;
   if (trim(s)='') or (length(s)<4) then
     begin
@@ -250,14 +286,22 @@ begin
   for n:=1 to sg.RowCount-1 do
     begin
       username:=ansilowercase(trim(sg.Cells[1,n]));
-      userpw:=trim(sg.Cells[2,n]);
-      usernote:=trim(sg.Cells[3,n]);
+      usertype:=sg.Cells[2,n];
+      userpw:=trim(sg.Cells[3,n]);
+      usernote:=trim(sg.Cells[4,n]);
       if ((username+userpw+usernote)<>'') then
         begin
           if (username='') or (userpw='') then
             begin
               CanClose:=false;
               ErrorMsg('Missing username og user password in user '+IntToStr(n));
+              PageControl1.ActivePage:=tabUsers;
+              exit;
+            end;
+          if (usertype='') then
+            begin
+              CanClose:=false;
+              ErrorMsg('No user type selected in user '+IntToStr(n));
               PageControl1.ActivePage:=tabUsers;
               exit;
             end;
@@ -314,9 +358,9 @@ begin
       secfile.MasterUsername:=editAdminusername.text;
       secfile.MasterPassword:=masterpw;
       for n:=1 to sg.RowCount-1 do
-        secfile.AddUser(sg.Cells[1,n],sg.Cells[2,n],sg.Cells[3,n]);
+        secfile.AddUser(sg.Cells[1,n],sg.Cells[2,n],sg.Cells[3,n],sg.Cells[4,n]);
       secfile.ProjectDescription:=editProjectDesc.text;
-      secfile.ProjectFilename:=ExtractFilename(tmpFilename);
+      secfile.ProjectFilename:=tmpFilename;
       secfile.EncryptDataFile:=checkEncryptRec.Checked;
       secfile.EncryptCheckFile:=checkEncryptChk.Checked;
       if comboLogWhere.ItemIndex =1 then s:='webservice'
@@ -334,6 +378,126 @@ begin
       secfile.Save;
     finally
       secfile.free;
+    end;
+end;
+
+procedure TformGCPAdmin.comboChange(Sender: TObject);
+var intRow: Integer;
+begin
+  inherited;
+
+  {Get the ComboBox selection and place in the grid}
+  with combo do
+  begin
+    intRow := sg.Row;
+    if (sg.Col = 2) then
+      begin
+        sg.Cells[2, intRow] := Items[ItemIndex];
+        Visible := False;
+      end;
+  end;
+  sg.SetFocus;
+end;
+
+procedure TformGCPAdmin.sgSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
+var R: TRect;
+begin
+  if ((ACol = 2) and (ARow <> 0)) then
+  begin
+    {Size and position the combo box to fit the cell}
+    R := sg.CellRect(ACol, ARow);
+    R.Left := R.Left + sg.Left;
+    R.Right := R.Right + sg.Left;
+    R.Top := R.Top + sg.Top;
+    R.Bottom := R.Bottom + sg.Top;
+
+    {Show the combobox}
+    with combo do
+    begin
+      Left := R.Left + 1;
+      Top := R.Top + 1;
+      Width := (R.Right + 1) - R.Left;
+      Height := (R.Bottom + 1) - R.Top;
+
+      ItemIndex := Items.IndexOf(sg.Cells[ACol, ARow]);
+      Visible := True;
+      SetFocus;
+    end;
+  end
+  else combo.visible:=false;
+  CanSelect := True;
+end;
+
+
+procedure TformGCPAdmin.FormPaint(Sender: TObject);
+var
+  secfile: TGCPsecfile;
+  n: integer;
+begin
+  if (not IntroDone) then
+    begin
+      IntroDone:=true;
+      if FFilename<>'' then
+        begin
+          //Load existing sec-file
+          formCredentials:=TformCredentials.Create(self);
+          try
+            n:=formCredentials.ShowModal;
+            if n=mrCancel then
+              begin
+                ErrorMsg('Invalid username or password');
+                exit;
+              end;
+            secfile:=TGCPsecfile.create;
+            secfile.ProjectFilename:=FFilename;
+            secfile.LoginUsername:=formCredentials.edUsername.text;
+            secfile.LoginPassword:=formCredentials.edPassword.text;
+            secfile.Load;
+            if secfile.CurUserType=utUnknown then
+              begin
+                ErrorMsg('Invalid username or password');
+                exit;
+              end
+            else if secfile.CurUserType<>utSuperAdmin then
+              begin
+                ErrorMsg('Only the project manager can edit the project settings');
+                exit;
+              end
+            else
+              begin
+                editAdminUsername.text:=secfile.MasterUsername;
+                editAdminPw1.Text:=secfile.MasterPassword;
+                editAdminPw2.Text:=secfile.MasterPassword;
+                editProjectDesc.Text:=secfile.ProjectDescription;
+                editProjectName.Text:=secfile.ProjectFilename;
+                checkEncryptRec.Checked:=secfile.EncryptDataFile;
+                checkEncryptChk.Checked:=secfile.EncryptCheckFile;
+                if secfile.LogWhere='localfile' then comboLogWhere.ItemIndex:=0
+                else if secfile.LogWhere='webservice' then comboLogWhere.itemIndex:=1
+                else if secfile.LogWhere='ftp' then comboLogWhere.ItemIndex:=2;
+                editLogFilename.text:=secfile.Logfilename;
+                checkLogNew.Checked:=secfile.LogNew;
+                checkLogEdit.Checked:=secfile.LogEdit;
+                checkLogDel.Checked:=secfile.LogDel;
+                checkLogRead.Checked:=secfile.LogRead;
+                checkLogFind.Checked:=secfile.LogFind;
+                for n:=1 to secfile.numUsers do
+                  begin
+                    sg.Cells[1,n]:=secfile.Users[n].name;
+                    sg.Cells[2,n]:=secfile.Users[n].utype;
+                    sg.Cells[3,n]:=secfile.Users[n].pw;
+                    sg.Cells[4,n]:=secfile.Users[n].note;
+                  end;
+                if secfile.Datafiles.Count>0 then
+                  begin
+                    for n:=0 to secfile.Datafiles.Count-1 do
+                      evalList.Items.Append(secfile.Datafiles[n]);
+                  end;
+              end;
+          finally
+            formCredentials.Free;
+          end;
+        end;
     end;
 end;
 

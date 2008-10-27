@@ -20,14 +20,15 @@ TYPE
   str10=String[10];
   str15=String[15];
   str30=String[30];
+  TdynArrayString=array of string;
 
 
 CONST
-EpiDataVersion='3.1';
+EpiDataVersion='3.3 beta';
 //VersionNumber=2.12;
 VersionNumber=3.1;
-BuildNo='270108';
-TESTVERSION=False;
+BuildNo='271008';
+TESTVERSION=true;
 NumChars:        Set of CHAR=['0'..'9'];
 AlfaNumChars:    Set of CHAR=['0'..'9','A'..'Z','a'..'z'];
 AlfaChars:       Set of CHAR=['A'..'Z','a'..'z'];
@@ -724,6 +725,7 @@ VAR
   function  getRandomPadding(len: integer):string;
   function  boolean2string(val: boolean):string;
   function  string2boolean(val: string):boolean;
+  function explode(const s:string;separator:char):TdynArrayString;
 
 implementation
 
@@ -3073,6 +3075,36 @@ end;
 function  string2boolean(val: string):boolean;
 begin
   if AnsiLowerCase(val)='true' then result:=true else result:=false;
+end;
+
+function explode(const s:string;separator:char):TdynArrayString;
+var
+  n,numelems,no: integer;
+  tmp,s2: string;
+begin
+  numelems:=0;
+  for n:=1 to length(s) do
+    if s[n]=separator then inc(numelems);
+  if numelems=0 then numelems:=1;
+  SetLength(result,numelems+1);
+  tmp:=s;
+  no:=0;
+  while length(tmp)>0 do
+    begin
+      n:=pos(separator,tmp);
+      if n=0 then
+        begin
+          result[no]:=tmp;
+          tmp:='';
+        end
+      else
+        begin
+          s2:=copy(tmp,1,n-1);
+          result[no]:=s2;
+          delete(tmp,1,n);
+        end;
+      inc(no);
+    end;
 end;
 
 end.

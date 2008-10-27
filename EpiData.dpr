@@ -57,7 +57,8 @@ uses
   ShellBrowser in 'ShellBrowser.pas',
   unitGCPInit in 'unitGCPInit.pas' {formGCPAdminInit},
   unitGCPAdmin in 'unitGCPAdmin.pas' {formGCPAdmin},
-  unitGCPClasses in 'unitGCPClasses.pas';
+  unitGCPClasses in 'unitGCPClasses.pas',
+  uCredentials in 'uCredentials.pas' {formCredentials};
 
 
 {$R *.RES}
@@ -79,7 +80,6 @@ begin
     Application.HelpFile:='EpiData.Hlp';
     Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TPickListForm, PickListForm);
-  Application.CreateForm(TformGCPAdmin, formGCPAdmin);
   Repeat
       Application.ProcessMessages;
     Until SplashForm.CloseQuery;

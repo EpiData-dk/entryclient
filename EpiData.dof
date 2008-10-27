@@ -55,8 +55,8 @@ HostApplication=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=3
-MinorVer=1
-Release=2701
+MinorVer=3
+Release=2710
 Build=2008
 Debug=0
 PreRelease=0
@@ -68,13 +68,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=The EpiData Association
 FileDescription=Freeware data entry and validation program
-FileVersion=3.1.2701.2008
-InternalName=EpiData 3.1 (270108)
+FileVersion=3.3.2710.2008
+InternalName=EpiData 3.3 Beta (271008)
 LegalCopyright=(c) The EpiData Association 2008
 LegalTrademarks=
 OriginalFilename=
 ProductName=EpiData 3.1
-ProductVersion=3.1
+ProductVersion=
 Comments=Can only be distributed as freeware
 [HistoryLists\hlDebugSourcePath]
 Count=1
