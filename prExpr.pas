@@ -19,6 +19,9 @@ uses
   EpiTypes,
   epiUDFTypes,
   math,
+  {$IFDEF VER150}
+    variants,
+  {$ENDIF}
   Windows;
 
 type

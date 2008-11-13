@@ -110,7 +110,10 @@ Uses
 {$IFDEF VER140}
   QConsts,
 {$ENDIF}
-  Classes, SysUtils;
+{$IFDEF VER150}               { Delphi 7 }
+  RTLConsts,
+{$ENDIF}
+Classes, SysUtils;
 
 const
 
@@ -135,6 +138,9 @@ const
   {$DEFINE DELPHI_BCB_3}
 {$ENDIF}
 {$IFDEF VER140}               { Delphi 6 }
+  {$DEFINE DELPHI_BCB_3}
+{$ENDIF}
+{$IFDEF VER150}               { Delphi 7 }
   {$DEFINE DELPHI_BCB_3}
 {$ENDIF}
 

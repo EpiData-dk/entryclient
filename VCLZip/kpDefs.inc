@@ -44,7 +44,20 @@
   {$IFDEF BCB}                { BCB 5    }
         {$DEFINE ISBCB5}
         {$DEFINE ISBCB}
-  {$ELSE}                     { Delphi 5 }
+  {$ELSE}                     { Delphi 6 }
+        {$DEFINE ISDELPHI4}
+        {$DEFINE ISDELPHI5}
+        {$DEFINE ISDELPHI6}
+        {$DEFINE ISDELPHI}
+   {$ENDIF}
+{$ENDIF}
+{$IFDEF VER150}
+  {$DEFINE DELPHI_BCB_3}
+  {$DEFINE HAS_64_BIT_INT}
+  {$IFDEF BCB}                { BCB 5    }
+        {$DEFINE ISBCB5}
+        {$DEFINE ISBCB}
+  {$ELSE}                     { Delphi 7 }
         {$DEFINE ISDELPHI4}
         {$DEFINE ISDELPHI5}
         {$DEFINE ISDELPHI6}
