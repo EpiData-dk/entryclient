@@ -224,6 +224,10 @@ var
   maxlen,n,t: integer;
   lin: TStringList;
   secfile: TGCPsecfile;
+  F:TextFile;
+  eline, filelabel,cryptkey: string;
+  NumFields,TempInt,TempInt2: integer;
+  vlab: boolean;
 begin
   CanClose:=true;
   if ModalResult=mrCancel then exit;
@@ -340,6 +344,71 @@ begin
             CanClose:=false;
             exit;
           end;
+      end
+    else
+      begin
+        //Check if all files in project exists
+        s:='';
+        for n:=0 to evalList.Count-1 do
+          if (not fileexists(evalList.Items[n])) then s:=s+evalList.Items[n]+#13;
+        if s<>'' then
+          begin
+            ErrorMsg('One or more files in the project does not exist:'#13+s);
+            CanClose:=false;
+            exit;
+          end;
+
+        //check all recfiles on the list for encrypted fields
+        lin:=TStringList.create;
+        try
+          for n:=0 to evalList.Count-1 do
+            begin
+              try
+                lin.LoadFromFile(evalList.Items[n]);
+              except
+                ErrorMsg(format('The file %s cannot be opened',[evalList.Items[n]]));
+                CanClose:=false;
+                exit;
+              end;
+              eline:=lin[0]+' ';
+              s:=COPY(eLine,1,POS(' ',eLine)-1);
+              IF IsInteger(s) THEN NumFields:=StrToInt(s)
+              else
+                begin
+                  ErrorMsg(format('The file %s is not a proper EpiData data file',[evalList.Items[n]]));
+                  CanClose:=false;
+                  exit;
+                end;
+              cryptkey:='';
+              TempInt:=pos('~kq:',eLine);
+              IF TempInt>0 THEN
+                begin
+                  //Datafile contains a crypt-key
+                  TempInt2:=pos(':kq~',eLine);
+                  if (TempInt2>0) AND (TempInt2>TempInt) THEN cryptkey:=copy(eLine,TempInt+4,TempInt2-TempInt-4);
+                end;
+              TempInt:=Pos('FILELABEL: ',AnsiUpperCase(eLine));
+              IF TempInt<>0 THEN Filelabel:=Copy(eLine,TempInt+Length('FILELABEL: '),Length(eLine));
+              IF Pos(' VLAB',eLine)>0 THEN vlab:=true ELSE vlab:=false;
+
+              //TODO: håndtering af krypterede filer med data
+
+              eline:=IntToStr(NumFields)+' 1';
+              if vlab then eline:=eline+' VLAB';
+              eline:=eline+'~pf:'+ExtractFilename(editProjectname.text)+' :pf~';
+              if trim(Filelabel)<>'' then eline:=eline+' Filelabel: '+Filelabel;
+              lin[0]:=eline;
+              try
+                lin.SaveToFile(evalList.Items[n]);
+              except
+                ErrorMsg(format('Error saving %s',[evalList.items[n]]));
+                CanClose:=false;
+                exit;
+              end;
+            end;  //for
+        finally
+          lin.Free;
+        end;
       end;
 
   if AnsiLowerCase(ExtractFileExt(tmpFilename))<>'.sec' then tmpFilename:=ChangeFileExt(tmpfilename,'.sec');

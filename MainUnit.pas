@@ -1689,6 +1689,14 @@ backup zip/encrypt mangler i hjælpefilen
         syntax: BACKUP "destination-library" [ZIP filename [date]]
          or      BACKUP "destination-library" [ENCRYPT filname password [date]]  
 
+27/10-2008
+Tilføjet GCP admin til oprettelse og editering af gcp projekt filer
+
+29/11-2008
+Tilføjet GCP projekt fil i første linie i rec filer, der tilknyttes et gcp projekt
+TODO: Der checkes ikke for om tilknyttede filer indeholder krypterede data. Krypterede data omkodes derfor ikke
+
+
 Noter slut*****}
 
 

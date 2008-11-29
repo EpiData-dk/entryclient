@@ -1,0 +1,32 @@
+dato
+tid
+user
+recordtype
+  new logfile (# fields?)
+  new record
+  changed field
+  search
+  datafile opened
+  datafile closed (md5)
+  record deleted
+  record read
+filnavn
+recordno
+fieldname
+value
+
+Når GCP projekt dannes:
+ - tilføj gcp=projektfilnavn i header på alle tilknyttede filer
+ - hvis crypt felter, så gem masterkode som kodeord i header
+
+Når open rec file og hvis gcp projekt:
+ - indlæs gcp fil
+ - promp for kodeord
+ - init projekt objekt
+
+GPC-projekt
+ - init: indlæs secfile
+ - findes log-fil?
+   Nej:  - hvis local file, så dan log-fil og log-filens chk-fil
+         - 
+   Ja:   - åbn logfil, integritetscheck, gem "datafil åbnet"-records

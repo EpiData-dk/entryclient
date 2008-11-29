@@ -44,14 +44,13 @@ begin
   if OpenDialog1.Execute then editSecFilename.Text:=OpenDialog1.FileName;
 end;
 
-procedure TformGCPAdminInit.FormCloseQuery(Sender: TObject;
-  var CanClose: Boolean);
+procedure TformGCPAdminInit.FormCloseQuery(Sender: TObject;var CanClose: Boolean);
 begin
   CanClose:=True;
   if modalresult=mrCancel then exit;
   if (modalresult=mrYes) and (trim(editSecFilename.text)='') then
     begin
-      ErrorMsg('Please enter file name for existing project');
+      FindFile1Click(sender);
       Canclose:=false;
       exit;
     end;

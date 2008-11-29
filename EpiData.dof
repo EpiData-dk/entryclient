@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=..\test
+OutputDir=..\..\..\test
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -105,10 +105,6 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
-[Language]
-ActiveLang=
-ProjectLang=
-RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
@@ -145,6 +141,7 @@ Count=2
 Item0=d:\zip\vcl
 Item1=..\..\smLib\Common
 [HistoryLists\hlOutputDirectorry]
-Count=2
-Item0=..\test
-Item1=..\..\..\test
+Count=3
+Item0=..\..\..\test
+Item1=..\..\test
+Item2=..\test
