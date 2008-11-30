@@ -2,14 +2,14 @@ dato
 tid
 user
 recordtype
-  new logfile (# fields?)
-  new record
-  changed field
-  search
-  datafile opened
-  datafile closed (md5)
-  record deleted
-  record read
+  1 new logfile created (# fields?)
+  2 new record
+  3 changed field
+  4 search
+  5 datafile opened
+  6 datafile closed (md5)
+  7 record deleted
+  8 record read
 filnavn
 recordno
 fieldname

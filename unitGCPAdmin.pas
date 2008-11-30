@@ -395,7 +395,7 @@ begin
 
               eline:=IntToStr(NumFields)+' 1';
               if vlab then eline:=eline+' VLAB';
-              eline:=eline+'~pf:'+ExtractFilename(editProjectname.text)+' :pf~';
+              eline:=eline+' ~pf:'+ExtractFilename(editProjectname.text)+':pf~';
               if trim(Filelabel)<>'' then eline:=eline+' Filelabel: '+Filelabel;
               lin[0]:=eline;
               try

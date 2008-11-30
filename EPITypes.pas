@@ -7,7 +7,7 @@ interface
 USES
   stdctrls,classes,comctrls, Forms, Graphics, controls,Windows,
   SysUtils, Dialogs, Buttons, extctrls, menus, UExtUDF, epiUDFTypes,
-  ShellAPI,Rijndael,Base64              //&&
+  ShellAPI,Rijndael,Base64, unitGCPClasses
   {$IFNDEF epidat},fmxUtils{$ENDIF};
 
 {$IFNDEF epidat}
@@ -456,6 +456,9 @@ TYPE
     dbKeyfieldname:    String;         //Name of keyfield
     dbKeyfieldvalue:   String;         //Entered value of keyfield
 
+    {GCP project properties}
+    GCPproject:           TGCPProject;
+
     {Misc.}
     ChkTopComments:    TStringList;    //Commentlines in the top of the checkfile - used only in checkfilemode
     FileLabel:         String[50];     //Label for datafile
@@ -876,6 +879,7 @@ VAR
 BEGIN
   WITH df^ DO
     BEGIN
+      if assigned(df^.GCPproject) then df^.GCPproject.LogAppend(df,LOG_RECCLOSED,0,'','');
       RECFilename:='';
       QESFilename:='';
       CHKFilename:='';
@@ -979,6 +983,8 @@ BEGIN
       GlobalMissingValues[1]:='';
       GlobalMissingValues[2]:='';
       GlobalDefaultValue:='';
+      if assigned(GCPproject) then GCPProject.Free;
+      GCPProject:=NIL;
       IF FindOpt<>NIL THEN Dispose(FindOpt);
       IsInSearchForm:=False;
       Key:='';
@@ -1104,6 +1110,7 @@ BEGIN
       GlobalMissingValues[0]:='';
       GlobalMissingValues[1]:='';
       GlobalMissingValues[2]:='';
+      GCPProject:=NIL;
       FindOpt:=NIL;
       IsInSearchForm:=False;
       SearchForm:=NIL;

@@ -8,6 +8,25 @@ uses
 const
   MAXGCPUSERS=20;
 
+  {Result of TGCPproject.loadproject}
+  GCP_OK=0;
+  GCP_ILLEGAL_CREDENTIALS=1;
+  GCP_FILE_NOT_FOUND=2;
+  GCP_ERROR_CREATING_LOGFILE=3;
+  GCP_ERROR_OPENING_LOGFILE=4;
+  GCP_ERROR_WRITING_LOGFILE=5;
+
+  {GCP log recordtype}
+  LOG_NEWLOGFILE=1;    // new logfile created
+  LOG_NEWRECORD=2;     // new record
+  LOG_CHANGEDFIELD=3;  // changed field
+  LOG_SEARCH=4;        // search for records
+  LOG_RECOPENED=5;     // datafile opened
+  LOG_RECCLOSED=6;     // datafile closed
+  LOG_DELETED=7;       // record deleted
+  LOG_READ=8;          // record read
+
+
 type
   TGCPUsers=record
     name:string;
@@ -74,15 +93,30 @@ TGCPsecfile=class(TObject)
     procedure Save;
     procedure Load;
     constructor create;
-    destructor  destroy;
+    destructor  destroy;  override;
 end;
 
+TGCPProject=class(TObject)
+  private
+    FSecFile: TGCPsecfile;
+    FUser:    string;
+    FMasterpw: string;
+    FLogFile:  pointer;
+    function createLogfile:integer;
+  public
+    function loadProject(filename, username, password:string):integer;
+    constructor create;
+    destructor destroy;   override;
+    function LogAppend(datafile:pointer; recordtype,recordnum:integer; fieldname:string; value:string):integer;
+    property Username:string read FUser;
+    property MasterPassword:string read FMasterpw;
+end;
 
 
 implementation
 
 uses
-  EpiTypes;
+  EpiTypes,FileUnit;
 
 //************************ Class TGCPsecfile *************************
 
@@ -401,6 +435,7 @@ begin
                       end;
                     inc(n);
                   end;
+                  if (FLogWhere='localfile') and (FLogFilename<>'') then FLogFilename:=ChangefileExt(FLogFilename,'.rec');
               end;
           end;
       end;
@@ -409,6 +444,153 @@ begin
   end;
 end;
 
+
+{**************************************************************************
+
+    TGCPProject
+
+****************************************************************************}
+
+constructor TGCPProject.create;
+begin
+  inherited create;
+  FSecFile:=TGCPsecfile.create;
+  Flogfile:=NIL;
+end;
+
+destructor TGCPProject.destroy;
+begin
+  FSecFile.Free;
+  if Assigned(Flogfile) then DisposeDatafilePointer(PDatafileInfo(Flogfile));
+  inherited destroy;
+end;
+
+function TGCPProject.loadProject(filename, username, password:string):integer;
+var
+  n:integer;
+  df: PDatafileInfo;
+begin
+  try
+    df:=NIL;
+    result:=GCP_FILE_NOT_FOUND;
+    if (not FileExists(filename)) then exit;
+    Fsecfile.ProjectFilename:=filename;
+    Fsecfile.LoginUsername:=username;
+    Fsecfile.LoginPassword:=password;
+    Fsecfile.Load;
+    result:=GCP_ILLEGAL_CREDENTIALS;
+    if Fsecfile.CurUserType=utUnknown then exit;
+    FUser:=username;
+    FMasterPW:=Fsecfile.MasterPassword;
+    //Check if logfile exists - if not then create it
+    if (not FileExists(Fsecfile.Logfilename)) then
+      begin
+        n:=createLogfile;
+        if n<>GCP_OK then
+          begin
+            result:=n;
+            exit;
+          end;
+      end;
+    //Open logfile
+    if (not getDatafilePointer(df)) then
+      begin
+        result:=GCP_ERROR_OPENING_LOGFILE;
+        exit;
+      end
+    else
+      begin
+        df^.RECFilename:=FsecFile.Logfilename;
+        if (not PeekDataFile(df)) then
+          begin
+            result:=GCP_ERROR_OPENING_LOGFILE;
+            exit;
+          end;
+      end;
+    FLogfile:=df;
+    result:=GCP_OK;
+  except
+  end;
+end;
+
+function TGCPProject.createLogfile:integer;
+var
+  lin:TStringList;
+begin
+  lin:=TStringList.create;
+  try
+    lin.append('8 1 VLAB');
+    lin.append('_DATESTAMP     1   1  30  15   1  11  10 112 DATESTAMP');
+    lin.append('#TIMESTAMP     1   2  30  15   2 102   5 112 TIMESTAMP');
+    lin.append('_USER          1   3  30  15   3   1  80 112 USER');
+    lin.append('#RECORDTYPE    1   4  30  15   4   0   1 112 RECORDTYPE');
+    lin.append('_FILENAME      1   5  30  15   5   1  80 112 FILNAVN');
+    lin.append('#RECORDNO      1   6  30  15   6   0   9 112 RECORDNO');
+    lin.append('_FIELDNAME     1   7  30  15   7   1  12 112 FIELDNAME');
+    lin.append('_VALUE         1   8  30  15   8   1  80 112 VALUE');
+    try
+      lin.SaveToFile(Fsecfile.Logfilename);
+    except
+      result:=GCP_ERROR_CREATING_LOGFILE;
+      exit;
+    end;
+
+    lin.Clear;
+    lin.append('LABELBLOCK');
+    lin.append('  LABEL label_recordtype');
+    lin.append('    1  "New log created"');
+    lin.append('    2  "New record"');
+    lin.append('    3  "Changed field"');
+    lin.append('    4  Search');
+    lin.append('    5  "Datafile opened"');
+    lin.append('    6  "Datafile closed"');
+    lin.append('    7  "Record deleted"');
+    lin.append('    8  "Record read"');
+    lin.append('  END');
+    lin.append('END');
+    lin.append('');
+    lin.append('RECORDTYPE');
+    lin.append('  COMMENT LEGAL USE label_recordtype');
+    lin.append('END');
+    try
+      lin.SaveToFile(ChangeFileExt(Fsecfile.Logfilename,'.chk'));
+    except
+      result:=GCP_ERROR_CREATING_LOGFILE;
+      exit;
+    end;
+    result:=GCP_OK;
+  finally
+    lin.free;
+  end;
+end;
+
+function TGCPProject.LogAppend(datafile:pointer; recordtype,recordnum:integer; fieldname:string; value:string):integer;
+var
+  df,log: PDatafileInfo;
+  datestr,timestr: string;
+  eField: PeField;
+  n:integer;
+begin
+  log:=PDatafileInfo(FLogfile);
+  df:=NIL;
+  if assigned(datafile) then df:=PDatafileInfo(datafile);
+  datestr:=formatdatetime('dd/mm/yyyy',now);
+  timestr:=formatdatetime('hh.nn',now);
+  peNewrecord(log);
+  for n:=0 to log^.fieldlist.Count-1 do
+    begin
+      eField:=PeField(log^.FieldList.Items[n]);
+      if      (trim(eField^.FName)='DATESTAMP')  then eField^.FFieldText:=datestr
+      else if (trim(eField^.FName)='TIMESTAMP')  then eField^.FFieldText:=timestr
+      else if (trim(eField^.FName)='USER')       then eField^.FFieldText:=FUser
+      else if (trim(eField^.FName)='RECORDTYPE') then eField^.FFieldText:=IntToStr(recordtype)
+      else if (trim(eField^.FName)='FILENAME') AND (df<>NIL) then eField^.FFieldText:=ExtractFileName(df^.RECFilename)
+      else if (trim(eField^.FName)='RECORDNO')   then eField^.FFieldText:=IntToStr(recordnum)
+      else if (trim(eField^.FName)='FIELDNAME')  then eField^.FFieldText:=fieldname
+      else if (trim(eField^.FName)='VALUE')  then eField^.FFieldText:=value;
+    end;
+  peWriteRecord(log,NewRecord);
+end;
 
 end.
 

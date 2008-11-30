@@ -169,7 +169,7 @@ implementation
 USES
   FileUnit, MainUnit, ExportFormUnit, PeekCheckUnit,
   LegalPickListUnit, LabelEditUnit,RelateTreeUnit, fmxUtils, BackUpUnit,
-  SearchFormUnit,searchunit,GridUnit, ZipFormUnit;
+  SearchFormUnit,searchunit,GridUnit, ZipFormUnit, unitGCPClasses;
 
 VAR
   FieldInfoTrigger:Byte;   //used for testing purposes
@@ -4272,6 +4272,18 @@ BEGIN
       IF Assigned(df^.AfterRecordCmds) THEN ExecCommandList(df^.AfterRecordCmds);
       IF NOT DidJump THEN
         BEGIN
+          if assigned(df^.GCPproject) then
+            begin
+              //Log changes
+              if df^.CurRecord=NewRecord then df^.GCPproject.LogAppend(df,LOG_NEWRECORD,df^.NumRecords+1,'','')
+              else
+                begin
+                  FOR n:=0 to df^.FieldList.Count-1 DO
+                    IF PeField(df^.FieldList.Items[n])^.FeltType<>ftQuestion THEN
+                      IF TEntryField(PeField(df^.FieldList.Items[n])^.EntryField).Modified
+                      then df^.GCPproject.LogAppend(df,LOG_CHANGEDFIELD,df^.CurRecord,PeField(df^.FieldList.Items[n])^.FName,PeField(df^.FieldList.Items[n])^.FFieldText);
+                end;
+            end;
           peWriteRecord(df,df^.CurRecord);
           Result:=True;
           IF (df^.IsRelateFile) AND (RelateOne2One) THEN Close;

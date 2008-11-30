@@ -5,7 +5,8 @@ unit FileUnit;
 interface
 
 USES
-  SysUtils, Classes, Forms, Dialogs, Controls, EpiTypes, Windows, Graphics;
+  SysUtils, Classes, Forms, Dialogs, Controls, EpiTypes, Windows, Graphics,
+  unitGCPClasses,uCredentials;
 
 
 Function  CanOpenFile(CONST filename:String):Boolean;
@@ -184,7 +185,7 @@ Procedure peNewRecord(VAR df:PDatafileInfo);
 VAR
   AField:PeField;
 BEGIN
-  TDataForm(df^.DatForm).ClearFields;
+  if Assigned(df^.DatForm) then TDataForm(df^.DatForm).ClearFields;
   WITH df^ DO
     BEGIN
       CurRecord:=NewRecord;
@@ -202,10 +203,10 @@ BEGIN
           AField:=PeField(FieldList.Items[IDNUMField]);
           AField^.FFieldText:=IntToStr(CurIDNumber);
           ChangeGoingOn:=True;
-          TEntryField(AField^.EntryField).Text:=AField^.FFieldText;
+          if Assigned(df^.DatForm) then TEntryField(AField^.EntryField).Text:=AField^.FFieldText;
           ChangeGoingOn:=False;
         END;
-      TDataForm(df^.DatForm).UpdateCurRecEdit(CurRecord,NumRecords);
+      if Assigned(df^.DatForm) then TDataForm(df^.DatForm).UpdateCurRecEdit(CurRecord,NumRecords);
     END;  //with
 END;  //procedure peNewRecord
 {$ENDIF}
@@ -1093,7 +1094,7 @@ VAR
   QuestColor,FieldColor,ft: Integer;
   F:TextFile;
   stop: Boolean;
-  tmpPassword: String;
+  GCPFilename, tmpPassword: String;
 
 BEGIN
   NumFields:=0;
@@ -1136,11 +1137,56 @@ BEGIN
               IF (TempInt2>0) AND (TempInt2>TempInt) THEN tmpPassword:=copy(eLine,TempInt+4,TempInt2-TempInt-4);
               {$ENDIF}
             END;
+          TempInt:=pos('~pf:',eLine);
+          if TempInt>0 then
+            begin
+              //Datafile points to a GCP project file
+              TempInt2:=pos(':pf~',eLine);
+              IF (TempInt2>0) AND (TempInt2>TempInt) THEN GCPFilename:=copy(eLine,TempInt+4,TempInt2-TempInt-4);
+              GCPFilename:=ChangefileExt(GCPFilename,'.sec');
+              if (not fileexists(GCPFilename)) then
+                begin
+                  ErrorMsg(format('GCP project file %s not found',[GCPFilename]));
+                  result:=false;
+                  CloseFile(F);
+                  exit;
+                end;
+              //Get GCP project credentials
+              formCredentials:=TformCredentials.Create(MainForm);
+              try
+                nn:=formCredentials.ShowModal;
+                if nn<>mrOK then
+                  begin
+                    result:=false;
+                    CloseFile(F);
+                    exit;
+                  end;
+                df^.GCPproject:=TGCPProject.create;
+                nn:=df^.GCPproject.loadProject(GCPFilename, formCredentials.edUsername.text, formCredentials.edPassword.text);
+                if nn=GCP_FILE_NOT_FOUND then
+                  begin
+                    ErrorMsg(format('GCP project file %s not found',[GCPFilename]));
+                    CloseFile(F);
+                    result:=false;
+                    exit;
+                  end
+                else if nn=GCP_ILLEGAL_CREDENTIALS then
+                  begin
+                    Errormsg('Illegal username or password entered');
+                    CloseFile(F);
+                    result:=false;
+                    exit;
+                  end;
+                df^.Key:=df^.GCPproject.MasterPassword;
+                df^.DontGetPassword:=true;
+              finally
+                formCredentials.Free;
+              end;
+            end;
+
           TempInt:=Pos('FILELABEL: ',AnsiUpperCase(eLine));
-          IF TempInt<>0 THEN df^.Filelabel:=
-            Copy(eLine,TempInt+Length('FILELABEL: '),Length(eLine));
-          IF Pos(' VLAB',eLine)>0 THEN df^.EpiInfoFieldNaming:=False
-            ELSE df^.EpiInfoFieldNaming:=True;
+          IF TempInt<>0 THEN df^.Filelabel:=Copy(eLine,TempInt+Length('FILELABEL: '),Length(eLine));
+          IF Pos(' VLAB',eLine)>0 THEN df^.EpiInfoFieldNaming:=False ELSE df^.EpiInfoFieldNaming:=True;
           df^.FieldList.Capacity:=NumFields;
           df^.RecLength:=0;
           df^.IDNumField:=-1;
@@ -1318,6 +1364,7 @@ BEGIN
               THEN INC(df^.NumFields);
             END;
           df^.NumRecords:=PeekCountRecords(df);
+          if assigned(df^.GCPproject) then df^.GCPproject.LogAppend(df,LOG_RECOPENED,0,'','');
           IF df^.NumRecords=-1 THEN
             BEGIN
               {$IFNDEF epidat}
@@ -1814,10 +1861,11 @@ VAR
 
   FUNCTION RemoveCurly(q:STRING):STRING;
   BEGIN
+    result:=q;
     IF NOT EpiInfoFieldNaming THEN Exit;
     WHILE pos('{',q)>0 DO Delete(q,pos('{',q),1);
     WHILE pos('}',q)>0 DO Delete(q,pos('}',q),1);
-    RemoveCurly:=q;
+    result:=q;
   END;
 
 
