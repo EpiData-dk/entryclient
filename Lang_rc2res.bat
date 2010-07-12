@@ -1,1 +1,0 @@
-"c:\programmer\borland\delphi4\bin\brcc32" c:\pas\epidata\english.rc c:\pas\epidata\english.res
