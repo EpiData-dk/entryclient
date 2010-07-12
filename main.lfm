@@ -4,11 +4,23 @@ object MainForm: TMainForm
   Top = 367
   Width = 796
   Caption = 'MainForm'
-  Menu = MainMenu1
+  ClientHeight = 497
+  ClientWidth = 796
+  Menu = MainFormMenu
+  OnShow = FormShow
   LCLVersion = '0.9.29'
-  object MainMenu1: TMainMenu
-    left = 364
-    top = 181
+  object MainFormPageControl: TPageControl
+    Left = 0
+    Height = 497
+    Top = 0
+    Width = 796
+    Align = alClient
+    ShowTabs = False
+    TabOrder = 0
+  end
+  object MainFormMenu: TMainMenu
+    left = 328
+    top = 176
     object FileMenu: TMenuItem
       Caption = '&File'
       object OpenProjectMenuItem: TMenuItem
@@ -24,8 +36,26 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object ExitMenuItem: TMenuItem
-        Caption = 'E&xit'
+        Action = FileExitAction
       end
+    end
+  end
+  object MainActionList: TActionList
+    left = 328
+    top = 256
+    object FileExitAction: TFileExit
+      Category = 'File'
+      Caption = 'E&xit'
+      Hint = 'Exit'
+      ShortCut = 123
+      SecondaryShortCuts.Strings = (
+        'Alt+Q'
+      )
+    end
+    object NewProjectAction: TAction
+      Category = 'File'
+      Caption = 'NewProjectAction'
+      OnExecute = NewProjectActionExecute
     end
   end
 end

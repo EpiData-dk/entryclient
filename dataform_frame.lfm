@@ -1,9 +1,0 @@
-object DataFormFrame: TDataFormFrame
-  Left = 0
-  Height = 482
-  Top = 0
-  Width = 643
-  TabOrder = 0
-  DesignLeft = 679
-  DesignTop = 287
-end
