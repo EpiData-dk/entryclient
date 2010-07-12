@@ -1,0 +1,31 @@
+object MainForm: TMainForm
+  Left = 638
+  Height = 522
+  Top = 367
+  Width = 796
+  Caption = 'MainForm'
+  Menu = MainMenu1
+  LCLVersion = '0.9.29'
+  object MainMenu1: TMainMenu
+    left = 364
+    top = 181
+    object FileMenu: TMenuItem
+      Caption = '&File'
+      object OpenProjectMenuItem: TMenuItem
+        Caption = 'Open'
+      end
+      object SaveProjectMenuItem: TMenuItem
+        Caption = 'Save'
+      end
+      object SaveProjectAsMenuItem: TMenuItem
+        Caption = 'SaveAs'
+      end
+      object FileMenuDivider1: TMenuItem
+        Caption = '-'
+      end
+      object ExitMenuItem: TMenuItem
+        Caption = 'E&xit'
+      end
+    end
+  end
+end
