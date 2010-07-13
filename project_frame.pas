@@ -47,13 +47,15 @@ implementation
 {$R *.lfm}
 
 uses
-  dataform_frame;
+  dataform_frame, epimiscutils;
 
 { TProjectFrame }
 
 procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
 begin
   ProjectOpenDialog.InitialDir := GetCurrentDirUTF8; //ManagerSettings.WorkingDirUTF8;
+  ProjectOpenDialog.Filter := GetEpiDialogFilter(true, false, false, false,
+    false, false, false, false, false, true);
 
 {  {$IFNDEF EPI_DEBUG}
   if MessageDlg('Warning', 'Opening project will clear all.' + LineEnding +

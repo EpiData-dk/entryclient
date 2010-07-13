@@ -46,7 +46,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="6">
       <Unit0>
         <Filename Value="epidataentry.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -73,6 +73,16 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="dataform_frame"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="dataform/fieldedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fieldedit"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="entryprocs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entryprocs"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -84,7 +94,12 @@
       <IncludeFiles Value="$(ProjOutDir)/"/>
       <OtherUnitFiles Value="dataform/"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      <LCLWidgetType Value="win32"/>
     </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="i386"/>
+      <TargetOS Value="Win32"/>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="True"/>
@@ -100,6 +115,8 @@
       <CompilerMessages>
         <UseMsgFile Value="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dEPI_DEBUG
+-dEPI_RELEASE1"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
