@@ -24,8 +24,12 @@ object ProjectFrame: TProjectFrame
       Width = 168
       Align = alClient
       DefaultItemHeight = 19
+      ReadOnly = True
       ScrollBars = ssAutoBoth
+      ShowRoot = False
       TabOrder = 0
+      Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoToolTips, tvoThemedDraw]
+      TreeLinePenStyle = psDot
     end
     object ToolBar1: TToolBar
       Left = 1
@@ -87,11 +91,13 @@ object ProjectFrame: TProjectFrame
       Caption = 'Save Project'
       Hint = 'Save Project'
       ImageIndex = 1
+      OnExecute = SaveProjectActionExecute
     end
     object SaveProjectAsAction: TAction
       Caption = 'Save Project As'
       Hint = 'Save Project As'
       ImageIndex = 2
+      OnExecute = SaveProjectAsActionExecute
     end
   end
   object ProjectImageList: TImageList
@@ -200,5 +206,9 @@ object ProjectFrame: TProjectFrame
   object ProjectOpenDialog: TOpenDialog
     left = 504
     top = 136
+  end
+  object ProjectSaveDialog: TSaveDialog
+    left = 504
+    top = 192
   end
 end

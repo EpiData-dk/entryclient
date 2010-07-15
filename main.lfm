@@ -8,6 +8,7 @@ object MainForm: TMainForm
   ClientWidth = 1167
   Menu = MainFormMenu
   OnShow = FormShow
+  Position = poScreenCenter
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0

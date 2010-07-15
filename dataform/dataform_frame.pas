@@ -49,8 +49,7 @@ type
     { Field Entry Handling }
     procedure FieldEditingDone(Sender: TObject);
     procedure FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char);
-    procedure FieldKeyPress(Sender: TObject; var Key: Char);
-
+    procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
@@ -69,7 +68,8 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit, epidatafilestypes, LCLProc, entryprocs;
+  fieldedit, epidatafilestypes, LCLProc, entryprocs,
+  main, Menus, LMessages;
 
 { TDataFormFrame }
 
@@ -207,7 +207,8 @@ begin
     Field          := TEpiField(EpiControl);
     OnEditingDone  := @FieldEditingDone;
     OnUTF8KeyPress := @FieldKeyPressUTF8;
-    OnKeyPress     := @FieldKeyPress;
+//    OnKeyPress     := @FieldKeyPress;
+    OnKeyDown      := @FieldKeyDown;
   end;
 
   FFieldEditList.Add(Result);
@@ -233,6 +234,13 @@ begin
   if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
   if AValue < 0 then AValue := 0;
 
+  // Before setting new record no. do a "EditingDone" on the Edit with focus.
+  // - this is because when using shortcuts to change record, the active Edit is
+  //   not exited, hence editing is not done.
+  if MainForm.ActiveControl is TFieldEdit then
+    TFieldEdit(MainForm.ActiveControl).EditingDone;
+
+
   FRecNo := AValue;
   if DataFile.Size > 0 then
     LoadRecord(AValue);
@@ -241,8 +249,22 @@ begin
 end;
 
 procedure TDataFormFrame.FieldEditingDone(Sender: TObject);
+var
+  FieldEdit: TFieldEdit absolute Sender;
+  Field: TEpiField;
 begin
-  //
+  // We don't care if Edit has not been modified.
+  if not FieldEdit.Modified then exit;
+
+  // This should verify text for the last time and then
+  // write data directly to the TEpiField.
+  Field := FieldEdit.Field;
+
+  case Field.FieldType of
+    ftInteger: ;
+  end;
+
+  Field.AsString[RecNo] := FieldEdit.Text;
 end;
 
 procedure TDataFormFrame.FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char
@@ -250,6 +272,8 @@ procedure TDataFormFrame.FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Ch
 var
   l: LongInt;
   FieldEdit: TFieldEdit absolute Sender;
+  Key: Char;
+  S: String;
 begin
   // Sole purpose of this:
   // - catch UTF8 characters with > 1 byte length, since these are NOT caught in
@@ -258,48 +282,71 @@ begin
   //   should NEVER be part of fields with types other than string.
 
   l := Length(UTF8Key);
-  if (l > 1) and (not (FieldEdit.Field.FieldType in StringFieldTypes)) then
-    UTF8Key := '';
+  if (l > 1) then
+  begin
+    if not (FieldEdit.Field.FieldType in StringFieldTypes) then
+      UTF8Key := '';
 
-  if (FieldEdit.Field.FieldType = ftUpperString) then
-    UTF8Key := UTF8UpperCase(UTF8Key);
-end;
+    if (FieldEdit.Field.FieldType = ftUpperString) then
+      UTF8Key := UTF8UpperCase(UTF8Key);
 
-procedure TDataFormFrame.FieldKeyPress(Sender: TObject; var Key: Char);
-var
-  FieldEdit: TFieldEdit absolute Sender;
-  S: String;
-begin
+    exit;
+  end;
 
+  Key := UTF8Key[1];
   if Key in SystemChars then
   begin
-
     exit;
   end;
 
   with FieldEdit.Field do
   begin
-    if (FieldType = ftInteger)       and not(Key in IntegerChars) then Key:=#0;
-    if (FieldType = ftBoolean)       and not(Key in BooleanChars) then Key:=#0;
-    if (FieldType in DateFieldTypes) and not(Key in DateChars)    then Key:=#0;
-    if (FieldType = ftFloat) then
-    begin
-      if NOT(Key in FloatChars) then Key:=#0;
-      if Key <> #0 then
-      begin
-        S := FieldEdit.Text;
-        if Decimals > 0 then
-        begin
-          if (System.Length(S) = Length - 1 - Decimals) and
-             (Pos('.',S)=0) and (Pos(',',S)=0) and
-             (ORD(Key)<>8) and (Key<>',') and (Key<>'.') then
-          begin
-            FieldEdit.Text:=S + DecimalSeparator;
-            FieldEdit.SelStart := System.Length(FieldEdit.Text);
-          end;  //if
-        end;
-      end;  //if Key
+    case FieldType of
+      ftInteger: if not(Key in IntegerChars) then Key:=#0;
+      ftBoolean: if not(Key in BooleanChars) then Key:=#0;
+      ftDMYDate,
+      ftMDYDate,
+      ftYMDDate: if not(Key in DateChars)    then Key:=#0;
+      ftFloat:   begin
+                   if not(Key in FloatChars) then Key:=#0;
+                   if Key <> #0 then
+                   begin
+                     S := FieldEdit.Text;
+                     if Decimals > 0 then
+                     begin
+                       if (System.Length(S) = Length - 1 - Decimals) and
+                          (Pos('.',S)=0) and (Pos(',',S)=0) and
+                          (ORD(Key)<>8) and (Key<>',') and (Key<>'.') then
+                       begin
+                         FieldEdit.Text:=S + DecimalSeparator;
+                         FieldEdit.SelStart := System.Length(FieldEdit.Text);
+                       end;
+                     end;
+                   end;
+                 end;
     end;
+  end;
+  UTF8Key[1] := Key;
+end;
+
+procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  KeyMsg: TLMKey;
+begin
+  if Key = VK_MENU then exit;
+  // Ugly dirty way of capturing shortcuts involving keys.
+  // -- send to mainform, it automatically propagetes down through action lists..
+  if Key <> VK_UNKNOWN then
+  begin
+    KeyMsg.Msg := LM_KEYDOWN;
+    KeyMsg.KeyData := ShortCut(0, Shift);
+    if (ssAlt in Shift) then
+      KeyMsg.KeyData := KeyMsg.KeyData or $20000000;
+    KeyMsg.CharCode := Key;
+    KeyMsg.Result := 0;
+    if MainForm.IsShortcut(KeyMsg) then
+      Key := VK_UNKNOWN;
   end;
 end;
 

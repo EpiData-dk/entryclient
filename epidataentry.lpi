@@ -14,9 +14,6 @@
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
-    <i18n>
-      <EnableI18N LFM="False"/>
-    </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
@@ -94,12 +91,12 @@
       <IncludeFiles Value="$(ProjOutDir)/"/>
       <OtherUnitFiles Value="dataform/"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
-      <LCLWidgetType Value="win32"/>
     </SearchPaths>
-    <CodeGeneration>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="Win32"/>
-    </CodeGeneration>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="True"/>
@@ -116,7 +113,7 @@
         <UseMsgFile Value="True"/>
       </CompilerMessages>
       <CustomOptions Value="-dEPI_DEBUG
--dEPI_RELEASE1"/>
+-dEPI_RELEASE"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

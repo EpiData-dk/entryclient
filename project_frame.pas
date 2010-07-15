@@ -15,6 +15,7 @@ type
   TProjectFrame = class(TFrame)
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
+    ProjectSaveDialog: TSaveDialog;
     SaveProjectAsAction: TAction;
     SaveProjectAction: TAction;
     OpenProjectAction: TAction;
@@ -29,11 +30,15 @@ type
     ProjectToolButtomDivider2: TToolButton;
     DataFilesTreeView: TTreeView;
     procedure OpenProjectActionExecute(Sender: TObject);
+    procedure SaveProjectActionExecute(Sender: TObject);
+    procedure SaveProjectAsActionExecute(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
     FEpiDocument: TEpiDocument;
+    FDocumentFilename: string;
     procedure DoOpenProject(Const aFilename: string);
+    procedure DoSaveProject(Const aFilename: string);
     procedure DoNewDataForm(DataFile: TEpiDataFile);
     function  DoCreateNewDocument: TEpiDocument;
   public
@@ -68,6 +73,20 @@ begin
   DoOpenProject(ProjectOpenDialog.FileName);
 end;
 
+procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
+begin
+  DoSaveProject(FDocumentFilename);
+end;
+
+procedure TProjectFrame.SaveProjectAsActionExecute(Sender: TObject);
+begin
+  ProjectSaveDialog.InitialDir := GetCurrentDirUTF8;
+  ProjectSaveDialog.Filter := GetEpiDialogFilter(true, false, false, false,
+    false, false, false, false, false, true);
+  if not ProjectSaveDialog.Execute then exit;
+  DoSaveProject(ProjectSaveDialog.FileName);
+end;
+
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
 var
   Frame: TDataFormFrame;
@@ -80,7 +99,20 @@ begin
 
   FEpiDocument := DoCreateNewDocument;
   FEpiDocument.LoadFromFile(aFilename);
+  FDocumentFilename := aFilename;
   DoNewDataForm(FEpiDocument.DataFiles[0]);
+end;
+
+procedure TProjectFrame.DoSaveProject(const aFilename: string);
+var
+  Ss: TStringStream;
+  Fs: TFileStream;
+begin
+  Ss := TStringStream.Create(EpiDocument.SaveToXml());
+  Fs := TFileStream.Create(aFilename, fmCreate);
+  Fs.CopyFrom(Ss, Ss.Size);
+  Ss.Free;
+  Fs.Free;
 end;
 
 procedure TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile);
