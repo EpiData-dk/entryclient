@@ -5,7 +5,7 @@ unit fieldedit;
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, epicustombase, epidatafiles;
+  Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles;
 
 
 type
@@ -23,20 +23,22 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
-    property    Field: TEpiField read FField write SetField;
+   property    Field: TEpiField read FField write SetField;
   end;
 
 
 implementation
 
 uses
-  Forms;
+  Forms, epidatafilestypes;
 
 { TFieldEdit }
 
 procedure TFieldEdit.SetField(const AValue: TEpiField);
 var
   S: string;
+  Cv: TCanvas;
+  SideBuf: integer;
 begin
   if FField = AValue then exit;
   FField := AValue;
@@ -47,9 +49,22 @@ begin
   Left      := Field.Left;
   Top       := Field.Top;
   if Self.Parent is TScrollBox then
-    Width   := TScrollBox(Self.Parent).Canvas.GetTextWidth('W') * FField.Length + 5
+    Cv := TScrollBox(Self.Parent).Canvas
   else
-    Width   := TScrollBox(Self.Parent.Parent).Canvas.GetTextWidth('W') * FField.Length + 5;
+    Cv := TScrollBox(Self.Parent.Parent).Canvas;
+  case Field.FieldType of
+    ftString: S := 'W';
+  else
+    S := '4';
+  end;
+
+  case BorderStyle of
+    bsNone:   SideBuf := 0;
+    bsSingle: SideBuf := 6;
+  end;
+
+  //         Side buffer (pixel from controls left side to first character.
+  Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * FField.Length;
 
   with FQuestionLabel do
   begin
@@ -64,7 +79,6 @@ begin
     Left    := FQuestionLabel.Left - (FNameLabel.Width + 5);
     Top     := FQuestionLabel.Top;
   end;
-
 
   {$IFDEF EPI_DEBUG}
   WriteStr(S,  Field.FieldType);

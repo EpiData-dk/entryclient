@@ -47,6 +47,7 @@ type
     procedure SetRecNo(AValue: integer);
   private
     { Field Entry Handling }
+    FEditingOk: Boolean;
     procedure FieldEditingDone(Sender: TObject);
     procedure FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -61,7 +62,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
-  end; 
+  end;
 
 implementation
 
@@ -155,7 +156,8 @@ begin
     end;
   end;
   DataFile.EndUpdate;
-
+  if DataFile.Size = 0 then
+    DataFile.Size := 10;
   RecNo := 0;
 end;
 
@@ -252,19 +254,41 @@ procedure TDataFormFrame.FieldEditingDone(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
   Field: TEpiField;
+  I: EpiInteger;
+  D: EpiDate;
+  S: String;
 begin
   // We don't care if Edit has not been modified.
   if not FieldEdit.Modified then exit;
 
+  // Temporary fix until "New Record" is implemented.
+  if DataFile.Size = 0 then exit;
+
+  FEditingOk := False;
   // This should verify text for the last time and then
   // write data directly to the TEpiField.
   Field := FieldEdit.Field;
 
   case Field.FieldType of
-    ftInteger: ;
+    ftInteger:
+      begin
+        if not IsEpiInteger(FieldEdit.Text, I) then exit;
+        Field.AsInteger[RecNo] := I;
+      end;
+    ftDMYDate,
+    ftMDYDate,
+    ftYMDDate:
+      begin
+        S := FieldEdit.Text;
+        if not IsEpiDate(S, D, Field.FieldType) then exit;
+        Field.AsDate[RecNo] := D;
+      end;
+  else
+    Field.AsString[RecNo] := FieldEdit.Text;
   end;
 
-  Field.AsString[RecNo] := FieldEdit.Text;
+  FEditingOk := True;
+  FieldEdit.Text := Field.AsString[RecNo];
 end;
 
 procedure TDataFormFrame.FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char
@@ -275,9 +299,9 @@ var
   Key: Char;
   S: String;
 begin
-  // Sole purpose of this:
+  // Purpose of this:
   // - catch UTF8 characters with > 1 byte length, since these are NOT caught in
-  //   the non-UTF8 version and cannot therefor be handled.
+  //   the non-UTF8 version and cannot therefor be handled here.
   //   Luckily enough >1 byte characters will ALWAYS be local string character and
   //   should NEVER be part of fields with types other than string.
 
