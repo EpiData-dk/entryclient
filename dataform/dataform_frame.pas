@@ -198,8 +198,6 @@ end;
 
 function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
-var
-  Lbl: TLabel;
 begin
   Result := TFieldEdit.Create(AParent);
   Result.Parent := AParent;

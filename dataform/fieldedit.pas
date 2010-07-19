@@ -86,7 +86,7 @@ begin
   Hint := WideFormat(
     'FieldName: %s' + LineEnding +
     'Length:    %d' + LineEnding +
-    'Type:      %s' + LineEnding,
+    'Type:      %s',
     [Field.Name, Field.Length, S]);
   {$ENDIF}
 end;

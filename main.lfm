@@ -1,20 +1,20 @@
 object MainForm: TMainForm
-  Left = 413
-  Height = 799
-  Top = 192
-  Width = 1167
+  Left = 263
+  Height = 642
+  Top = 29
+  Width = 977
   Caption = 'MainForm'
-  ClientHeight = 774
-  ClientWidth = 1167
+  ClientHeight = 623
+  ClientWidth = 977
   Menu = MainFormMenu
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 774
+    Height = 623
     Top = 0
-    Width = 1167
+    Width = 977
     Align = alClient
     ShowTabs = False
     TabOrder = 0
