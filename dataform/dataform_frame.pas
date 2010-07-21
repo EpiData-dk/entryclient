@@ -50,7 +50,7 @@ type
     FEditingOk: Boolean;
     procedure FieldEditingDone(Sender: TObject);
     procedure FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char);
-    procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
@@ -207,8 +207,7 @@ begin
     Field          := TEpiField(EpiControl);
     OnEditingDone  := @FieldEditingDone;
     OnUTF8KeyPress := @FieldKeyPressUTF8;
-//    OnKeyPress     := @FieldKeyPress;
-    OnKeyDown      := @FieldKeyDown;
+    OnKeyUp        := @FieldKeyUp;
   end;
 
   FFieldEditList.Add(Result);
@@ -240,6 +239,7 @@ begin
   if MainForm.ActiveControl is TFieldEdit then
     TFieldEdit(MainForm.ActiveControl).EditingDone;
 
+  // TODO: Ask for saving current record if things have been modified.
 
   FRecNo := AValue;
   if DataFile.Size > 0 then
@@ -299,25 +299,35 @@ var
 begin
   // Purpose of this:
   // - catch UTF8 characters with > 1 byte length, since these are NOT caught in
-  //   the non-UTF8 version and cannot therefor be handled here.
-  //   Luckily enough >1 byte characters will ALWAYS be local string character and
+  //   the non-UTF8 version and cannot therefor be handled there.
+  //   Luckily enough >1 byte characters will ALWAYS be string characters and
   //   should NEVER be part of fields with types other than string.
+
+  if (FieldEdit.Field.FieldType = ftUpperString) then
+    UTF8Key := UTF8UpperCase(UTF8Key);
 
   l := Length(UTF8Key);
   if (l > 1) then
   begin
     if not (FieldEdit.Field.FieldType in StringFieldTypes) then
       UTF8Key := '';
-
-    if (FieldEdit.Field.FieldType = ftUpperString) then
-      UTF8Key := UTF8UpperCase(UTF8Key);
-
     exit;
   end;
 
   Key := UTF8Key[1];
   if Key in SystemChars then
   begin
+    if Word(Key) = VK_RETURN then
+    begin
+      l := FFieldEditList.IndexOf(FieldEdit)+1;
+      if l = FFieldEditList.Count then
+      begin
+        NextRecAction.Execute;
+        Exit;
+      end;
+
+      TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
+    end;
     exit;
   end;
 
@@ -351,24 +361,28 @@ begin
   UTF8Key[1] := Key;
 end;
 
-procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
+procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
-  KeyMsg: TLMKey;
+  FieldEdit: TFieldEdit absolute Sender;
+  l: Integer;
 begin
-  if Key = VK_MENU then exit;
-  // Ugly dirty way of capturing shortcuts involving keys.
-  // -- send to mainform, it automatically propagetes down through action lists..
-  if Key <> VK_UNKNOWN then
+  // This sort of works, but a lot of special characters exists
+  //  and we cannot capture them all. Is there a better way perhaps
+  //  that also ensure legal UTF-8 character can be entered into
+  //  string fields.
+  if (Key < VK_0) and (Key <> VK_SPACE) then exit;
+
+  if UTF8Length(FieldEdit.Text) = FieldEdit.Field.Length then
   begin
-    KeyMsg.Msg := LM_KEYDOWN;
-    KeyMsg.KeyData := ShortCut(0, Shift);
-    if (ssAlt in Shift) then
-      KeyMsg.KeyData := KeyMsg.KeyData or $20000000;
-    KeyMsg.CharCode := Key;
-    KeyMsg.Result := 0;
-    if MainForm.IsShortcut(KeyMsg) then
-      Key := VK_UNKNOWN;
+    l := FFieldEditList.IndexOf(FieldEdit)+1;
+    if l = FFieldEditList.Count then
+    begin
+      NextRecAction.Execute;
+      Exit;
+    end;
+
+    TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
   end;
 end;
 
