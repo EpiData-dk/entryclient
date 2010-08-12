@@ -302,7 +302,7 @@ begin
   //   the non-UTF8 version and cannot therefor be handled there.
   //   Luckily enough >1 byte characters will ALWAYS be string characters and
   //   should NEVER be part of fields with types other than string.
-
+{
   if (FieldEdit.Field.FieldType = ftUpperString) then
     UTF8Key := UTF8UpperCase(UTF8Key);
 
@@ -358,7 +358,7 @@ begin
                  end;
     end;
   end;
-  UTF8Key[1] := Key;
+  UTF8Key[1] := Key;       }
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
