@@ -32,7 +32,8 @@ type
 implementation
 
 uses
-  Forms, epidatafilestypes, entryprocs, LCLProc, strutils;
+  Forms, epidatafilestypes, entryprocs, LCLProc, strutils,
+  epistringutils;
 
 { TFieldEdit }
 
@@ -106,15 +107,19 @@ end;
 function TFieldEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   WC: WideChar;
-//  Seps: Array of WideChar;
+  N: LongInt;
 begin
   // Compare the pressed key to the field type. Sets to '' (empty) key if
   // the type is not allowed.
   // Also catch to many separator in float, date and time field.
 
+  // We catch keypresses "below" space here, since eg. backspace generates #8, we
+  // must accept it!
   WC := UTF8ToUTF16(UTF8Key)[1];
   if WC < #32 then
     exit(inherited DoUTF8KeyPress(UTF8Key));
+
+  if UTF8Length(Text) = MaxLength then exit(false);
 
   // Strict type checking. (Eg. number in int-field, etc.)
   case Field.FieldType of
@@ -123,15 +128,26 @@ begin
     ftBoolean: if not(WC in BooleanChars) then UTF8Key := '';
     ftDMYDate,
     ftMDYDate,
-    ftYMDDate: begin
-                 if not(WC in DateChars)    then UTF8Key := '';
-               end;
-    ftFloat:   begin
-                 if not(WC in FloatChars) then UTF8Key := '';
-               end;
+    ftYMDDate: if not(WC in DateChars)  then UTF8Key := '';
+    ftTime:    if not(WC in TimeChars)  then UTF8Key := '';
+    ftFloat:   if not(WC in FloatChars) then UTF8Key := '';
   end;
+  if UTF8Key = '' then exit(true);
 
   // Check for separators.
+  N := CountChar(Text, '.'); // Float, date
+  N += CountChar(Text, ','); // Float
+  N += CountChar(Text, '-'); // Date, time
+  N += CountChar(Text, '/'); // Date
+  N += CountChar(Text, ':'); // Time
+  case Field.FieldType of
+    ftDMYDate,
+    ftMDYDate,
+    ftYMDDate: if (N >= 2) and (WC in ['.','-','/']) then UTF8Key := '';
+    ftTime:    if (N >= 2) and (WC in ['-',':']) then UTF8Key := '';
+    ftFloat:   if (N >= 1) and (WC in ['.',',']) then UTF8Key := '';
+  end;
+  if UTF8Key = '' then exit(true);
 
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;

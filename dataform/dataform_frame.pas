@@ -292,73 +292,33 @@ end;
 procedure TDataFormFrame.FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char
   );
 var
-  l: LongInt;
-  FieldEdit: TFieldEdit absolute Sender;
-  Key: Char;
-  S: String;
+  Edit: TFieldEdit absolute Sender;
+  WC: WideChar;
+  Pos: integer;
+  IsSeparator: boolean;
 begin
-  // Purpose of this:
-  // - catch UTF8 characters with > 1 byte length, since these are NOT caught in
-  //   the non-UTF8 version and cannot therefor be handled there.
-  //   Luckily enough >1 byte characters will ALWAYS be string characters and
-  //   should NEVER be part of fields with types other than string.
-{
-  if (FieldEdit.Field.FieldType = ftUpperString) then
-    UTF8Key := UTF8UpperCase(UTF8Key);
+  // At this point the pressed key has been validated as supported for this
+  // field type, and there not too many separators. Also there is room for at
+  // least 1 more character in the field. The syntax has NOT been checked.
+  // Now do advanced handling of keys - such as separator positions.
 
-  l := Length(UTF8Key);
-  if (l > 1) then
-  begin
-    if not (FieldEdit.Field.FieldType in StringFieldTypes) then
-      UTF8Key := '';
-    exit;
+  Pos := Edit.CaretPos.X;
+  WC := UTF8ToUTF16(UTF8Key)[1];
+  IsSeparator := WC in [',','.','-','/',':'];
+
+  case Edit.Field.FieldType of
+    ftFloat: begin
+               // Validate position of separator...
+               if IsSeparator and (Pos >= (Edit.Field.Length - Edit.Field.Decimals - 1)) then
+               begin
+                 UTF8Key := '';
+                 exit;
+               end;
+{               // Auto place the separator...
+               if (not IsSeparator) and (Pos = (Edit.Field.Length - Edit.Field.Decimals - 1)) then
+                 Edit.Text := Edit.Text + DecimalSeparator;  }
+             end;
   end;
-
-  Key := UTF8Key[1];
-  if Key in SystemChars then
-  begin
-    if Word(Key) = VK_RETURN then
-    begin
-      l := FFieldEditList.IndexOf(FieldEdit)+1;
-      if l = FFieldEditList.Count then
-      begin
-        NextRecAction.Execute;
-        Exit;
-      end;
-
-      TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
-    end;
-    exit;
-  end;
-
-  with FieldEdit.Field do
-  begin
-    case FieldType of
-      ftInteger: if not(Key in IntegerChars) then Key:=#0;
-      ftBoolean: if not(Key in BooleanChars) then Key:=#0;
-      ftDMYDate,
-      ftMDYDate,
-      ftYMDDate: if not(Key in DateChars)    then Key:=#0;
-      ftFloat:   begin
-                   if not(Key in FloatChars) then Key:=#0;
-                   if Key <> #0 then
-                   begin
-                     S := FieldEdit.Text;
-                     if Decimals > 0 then
-                     begin
-                       if (System.Length(S) = Length - 1 - Decimals) and
-                          (Pos('.',S)=0) and (Pos(',',S)=0) and
-                          (ORD(Key)<>8) and (Key<>',') and (Key<>'.') then
-                       begin
-                         FieldEdit.Text:=S + DecimalSeparator;
-                         FieldEdit.SelStart := System.Length(FieldEdit.Text);
-                       end;
-                     end;
-                   end;
-                 end;
-    end;
-  end;
-  UTF8Key[1] := Key;       }
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
@@ -367,7 +327,7 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   l: Integer;
 begin
-  // This sort of works, but a lot of special characters exists
+{  // This sort of works, but a lot of special characters exists
   //  and we cannot capture them all. Is there a better way perhaps
   //  that also ensure legal UTF-8 character can be entered into
   //  string fields.
@@ -383,7 +343,7 @@ begin
     end;
 
     TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
-  end;
+  end;   }
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
