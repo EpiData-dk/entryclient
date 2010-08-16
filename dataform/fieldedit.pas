@@ -22,11 +22,34 @@ type
   protected
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
     property    Field: TEpiField read FField write SetField;
   end;
+
+  { TFloatEdit }
+
+  TFloatEdit = class(TFieldEdit)
+  protected
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  end;
+
+  { TDateEdit }
+
+  TDateEdit = class(TFieldEdit)
+  protected
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  end;
+
+  { TIntegerEdit }
+
+  TIntegerEdit = class(TFieldEdit)
+  protected
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  end;
+
 
 
 implementation
@@ -109,7 +132,7 @@ var
   WC: WideChar;
   N: LongInt;
 begin
-  // Compare the pressed key to the field type. Sets to '' (empty) key if
+ { // Compare the pressed key to the field type. Sets to '' (empty) key if
   // the type is not allowed.
   // Also catch to many separator in float, date and time field.
 
@@ -149,7 +172,21 @@ begin
   end;
   if UTF8Key = '' then exit(true);
 
-  Result := inherited DoUTF8KeyPress(UTF8Key);
+  Result := inherited DoUTF8KeyPress(UTF8Key);     }
+end;
+
+function TFieldEdit.PreUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  WC: WideChar;
+begin
+  WC := UTF8ToUTF16(UTF8Key)[1];
+  if WC < #32 then
+  begin
+    inherited DoUTF8KeyPress(UTF8Key);
+    exit(true);
+  end;
+
+  if UTF8Length(Text) = MaxLength then exit(true);
 end;
 
 constructor TFieldEdit.Create(AOwner: TComponent);
@@ -164,6 +201,96 @@ begin
   FNameLabel.Free;
   FQuestionLabel.Free;
   inherited Destroy;
+end;
+
+{ TFloatEdit }
+
+function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: LongInt;
+  WC: WideChar;
+  IsSeparator: Boolean;
+  Caret: LongInt;
+begin
+  WC := UTF8ToUTF16(UTF8Key)[1];
+  if WC < #32 then
+    exit(inherited DoUTF8KeyPress(UTF8Key));
+
+  UTF8Key := '';
+  N := CountChar(Text, '.');
+  N += CountChar(Text, ',');
+
+  IsSeparator := false;
+  if (WC in ['.',',']) then IsSeparator := true;
+
+  if not(WC in FloatChars) then exit;
+  if IsSeparator and (N >= 1) then exit;
+
+  Caret := CaretPos.X;
+
+  // Validate position of separator... (cannot be placed beyond #integers)
+  if IsSeparator and (Caret > (Field.Length - Field.Decimals - 1)) then
+    exit;
+
+  // Auto place the separator...
+  if (not IsSeparator) and (N=0) and
+     (Caret = (Field.Length - Field.Decimals - 1)) then
+  begin
+    Text := Text + DecimalSeparator;
+    CaretPos := Point(Caret + 1, 0);
+  end;
+
+  if IsSeparator then
+    UTF8Key := DecimalSeparator
+  else
+    UTF8Key := WC;
+
+  Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+{ TDateEdit }
+
+function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: LongInt;
+  WC: WideChar;
+  IsSeparator: Boolean;
+begin
+  WC := UTF8ToUTF16(UTF8Key)[1];
+  if WC < #32 then
+    exit(inherited DoUTF8KeyPress(UTF8Key));
+
+  UTF8Key := '';
+  N := CountChar(Text, '-');
+  N += CountChar(Text, '/');
+  N += CountChar(Text, '.');
+
+  IsSeparator := false;
+  if (WC in ['.',',']) then IsSeparator := true;
+
+  if not(WC in DateChars) then exit;
+  if IsSeparator and (N >= 2) then exit;
+
+  if IsSeparator then UTF8Key := DateSeparator;
+  Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+{ TIntegerEdit }
+
+function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: LongInt;
+  WC: WideChar;
+begin
+  WC := UTF8ToUTF16(UTF8Key)[1];
+  if WC < #32 then
+    exit(inherited DoUTF8KeyPress(UTF8Key));
+
+  UTF8Key := '';
+
+  if not(WC in IntegerChars) then exit;
+
+  Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
 end.

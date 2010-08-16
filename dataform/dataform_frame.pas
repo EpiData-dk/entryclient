@@ -49,7 +49,6 @@ type
     { Field Entry Handling }
     FEditingOk: Boolean;
     procedure FieldEditingDone(Sender: TObject);
-    procedure FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { DataForm Control }
@@ -70,7 +69,7 @@ implementation
 
 uses
   fieldedit, epidatafilestypes, LCLProc, entryprocs,
-  main, Menus, LMessages;
+  main, Menus, LMessages, epistringutils;
 
 { TDataFormFrame }
 
@@ -199,14 +198,25 @@ end;
 function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
-  Result := TFieldEdit.Create(AParent);
+  case TEpiField(EpiControl).FieldType of
+    ftFloat:    Result := TFloatEdit.Create(AParent);
+    ftDMYDate,
+    ftDMYToday,
+    ftMDYDate,
+    ftMDYToday,
+    ftYMDDate,
+    ftYMDToday: Result := TDateEdit.Create(AParent);
+    ftInteger,
+    ftAutoInc:  Result := TIntegerEdit.Create(AParent);
+  else
+    Result := TFieldEdit.Create(AParent);
+  end;
   Result.Parent := AParent;
 
   with TFieldEdit(Result) do
   begin
     Field          := TEpiField(EpiControl);
     OnEditingDone  := @FieldEditingDone;
-    OnUTF8KeyPress := @FieldKeyPressUTF8;
     OnKeyUp        := @FieldKeyUp;
   end;
 
@@ -287,38 +297,6 @@ begin
 
   FEditingOk := True;
   FieldEdit.Text := Field.AsString[RecNo];
-end;
-
-procedure TDataFormFrame.FieldKeyPressUTF8(Sender: TObject; var UTF8Key: TUTF8Char
-  );
-var
-  Edit: TFieldEdit absolute Sender;
-  WC: WideChar;
-  Pos: integer;
-  IsSeparator: boolean;
-begin
-  // At this point the pressed key has been validated as supported for this
-  // field type, and there not too many separators. Also there is room for at
-  // least 1 more character in the field. The syntax has NOT been checked.
-  // Now do advanced handling of keys - such as separator positions.
-
-  Pos := Edit.CaretPos.X;
-  WC := UTF8ToUTF16(UTF8Key)[1];
-  IsSeparator := WC in [',','.','-','/',':'];
-
-  case Edit.Field.FieldType of
-    ftFloat: begin
-               // Validate position of separator...
-               if IsSeparator and (Pos >= (Edit.Field.Length - Edit.Field.Decimals - 1)) then
-               begin
-                 UTF8Key := '';
-                 exit;
-               end;
-{               // Auto place the separator...
-               if (not IsSeparator) and (Pos = (Edit.Field.Length - Edit.Field.Decimals - 1)) then
-                 Edit.Text := Edit.Text + DecimalSeparator;  }
-             end;
-  end;
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
