@@ -165,10 +165,7 @@ var
   i: Integer;
 begin
   for i := 0 to FFieldEditList.Count - 1 do
-  with TFieldEdit(FFieldEditList[i]) do
-  begin
-    Text := Field.AsString[RecordNo];
-  end;
+    TFieldEdit(FFieldEditList[i]).RecNo := RecordNo
 end;
 
 procedure TDataFormFrame.UpdateRecordEdit;
@@ -199,17 +196,23 @@ function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
   case TEpiField(EpiControl).FieldType of
+    ftInteger,
+    ftAutoInc:  Result := TIntegerEdit.Create(AParent);
+
     ftFloat:    Result := TFloatEdit.Create(AParent);
+
+    ftUpperString,
+    ftString:   Result := TStringEdit.Create(AParent);
+
     ftDMYDate,
     ftDMYToday,
     ftMDYDate,
     ftMDYToday,
     ftYMDDate,
     ftYMDToday: Result := TDateEdit.Create(AParent);
-    ftInteger,
-    ftAutoInc:  Result := TIntegerEdit.Create(AParent);
-  else
-    Result := TFieldEdit.Create(AParent);
+
+    ftTimeNow,
+    ftTime:     Result := TTimeEdit.Create(AParent);
   end;
   Result.Parent := AParent;
 
@@ -266,7 +269,7 @@ var
   D: EpiDate;
   S: String;
 begin
-  // We don't care if Edit has not been modified.
+{  // We don't care if Edit has not been modified.
   if not FieldEdit.Modified then exit;
 
   // Temporary fix until "New Record" is implemented.
@@ -296,7 +299,7 @@ begin
   end;
 
   FEditingOk := True;
-  FieldEdit.Text := Field.AsString[RecNo];
+  FieldEdit.Text := Field.AsString[RecNo];   }
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;

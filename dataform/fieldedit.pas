@@ -18,21 +18,43 @@ type
     FField: TEpiField;
     FNameLabel: TLabel;
     FQuestionLabel: TLabel;
+    FRecNo: integer;
     procedure   SetField(const AValue: TEpiField);
+    procedure   SetRecNo(const AValue: integer);
+    procedure   UpdateText;
   protected
+    WC: WideChar;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
-    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var InheritHandled: boolean): boolean;
+    procedure   EditingDone; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
     property    Field: TEpiField read FField write SetField;
+    property    RecNo: integer read FRecNo write SetRecNo;
+  end;
+
+  { TIntegerEdit }
+
+  TIntegerEdit = class(TFieldEdit)
+  protected
+    procedure   EditingDone; override;
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
   end;
 
   { TFloatEdit }
 
   TFloatEdit = class(TFieldEdit)
   protected
+    procedure   EditingDone; override;
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  end;
+
+  { TStringEdit }
+  TStringEdit = class(TFieldEdit)
+  protected
+    procedure   EditingDone; override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
   end;
 
@@ -40,17 +62,17 @@ type
 
   TDateEdit = class(TFieldEdit)
   protected
+    procedure   EditingDone; override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
   end;
 
-  { TIntegerEdit }
+  { TTimeEdit }
 
-  TIntegerEdit = class(TFieldEdit)
+  TTimeEdit = class(TFieldEdit)
   protected
+    procedure   EditingDone; override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
   end;
-
-
 
 implementation
 
@@ -118,6 +140,18 @@ begin
   {$ENDIF}
 end;
 
+procedure TFieldEdit.SetRecNo(const AValue: integer);
+begin
+  if FRecNo = AValue then exit;
+  FRecNo := AValue;
+  UpdateText;
+end;
+
+procedure TFieldEdit.UpdateText;
+begin
+  Text := Field.AsString[RecNo];
+end;
+
 procedure TFieldEdit.SetParent(NewParent: TWinControl);
 begin
   inherited SetParent(NewParent);
@@ -128,65 +162,34 @@ begin
 end;
 
 function TFieldEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
-var
-  WC: WideChar;
-  N: LongInt;
 begin
- { // Compare the pressed key to the field type. Sets to '' (empty) key if
-  // the type is not allowed.
-  // Also catch to many separator in float, date and time field.
-
-  // We catch keypresses "below" space here, since eg. backspace generates #8, we
-  // must accept it!
-  WC := UTF8ToUTF16(UTF8Key)[1];
-  if WC < #32 then
-    exit(inherited DoUTF8KeyPress(UTF8Key));
-
-  if UTF8Length(Text) = MaxLength then exit(false);
-
-  // Strict type checking. (Eg. number in int-field, etc.)
-  case Field.FieldType of
-    ftString, ftUpperString: ;
-    ftInteger: if not(WC in IntegerChars) then UTF8Key := '';
-    ftBoolean: if not(WC in BooleanChars) then UTF8Key := '';
-    ftDMYDate,
-    ftMDYDate,
-    ftYMDDate: if not(WC in DateChars)  then UTF8Key := '';
-    ftTime:    if not(WC in TimeChars)  then UTF8Key := '';
-    ftFloat:   if not(WC in FloatChars) then UTF8Key := '';
-  end;
-  if UTF8Key = '' then exit(true);
-
-  // Check for separators.
-  N := CountChar(Text, '.'); // Float, date
-  N += CountChar(Text, ','); // Float
-  N += CountChar(Text, '-'); // Date, time
-  N += CountChar(Text, '/'); // Date
-  N += CountChar(Text, ':'); // Time
-  case Field.FieldType of
-    ftDMYDate,
-    ftMDYDate,
-    ftYMDDate: if (N >= 2) and (WC in ['.','-','/']) then UTF8Key := '';
-    ftTime:    if (N >= 2) and (WC in ['-',':']) then UTF8Key := '';
-    ftFloat:   if (N >= 1) and (WC in ['.',',']) then UTF8Key := '';
-  end;
-  if UTF8Key = '' then exit(true);
-
-  Result := inherited DoUTF8KeyPress(UTF8Key);     }
+  UTF8Key := WC;
+  Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
-function TFieldEdit.PreUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
-var
-  WC: WideChar;
+function TFieldEdit.PreUTF8KeyPress(var UTF8Key: TUTF8Char;
+  var InheritHandled: boolean): boolean;
 begin
   WC := UTF8ToUTF16(UTF8Key)[1];
   if WC < #32 then
   begin
-    inherited DoUTF8KeyPress(UTF8Key);
+    InheritHandled := inherited DoUTF8KeyPress(UTF8Key);
     exit(true);
   end;
 
-  if UTF8Length(Text) = MaxLength then exit(true);
+  UTF8Key := '';
+  InheritHandled := false;
+  if (SelLength = 0) and (UTF8Length(Text) = MaxLength) then exit(true);
+  result := false;
+end;
+
+procedure TFieldEdit.EditingDone;
+begin
+  // This should verify text for the last time and then
+  // write data directly to the TEpiField.
+
+  UpdateText;
+  inherited EditingDone;
 end;
 
 constructor TFieldEdit.Create(AOwner: TComponent);
@@ -194,6 +197,7 @@ begin
   inherited Create(AOwner);
   FNameLabel := TLabel.Create(Self);
   FQuestionLabel := TLabel.Create(Self);
+  FRecNo := -1;
 end;
 
 destructor TFieldEdit.Destroy;
@@ -203,20 +207,55 @@ begin
   inherited Destroy;
 end;
 
+{ TIntegerEdit }
+
+procedure TIntegerEdit.EditingDone;
+var
+  I: integer;
+begin
+  if not Modified then exit;
+
+  if not IsEpiInteger(Text, I) then exit;
+  Field.AsInteger[RecNo] := I;
+
+  inherited EditingDone;
+end;
+
+function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: LongInt;
+
+begin
+  if PreUTF8KeyPress(UTF8Key, Result) then exit(Result);
+
+  UTF8Key := '';
+
+  if not(WC in IntegerChars) then exit;
+
+  UTF8Key := WC;
+  Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
 { TFloatEdit }
+
+procedure TFloatEdit.EditingDone;
+begin
+  if not Modified then exit;
+
+  //  if not IsEpiInteger(Text, I) then exit;
+  Field.AsString[RecNo] := Text;
+
+  inherited EditingDone;
+end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  WC: WideChar;
   IsSeparator: Boolean;
   Caret: LongInt;
 begin
-  WC := UTF8ToUTF16(UTF8Key)[1];
-  if WC < #32 then
-    exit(inherited DoUTF8KeyPress(UTF8Key));
+  if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
-  UTF8Key := '';
   N := CountChar(Text, '.');
   N += CountChar(Text, ',');
 
@@ -240,56 +279,165 @@ begin
     CaretPos := Point(Caret + 1, 0);
   end;
 
-  if IsSeparator then
-    UTF8Key := DecimalSeparator
-  else
-    UTF8Key := WC;
+  if IsSeparator then WC := DecimalSeparator;
+  Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
 
+{ TStringEdit }
+
+procedure TStringEdit.EditingDone;
+begin
+  if not Modified then exit;
+
+  Field.AsString[RecNo] := Text;
+  inherited EditingDone;
+end;
+
+function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+begin
+  if PreUTF8KeyPress(UTF8Key, Result) then exit;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
 { TDateEdit }
 
+procedure TDateEdit.EditingDone;
+var
+//  S: String;
+//  D: EpiDate;
+  DateStr: String;
+  Sep: String;
+  Y, M, D: word;
+  A, B, C: String;
+  Al, Bl, Cl: Integer;
+  ThisYear: Word;
+
+  procedure SwapVal(Var A,B: Word);
+  var
+    T: Word;
+  begin
+    T := A;
+    A := B;
+    B := T;
+  end;
+
+begin
+  if not Modified then exit;
+
+  Sep := String(DateSeparator);
+  DateStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
+
+  DecodeDate(Date, Y, M, D);
+  ThisYear := Y;
+
+  A := Copy2SymbDel(DateStr, DateSeparator);
+  Al := Length(A);
+  B := Copy2SymbDel(DateStr, DateSeparator);
+  Bl := Length(B);
+  C := Copy2SymbDel(DateStr, DateSeparator);
+  Cl := Length(C);
+
+  case Field.FieldType of
+    ftDMYDate,
+    ftMDYDate:
+      begin
+        if (Al > 2) or (Bl > 2) or (Cl > 4) then exit;
+
+        if Field.FieldType = ftDMYDate then
+        begin
+          if (Al > 0) then D := StrToInt(A);
+          if (Bl > 0) then M := StrToInt(B);
+        end else begin
+          if (Al > 0) then M := StrToInt(A);
+          if (Bl > 0) then D := StrToInt(B);
+        end;
+        if (Cl > 0) then Y := StrToInt(C);
+      end;
+    ftYMDDate:
+      begin
+        if (Al > 4) or (Bl > 2) or (Cl > 2) then exit;
+        if (Al > 0) then Y := StrToInt(A);
+        if (Bl > 0) then M := StrToInt(B);
+        if (Cl > 0) then D := StrToInt(C);
+      end;
+  end;
+
+  // 2 year digit conversion.
+  if Y < 100 then
+    if Y <= (ThisYear-2000) then  // TODO: Make 2-year limit variable.
+      Y += 2000
+    else
+      Y += 1900;
+
+  // TODO : Errorhandling when date not valid.
+  Field.AsDate[RecNo] := TruncToInt(EncodeDate(Y,M,D));
+  inherited EditingDone;
+end;
+
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  WC: WideChar;
   IsSeparator: Boolean;
+  Caret: LongInt;
+  SepPos: TIntegerSet;
 begin
-  WC := UTF8ToUTF16(UTF8Key)[1];
-  if WC < #32 then
-    exit(inherited DoUTF8KeyPress(UTF8Key));
+  if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
-  UTF8Key := '';
   N := CountChar(Text, '-');
   N += CountChar(Text, '/');
   N += CountChar(Text, '.');
 
   IsSeparator := false;
-  if (WC in ['.',',']) then IsSeparator := true;
+  if (WC in ['-','/','.']) then IsSeparator := true;
 
   if not(WC in DateChars) then exit;
-  if IsSeparator and (N >= 2) then exit;
+  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);
 
-  if IsSeparator then UTF8Key := DateSeparator;
+  Caret := CaretPos.X;
+
+  SepPos := [2,5];
+  if Field.FieldType = ftYMDDate then
+    SepPos := [4,7];
+
+  // Auto place the separator...
+  if (not IsSeparator) and (N<2) and
+     (Caret in SepPos) then
+  begin
+    Text := Text + DateSeparator;
+    CaretPos := Point(Caret + 1, 0);
+  end;
+
+  if IsSeparator then WC := DateSeparator;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
-{ TIntegerEdit }
+{ TTimeEdit }
 
-function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+procedure TTimeEdit.EditingDone;
+begin
+  if not Modified then exit;
+
+  Field.AsString[RecNo] := Text;
+  inherited EditingDone;
+end;
+
+function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  WC: WideChar;
+  IsSeparator: Boolean;
 begin
-  WC := UTF8ToUTF16(UTF8Key)[1];
-  if WC < #32 then
-    exit(inherited DoUTF8KeyPress(UTF8Key));
+  if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
-  UTF8Key := '';
+  N := CountChar(Text, '-');
+  N += CountChar(Text, ':');
 
-  if not(WC in IntegerChars) then exit;
+  IsSeparator := false;
+  if (WC in ['-',':']) then IsSeparator := true;
 
+  if not(WC in TimeChars) then exit;
+  if IsSeparator and (N >= 2) then exit;
+
+  if IsSeparator then WC := TimeSeparator;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
