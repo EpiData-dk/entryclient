@@ -185,9 +185,6 @@ end;
 
 procedure TFieldEdit.EditingDone;
 begin
-  // This should verify text for the last time and then
-  // write data directly to the TEpiField.
-
   UpdateText;
   inherited EditingDone;
 end;
@@ -224,15 +221,16 @@ end;
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
+  Caret: LongInt;
 
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit(Result);
 
-  UTF8Key := '';
-
+  Caret := CaretPos.X;
   if not(WC in IntegerChars) then exit;
+  // Sign operators are only allowed at pos 0.
+  if (WC in ['+','-']) and (Caret > 0) and (SelLength = 0) then exit;
 
-  UTF8Key := WC;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -262,7 +260,11 @@ begin
   IsSeparator := false;
   if (WC in ['.',',']) then IsSeparator := true;
 
+  // Check for allowed keys.
   if not(WC in FloatChars) then exit;
+  // Sign operators are only allowed at pos 0.
+  if (WC in ['+','-']) and (Caret > 0) and (SelLength = 0) then exit;
+  // No more than 1 separator is allowed at any time.
   if IsSeparator and (N >= 1) then exit;
 
   Caret := CaretPos.X;
@@ -303,23 +305,12 @@ end;
 
 procedure TDateEdit.EditingDone;
 var
-//  S: String;
-//  D: EpiDate;
   DateStr: String;
   Sep: String;
   Y, M, D: word;
   A, B, C: String;
   Al, Bl, Cl: Integer;
   ThisYear: Word;
-
-  procedure SwapVal(Var A,B: Word);
-  var
-    T: Word;
-  begin
-    T := A;
-    A := B;
-    B := T;
-  end;
 
 begin
   if not Modified then exit;
@@ -414,10 +405,29 @@ end;
 { TTimeEdit }
 
 procedure TTimeEdit.EditingDone;
+var
+  Sep: String;
+  TimeStr: String;
+  A,B,C: String;
+  Al,Bl,Cl: Integer;
 begin
   if not Modified then exit;
 
-  Field.AsString[RecNo] := Text;
+  Sep := String(TimeSeparator);
+  TimeStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
+
+  A := Copy2SymbDel(TimeStr, TimeSeparator);
+  Al := Length(A);
+  B := Copy2SymbDel(TimeStr, TimeSeparator);
+  Bl := Length(B);
+  C := Copy2SymbDel(TimeStr, TimeSeparator);
+  Cl := Length(C);
+
+  if (Al > 0) and (StrToInt(A) > 23) then raise Exception.Create('fielderror');
+  if (Bl > 0) and (StrToInt(B) > 59) then abort;
+  if (Cl > 0) and (StrToInt(C) > 59) then abort;
+
+  Field.AsTime[RecNo] := EncodeTime(StrToInt(A), StrToInt(B), StrToInt(C), 0);
   inherited EditingDone;
 end;
 
@@ -425,6 +435,7 @@ function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
   IsSeparator: Boolean;
+  Caret: LongInt;
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
@@ -435,7 +446,17 @@ begin
   if (WC in ['-',':']) then IsSeparator := true;
 
   if not(WC in TimeChars) then exit;
-  if IsSeparator and (N >= 2) then exit;
+  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);
+
+  Caret := CaretPos.X;
+
+  // Auto place the separator...
+  if (not IsSeparator) and (N<2) and
+     (Caret in [2,5]) then
+  begin
+    Text := Text + TimeSeparator;
+    CaretPos := Point(Caret + 1, 0);
+  end;
 
   if IsSeparator then WC := TimeSeparator;
   Result := inherited DoUTF8KeyPress(UTF8Key);

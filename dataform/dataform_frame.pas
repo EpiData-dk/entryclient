@@ -48,8 +48,8 @@ type
   private
     { Field Entry Handling }
     FEditingOk: Boolean;
-    procedure FieldEditingDone(Sender: TObject);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FieldException(Sender: TObject; E: Exception);
   private
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
@@ -69,7 +69,7 @@ implementation
 
 uses
   fieldedit, epidatafilestypes, LCLProc, entryprocs,
-  main, Menus, LMessages, epistringutils;
+  main, Menus, LMessages, epistringutils, Dialogs;
 
 { TDataFormFrame }
 
@@ -219,7 +219,6 @@ begin
   with TFieldEdit(Result) do
   begin
     Field          := TEpiField(EpiControl);
-    OnEditingDone  := @FieldEditingDone;
     OnKeyUp        := @FieldKeyUp;
   end;
 
@@ -261,47 +260,6 @@ begin
   TFieldEdit(FFieldEditList[0]).SetFocus;
 end;
 
-procedure TDataFormFrame.FieldEditingDone(Sender: TObject);
-var
-  FieldEdit: TFieldEdit absolute Sender;
-  Field: TEpiField;
-  I: EpiInteger;
-  D: EpiDate;
-  S: String;
-begin
-{  // We don't care if Edit has not been modified.
-  if not FieldEdit.Modified then exit;
-
-  // Temporary fix until "New Record" is implemented.
-  if DataFile.Size = 0 then exit;
-
-  FEditingOk := False;
-  // This should verify text for the last time and then
-  // write data directly to the TEpiField.
-  Field := FieldEdit.Field;
-
-  case Field.FieldType of
-    ftInteger:
-      begin
-        if not IsEpiInteger(FieldEdit.Text, I) then exit;
-        Field.AsInteger[RecNo] := I;
-      end;
-    ftDMYDate,
-    ftMDYDate,
-    ftYMDDate:
-      begin
-        S := FieldEdit.Text;
-        if not IsEpiDate(S, D, Field.FieldType) then exit;
-        Field.AsDate[RecNo] := D;
-      end;
-  else
-    Field.AsString[RecNo] := FieldEdit.Text;
-  end;
-
-  FEditingOk := True;
-  FieldEdit.Text := Field.AsString[RecNo];   }
-end;
-
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
@@ -327,12 +285,21 @@ begin
   end;   }
 end;
 
+procedure TDataFormFrame.FieldException(Sender: TObject; E: Exception);
+begin
+//  ShowMessage('Sender: ' + Sender.ClassName + LineEnding +
+//              'Exception: ' + E.Message);
+  //ShowException(E, E.);
+end;
+
 constructor TDataFormFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
 
   FFieldEditList := TFPList.Create;
   FRecNo := -1;
+
+//  Application.AddOnExceptionHandler(@FieldException);
 end;
 
 
