@@ -6,7 +6,6 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <Title Value="EpiData Entry Client"/>
-      <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
     </General>
     <VersionInfo>
@@ -108,7 +107,7 @@
         <UseMsgFile Value="True"/>
       </CompilerMessages>
       <CustomOptions Value="-dEPI_DEBUG
--dEPI_RELEASE"/>
+-dEPI_RELEASE1"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

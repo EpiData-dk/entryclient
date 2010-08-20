@@ -14,7 +14,9 @@ type
 
   TDataFormFrame = class(TFrame)
     LastRecAction: TAction;
+    ListBox1: TListBox;
     NextRecAction: TAction;
+    Panel1: TPanel;
     PrevRecAction: TAction;
     FirstRecAction: TAction;
     ActionList1: TActionList;
@@ -29,6 +31,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    Splitter1: TSplitter;
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
@@ -49,7 +52,7 @@ type
     { Field Entry Handling }
     FEditingOk: Boolean;
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FieldException(Sender: TObject; E: Exception);
+    procedure FieldExit(Sender: TObject);
   private
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
@@ -218,8 +221,9 @@ begin
 
   with TFieldEdit(Result) do
   begin
-    Field          := TEpiField(EpiControl);
-    OnKeyUp        := @FieldKeyUp;
+    Field    := TEpiField(EpiControl);
+    OnExit   := @FieldExit;
+    OnKeyUp  := @FieldKeyUp;
   end;
 
   FFieldEditList.Add(Result);
@@ -285,11 +289,14 @@ begin
   end;   }
 end;
 
-procedure TDataFormFrame.FieldException(Sender: TObject; E: Exception);
+procedure TDataFormFrame.FieldExit(Sender: TObject);
 begin
-//  ShowMessage('Sender: ' + Sender.ClassName + LineEnding +
-//              'Exception: ' + E.Message);
-  //ShowException(E, E.);
+  with TFieldEdit(Sender) do
+  if not ValidateEntry then
+  begin
+    SetFocus;
+    Beep;
+  end;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);

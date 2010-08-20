@@ -1,18 +1,18 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 482
+  Height = 633
   Top = 0
-  Width = 643
-  ClientHeight = 482
-  ClientWidth = 643
+  Width = 880
+  ClientHeight = 633
+  ClientWidth = 880
   TabOrder = 0
-  DesignLeft = 564
-  DesignTop = 228
+  DesignLeft = 586
+  DesignTop = 248
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 452
+    Height = 603
     Top = 0
-    Width = 643
+    Width = 705
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -21,11 +21,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 452
-    Width = 643
+    Top = 603
+    Width = 880
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 643
+    ClientWidth = 880
     TabOrder = 1
     object NavigationPanel: TPanel
       Left = 1
@@ -211,6 +211,35 @@ object DataFormFrame: TDataFormFrame
         NumGlyphs = 2
       end
     end
+  end
+  object Panel1: TPanel
+    Left = 710
+    Height = 603
+    Top = 0
+    Width = 170
+    Align = alRight
+    Caption = 'Panel1'
+    ClientHeight = 603
+    ClientWidth = 170
+    TabOrder = 2
+    object ListBox1: TListBox
+      Left = 1
+      Height = 601
+      Top = 1
+      Width = 168
+      Align = alClient
+      ItemHeight = 0
+      TabOrder = 0
+      TopIndex = -1
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 705
+    Height = 603
+    Top = 0
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
   end
   object ActionList1: TActionList
     left = 432
