@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, epidatafiles,
-  epicustombase, StdCtrls, ExtCtrls, Buttons, Arrow, ActnList, LCLType;
+  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType;
 
 type
 
@@ -50,7 +50,6 @@ type
     procedure SetRecNo(AValue: integer);
   private
     { Field Entry Handling }
-    FEditingOk: Boolean;
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldExit(Sender: TObject);
   private
@@ -71,8 +70,8 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit, epidatafilestypes, LCLProc, entryprocs,
-  main, Menus, LMessages, epistringutils, Dialogs;
+  fieldedit, epidatafilestypes, LCLProc,
+  main, Menus, Dialogs;
 
 { TDataFormFrame }
 
@@ -249,13 +248,11 @@ begin
   if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
   if AValue < 0 then AValue := 0;
 
-  // Before setting new record no. do a "EditingDone" on the Edit with focus.
+  // Before setting new record no. do a "ValidateEntry" on the Edit with focus.
   // - this is because when using shortcuts to change record, the active Edit is
-  //   not exited, hence editing is not done.
-  if MainForm.ActiveControl is TFieldEdit then
-    TFieldEdit(MainForm.ActiveControl).EditingDone;
-
-  // TODO: Ask for saving current record if things have been modified.
+  //   not exited, hence not triggering of OnExit event.
+  if (MainForm.ActiveControl is TFieldEdit) and
+     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
 
   FRecNo := AValue;
   if DataFile.Size > 0 then
@@ -305,8 +302,6 @@ begin
 
   FFieldEditList := TFPList.Create;
   FRecNo := -1;
-
-//  Application.AddOnExceptionHandler(@FieldException);
 end;
 
 

@@ -25,14 +25,15 @@ type
     procedure   UpdateText;
     procedure   FieldChange(Sender: TObject; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
   protected
-    WC: WideChar;
+    WC:         WideChar;
+    Caret:      Integer;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
     function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var InheritHandled: boolean): boolean;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
-    function    ValidateEntry: boolean; virtual; abstract;
+    function    ValidateEntry: boolean; virtual;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
   end;
@@ -195,6 +196,19 @@ begin
     exit(true);
   end;
 
+  if SelLength > 0 then
+    Caret := SelStart
+  else
+    Caret := CaretPos.X;
+  // Increment to have 1 indexed caret as with strings.
+  Inc(Caret);
+
+  if (Caret = 1) and (WC = '.') then
+  begin
+    InheritHandled := inherited DoUTF8KeyPress(UTF8Key);
+    exit(true);
+  end;
+
   UTF8Key := '';
   InheritHandled := false;
   if (SelLength = 0) and (UTF8Length(Text) = MaxLength) then exit(true);
@@ -216,30 +230,44 @@ begin
   inherited Destroy;
 end;
 
+function TFieldEdit.ValidateEntry: boolean;
+var
+  S: WideString;
+begin
+  S := Trim(UTF8ToUTF16(Text));
+  if (S = '.') or (S = '') then
+  begin
+    Field.IsMissing[RecNo] := true;
+    exit(true);
+  end else
+    exit(false);
+end;
+
 { TIntegerEdit }
 
 function TIntegerEdit.ValidateEntry: boolean;
 var
-  I: integer;
+  I, Code: integer;
 begin
   result := true;
   if not Modified then exit;
-  if not IsEpiInteger(Text, I) then exit(false);
+  if Inherited ValidateEntry then exit;
+
+  Val(Text, I, Code);
+  if (Code <> 0) then exit(false);
+
   Field.AsInteger[RecNo] := I;
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  Caret: LongInt;
-
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit(Result);
 
-  Caret := CaretPos.X;
   if not(WC in IntegerChars) then exit;
-  // Sign operators are only allowed at pos 0.
-  if (WC in ['+','-']) and (Caret > 0) and (SelLength = 0) then exit;
+  // Sign operators are only allowed at pos 1.
+  if (WC in ['+','-']) and (Caret > 1) then exit;
 
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
@@ -247,17 +275,24 @@ end;
 { TFloatEdit }
 
 function TFloatEdit.ValidateEntry: boolean;
+var
+  F: EpiFloat;
+  Code: Integer;
 begin
+  result := true;
   if not Modified then exit;
-  Field.AsString[RecNo] := Text;
-  Result := true;
+  if Inherited ValidateEntry then exit;
+
+  Val(Text, F, Code);
+  if (Code <> 0) then exit(false);
+
+  Field.AsFloat[RecNo] := F;
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
   IsSeparator: Boolean;
-  Caret: LongInt;
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
@@ -270,19 +305,17 @@ begin
   // Check for allowed keys.
   if not(WC in FloatChars) then exit;
   // Sign operators are only allowed at pos 0.
-  if (WC in ['+','-']) and (Caret > 0) and (SelLength = 0) then exit;
+  if (WC in ['+','-']) and (Caret > 1) then exit;
   // No more than 1 separator is allowed at any time.
   if IsSeparator and (N >= 1) then exit;
 
-  Caret := CaretPos.X;
-
   // Validate position of separator... (cannot be placed beyond #integers)
-  if IsSeparator and (Caret > (Field.Length - Field.Decimals - 1)) then
+  if IsSeparator and (Caret > (Field.Length - Field.Decimals)) then
     exit;
 
   // Auto place the separator...
   if (not IsSeparator) and (N=0) and
-     (Caret = (Field.Length - Field.Decimals - 1)) then
+     (Caret = (Field.Length - Field.Decimals)) then
   begin
     Text := Text + DecimalSeparator;
     CaretPos := Point(Caret + 1, 0);
@@ -298,12 +331,17 @@ function TStringEdit.ValidateEntry: boolean;
 begin
   Result := true;
   if not Modified then exit;
+  if Inherited ValidateEntry then exit;
+
   Field.AsString[RecNo] := Text;
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit;
+
+  if Field.FieldType = ftUpperString then
+    WC := WideUpperCase(WC)[1];
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -320,6 +358,7 @@ var
 begin
   Result := true;
   if not Modified then exit;
+  if Inherited ValidateEntry then exit;
 
   Sep := String(DateSeparator);
   DateStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
@@ -366,7 +405,21 @@ begin
     else
       Y += 1900;
 
-  // TODO : Errorhandling when date not valid.          Result := inherited ValidateEntry;
+  // I don't what to use try-except... :)
+  if (Y <= 0) or (Y >= 2100) then exit(false);
+  if (M <= 0) or (M > 12) then exit(false);
+  case M of
+    1,3,5,7,8,10,12:
+      if (D <= 0) or (D > 31) then exit(false);
+    4,6,9,11:
+      if (D <= 0) or (D > 30) then exit(false);
+    2:
+      if ((Y mod 4  = 0) and (Y mod 100 <> 0)) or (Y mod 400 = 0) then      // leap year
+        begin if (D <= 0) or (D > 29) then exit(false); end
+      else
+        begin if (D <= 0) or (D > 28) then exit(false); end;
+  end;
+
   Field.AsDate[RecNo] := TruncToInt(EncodeDate(Y,M,D));
 end;
 
@@ -374,21 +427,14 @@ function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
   IsSeparator: Boolean;
-  Caret: LongInt;
   SepPos: TIntegerSet;
+  AutoPlace: Boolean;
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit;
 
   N := CountChar(Text, '-');
   N += CountChar(Text, '/');
   N += CountChar(Text, '.');
-
-  if SelLength > 0 then
-    Caret := SelStart
-  else
-    Caret := CaretPos.X;
-  // Increment to have 1 indexed caret as with strings.
-  Inc(Caret);
 
   IsSeparator := false;
   if (WC in ['-','/','.']) then IsSeparator := true;
@@ -402,35 +448,29 @@ begin
   // No two consecutive separators.
   if IsSeparator and (Caret > 1) and (Text[Caret-1] = WC) then exit(false);
 
-
-  SepPos := [2,5];
-  if Field.FieldType = ftYMDDate then
-    SepPos := [4,7];
-
-  // Auto place the separator...
-  if (not IsSeparator) and (N<2) and
-     (Caret in SepPos) then
-  begin
-    Text := Text + DateSeparator;
-    CaretPos := Point(Caret + 1, 0);
-  end;
-
-{
-
-   TODO!!!!
-
-  // Auto place the separator...
   if (not IsSeparator) then
   begin
     AutoPlace := false;
-    if (N=0) and (Caret = 3) then AutoPlace := true;
-    if (N=1) and (Caret in [5,6]) and (Text[Caret-3] = TimeSeparator) then AutoPlace := true;
+    case Field.FieldType of
+      ftDMYDate,
+      ftMDYDate:
+        begin
+          if (N=0) and (Caret = 3) then AutoPlace := true;
+          if (N=1) and (Caret in [5,6]) and (Text[Caret-3] = DateSeparator) then AutoPlace := true;
+        end;
+      ftYMDDate:
+        begin
+          if (N=0) and (Caret = 5) then AutoPlace := true;
+          if (N=1) and (Caret >= 5) and (Text[Caret-3] = DateSeparator) then AutoPlace := true;
+        end;
+    end;
     if AutoPlace then
     begin
-      Text := Text + TimeSeparator;
+      Text := Text + DateSeparator;
       CaretPos := Point(Caret + 1, 0);
     end;
-  end;                                        }
+  end;
+
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -446,6 +486,7 @@ var
 begin
   Result := true;;
   if not Modified then exit;
+  if Inherited ValidateEntry then exit;
 
   Sep := String(TimeSeparator);
   TimeStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
@@ -472,7 +513,6 @@ function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
   IsSeparator: Boolean;
-  Caret: LongInt;
   AutoPlace: Boolean;
 begin
   if PreUTF8KeyPress(UTF8Key, Result) then exit;
@@ -480,13 +520,6 @@ begin
   N := CountChar(Text, '-');
   N += CountChar(Text, ':');
   N += CountChar(Text, '.');
-
-  if SelLength > 0 then
-    Caret := SelStart
-  else
-    Caret := CaretPos.X;
-  // Increment to have 1 indexed caret as with strings.
-  Inc(Caret);
 
   IsSeparator := false;
   if (WC in ['-',':','.']) then IsSeparator := true;

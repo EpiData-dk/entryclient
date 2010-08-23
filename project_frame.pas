@@ -88,8 +88,6 @@ begin
 end;
 
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
-var
-  Frame: TDataFormFrame;
 begin
   FEpiDocument.Free;
 
