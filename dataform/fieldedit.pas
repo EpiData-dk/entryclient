@@ -283,10 +283,15 @@ begin
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
 
-  Val(Text, F, Code);
+{  Val(Text, F, Code);
   if (Code <> 0) then exit(false);
+  Field.AsFloat[RecNo] := F;}
 
-  Field.AsFloat[RecNo] := F;
+  try
+    Field.AsString[RecNo] := Text;
+  except
+    result := false;
+  end;
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
