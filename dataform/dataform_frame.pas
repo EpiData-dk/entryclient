@@ -157,8 +157,11 @@ begin
     end;
   end;
   DataFile.EndUpdate;
+
+  {$IFDEF EPI_DEBUG}
   if DataFile.Size = 0 then
     DataFile.Size := 10;
+  {$ENDIF}
   RecNo := 0;
 end;
 

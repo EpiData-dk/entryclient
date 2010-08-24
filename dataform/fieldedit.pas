@@ -108,12 +108,11 @@ begin
     Cv := TScrollBox(Self.Parent).Canvas
   else
     Cv := TScrollBox(Self.Parent.Parent).Canvas;
-  case Field.FieldType of
-    ftString, ftUpperString:
-      S := 'W';
+
+  if Field.FieldType in StringFieldTypes then
+    S := 'W'
   else
     S := '4';
-  end;
 
   case BorderStyle of
     bsNone:   SideBuf := 0;
@@ -137,6 +136,10 @@ begin
     Top     := FQuestionLabel.Top;
   end;
 
+  if Field.FieldType in AutoFieldTypes then
+  begin
+    ReadOnly := True;
+  end;
   Field.RegisterOnChangeHook(@FieldChange);
 
   {$IFDEF EPI_DEBUG}
@@ -159,7 +162,10 @@ end;
 
 procedure TFieldEdit.UpdateText;
 begin
-  Text := Field.AsString[RecNo];
+  if Field.IsMissing[RecNo] then
+    Text := ''
+  else
+    Text := Field.AsString[RecNo];
 end;
 
 procedure TFieldEdit.FieldChange(Sender: TObject; EventGroup: TEpiEventGroup;
@@ -282,10 +288,6 @@ begin
   result := true;
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
-
-{  Val(Text, F, Code);
-  if (Code <> 0) then exit(false);
-  Field.AsFloat[RecNo] := F;}
 
   try
     Field.AsString[RecNo] := Text;
