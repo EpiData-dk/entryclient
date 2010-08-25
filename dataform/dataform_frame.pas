@@ -14,9 +14,7 @@ type
 
   TDataFormFrame = class(TFrame)
     LastRecAction: TAction;
-    ListBox1: TListBox;
     NextRecAction: TAction;
-    Panel1: TPanel;
     PrevRecAction: TAction;
     FirstRecAction: TAction;
     ActionList1: TActionList;
@@ -31,7 +29,6 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
-    Splitter1: TSplitter;
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
@@ -121,6 +118,16 @@ begin
   RecNo := AValue - 1;
 end;
 
+function FieldSort(Item1, Item2: Pointer): Integer;
+var
+  F1: TFieldEdit absolute Item1;
+  F2: TFieldEdit absolute Item2;
+begin
+  result := F1.Top - F2.Top;
+  if result = 0 then
+    result := F1.Left - F2.Left;
+end;
+
 procedure TDataFormFrame.SetDataFile(const AValue: TEpiDataFile);
 var
   i: Integer;
@@ -158,11 +165,15 @@ begin
   end;
   DataFile.EndUpdate;
 
-  {$IFDEF EPI_DEBUG}
+  // Correct tab order of fields.
+  FFieldEditList.Sort(@FieldSort);
+  for i := 0 to FFieldEditList.Count - 1 do
+    TFieldEdit(FFieldEditList[i]).TabOrder := i;
+
+  // Todo : React to how users have define "new record" behaviour.
   if DataFile.Size = 0 then
-    DataFile.Size := 10;
-  {$ENDIF}
-  RecNo := 0;
+    DataFile.NewRecords(1);
+  RecNo := (DataFile.Size - 1);
 end;
 
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
