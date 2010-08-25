@@ -13,6 +13,7 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    NewRecordAction: TAction;
     LastRecAction: TAction;
     NextRecAction: TAction;
     PrevRecAction: TAction;
@@ -33,6 +34,7 @@ type
     procedure FirstRecActionUpdate(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
+    procedure NewRecordActionExecute(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditClick(Sender: TObject);
@@ -45,11 +47,14 @@ type
     procedure LoadRecord(RecordNo: Integer);
     procedure UpdateRecordEdit;
     procedure SetRecNo(AValue: integer);
+    procedure SetModified(const AValue: boolean);
   private
     { Field Entry Handling }
+    procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldExit(Sender: TObject);
   private
+    FModified: boolean;
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
     function  NewFieldControl(EpiControl: TEpiCustomControlItem;
@@ -60,6 +65,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
+    property  Modified: boolean read FModified write SetModified;
   end;
 
 implementation
@@ -90,6 +96,15 @@ end;
 procedure TDataFormFrame.LastRecActionUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := RecNo < (DataFile.Size - 1);
+end;
+
+procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
+begin
+//  if DataFile.Modified then
+//    ;
+
+  DataFile.NewRecords;
+  LastRecAction.Execute;
 end;
 
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
@@ -186,8 +201,12 @@ end;
 
 procedure TDataFormFrame.UpdateRecordEdit;
 begin
-  RecordEdit.Text :=
-    Format('%d / %d', [RecNo + 1, DataFile.Size]);
+  if Modified then
+    RecordEdit.Text :=
+        Format('%d / %d *', [RecNo + 1, DataFile.Size])
+  else
+    RecordEdit.Text :=
+      Format('%d / %d', [RecNo + 1, DataFile.Size]);
 
   if DataFile.Size = 0 then
     RecordEdit.Text := 'Empty';
@@ -234,9 +253,10 @@ begin
 
   with TFieldEdit(Result) do
   begin
-    Field    := TEpiField(EpiControl);
-    OnExit   := @FieldExit;
-    OnKeyUp  := @FieldKeyUp;
+    Field     := TEpiField(EpiControl);
+    OnExit    := @FieldExit;
+    OnKeyDown := @FieldKeyDown;
+    OnKeyUp   := @FieldKeyUp;
   end;
 
   FFieldEditList.Add(Result);
@@ -257,6 +277,9 @@ begin
 end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);
+var
+  i: Integer;
+  Res: LongInt;
 begin
   if AValue = FRecNo then exit;
   if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
@@ -268,11 +291,50 @@ begin
   if (MainForm.ActiveControl is TFieldEdit) and
      (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
 
+  if Modified then
+  begin
+    Res := MessageDlg('Warning',
+      'Record is modified.' + LineEnding +
+      'Save?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Res = mrCancel then exit;
+
+    if Res = mrYes then
+      for i := 0 to FFieldEditList.Count - 1 do
+        TFieldEdit(FFieldEditList[i]).Commit;
+    Modified := false;
+  end;
+
+
   FRecNo := AValue;
   if DataFile.Size > 0 then
     LoadRecord(AValue);
   UpdateRecordEdit;
   TFieldEdit(FFieldEditList[0]).SetFocus;
+end;
+
+procedure TDataFormFrame.SetModified(const AValue: boolean);
+begin
+  if FModified = AValue then exit;
+  FModified := AValue;
+  UpdateRecordEdit;
+end;
+
+procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  FieldEdit: TFieldEdit absolute Sender;
+  l: Integer;
+begin
+  if (Key = VK_RETURN) and (Shift = []) then
+  begin
+    l := FFieldEditList.IndexOf(FieldEdit)+1;
+    if l = FFieldEditList.Count then
+      NewRecordAction.Execute                  // Last control - new record!
+    else
+      TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
+  end;
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
@@ -281,7 +343,10 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   l: Integer;
 begin
-{  // This sort of works, but a lot of special characters exists
+
+  if FieldEdit.Modified then Modified := true;
+
+  { // This sort of works, but a lot of special characters exists
   //  and we cannot capture them all. Is there a better way perhaps
   //  that also ensure legal UTF-8 character can be entered into
   //  string fields.
@@ -301,11 +366,12 @@ begin
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);
+var
+  FE: TFieldEdit absolute sender;
 begin
-  with TFieldEdit(Sender) do
-  if not ValidateEntry then
+  if not FE.ValidateEntry then
   begin
-    SetFocus;
+    FE.SetFocus;
     Beep;
   end;
 end;

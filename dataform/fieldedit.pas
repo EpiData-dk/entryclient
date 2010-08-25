@@ -34,6 +34,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
     function    ValidateEntry: boolean; virtual;
+    procedure   Commit;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
   end;
@@ -188,7 +189,7 @@ end;
 
 function TFieldEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 begin
-  UTF8Key := WC;
+  UTF8Key := UTF16ToUTF8(WC);
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -243,10 +244,18 @@ begin
   S := Trim(UTF8ToUTF16(Text));
   if (S = '.') or (S = '') then
   begin
-    Field.IsMissing[RecNo] := true;
+    Text := '';
     exit(true);
   end else
     exit(false);
+end;
+
+procedure TFieldEdit.Commit;
+begin
+  if Text = '' then
+    Field.IsMissing[RecNo] := true
+  else
+    Field.AsString[RecNo] := Text;
 end;
 
 { TIntegerEdit }
@@ -262,7 +271,7 @@ begin
   Val(Text, I, Code);
   if (Code <> 0) then exit(false);
 
-  Field.AsInteger[RecNo] := I;
+//  Field.AsInteger[RecNo] := I;
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -289,11 +298,12 @@ begin
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
 
-  try
+  if not TryStrToFloat(Text, F) then exit(false);
+{  try
     Field.AsString[RecNo] := Text;
   except
     result := false;
-  end;
+  end;}
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -340,7 +350,7 @@ begin
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
 
-  Field.AsString[RecNo] := Text;
+//  Field.AsString[RecNo] := Text;
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -362,6 +372,7 @@ var
   A, B, C: String;
   Al, Bl, Cl: Integer;
   ThisYear: Word;
+  S: String;
 begin
   Result := true;
   if not Modified then exit;
@@ -427,7 +438,14 @@ begin
         begin if (D <= 0) or (D > 28) then exit(false); end;
   end;
 
-  Field.AsDate[RecNo] := TruncToInt(EncodeDate(Y,M,D));
+  case Field.FieldType of
+    ftDMYDate, ftDMYToday: S := 'DD/MM/YYYY';
+    ftMDYDate, ftMDYToday: S := 'MM/DD/YYYY';
+    ftYMDDate, ftYMDToday: S := 'YYYY/MM/DD';
+  end;
+  Text := FormatDateTime(S, EncodeDate(Y,M,D));
+
+//  Field.AsDate[RecNo] := TruncToInt(EncodeDate(Y,M,D));
 end;
 
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -513,7 +531,9 @@ begin
   if H > 23 then exit(false);
   if M > 59 then exit(false);
   if S > 59 then exit(false);
-  Field.AsTime[RecNo] := EncodeTime(H, M, S, 0);
+
+  Text := FormatDateTime('HH:NN:SS', EncodeTime(H, M, S, 0));
+//  Field.AsTime[RecNo] := EncodeTime(H, M, S, 0);
 end;
 
 function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;

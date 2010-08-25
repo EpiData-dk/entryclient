@@ -107,7 +107,8 @@
         <UseMsgFile Value="True"/>
       </CompilerMessages>
       <CustomOptions Value="-dEPI_DEBUG
--dEPI_RELEASE1"/>
+-dEPI_RELEASE1
+-dBLAH"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

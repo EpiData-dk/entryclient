@@ -216,6 +216,7 @@ object DataFormFrame: TDataFormFrame
     left = 432
     top = 184
     object FirstRecAction: TAction
+      Category = 'Record'
       Caption = 'First Record'
       Hint = 'First Record'
       OnExecute = FirstRecActionExecute
@@ -223,6 +224,7 @@ object DataFormFrame: TDataFormFrame
       ShortCut = 32804
     end
     object PrevRecAction: TAction
+      Category = 'Record'
       Caption = 'Previous Record'
       Hint = 'Previous Record'
       OnExecute = PrevRecActionExecute
@@ -230,6 +232,7 @@ object DataFormFrame: TDataFormFrame
       ShortCut = 32805
     end
     object NextRecAction: TAction
+      Category = 'Record'
       Caption = 'Next Record'
       Hint = 'Next Record'
       OnExecute = NextRecActionExecute
@@ -237,11 +240,18 @@ object DataFormFrame: TDataFormFrame
       ShortCut = 32807
     end
     object LastRecAction: TAction
+      Category = 'Record'
       Caption = 'Last Record'
       Hint = 'Last Record'
       OnExecute = LastRecActionExecute
       OnUpdate = LastRecActionUpdate
       ShortCut = 32803
+    end
+    object NewRecordAction: TAction
+      Category = 'Record'
+      Caption = 'New Record'
+      OnExecute = NewRecordActionExecute
+      ShortCut = 16462
     end
   end
 end
