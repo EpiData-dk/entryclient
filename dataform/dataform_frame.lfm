@@ -253,5 +253,15 @@ object DataFormFrame: TDataFormFrame
       OnExecute = NewRecordActionExecute
       ShortCut = 16462
     end
+    object PrevFieldAction: TAction
+      Category = 'Field'
+      Caption = 'PrevFieldAction'
+      OnExecute = PrevFieldActionExecute
+    end
+    object NextFieldAction: TAction
+      Category = 'Field'
+      Caption = 'NextFieldAction'
+      OnExecute = NextFieldActionExecute
+    end
   end
 end

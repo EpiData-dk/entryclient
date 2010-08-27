@@ -5,8 +5,8 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Menus,
-  ActnList, StdActns, ComCtrls, LCLType;
+  Classes, SysUtils, epidocument, FileUtil, Forms, Controls, Graphics, Dialogs,
+  Menus, ActnList, StdActns, ComCtrls, LCLType;
 
 type
 
@@ -21,9 +21,9 @@ type
     FileMenuDivider1: TMenuItem;
     ExitMenuItem: TMenuItem;
     MainFormPageControl: TPageControl;
-    SaveProjectAsMenuItem: TMenuItem;
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
   private
@@ -43,7 +43,7 @@ implementation
 {$R *.lfm}
 
 uses
-  project_frame;
+  project_frame, dataform_frame, fieldedit;
 
 { TMainForm }
 
@@ -71,7 +71,6 @@ begin
 
   // Only as long as one project is created!
   SaveProjectMenuItem.Action := Frame.SaveProjectAction;
-  SaveProjectAsMenuItem.Action := Frame.SaveProjectAsAction;
   OpenProjectMenuItem.Action := Frame.OpenProjectAction;
 
   Inc(TabNameCount);
@@ -89,6 +88,41 @@ begin
 //  LoadIniFile;
 
   NewProjectAction.Execute;
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  List: TFPList;
+  Doc: TEpiDocument;
+  Res: LongInt;
+  i: Integer;
+begin
+  CanClose := false;
+
+  // TODO : Optimize NOT to used casting, and units specific to the dataform_frame
+  // TODO : Works only on a single datafile in a single document - expand to be more generic.
+  if (Assigned(TProjectFrame(ActiveFrame).EpiDocument)) and
+     ((TProjectFrame(ActiveFrame).EpiDocument.Modified) or
+      (TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).Modified))
+  then begin
+    Res := MessageDlg('Warning',
+      'Project is modified.' + LineEnding +
+      'Save before exit?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Res = mrCancel then exit;
+
+    if Res = mrYes then
+    begin
+      // Commit field (in case they are not already.
+      List := TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).FieldEditList;
+      for i := 0 to List.Count - 1 do
+        TFieldEdit(List[i]).Commit;
+
+      SaveProjectMenuItem.Click;
+    end;
+  end;
+  CanClose := true;
 end;
 
 end.

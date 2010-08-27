@@ -13,6 +13,8 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    PrevFieldAction: TAction;
+    NextFieldAction: TAction;
     NewRecordAction: TAction;
     LastRecAction: TAction;
     NextRecAction: TAction;
@@ -35,7 +37,9 @@ type
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
     procedure NewRecordActionExecute(Sender: TObject);
+    procedure NextFieldActionExecute(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
+    procedure PrevFieldActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditClick(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
@@ -48,6 +52,7 @@ type
     procedure UpdateRecordEdit;
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
+    function  CheckRecordModified(Const IsNewRecord: boolean): Word;
   private
     { Field Entry Handling }
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -66,6 +71,7 @@ type
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
+    property  FieldEditList: TFpList read FFieldEditList;
   end;
 
 implementation
@@ -100,16 +106,37 @@ end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
 begin
-//  if DataFile.Modified then
-//    ;
+  if CheckRecordModified(true) = mrCancel then exit;
 
   DataFile.NewRecords;
   LastRecAction.Execute;
 end;
 
+procedure TDataFormFrame.NextFieldActionExecute(Sender: TObject);
+var
+  l: Integer;
+begin
+  if not (MainForm.ActiveControl is TFieldEdit) then exit;
+
+  l := FFieldEditList.IndexOf(MainForm.ActiveControl)+1;
+  if l = FFieldEditList.Count then exit;
+  TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
+end;
+
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
 begin
   RecNo := RecNo + 1;
+end;
+
+procedure TDataFormFrame.PrevFieldActionExecute(Sender: TObject);
+var
+  l: Integer;
+begin
+  if not (MainForm.ActiveControl is TFieldEdit) then exit;
+
+  l := FFieldEditList.IndexOf(MainForm.ActiveControl) - 1;
+  if l < 0 then exit;
+  TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to prev control.
 end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
@@ -291,21 +318,7 @@ begin
   if (MainForm.ActiveControl is TFieldEdit) and
      (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
 
-  if Modified then
-  begin
-    Res := MessageDlg('Warning',
-      'Record is modified.' + LineEnding +
-      'Save?',
-      mtWarning, mbYesNoCancel, 0, mbCancel);
-
-    if Res = mrCancel then exit;
-
-    if Res = mrYes then
-      for i := 0 to FFieldEditList.Count - 1 do
-        TFieldEdit(FFieldEditList[i]).Commit;
-    Modified := false;
-  end;
-
+  if CheckRecordModified(false) = mrCancel then exit;
 
   FRecNo := AValue;
   if DataFile.Size > 0 then
@@ -321,19 +334,60 @@ begin
   UpdateRecordEdit;
 end;
 
+function TDataFormFrame.CheckRecordModified(const IsNewRecord: boolean): Word;
+var
+  i: Integer;
+begin
+  Result := mrYes;
+
+  if Modified then
+  begin
+    if IsNewRecord then
+    begin
+      Result := MessageDlg('Confirmation',
+        'Save Record?',
+        mtConfirmation, mbYesNo, 0, mbYes);
+      if Result = mrNo then
+        Result := mrCancel;
+    end
+    else
+      Result := MessageDlg('Warning',
+        'Record is modified.' + LineEnding +
+        'Save?',
+        mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Result = mrCancel then exit;
+
+    if Result = mrYes then
+      for i := 0 to FFieldEditList.Count - 1 do
+        TFieldEdit(FFieldEditList[i]).Commit;
+    Modified := false;
+  end;
+end;
+
 procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   FieldEdit: TFieldEdit absolute Sender;
-  l: Integer;
 begin
-  if (Key = VK_RETURN) and (Shift = []) then
+  if ((Key = VK_RETURN) and (Shift = [])) then
   begin
-    l := FFieldEditList.IndexOf(FieldEdit)+1;
-    if l = FFieldEditList.Count then
-      NewRecordAction.Execute                  // Last control - new record!
+    if Pointer(FieldEdit) = FFieldEditList[FFieldEditList.Count - 1] then
+      NewRecordAction.Execute
     else
-      TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
+      NextFieldAction.Execute;
+  end;
+
+  if ((Key = VK_DOWN) and (Shift = []))then
+  begin
+    NextFieldAction.Execute;
+    Key := VK_UNKNOWN;
+  end;
+
+  if (Key = VK_UP) and (Shift = []) then
+  Begin
+    PrevFieldAction.Execute;
+    Key := VK_UNKNOWN;
   end;
 end;
 

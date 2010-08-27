@@ -56,13 +56,8 @@ object ProjectFrame: TProjectFrame
         Top = 2
         Action = SaveProjectAction
       end
-      object SaveProjectAsToolButton: TToolButton
-        Left = 51
-        Top = 2
-        Action = SaveProjectAsAction
-      end
       object ProjectToolButtomDivider2: TToolButton
-        Left = 74
+        Left = 51
         Top = 2
         Width = 4
         Caption = 'ProjectToolButtomDivider2'
@@ -92,12 +87,6 @@ object ProjectFrame: TProjectFrame
       Hint = 'Save Project'
       ImageIndex = 1
       OnExecute = SaveProjectActionExecute
-    end
-    object SaveProjectAsAction: TAction
-      Caption = 'Save Project As'
-      Hint = 'Save Project As'
-      ImageIndex = 2
-      OnExecute = SaveProjectAsActionExecute
     end
   end
   object ProjectImageList: TImageList

@@ -16,7 +16,6 @@ type
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
     ProjectSaveDialog: TSaveDialog;
-    SaveProjectAsAction: TAction;
     SaveProjectAction: TAction;
     OpenProjectAction: TAction;
     ProjectActionList: TActionList;
@@ -26,12 +25,10 @@ type
     OpenProjectToolButton: TToolButton;
     ProjectToolButtomDivider1: TToolButton;
     SaveProjectToolButton: TToolButton;
-    SaveProjectAsToolButton: TToolButton;
     ProjectToolButtomDivider2: TToolButton;
     DataFilesTreeView: TTreeView;
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
-    procedure SaveProjectAsActionExecute(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
@@ -43,6 +40,7 @@ type
     function  DoCreateNewDocument: TEpiDocument;
   public
     { public declarations }
+    constructor Create(TheOwner: TComponent); override;
     property  EpiDocument: TEpiDocument read FEpiDocument;
     property  ActiveFrame: TFrame read FActiveFrame;
   end; 
@@ -76,15 +74,6 @@ end;
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
   DoSaveProject(FDocumentFilename);
-end;
-
-procedure TProjectFrame.SaveProjectAsActionExecute(Sender: TObject);
-begin
-  ProjectSaveDialog.InitialDir := GetCurrentDirUTF8;
-  ProjectSaveDialog.Filter := GetEpiDialogFilter(true, false, false, false,
-    false, false, false, false, false, true);
-  if not ProjectSaveDialog.Execute then exit;
-  DoSaveProject(ProjectSaveDialog.FileName);
 end;
 
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
@@ -133,6 +122,18 @@ begin
   Result := TEpiDocument.Create('en');
 //  Result.DataFiles.OnNewItemClass := @NewDataFileItem;
 //  Result.OnModified := @EpiDocumentModified;
+end;
+
+constructor TProjectFrame.Create(TheOwner: TComponent);
+begin
+  inherited Create(TheOwner);
+
+  {$IFDEF EPI_RELEASE}
+    ProjectPanel.Enabled := false;
+    ProjectPanel.Visible := false;
+    Splitter1.Enabled    := false;
+    Splitter1.Visible    := false;
+  {$ENDIF}
 end;
 
 end.

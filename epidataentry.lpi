@@ -108,7 +108,7 @@
       </CompilerMessages>
       <CustomOptions Value="-dEPI_DEBUG
 -dEPI_RELEASE1
--dBLAH"/>
+-dBLAH1"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

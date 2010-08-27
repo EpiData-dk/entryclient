@@ -1,18 +1,19 @@
 object MainForm: TMainForm
-  Left = 303
+  Left = 428
   Height = 642
-  Top = 179
+  Top = 238
   Width = 977
   Caption = 'MainForm'
-  ClientHeight = 623
+  ClientHeight = 617
   ClientWidth = 977
   Menu = MainFormMenu
+  OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 623
+    Height = 617
     Top = 0
     Width = 977
     Align = alClient
@@ -29,9 +30,6 @@ object MainForm: TMainForm
       end
       object SaveProjectMenuItem: TMenuItem
         Caption = 'Save'
-      end
-      object SaveProjectAsMenuItem: TMenuItem
-        Caption = 'SaveAs'
       end
       object FileMenuDivider1: TMenuItem
         Caption = '-'
