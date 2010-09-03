@@ -140,6 +140,8 @@ begin
   if Field.FieldType in AutoFieldTypes then
   begin
     ReadOnly := True;
+    Enabled  := false;
+    TabStop  := false;
   end;
   Field.RegisterOnChangeHook(@FieldChange);
 

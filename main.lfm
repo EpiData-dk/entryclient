@@ -1,9 +1,9 @@
 object MainForm: TMainForm
-  Left = 428
+  Left = 410
   Height = 642
-  Top = 238
+  Top = 248
   Width = 977
-  Caption = 'MainForm'
+  Caption = 'EpiData Entry'
   ClientHeight = 617
   ClientWidth = 977
   Menu = MainFormMenu
@@ -36,6 +36,34 @@ object MainForm: TMainForm
       end
       object ExitMenuItem: TMenuItem
         Action = FileExitAction
+      end
+    end
+    object RecordMenu: TMenuItem
+      Caption = 'Records'
+      Visible = False
+      object GotoRecordMenuItem: TMenuItem
+        Caption = 'Goto Rec'
+      end
+      object RecordMenuDivider1: TMenuItem
+        Caption = '-'
+      end
+      object FirstRecordMenuItem: TMenuItem
+        Caption = 'FirstRec'
+      end
+      object PrevRecordMenuItem: TMenuItem
+        Caption = 'PrevRec'
+      end
+      object NextRecordMenuItem: TMenuItem
+        Caption = 'NextRec'
+      end
+      object LastRecordMenuItem: TMenuItem
+        Caption = 'LastRec'
+      end
+      object RecordMenuDivider2: TMenuItem
+        Caption = '-'
+      end
+      object NewRecordMenuItem: TMenuItem
+        Caption = 'New Rec'
       end
     end
   end

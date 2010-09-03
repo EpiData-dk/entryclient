@@ -13,6 +13,15 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    FirstRecordMenuItem: TMenuItem;
+    LastRecordMenuItem: TMenuItem;
+    RecordMenuDivider2: TMenuItem;
+    RecordMenuDivider1: TMenuItem;
+    PrevRecordMenuItem: TMenuItem;
+    NextRecordMenuItem: TMenuItem;
+    RecordMenu: TMenuItem;
+    GotoRecordMenuItem: TMenuItem;
+    NewRecordMenuItem: TMenuItem;
     NewProjectAction: TAction;
     FileExitAction: TFileExit;
     MainActionList: TActionList;

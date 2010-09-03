@@ -15,7 +15,6 @@ type
   TProjectFrame = class(TFrame)
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
-    ProjectSaveDialog: TSaveDialog;
     SaveProjectAction: TAction;
     OpenProjectAction: TAction;
     ProjectActionList: TActionList;
@@ -29,6 +28,7 @@ type
     DataFilesTreeView: TTreeView;
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
+    procedure SaveProjectActionUpdate(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
@@ -38,6 +38,8 @@ type
     procedure DoSaveProject(Const aFilename: string);
     procedure DoNewDataForm(DataFile: TEpiDataFile);
     function  DoCreateNewDocument: TEpiDocument;
+    procedure EpiDocModified(Sendet: TObject);
+    procedure UpdateMainCaption;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -50,7 +52,7 @@ implementation
 {$R *.lfm}
 
 uses
-  dataform_frame, epimiscutils;
+  main, dataform_frame, epimiscutils;
 
 { TProjectFrame }
 
@@ -76,6 +78,11 @@ begin
   DoSaveProject(FDocumentFilename);
 end;
 
+procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
+begin
+  SaveProjectAction.Enabled := Assigned(FEpiDocument);
+end;
+
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
 begin
   FEpiDocument.Free;
@@ -87,7 +94,9 @@ begin
   FEpiDocument := DoCreateNewDocument;
   FEpiDocument.LoadFromFile(aFilename);
   FDocumentFilename := aFilename;
+
   DoNewDataForm(FEpiDocument.DataFiles[0]);
+  UpdateMainCaption;
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
@@ -100,6 +109,8 @@ begin
   Fs.CopyFrom(Ss, Ss.Size);
   Ss.Free;
   Fs.Free;
+
+  UpdateMainCaption;
 end;
 
 procedure TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile);
@@ -115,18 +126,57 @@ begin
   DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Name.Text, Frame);
 //  TEpiDataFileEx(Df).TreeNode := DataFilesTreeView.Selected;
 //  Df.Name.RegisterOnChangeHook(@OnDataFileChange);
+
+  // TODO : Adapt to multiple datafiles.
+  With MainForm do
+  begin
+    GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
+    // -
+    FirstRecordMenuItem.Action := Frame.FirstRecAction;
+    PrevRecordMenuItem.Action  := Frame.PrevRecAction;
+    NextRecordMenuItem.Action  := Frame.NextRecAction;
+    LastRecordMenuItem.Action  := Frame.LastRecAction;
+    // -
+    NewRecordMenuItem.Action   := Frame.NewRecordAction;
+    RecordMenu.Visible := true;
+  end;
 end;
 
 function TProjectFrame.DoCreateNewDocument: TEpiDocument;
 begin
   Result := TEpiDocument.Create('en');
-//  Result.DataFiles.OnNewItemClass := @NewDataFileItem;
-//  Result.OnModified := @EpiDocumentModified;
+  Result.OnModified := @EpiDocModified;
+end;
+
+procedure TProjectFrame.EpiDocModified(Sendet: TObject);
+var
+  EpiDoc: TEpiDocument;
+begin
+  UpdateMainCaption;
+end;
+
+procedure TProjectFrame.UpdateMainCaption;
+var
+  S: String;
+begin
+  S := 'EpiData Entry';
+
+  if Assigned(EpiDocument) then
+  begin
+    S := S + ': ' + SysToUTF8(ExtractFileName(UTF8ToSys(FDocumentFilename)));
+    if EpiDocument.Modified then
+     S := S + '*';
+    if Assigned(ActiveFrame) then
+      S := S + ' (' + TDataFormFrame(ActiveFrame).DataFile.Name.Text + ')';
+  end;
+  MainForm.Caption := S;
 end;
 
 constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  FEpiDocument := nil;
+  FActiveFrame := nil;
 
   {$IFDEF EPI_RELEASE}
     ProjectPanel.Enabled := false;

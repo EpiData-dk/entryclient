@@ -6,8 +6,8 @@ object ProjectFrame: TProjectFrame
   ClientHeight = 572
   ClientWidth = 739
   TabOrder = 0
-  DesignLeft = 572
-  DesignTop = 272
+  DesignLeft = 697
+  DesignTop = 336
   object ProjectPanel: TPanel
     Left = 0
     Height = 572
@@ -87,6 +87,8 @@ object ProjectFrame: TProjectFrame
       Hint = 'Save Project'
       ImageIndex = 1
       OnExecute = SaveProjectActionExecute
+      OnUpdate = SaveProjectActionUpdate
+      ShortCut = 16467
     end
   end
   object ProjectImageList: TImageList
@@ -195,9 +197,5 @@ object ProjectFrame: TProjectFrame
   object ProjectOpenDialog: TOpenDialog
     left = 504
     top = 136
-  end
-  object ProjectSaveDialog: TSaveDialog
-    left = 504
-    top = 192
   end
 end

@@ -6,8 +6,8 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 633
   ClientWidth = 880
   TabOrder = 0
-  DesignLeft = 586
-  DesignTop = 248
+  DesignLeft = 688
+  DesignTop = 264
   object DataFormScroolBox: TScrollBox
     Left = 0
     Height = 603
@@ -98,8 +98,8 @@ object DataFormFrame: TDataFormFrame
         AutoSelect = False
         Font.Height = -9
         Font.Name = 'Courier 10 Pitch'
-        OnClick = RecordEditClick
         OnEditingDone = RecordEditEditingDone
+        OnEnter = RecordEditEnter
         ParentFont = False
         TabStop = False
         TabOrder = 0
@@ -253,6 +253,16 @@ object DataFormFrame: TDataFormFrame
       OnExecute = NewRecordActionExecute
       ShortCut = 16462
     end
+    object FirstFieldAction: TAction
+      Category = 'Field'
+      Caption = 'FirstFieldAction'
+      OnExecute = FirstFieldActionExecute
+      ShortCut = 36
+    end
+    object PgUpFieldAction: TAction
+      Category = 'Field'
+      Caption = 'PgUpFieldAction'
+    end
     object PrevFieldAction: TAction
       Category = 'Field'
       Caption = 'PrevFieldAction'
@@ -262,6 +272,22 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'NextFieldAction'
       OnExecute = NextFieldActionExecute
+    end
+    object PgDnFieldAction: TAction
+      Category = 'Field'
+      Caption = 'PgDnFieldAction'
+    end
+    object LastFieldAction: TAction
+      Category = 'Field'
+      Caption = 'LastFieldAction'
+      OnExecute = LastFieldActionExecute
+      ShortCut = 35
+    end
+    object GotoRecordAction: TAction
+      Category = 'Record'
+      Caption = 'Goto Record'
+      OnExecute = GotoRecordActionExecute
+      ShortCut = 16455
     end
   end
 end

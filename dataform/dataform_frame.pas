@@ -13,6 +13,11 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    GotoRecordAction: TAction;
+    LastFieldAction: TAction;
+    FirstFieldAction: TAction;
+    PgDnFieldAction: TAction;
+    PgUpFieldAction: TAction;
     PrevFieldAction: TAction;
     NextFieldAction: TAction;
     NewRecordAction: TAction;
@@ -32,8 +37,11 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
+    procedure GotoRecordActionExecute(Sender: TObject);
+    procedure LastFieldActionExecute(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
     procedure NewRecordActionExecute(Sender: TObject);
@@ -41,8 +49,8 @@ type
     procedure NextRecActionExecute(Sender: TObject);
     procedure PrevFieldActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
-    procedure RecordEditClick(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
+    procedure RecordEditEnter(Sender: TObject);
   private
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
@@ -55,12 +63,16 @@ type
     function  CheckRecordModified(Const IsNewRecord: boolean): Word;
   private
     { Field Entry Handling }
+    function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
+    function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FieldEnter(Sender: TObject);
     procedure FieldExit(Sender: TObject);
   private
     FModified: boolean;
     { DataForm Control }
+    function  FieldEditTop(LocalCtrl: TControl): integer;
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
     function  NewFieldControl(EpiControl: TEpiCustomControlItem;
       AParent: TWinControl): TControl;
@@ -89,9 +101,34 @@ begin
   RecNo := 0;
 end;
 
+procedure TDataFormFrame.FirstFieldActionExecute(Sender: TObject);
+var
+  I: LongInt;
+begin
+  I := NextNonAutoFieldIndex(-1, false);
+  if i = -1 then exit;
+
+  TFieldEdit(FieldEditList[i]).SetFocus;
+end;
+
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := RecNo > 0;
+end;
+
+procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
+begin
+  RecordEdit.SetFocus;
+end;
+
+procedure TDataFormFrame.LastFieldActionExecute(Sender: TObject);
+var
+  i: LongInt;
+begin
+  i := PrevNonAutoFieldIndex(FieldEditList.Count, false);
+  if i = -1 then exit;
+
+  TFieldEdit(FieldEditList[i]).SetFocus;
 end;
 
 procedure TDataFormFrame.LastRecActionExecute(Sender: TObject);
@@ -105,22 +142,39 @@ begin
 end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
+var
+  i: Integer;
 begin
   if CheckRecordModified(true) = mrCancel then exit;
 
+  // This expands the datafile to prepare for a new record input.
   DataFile.NewRecords;
   LastRecAction.Execute;
+
+  // Check for AutoInc/Today fields.
+  for i := 0 to FieldEditList.Count - 1 do
+  begin
+    if TFieldEdit(FieldEditList[i]).Field.FieldType in AutoFieldTypes then
+    begin
+      FieldEnter(TFieldEdit(FieldEditList[i]));
+    end;
+  end;
+
+  // Set focus to first field.
+  FirstFieldAction.Execute;
 end;
 
 procedure TDataFormFrame.NextFieldActionExecute(Sender: TObject);
 var
-  l: Integer;
+  i: Integer;
 begin
   if not (MainForm.ActiveControl is TFieldEdit) then exit;
 
-  l := FFieldEditList.IndexOf(MainForm.ActiveControl)+1;
-  if l = FFieldEditList.Count then exit;
-  TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
+  i := FieldEditList.IndexOf(MainForm.ActiveControl);
+  i := NextNonAutoFieldIndex(i, true);
+
+  if i = -1  then exit;
+  TFieldEdit(FFieldEditList[i]).SetFocus;  // Jump to next control.
 end;
 
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
@@ -130,13 +184,15 @@ end;
 
 procedure TDataFormFrame.PrevFieldActionExecute(Sender: TObject);
 var
-  l: Integer;
+  i: Integer;
 begin
   if not (MainForm.ActiveControl is TFieldEdit) then exit;
 
-  l := FFieldEditList.IndexOf(MainForm.ActiveControl) - 1;
-  if l < 0 then exit;
-  TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to prev control.
+  i := FieldEditList.IndexOf(MainForm.ActiveControl);
+  i := PrevNonAutoFieldIndex(i, true);
+
+  if i = -1  then exit;
+  TFieldEdit(FFieldEditList[i]).SetFocus;  // Jump to prev control.
 end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
@@ -144,20 +200,20 @@ begin
   RecNo := RecNo - 1;
 end;
 
-procedure TDataFormFrame.RecordEditClick(Sender: TObject);
-begin
-  RecordEdit.SelectAll;
-end;
-
 procedure TDataFormFrame.RecordEditEditingDone(Sender: TObject);
 var
   AValue, Code: integer;
 begin
   Val(RecordEdit.Text, AValue, Code);
-
   if Code <> 0 then exit;
 
   RecNo := AValue - 1;
+  FirstFieldAction.Execute;
+end;
+
+procedure TDataFormFrame.RecordEditEnter(Sender: TObject);
+begin
+  RecordEdit.SelectAll;
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
@@ -281,6 +337,7 @@ begin
   with TFieldEdit(Result) do
   begin
     Field     := TEpiField(EpiControl);
+    OnEnter   := @FieldEnter;
     OnExit    := @FieldExit;
     OnKeyDown := @FieldKeyDown;
     OnKeyUp   := @FieldKeyUp;
@@ -324,7 +381,7 @@ begin
   if DataFile.Size > 0 then
     LoadRecord(AValue);
   UpdateRecordEdit;
-  TFieldEdit(FFieldEditList[0]).SetFocus;
+//  TFieldEdit(FFieldEditList[0]).SetFocus;
 end;
 
 procedure TDataFormFrame.SetModified(const AValue: boolean);
@@ -340,7 +397,7 @@ var
 begin
   Result := mrYes;
 
-  if Modified then
+  if Modified or IsNewRecord then
   begin
     if IsNewRecord then
     begin
@@ -365,6 +422,44 @@ begin
   end;
 end;
 
+function TDataFormFrame.NextNonAutoFieldIndex(const Index: integer;
+  const Wrap: boolean): integer;
+begin
+  // Assume Index is always valid (or -1 to get the first field).
+  Result := Index + 1;
+
+  if (Result >= FieldEditList.Count) and Wrap then
+    Result := 0;
+
+  while (Result <= (FieldEditList.Count - 1)) and
+        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) do
+  begin
+    inc(Result);
+    if (Result >= FieldEditList.Count) and Wrap then
+      Result := 0;
+  end;
+  if Result = FieldEditList.Count then
+    Result := -1;
+end;
+
+function TDataFormFrame.PrevNonAutoFieldIndex(const Index: integer;
+  const Wrap: boolean): integer;
+begin
+  // Assume Index is always valid (or FieldEditList.Count to get last field).
+  Result := Index - 1;
+
+  if (Result < 0) and Wrap then
+    Result := FieldEditList.Count - 1;
+
+  while (Result >= 0) and
+        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) do
+  begin
+    dec(Result);
+    if (Result < 0) and Wrap then
+      Result := FieldEditList.Count - 1;
+  end;
+end;
+
 procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
@@ -372,10 +467,16 @@ var
 begin
   if ((Key = VK_RETURN) and (Shift = [])) then
   begin
-    if Pointer(FieldEdit) = FFieldEditList[FFieldEditList.Count - 1] then
-      NewRecordAction.Execute
+    if NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false) = -1 then
+      if RecNo = (DataFile.Size - 1) then
+        NewRecordAction.Execute
+      else begin
+        NextRecAction.Execute;
+        FirstFieldAction.Execute;
+      end
     else
       NextFieldAction.Execute;
+    Key := VK_UNKNOWN;
   end;
 
   if ((Key = VK_DOWN) and (Shift = []))then
@@ -419,6 +520,56 @@ begin
   end;   }
 end;
 
+procedure TDataFormFrame.FieldEnter(Sender: TObject);
+var
+  FieldEdit: TFieldEdit absolute Sender;
+begin
+  // Occurs whenever a field recieves focus
+  // - eg. through mouseclik, tab or move.
+
+  if FieldEdit.Top < DataFormScroolBox.VertScrollBar.Position then
+    DataFormScroolBox.VertScrollBar.Position := FieldEdit.Top - 5;
+
+  if FieldEdit.Top > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
+    DataFormScroolBox.VertScrollBar.Position := FieldEdit.Top - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
+
+
+
+  // ********************************
+  // **    EpiData Flow Control    **
+  // ********************************
+  // Should all these things happen each time, or only first time
+  //   field is entered.
+
+  // Before field script:
+  // TODO : Before field script
+
+
+  // AutoInc/Today:
+  if FieldEdit.Field.FieldType in AutoFieldTypes then
+  with FieldEdit.Field do
+  begin
+    case FieldType of
+      ftAutoInc: ;
+      ftDMYToday: FieldEdit.Text := FormatDateTime('DD/MM/YYYY', Date);
+      ftMDYToday: FieldEdit.Text := FormatDateTime('MM/DD/YYYY', Date);
+      ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);
+      ftTimeNow:  FieldEdit.Text := FormatDateTime('HH:NN:SS',   Now);
+    end;
+    Self.Modified := true;
+    Exit;
+  end;
+
+
+  // NoEnter property?
+
+
+  // Repeat?
+
+
+  // Top-of-screen?
+end;
+
 procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
   FE: TFieldEdit absolute sender;
@@ -428,6 +579,14 @@ begin
     FE.SetFocus;
     Beep;
   end;
+end;
+
+function TDataFormFrame.FieldEditTop(LocalCtrl: TControl): integer;
+begin
+  if LocalCtrl.Parent = DataFormScroolBox then
+    exit(LocalCtrl.Top);
+
+  result := LocalCtrl.Top + LocalCtrl.Parent.Top;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
