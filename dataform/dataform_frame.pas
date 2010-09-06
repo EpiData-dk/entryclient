@@ -13,6 +13,8 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    PageDownAction: TAction;
+    PageUpAction: TAction;
     GotoRecordAction: TAction;
     LastFieldAction: TAction;
     FirstFieldAction: TAction;
@@ -47,6 +49,8 @@ type
     procedure NewRecordActionExecute(Sender: TObject);
     procedure NextFieldActionExecute(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
+    procedure PageDownActionExecute(Sender: TObject);
+    procedure PageUpActionExecute(Sender: TObject);
     procedure PrevFieldActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
@@ -72,7 +76,6 @@ type
   private
     FModified: boolean;
     { DataForm Control }
-    function  FieldEditTop(LocalCtrl: TControl): integer;
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
     function  NewFieldControl(EpiControl: TEpiCustomControlItem;
       AParent: TWinControl): TControl;
@@ -93,6 +96,27 @@ implementation
 uses
   fieldedit, epidatafilestypes, LCLProc,
   main, Menus, Dialogs;
+
+function FieldEditTop(LocalCtrl: TControl): integer;
+var
+  a: LongInt;
+  b: LongInt;
+begin
+  if LocalCtrl.Parent is TScrollBox then
+    exit(LocalCtrl.Top);
+
+  With LocalCtrl do
+    result := Parent.Top + (ControlOrigin.y - Parent.ControlOrigin.y);
+end;
+
+function FieldEditLeft(LocalCtrl: TControl): integer;
+begin
+  if LocalCtrl.Parent is TScrollBox then
+    exit(LocalCtrl.Left);
+
+  With LocalCtrl do
+    result := Parent.Top + (ControlOrigin.x - Parent.ControlOrigin.x);
+end;
 
 { TDataFormFrame }
 
@@ -182,6 +206,18 @@ begin
   RecNo := RecNo + 1;
 end;
 
+procedure TDataFormFrame.PageDownActionExecute(Sender: TObject);
+begin
+  With DataFormScroolBox.VertScrollBar do
+    Position := Position + Page;
+end;
+
+procedure TDataFormFrame.PageUpActionExecute(Sender: TObject);
+begin
+  With DataFormScroolBox.VertScrollBar do
+    Position := Position - Page;
+end;
+
 procedure TDataFormFrame.PrevFieldActionExecute(Sender: TObject);
 var
   i: Integer;
@@ -221,9 +257,9 @@ var
   F1: TFieldEdit absolute Item1;
   F2: TFieldEdit absolute Item2;
 begin
-  result := F1.Top - F2.Top;
+  result := FieldEditTop(F1) - FieldEditTop(F2);
   if result = 0 then
-    result := F1.Left - F2.Left;
+    result := FieldEditLeft(F1) - FieldEditLeft(F2);
 end;
 
 procedure TDataFormFrame.SetDataFile(const AValue: TEpiDataFile);
@@ -523,15 +559,16 @@ end;
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
+  FieldTop: LongInt;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
+  FieldTop := FieldEditTop(FieldEdit);
+  if FieldTop < DataFormScroolBox.VertScrollBar.Position then
+    DataFormScroolBox.VertScrollBar.Position := FieldTop - 5;
 
-  if FieldEdit.Top < DataFormScroolBox.VertScrollBar.Position then
-    DataFormScroolBox.VertScrollBar.Position := FieldEdit.Top - 5;
-
-  if FieldEdit.Top > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
-    DataFormScroolBox.VertScrollBar.Position := FieldEdit.Top - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
+  if FieldTop > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
+    DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
 
 
 
@@ -579,14 +616,6 @@ begin
     FE.SetFocus;
     Beep;
   end;
-end;
-
-function TDataFormFrame.FieldEditTop(LocalCtrl: TControl): integer;
-begin
-  if LocalCtrl.Parent = DataFormScroolBox then
-    exit(LocalCtrl.Top);
-
-  result := LocalCtrl.Top + LocalCtrl.Parent.Top;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);

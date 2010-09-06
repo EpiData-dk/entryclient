@@ -52,23 +52,42 @@ implementation
 {$R *.lfm}
 
 uses
-  main, dataform_frame, epimiscutils;
+  main, dataform_frame, epimiscutils, settings, fieldedit;
 
 { TProjectFrame }
 
 procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
+var
+  Res: LongInt;
+  List: TFPList;
+  i: Integer;
 begin
-  ProjectOpenDialog.InitialDir := GetCurrentDirUTF8; //ManagerSettings.WorkingDirUTF8;
+  ProjectOpenDialog.InitialDir := EntrySettings.WorkingDirUTF8;
   ProjectOpenDialog.Filter := GetEpiDialogFilter(true, false, false, false,
     false, false, false, false, false, true);
-
-{  {$IFNDEF EPI_DEBUG}
-  if MessageDlg('Warning', 'Opening project will clear all.' + LineEnding +
-       'Continue?',
-       mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
-  {$ENDIF}     }
-
   if not ProjectOpenDialog.Execute then exit;
+
+  if (Assigned(EpiDocument)) and
+     ((EpiDocument.Modified) or
+      (TDataFormFrame(ActiveFrame).Modified))
+  then begin
+    Res := MessageDlg('Warning',
+      'Project data content modified.' + LineEnding +
+      'Save?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Res = mrCancel then exit;
+
+    if Res = mrYes then
+    begin
+      // Commit field (in case they are not already).
+      List := TDataFormFrame(ActiveFrame).FieldEditList;
+      for i := 0 to List.Count - 1 do
+        TFieldEdit(List[i]).Commit;
+
+      SaveProjectAction.Execute;
+    end;
+  end;
 
   DoOpenProject(ProjectOpenDialog.FileName);
 end;
@@ -85,10 +104,10 @@ end;
 
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
 begin
-  FEpiDocument.Free;
+  FreeAndNil(FEpiDocument);
 
   // TODO : Delete ALL dataforms!
-  FActiveFrame.Free;
+  FreeAndNil(FActiveFrame);
   DataFilesTreeView.Items.Clear;
 
   FEpiDocument := DoCreateNewDocument;
@@ -138,7 +157,7 @@ begin
     LastRecordMenuItem.Action  := Frame.LastRecAction;
     // -
     NewRecordMenuItem.Action   := Frame.NewRecordAction;
-    RecordMenu.Visible := true;
+    BrowseMenu.Visible := true;
   end;
 end;
 

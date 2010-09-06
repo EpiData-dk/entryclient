@@ -151,8 +151,10 @@ begin
   Hint := WideFormat(
     'FieldName: %s' + LineEnding +
     'Length:    %d' + LineEnding +
-    'Type:      %s',
-    [Field.Name, Field.Length, S]);
+    'Type:      %s' + LineEnding +
+    'Top,Left:  (%d, %d)',
+    [Field.Name, Field.Length, S,
+     Top, Left]);
   {$ENDIF}
 end;
 

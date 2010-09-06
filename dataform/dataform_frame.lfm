@@ -6,7 +6,7 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 633
   ClientWidth = 880
   TabOrder = 0
-  DesignLeft = 688
+  DesignLeft = 512
   DesignTop = 264
   object DataFormScroolBox: TScrollBox
     Left = 0
@@ -288,6 +288,18 @@ object DataFormFrame: TDataFormFrame
       Caption = 'Goto Record'
       OnExecute = GotoRecordActionExecute
       ShortCut = 16455
+    end
+    object PageUpAction: TAction
+      Category = 'Screen'
+      Caption = 'PageUpAction'
+      OnExecute = PageUpActionExecute
+      ShortCut = 33
+    end
+    object PageDownAction: TAction
+      Category = 'Screen'
+      Caption = 'PageDownAction'
+      OnExecute = PageDownActionExecute
+      ShortCut = 34
     end
   end
 end

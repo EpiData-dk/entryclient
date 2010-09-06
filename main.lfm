@@ -1,10 +1,10 @@
 object MainForm: TMainForm
-  Left = 410
+  Left = 313
   Height = 642
-  Top = 248
+  Top = 253
   Width = 977
   Caption = 'EpiData Entry'
-  ClientHeight = 617
+  ClientHeight = 623
   ClientWidth = 977
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
@@ -13,7 +13,7 @@ object MainForm: TMainForm
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 617
+    Height = 623
     Top = 0
     Width = 977
     Align = alClient
@@ -38,8 +38,14 @@ object MainForm: TMainForm
         Action = FileExitAction
       end
     end
-    object RecordMenu: TMenuItem
-      Caption = 'Records'
+    object EditMenu: TMenuItem
+      Caption = '&Edit'
+      object SettingsMenuItem: TMenuItem
+        Action = SettingsAction
+      end
+    end
+    object BrowseMenu: TMenuItem
+      Caption = '&Browse'
       Visible = False
       object GotoRecordMenuItem: TMenuItem
         Caption = 'Goto Rec'
@@ -74,7 +80,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'E&xit'
       Hint = 'Exit'
-      ShortCut = 123
+      ShortCut = 121
       SecondaryShortCuts.Strings = (
         'Alt+Q'
       )
@@ -83,6 +89,12 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'NewProjectAction'
       OnExecute = NewProjectActionExecute
+    end
+    object SettingsAction: TAction
+      Category = 'Edit'
+      Caption = 'Settings'
+      OnExecute = SettingsActionExecute
+      ShortCut = 32851
     end
   end
 end
