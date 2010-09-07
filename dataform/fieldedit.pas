@@ -87,7 +87,7 @@ implementation
 
 uses
   Forms, epidatafilestypes, entryprocs, LCLProc, strutils,
-  epistringutils;
+  epistringutils, epidocument, episettings;
 
 { TFieldEdit }
 
@@ -96,9 +96,12 @@ var
   S: string;
   Cv: TCanvas;
   SideBuf: integer;
+  Settings: TEpiProjectSettings;
 begin
   if FField = AValue then exit;
   FField := AValue;
+  Settings :=  TEpiDocument(Field.RootOwner).ProjectSettings;
+
   Name := FField.Id;
   MaxLength := Field.Length;
 
@@ -115,6 +118,8 @@ begin
   else
     S := '4';
 
+  if not Settings.ShowFieldBorders then
+    BorderStyle := bsNone;
   case BorderStyle of
     bsNone:   SideBuf := 0;
     bsSingle: SideBuf := 6;
@@ -135,6 +140,8 @@ begin
     Caption := Field.Name;
     Left    := FQuestionLabel.Left - (FNameLabel.Width + 5);
     Top     := FQuestionLabel.Top;
+    if not Settings.ShowFieldNames then
+      Visible := false;
   end;
 
   if Field.FieldType in AutoFieldTypes then
