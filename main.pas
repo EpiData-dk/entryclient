@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, epidocument, FileUtil, Forms, Controls, Graphics, Dialogs,
-  Menus, ActnList, StdActns, ComCtrls, LCLType;
+  Menus, ActnList, StdActns, ComCtrls, LCLType, StdCtrls, ExtCtrls;
 
 type
 

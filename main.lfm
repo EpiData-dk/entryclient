@@ -3,8 +3,8 @@ object MainForm: TMainForm
   Height = 642
   Top = 253
   Width = 977
-  Caption = 'EpiData Entry'
-  ClientHeight = 623
+  Caption = 'EpiData Entry - Test Version do NOT use for real data.'
+  ClientHeight = 622
   ClientWidth = 977
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
@@ -13,7 +13,7 @@ object MainForm: TMainForm
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 623
+    Height = 622
     Top = 0
     Width = 977
     Align = alClient
