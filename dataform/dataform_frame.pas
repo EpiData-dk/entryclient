@@ -64,7 +64,7 @@ type
     procedure UpdateRecordEdit;
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
-    function  CheckRecordModified(Const IsNewRecord: boolean): Word;
+    procedure CommitFields;
   private
     { Field Entry Handling }
     function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
@@ -89,13 +89,16 @@ type
     property  FieldEditList: TFpList read FFieldEditList;
   end;
 
+const
+  NewRecord = MaxInt;
+
 implementation
 
 {$R *.lfm}
 
 uses
   fieldedit, epidatafilestypes, LCLProc,
-  main, Menus, Dialogs;
+  main, Menus, Dialogs, math;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 var
@@ -168,20 +171,43 @@ end;
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
 var
   i: Integer;
+  Res: LongInt;
 begin
-  if CheckRecordModified(true) = mrCancel then exit;
-
-  // This expands the datafile to prepare for a new record input.
-  DataFile.NewRecords;
-  LastRecAction.Execute;
-
-  // Check for AutoInc/Today fields.
-  for i := 0 to FieldEditList.Count - 1 do
+  // *******************
+  // * Commit old data *
+  // *******************
+  if (RecNo <> NewRecord) and Modified then
   begin
-    if TFieldEdit(FieldEditList[i]).Field.FieldType in AutoFieldTypes then
-    begin
-      FieldEnter(TFieldEdit(FieldEditList[i]));
+    Res := MessageDlg('Warning',
+             'Current record modified.' + LineEnding +
+             'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
+    case Res of
+      mrCancel: Exit;
+      mrYes:    CommitFields;
+      mrNo:     ; // Do nothing
     end;
+  end;
+  if (RecNo = NewRecord) then
+  begin
+    if MessageDlg('Confirmation', 'Save Record?',
+      mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
+
+    // Expand datafile so that current text can be commited...
+    DataFile.NewRecords();
+    // Commit text to data.
+    CommitFields;
+  end;
+
+  // **********************************
+  // * Prepare system for new record  *
+  // **********************************
+  RecNo := NewRecord;
+  for i := 0 to FieldEditList.Count - 1 do
+  with TFieldEdit(FieldEditList[i]) do
+  begin
+    // Check for AutoInc/Today fields.
+    if Field.FieldType in AutoFieldTypes then
+      DoEnter;
   end;
 
   // Set focus to first field.
@@ -233,7 +259,7 @@ end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
 begin
-  RecNo := RecNo - 1;
+  RecNo := Min(RecNo - 1, DataFile.Size - 1);
 end;
 
 procedure TDataFormFrame.RecordEditEditingDone(Sender: TObject);
@@ -243,7 +269,7 @@ begin
   Val(RecordEdit.Text, AValue, Code);
   if Code <> 0 then exit;
 
-  RecNo := AValue - 1;
+  RecNo := Min(AValue - 1, DataFile.Size - 1);
   FirstFieldAction.Execute;
 end;
 
@@ -320,12 +346,22 @@ end;
 
 procedure TDataFormFrame.UpdateRecordEdit;
 begin
-  if Modified then
-    RecordEdit.Text :=
-        Format('%d / %d *', [RecNo + 1, DataFile.Size])
-  else
-    RecordEdit.Text :=
-      Format('%d / %d', [RecNo + 1, DataFile.Size]);
+  if RecNo = NewRecord then
+  begin
+    if Modified then
+      RecordEdit.Text :=
+          Format('New / %d *', [DataFile.Size])
+    else
+      RecordEdit.Text :=
+        Format('New / %d', [DataFile.Size]);
+  end else begin
+    if Modified then
+      RecordEdit.Text :=
+          Format('%d / %d *', [RecNo + 1, DataFile.Size])
+    else
+      RecordEdit.Text :=
+        Format('%d / %d', [RecNo + 1, DataFile.Size]);
+  end;
 
   if DataFile.Size = 0 then
     RecordEdit.Text := 'Empty';
@@ -401,9 +437,12 @@ var
   i: Integer;
   Res: LongInt;
 begin
-  if AValue = FRecNo then exit;
-  if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
-  if AValue < 0 then AValue := 0;
+  if not (AValue = NewRecord) then
+  begin
+    if AValue = FRecNo then exit;
+    if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
+    if AValue < 0 then AValue := 0;
+  end;
 
   // Before setting new record no. do a "ValidateEntry" on the Edit with focus.
   // - this is because when using shortcuts to change record, the active Edit is
@@ -411,13 +450,23 @@ begin
   if (MainForm.ActiveControl is TFieldEdit) and
      (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
 
-  if CheckRecordModified(false) = mrCancel then exit;
+  if (not (AValue = NewRecord)) and Modified then
+  begin
+    Res := MessageDlg('Warning',
+      'Record is modified.' + LineEnding +
+      'Save?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+    case Res of
+      mrCancel: Exit;
+      mrYes:    CommitFields;
+      mrNo:     ; // do nothing.
+    end;
+  end;
 
   FRecNo := AValue;
   if DataFile.Size > 0 then
     LoadRecord(AValue);
   UpdateRecordEdit;
-//  TFieldEdit(FFieldEditList[0]).SetFocus;
 end;
 
 procedure TDataFormFrame.SetModified(const AValue: boolean);
@@ -427,35 +476,13 @@ begin
   UpdateRecordEdit;
 end;
 
-function TDataFormFrame.CheckRecordModified(const IsNewRecord: boolean): Word;
+procedure TDataFormFrame.CommitFields;
 var
   i: Integer;
 begin
-  Result := mrYes;
-
-  if Modified or IsNewRecord then
-  begin
-    if IsNewRecord then
-    begin
-      Result := MessageDlg('Confirmation',
-        'Save Record?',
-        mtConfirmation, mbYesNo, 0, mbYes);
-      if Result = mrNo then
-        Result := mrCancel;
-    end
-    else
-      Result := MessageDlg('Warning',
-        'Record is modified.' + LineEnding +
-        'Save?',
-        mtWarning, mbYesNoCancel, 0, mbCancel);
-
-    if Result = mrCancel then exit;
-
-    if Result = mrYes then
-      for i := 0 to FFieldEditList.Count - 1 do
-        TFieldEdit(FFieldEditList[i]).Commit;
-    Modified := false;
-  end;
+  for i := 0 to FFieldEditList.Count - 1 do
+    TFieldEdit(FFieldEditList[i]).Commit;
+  Modified := false;
 end;
 
 function TDataFormFrame.NextNonAutoFieldIndex(const Index: integer;
@@ -504,8 +531,8 @@ begin
   if ((Key = VK_RETURN) and (Shift = [])) then
   begin
     if NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false) = -1 then
-      if RecNo = (DataFile.Size - 1) then
-        NewRecordAction.Execute
+      if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
+        NewRecordActionExecute(nil)
       else begin
         NextRecAction.Execute;
         FirstFieldAction.Execute;

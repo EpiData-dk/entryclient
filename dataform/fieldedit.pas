@@ -87,7 +87,7 @@ implementation
 
 uses
   Forms, epidatafilestypes, entryprocs, LCLProc, strutils,
-  epistringutils, epidocument, episettings;
+  epistringutils, epidocument, episettings, dataform_frame;
 
 { TFieldEdit }
 
@@ -174,7 +174,7 @@ end;
 
 procedure TFieldEdit.UpdateText;
 begin
-  if Field.IsMissing[RecNo] then
+  if (RecNo = NewRecord) or (Field.IsMissing[RecNo]) then
     Text := ''
   else
     Text := Field.AsString[RecNo];
@@ -262,11 +262,18 @@ begin
 end;
 
 procedure TFieldEdit.Commit;
+var
+  LRecNo: LongInt;
 begin
+  LRecNo := RecNo;
+  // Assume that if this is a new record and we are about to commit
+  // the Datafile has been expanded to hold the new record.
+  if RecNo = NewRecord then
+    LRecNo := Field.DataFile.Size - 1;
   if Text = '' then
-    Field.IsMissing[RecNo] := true
+    Field.IsMissing[LRecNo] := true
   else
-    Field.AsString[RecNo] := Text;
+    Field.AsString[LRecNo] := Text;
 end;
 
 { TIntegerEdit }
@@ -281,8 +288,6 @@ begin
 
   Val(Text, I, Code);
   if (Code <> 0) then exit(false);
-
-//  Field.AsInteger[RecNo] := I;
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -310,11 +315,6 @@ begin
   if Inherited ValidateEntry then exit;
 
   if not TryStrToFloat(Text, F) then exit(false);
-{  try
-    Field.AsString[RecNo] := Text;
-  except
-    result := false;
-  end;}
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -360,8 +360,6 @@ begin
   Result := true;
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
-
-//  Field.AsString[RecNo] := Text;
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -455,8 +453,6 @@ begin
     ftYMDDate, ftYMDToday: S := 'YYYY/MM/DD';
   end;
   Text := FormatDateTime(S, EncodeDate(Y,M,D));
-
-//  Field.AsDate[RecNo] := TruncToInt(EncodeDate(Y,M,D));
 end;
 
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -544,7 +540,6 @@ begin
   if S > 59 then exit(false);
 
   Text := FormatDateTime('HH:NN:SS', EncodeTime(H, M, S, 0));
-//  Field.AsTime[RecNo] := EncodeTime(H, M, S, 0);
 end;
 
 function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
