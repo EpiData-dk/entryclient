@@ -34,12 +34,28 @@ type
     IniFileName:           string;
   end;
 
+  TEntryVersion = record
+    VersionNo: Integer;
+    MajorRev:  Integer;
+    MinorRev:  Integer;
+    BuildNo:   Integer;
+  end;
+
 var
   EntrySettings: TEntrySettings = (
     WorkingDirUTF8: '';
     IniFileName:    '';
   );
 
+const
+  EntryVersion: TEntryVersion = (
+    VersionNo: 0;
+    MajorRev:  1;
+    MinorRev:  0;
+    BuildNo:   0;
+  );
+
+  function GetEntryVersion: String;
   function SaveSettingToIni(Const FileName: string): boolean;
   function LoadSettingsFromIni(Const FileName: string): boolean;
 
@@ -49,6 +65,22 @@ implementation
 
 uses
   LCLProc, IniFiles;
+
+{$IFDEF EPI_RELEASE}
+  {$I revision.inc}
+{$ELSE}
+  const RevisionStr = '(DEBUG)';
+{$ENDIF}
+
+
+function GetEntryVersion: String;
+begin
+  with EntryVersion do
+    result := IntToStr(VersionNo) + '.' +
+              IntToStr(MajorRev) + '.' +
+              IntToStr(MinorRev) + ' ' +
+              {$IFDEF EPI_RELEASE}'r' + {$ENDIF EPI_RELEASE} RevisionStr;
+end;
 
 function SaveSettingToIni(Const FileName: string): boolean;
 var
@@ -128,4 +160,4 @@ begin
 end;
 
 end.
-
+

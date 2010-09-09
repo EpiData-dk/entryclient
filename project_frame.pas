@@ -34,7 +34,6 @@ type
     FActiveFrame: TFrame;
     FEpiDocument: TEpiDocument;
     FDocumentFilename: string;
-    procedure DoOpenProject(Const aFilename: string);
     procedure DoSaveProject(Const aFilename: string);
     procedure DoNewDataForm(DataFile: TEpiDataFile);
     function  DoCreateNewDocument: TEpiDocument;
@@ -43,6 +42,8 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
+    // TODO : Move DoOpenProject back to private when test-phase over.
+    procedure DoOpenProject(Const aFilename: string);
     property  EpiDocument: TEpiDocument read FEpiDocument;
     property  ActiveFrame: TFrame read FActiveFrame;
   end; 
@@ -143,8 +144,6 @@ begin
   FActiveFrame := Frame;
 
   DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Name.Text, Frame);
-//  TEpiDataFileEx(Df).TreeNode := DataFilesTreeView.Selected;
-//  Df.Name.RegisterOnChangeHook(@OnDataFileChange);
 
   // TODO : Adapt to multiple datafiles.
   With MainForm do
@@ -178,17 +177,22 @@ procedure TProjectFrame.UpdateMainCaption;
 var
   S: String;
 begin
-  S := 'EpiData Entry';
+  S := 'EpiData Entry Client';
 
   if Assigned(EpiDocument) then
   begin
-    S := S + ': ' + SysToUTF8(ExtractFileName(UTF8ToSys(FDocumentFilename)));
-    if EpiDocument.Modified then
-     S := S + '*';
     if Assigned(ActiveFrame) then
-      S := S + ' (' + TDataFormFrame(ActiveFrame).DataFile.Name.Text + ')';
+      S := S + ' "' + TDataFormFrame(ActiveFrame).DataFile.Name.Text + '"';
   end;
-  MainForm.Caption := S;
+  MainForm.Caption := S + ' (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
+
+  if Assigned(EpiDocument) and Assigned(ActiveFrame) then
+  begin
+    S :={ SysToUTF8(ExtractFileName(UTF8ToSys(}FDocumentFilename{)))};
+    if EpiDocument.Modified then
+      S := S + '*';
+    TDataFormFrame(ActiveFrame).FileNameEdit.Text := S;
+  end;
 end;
 
 constructor TProjectFrame.Create(TheOwner: TComponent);

@@ -44,6 +44,7 @@ type
     FActiveFrame: TFrame;
     TabNameCount: integer;
     procedure LoadIniFile;
+    procedure SetCaption;
   public
     { public declarations }
     property  ActiveFrame: TFrame read FActiveFrame;
@@ -65,6 +66,9 @@ procedure TMainForm.NewProjectActionExecute(Sender: TObject);
 var
   TabSheet: TTabSheet;
   Frame: TProjectFrame;
+  S: String;
+const
+  SampleFileName = 'sample.epx';
 begin
   TabSheet := TTabSheet.Create(MainFormPageControl);
   TabSheet.PageControl := MainFormPageControl;
@@ -86,6 +90,10 @@ begin
   // Only as long as one project is created!
   SaveProjectMenuItem.Action := Frame.SaveProjectAction;
   OpenProjectMenuItem.Action := Frame.OpenProjectAction;
+
+  S := ExtractFilePath(Application.ExeName) + SampleFileName;
+  if FileExistsUTF8(S) then
+    Frame.DoOpenProject(S);
 
   Inc(TabNameCount);
 end;
@@ -110,9 +118,14 @@ begin
   if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
 end;
 
+procedure TMainForm.SetCaption;
+begin
+  Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
+end;
+
 procedure TMainForm.FormShow(Sender: TObject);
 begin
-//  SetCaption;
+  SetCaption;
   {$IFDEF EPI_RELEASE}
   Width := 800;
   Height := 600;

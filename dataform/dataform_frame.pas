@@ -13,6 +13,7 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    FileNamePanel: TPanel;
     PageDownAction: TAction;
     PageUpAction: TAction;
     GotoRecordAction: TAction;
@@ -39,6 +40,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    FileNameEdit: TEdit;
     procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
@@ -98,7 +100,7 @@ implementation
 
 uses
   fieldedit, epidatafilestypes, LCLProc,
-  main, Menus, Dialogs, math;
+  main, Menus, Dialogs, math, Graphics;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 var
@@ -173,6 +175,10 @@ var
   i: Integer;
   Res: LongInt;
 begin
+  // Sanity check - current focused field may not have been validated.
+  if (MainForm.ActiveControl is TFieldEdit) and
+     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
+
   // *******************
   // * Commit old data *
   // *******************
@@ -332,8 +338,11 @@ begin
 
   // Todo : React to how users have define "new record" behaviour.
   if DataFile.Size = 0 then
-    DataFile.NewRecords(1);
-  RecNo := (DataFile.Size - 1);
+//    DataFile.NewRecords(1);
+    NewRecordActionExecute(nil)
+  else
+    RecNo := (DataFile.Size - 1);
+  FirstFieldAction.Execute;
 end;
 
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
@@ -378,6 +387,7 @@ begin
     Result.Left := Left;
     Result.Width := TEpiSection(EpiControl).Width;
     Result.Height := TEpiSection(EpiControl).Height;
+    Result.Caption := TEpiSection(EpiControl).Name.Text;
   end;
   Result.Parent := DataFormScroolBox;
 end;
@@ -428,6 +438,7 @@ begin
     Result.Top := Top;
     Result.Left := Left;
     Result.Caption := Caption.Text;
+    Result.Font.Style := [fsBold];
   end;
   Result.Parent := AParent;
 end;
@@ -458,14 +469,19 @@ begin
       mtWarning, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel: Exit;
-      mrYes:    CommitFields;
-      mrNo:     ; // do nothing.
+      mrYes:    begin
+                  // if a new record is being edited the datafile has NOT been
+                  // expanded at this point.
+                  if RecNo = NewRecord then
+                    DataFile.NewRecords;
+                  CommitFields;
+                end;
+      mrNo:     Modified := false; // do nothing.
     end;
   end;
 
   FRecNo := AValue;
-  if DataFile.Size > 0 then
-    LoadRecord(AValue);
+  LoadRecord(AValue);
   UpdateRecordEdit;
 end;
 
@@ -620,7 +636,7 @@ begin
       ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);
       ftTimeNow:  FieldEdit.Text := FormatDateTime('HH:NN:SS',   Now);
     end;
-    Self.Modified := true;
+//    Self.Modified := true;
     Exit;
   end;
 
@@ -643,6 +659,7 @@ begin
     FE.SetFocus;
     Beep;
   end;
+  FE.SelLength := 0;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
