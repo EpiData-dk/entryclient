@@ -13,6 +13,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    HelpMenu: TMenuItem;
+    AboutMenuItem: TMenuItem;
+    HelpMenuDivider1: TMenuItem;
+    CopyVersionInfoMenuItem: TMenuItem;
     SettingsAction: TAction;
     FirstRecordMenuItem: TMenuItem;
     LastRecordMenuItem: TMenuItem;

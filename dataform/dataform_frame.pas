@@ -577,7 +577,6 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   l: Integer;
 begin
-
   if FieldEdit.Modified then Modified := true;
 
   { // This sort of works, but a lot of special characters exists

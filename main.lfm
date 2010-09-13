@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 508
+  Left = 283
   Height = 642
-  Top = 286
+  Top = 191
   Width = 977
   Caption = 'EpiData Entry - Test Version do NOT use for real data.'
   ClientHeight = 617
@@ -207,6 +207,18 @@ object MainForm: TMainForm
       end
       object NewRecordMenuItem: TMenuItem
         Caption = 'New Rec'
+      end
+    end
+    object HelpMenu: TMenuItem
+      Caption = '&Help'
+      object CopyVersionInfoMenuItem: TMenuItem
+        Caption = 'Copy Version Information'
+      end
+      object HelpMenuDivider1: TMenuItem
+        Caption = '-'
+      end
+      object AboutMenuItem: TMenuItem
+        Caption = '&About'
       end
     end
   end
