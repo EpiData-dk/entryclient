@@ -285,7 +285,6 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'FirstFieldAction'
       OnExecute = FirstFieldActionExecute
-      ShortCut = 36
     end
     object PgUpFieldAction: TAction
       Category = 'Field'
@@ -309,7 +308,6 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'LastFieldAction'
       OnExecute = LastFieldActionExecute
-      ShortCut = 35
     end
     object GotoRecordAction: TAction
       Category = 'Record'

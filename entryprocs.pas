@@ -5,19 +5,17 @@ unit entryprocs;
 interface
 
 uses
-  Classes, SysUtils, LCLType, epidatafilestypes;
+  Classes, SysUtils, LCLType, epidatafilestypes, epistringutils;
 
 const
-  IntegerChars:    Set of char=['0'..'9','-','+'];
-  FloatChars:      Set of char=['0'..'9', '.', ',', '-', '+'];
-  DateChars:       Set of char=['0'..'9','/', '-', '.'];
-  TimeChars:       Set of char=['0'..'9',':','.'];
-  BooleanChars:    Set of char=['y','Y','n','N','1','0'];
+  IntegerChars:    TCharSet=['0'..'9','-','+'];
+  FloatChars:      TCharSet=['0'..'9', '.', ',', '-', '+'];
+  DateChars:       TCharSet=['0'..'9','/', '-', '.'];
+  TimeChars:       TCharSet=['0'..'9',':','.'];
+  BooleanChars:    TCharSet=['y','Y','n','N','1','0'];
 
-  SystemChars:     Set of char=[
-                   // VK_BACK, VK_TAB, VK_RETURN, VK_UP, VK_DOWN
-                      #8,      #9,     #13,       #38,   #40
-                   ];
+type
+  TCharArray = array of char;
 
 implementation
 

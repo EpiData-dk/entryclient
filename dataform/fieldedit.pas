@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, LMessages;
-
+  LCLType, LMessages, epistringutils, entryprocs;
 
 type
 
@@ -16,6 +15,7 @@ type
   TFieldEdit = class(TEdit)
   private
     FField: TEpiField;
+    FJumpToNext: boolean;
     FNameLabel: TLabel;
     FOnEditDoneError: TNotifyEvent;
     FQuestionLabel: TLabel;
@@ -27,9 +27,15 @@ type
   protected
     WC:         WideChar;
     Caret:      Integer;
+    IsSeparator: boolean;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
-    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var InheritHandled: boolean): boolean;
+    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var SepCount: integer;
+      var InheritHandled: boolean): boolean;
+    function    Characters: TCharSet; virtual;
+    function    Separators: TCharArray; virtual;
+    function    SeparatorCount: integer; virtual;
+    function    UseSigns: boolean; virtual;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
@@ -37,6 +43,7 @@ type
     procedure   Commit;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
+    property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
   end;
 
   { TIntegerEdit }
@@ -44,6 +51,8 @@ type
   TIntegerEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    Characters: TCharSet; override;
+    function    UseSigns: boolean; override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -53,6 +62,10 @@ type
   TFloatEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    Characters: TCharSet; override;
+    function    Separators: TCharArray; override;
+    function    SeparatorCount: integer; override;
+    function    UseSigns: boolean; override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -70,6 +83,9 @@ type
   TDateEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    Characters: TCharSet; override;
+    function    Separators: TCharArray; override;
+    function    SeparatorCount: integer; override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -79,6 +95,9 @@ type
   TTimeEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    Characters: TCharSet; override;
+    function    Separators: TCharArray; override;
+    function    SeparatorCount: integer; override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -86,8 +105,8 @@ type
 implementation
 
 uses
-  Forms, epidatafilestypes, entryprocs, LCLProc, strutils,
-  epistringutils, epidocument, episettings, dataform_frame;
+  Forms, epidatafilestypes, LCLProc, strutils,
+  epidocument, episettings, dataform_frame;
 
 { TFieldEdit }
 
@@ -205,7 +224,11 @@ begin
 end;
 
 function TFieldEdit.PreUTF8KeyPress(var UTF8Key: TUTF8Char;
-  var InheritHandled: boolean): boolean;
+  var SepCount: integer; var InheritHandled: boolean): boolean;
+var
+  i, n: integer;
+  LSeparators: TCharArray;
+  LCharacters: TCharSet;
 begin
   WC := UTF8ToUTF16(UTF8Key)[1];
   if WC < #32 then
@@ -221,15 +244,61 @@ begin
   // Increment to have 1 indexed caret as with strings.
   Inc(Caret);
 
+  // Missing handling.
   if (Caret = 1) and (WC = '.') then
   begin
     InheritHandled := inherited DoUTF8KeyPress(UTF8Key);
     exit(true);
   end;
 
+  // Separator counting
+  IsSeparator := false;
+  SepCount := 0;
+  LSeparators := Separators;
+  for i := Low(LSeparators) to High(LSeparators) do
+  begin
+    SepCount += CountChar(Text, LSeparators[i]);
+    if WC = LSeparators[i] then IsSeparator := true;
+  end;
+
+  // Check for allowed keys.
   UTF8Key := '';
   InheritHandled := false;
-  if (SelLength = 0) and (UTF8Length(Text) = MaxLength) then exit(true);
+  LCharacters := Characters;
+  if (not (LCharacters = [])) and
+     (not (WC in LCharacters)) then exit(true);
+
+  // Sign operators are only allowed at pos 0.
+  if UseSigns and
+     (WC in ['+','-']) and (Caret > 1) then exit(true);
+  // No more than "SeparatorCount)" separator is allowed at any time.
+  if IsSeparator and (SepCount >= SeparatorCount) then exit(true);
+
+  if (SelLength = 0) and (UTF8Length(Text) = MaxLength) then
+    exit(true);
+  FJumpToNext := false;
+  if (SelLength = 0) and (UTF8Length(Text) = (MaxLength-1)) then
+    FJumpToNext := true;
+  result := false;
+end;
+
+function TFieldEdit.Characters: TCharSet;
+begin
+  result := [];
+end;
+
+function TFieldEdit.Separators: TCharArray;
+begin
+  result := nil;
+end;
+
+function TFieldEdit.SeparatorCount: integer;
+begin
+  result := 0;
+end;
+
+function TFieldEdit.UseSigns: boolean;
+begin
   result := false;
 end;
 
@@ -292,15 +361,20 @@ end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
-  N: LongInt;
+  N: integer;
 begin
-  if PreUTF8KeyPress(UTF8Key, Result) then exit(Result);
-
-  if not(WC in IntegerChars) then exit;
-  // Sign operators are only allowed at pos 1.
-  if (WC in ['+','-']) and (Caret > 1) then exit;
-
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit(Result);
   Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+function TIntegerEdit.Characters: TCharSet;
+begin
+  Result :=  IntegerChars;
+end;
+
+function TIntegerEdit.UseSigns: boolean;
+begin
+  Result := true;
 end;
 
 { TFloatEdit }
@@ -319,12 +393,11 @@ end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
-  N: LongInt;
-  IsSeparator: Boolean;
+  N: Integer;
 begin
-  if PreUTF8KeyPress(UTF8Key, Result) then exit;
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
-  N := CountChar(Text, '.');
+{  N := CountChar(Text, '.');
   N += CountChar(Text, ',');
 
   IsSeparator := false;
@@ -335,7 +408,7 @@ begin
   // Sign operators are only allowed at pos 0.
   if (WC in ['+','-']) and (Caret > 1) then exit;
   // No more than 1 separator is allowed at any time.
-  if IsSeparator and (N >= 1) then exit;
+  if IsSeparator and (N >= 1) then exit;        }
 
   // Validate position of separator... (cannot be placed beyond #integers)
   if IsSeparator and (Caret > (Field.Length - Field.Decimals)) then
@@ -353,6 +426,28 @@ begin
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
+function TFloatEdit.Characters: TCharSet;
+begin
+  Result := FloatChars;
+end;
+
+function TFloatEdit.Separators: TCharArray;
+begin
+  SetLength(Result, 2);
+  Result[0] := ',';
+  Result[1] := '.';
+end;
+
+function TFloatEdit.SeparatorCount: integer;
+begin
+  Result := 1;
+end;
+
+function TFloatEdit.UseSigns: boolean;
+begin
+  Result := true;
+end;
+
 { TStringEdit }
 
 function TStringEdit.ValidateEntry: boolean;
@@ -363,8 +458,10 @@ begin
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: Integer;
 begin
-  if PreUTF8KeyPress(UTF8Key, Result) then exit;
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
   if Field.FieldType = ftUpperString then
     WC := WideUpperCase(WC)[1];
@@ -458,13 +555,12 @@ end;
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  IsSeparator: Boolean;
-  SepPos: TIntegerSet;
   AutoPlace: Boolean;
 begin
-  if PreUTF8KeyPress(UTF8Key, Result) then exit;
+  N := 2;
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
-  N := CountChar(Text, '-');
+{  N := CountChar(Text, '-');
   N += CountChar(Text, '/');
   N += CountChar(Text, '.');
 
@@ -474,7 +570,7 @@ begin
 
   if not(WC in DateChars) then exit(false);
   // No more than two separators.
-  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);
+  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);     }
   // No separator at start
   if IsSeparator and (Caret = 1) then exit(false);
   // No two consecutive separators.
@@ -504,6 +600,24 @@ begin
   end;
 
   Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+function TDateEdit.Characters: TCharSet;
+begin
+  Result := DateChars;
+end;
+
+function TDateEdit.Separators: TCharArray;
+begin
+  SetLength(Result, 3);
+  Result[0] := '-';
+  Result[1] := '.';
+  Result[2] := '/';
+end;
+
+function TDateEdit.SeparatorCount: integer;
+begin
+  Result := 2;
 end;
 
 { TTimeEdit }
@@ -545,11 +659,10 @@ end;
 function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: LongInt;
-  IsSeparator: Boolean;
   AutoPlace: Boolean;
 begin
-  if PreUTF8KeyPress(UTF8Key, Result) then exit;
-
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
+{
   N := CountChar(Text, '-');
   N += CountChar(Text, ':');
   N += CountChar(Text, '.');
@@ -560,12 +673,11 @@ begin
 
   if not(WC in TimeChars) then exit;
   // No more than two separators.
-  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);
+  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);}
   // No separator at start
   if IsSeparator and (Caret = 1) then exit(false);
   // No two consecutive separators.
   if IsSeparator and (Caret > 1) and (Text[Caret-1] = WC) then exit(false);
-
 
   // Auto place the separator...
   if (not IsSeparator) then
@@ -581,6 +693,24 @@ begin
   end;
 
   Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+function TTimeEdit.Characters: TCharSet;
+begin
+  Result := TimeChars;
+end;
+
+function TTimeEdit.Separators: TCharArray;
+begin
+  SetLength(Result, 3);
+  Result[0] := '-';
+  Result[1] := ':';
+  Result[2] := '.';
+end;
+
+function TTimeEdit.SeparatorCount: integer;
+begin
+  Result := 2;
 end;
 
 end.

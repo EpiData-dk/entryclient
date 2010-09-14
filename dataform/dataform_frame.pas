@@ -548,7 +548,7 @@ begin
   begin
     if NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false) = -1 then
       if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
-        NewRecordActionExecute(nil)
+        NewRecordAction.Execute
       else begin
         NextRecAction.Execute;
         FirstFieldAction.Execute;
@@ -579,7 +579,16 @@ var
 begin
   if FieldEdit.Modified then Modified := true;
 
-  { // This sort of works, but a lot of special characters exists
+  if FieldEdit.JumpToNext then
+  begin
+    Key := VK_RETURN;
+    FieldEdit.OnKeyDown(FieldEdit, Key, []);
+    Exit;
+  end;
+
+{
+
+  // This sort of works, but a lot of special characters exists
   //  and we cannot capture them all. Is there a better way perhaps
   //  that also ensure legal UTF-8 character can be entered into
   //  string fields.
@@ -587,15 +596,10 @@ begin
 
   if UTF8Length(FieldEdit.Text) = FieldEdit.Field.Length then
   begin
-    l := FFieldEditList.IndexOf(FieldEdit)+1;
-    if l = FFieldEditList.Count then
-    begin
-      NextRecAction.Execute;
-      Exit;
-    end;
-
-    TFieldEdit(FFieldEditList[l]).SetFocus;  // Jump to next control.
-  end;   }
+    Key := VK_RETURN;
+    FieldEdit.OnKeyDown(FieldEdit, Key, []);
+    Exit;
+  end;    }
 end;
 
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
@@ -658,6 +662,7 @@ begin
     FE.SetFocus;
     Beep;
   end;
+  FE.JumpToNext := false;
   FE.SelLength := 0;
 end;
 
