@@ -146,7 +146,7 @@ object MainForm: TMainForm
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
-  Position = poScreenCenter
+  Position = poOwnerFormCenter
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
@@ -212,13 +212,13 @@ object MainForm: TMainForm
     object HelpMenu: TMenuItem
       Caption = '&Help'
       object CopyVersionInfoMenuItem: TMenuItem
-        Caption = 'Copy Version Information'
+        Action = CopyProjectInfoAction
       end
       object HelpMenuDivider1: TMenuItem
         Caption = '-'
       end
       object AboutMenuItem: TMenuItem
-        Caption = '&About'
+        Action = AboutAction
       end
     end
   end
@@ -244,6 +244,17 @@ object MainForm: TMainForm
       Caption = 'Settings'
       OnExecute = SettingsActionExecute
       ShortCut = 32851
+    end
+    object AboutAction: TAction
+      Category = 'Help'
+      Caption = 'About'
+      Enabled = False
+      OnExecute = AboutActionExecute
+    end
+    object CopyProjectInfoAction: TAction
+      Category = 'Help'
+      Caption = 'Copy Version Info'
+      OnExecute = CopyProjectInfoActionExecute
     end
   end
 end

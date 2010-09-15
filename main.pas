@@ -13,6 +13,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    AboutAction: TAction;
+    CopyProjectInfoAction: TAction;
     HelpMenu: TMenuItem;
     AboutMenuItem: TMenuItem;
     HelpMenuDivider1: TMenuItem;
@@ -39,6 +41,8 @@ type
     MainFormPageControl: TPageControl;
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
+    procedure AboutActionExecute(Sender: TObject);
+    procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
@@ -62,7 +66,7 @@ implementation
 {$R *.lfm}
 
 uses
-  project_frame, dataform_frame, fieldedit, settings;
+  project_frame, dataform_frame, fieldedit, settings, about, Clipbrd;
 
 { TMainForm }
 
@@ -172,6 +176,32 @@ begin
     end;
   end;
   CanClose := true;
+end;
+
+procedure TMainForm.AboutActionExecute(Sender: TObject);
+var
+  Frm: TAboutForm;
+begin
+  Frm := TAboutForm.Create(self);
+  Frm.ShowModal;
+  Frm.Free;
+end;
+
+procedure TMainForm.CopyProjectInfoActionExecute(Sender: TObject);
+var
+  S: String;
+begin
+  S := GetProgramInfo;
+  if Assigned(TProjectFrame(ActiveFrame).EpiDocument) then
+  with TProjectFrame(ActiveFrame).EpiDocument do
+  begin
+    S := S + LineEnding +
+      'Filename: ' + TProjectFrame(ActiveFrame).DocumentFileName + LineEnding +
+      'XML Version: ' + IntToStr(XMLSettings.Version) + LineEnding +
+      'Field count: ' + IntToStr(DataFiles[0].Fields.Count) + LineEnding +
+      'Record count: ' + IntToStr(DataFiles[0].Size);
+  end;
+  Clipboard.AsText := S;
 end;
 
 end.

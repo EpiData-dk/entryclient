@@ -46,6 +46,7 @@ type
     procedure DoOpenProject(Const aFilename: string);
     property  EpiDocument: TEpiDocument read FEpiDocument;
     property  ActiveFrame: TFrame read FActiveFrame;
+    property  DocumentFileName: string read FDocumentFilename;
   end; 
 
 implementation

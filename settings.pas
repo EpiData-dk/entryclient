@@ -47,13 +47,11 @@ var
     IniFileName:    '';
   );
 
-const
-  EntryVersion: TEntryVersion = (
-    VersionNo: 0;
-    MajorRev:  1;
-    MinorRev:  0;
-    BuildNo:   0;
-  );
+  {$IFDEF EPI_RELEASE}
+    {$I revision.inc}
+  {$ELSE}
+    const RevisionStr = '(DEBUG)';
+  {$ENDIF}
 
   function GetEntryVersion: String;
   function SaveSettingToIni(Const FileName: string): boolean;
@@ -64,22 +62,19 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLProc, IniFiles;
+  LCLProc, IniFiles, epimiscutils;
 
-{$IFDEF EPI_RELEASE}
-  {$I revision.inc}
-{$ELSE}
-  const RevisionStr = '(DEBUG)';
-{$ENDIF}
-
+const
+  EntryVersion: TEpiVersionInfo = (
+    VersionNo: 0;
+    MajorRev:  1;
+    MinorRev:  0;
+    BuildNo:   0;
+  );
 
 function GetEntryVersion: String;
 begin
-  with EntryVersion do
-    result := IntToStr(VersionNo) + '.' +
-              IntToStr(MajorRev) + '.' +
-              IntToStr(MinorRev) + ' ' +
-              {$IFDEF EPI_RELEASE}'r' + {$ENDIF EPI_RELEASE} RevisionStr;
+  result := GetEpiVersionInfo(EntryVersion);
 end;
 
 function SaveSettingToIni(Const FileName: string): boolean;

@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, main, project_frame, dataform_frame, epidatacore, fieldedit,
-  entryprocs, settings;
+  entryprocs, settings, about;
 
 {$R *.res}
 
