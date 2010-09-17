@@ -1,6 +1,7 @@
 unit about;
 
 {$mode objfpc}
+{$h+}
 
 interface
 
@@ -31,7 +32,6 @@ type
     { public declarations }
   end; 
 
-
 function GetProgramInfo: string;
 
 implementation
@@ -39,7 +39,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings, epimiscutils;
+  settings, epiversionutils;
 
 function EntryVersionCaption: string;
 begin

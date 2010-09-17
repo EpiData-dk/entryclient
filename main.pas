@@ -14,11 +14,13 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    CheckVersionAction: TAction;
     CopyProjectInfoAction: TAction;
     HelpMenu: TMenuItem;
     AboutMenuItem: TMenuItem;
     HelpMenuDivider1: TMenuItem;
     CopyVersionInfoMenuItem: TMenuItem;
+    CheckVersionMenuItem: TMenuItem;
     SettingsAction: TAction;
     FirstRecordMenuItem: TMenuItem;
     LastRecordMenuItem: TMenuItem;
@@ -42,6 +44,7 @@ type
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
+    procedure CheckVersionActionExecute(Sender: TObject);
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormShow(Sender: TObject);
@@ -66,7 +69,8 @@ implementation
 {$R *.lfm}
 
 uses
-  project_frame, dataform_frame, fieldedit, settings, about, Clipbrd;
+  project_frame, dataform_frame, fieldedit, settings, about, Clipbrd,
+  epiversionutils;
 
 { TMainForm }
 
@@ -137,7 +141,12 @@ begin
   {$IFDEF EPI_RELEASE}
   Width := 800;
   Height := 600;
+  AboutAction.Enabled := false;
   {$ENDIF}
+  {$IFDEF EPI_DEBUG}
+  AboutAction.Enabled := true;
+  {$ENDIF}
+
 
   LoadIniFile;
 
@@ -185,6 +194,49 @@ begin
   Frm := TAboutForm.Create(self);
   Frm.ShowModal;
   Frm.Free;
+end;
+
+procedure TMainForm.CheckVersionActionExecute(Sender: TObject);
+var
+  Stable: TEpiVersionInfo;
+  Test: TEpiVersionInfo;
+  Response: string;
+  NewStable: Boolean;
+  NewTest: Boolean;
+  EntryScore: Integer;
+  StableScore: Integer;
+  TestScore: Integer;
+  S: String;
+begin
+  if not CheckVersionOnline('epidataentryclient', Stable, Test, Response) then
+  begin
+    ShowMessage(
+      'ERROR: Could not find version information.' + LineEnding +
+      'Response: ' + Response);
+    exit;
+  end;
+
+  with EntryVersion do
+    EntryScore  := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
+  With Stable do
+    StableScore := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
+  With Test do
+    TestScore   := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
+
+  NewStable     := (StableScore - EntryScore) > 0;
+  NewTest       := (TestScore   - EntryScore) > 0;
+
+  with EntryVersion do
+    S := Format('Current Version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
+  if NewStable then with Stable do
+    S := S + Format('New stable release available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
+  else
+    S := S + 'No new stable release available.';
+  if NewTest then with Test do
+    S := S + Format('New test version available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
+  else
+    S := S + 'No new test version available.';
+  ShowMessage(S);
 end;
 
 procedure TMainForm.CopyProjectInfoActionExecute(Sender: TObject);

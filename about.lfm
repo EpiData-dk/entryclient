@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 2067
+  Left = 958
   Height = 367
-  Top = 325
+  Top = 267
   Width = 458
   ActiveControl = AboutPageControl
   BorderIcons = []
@@ -60,6 +60,8 @@ object AboutForm: TAboutForm
         Top = 0
         Width = 452
         Align = alClient
+        AutoSize = True
+        Center = True
       end
       object VersionLabel: TLabel
         Left = 13

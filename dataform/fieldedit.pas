@@ -560,17 +560,6 @@ begin
   N := 2;
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
-{  N := CountChar(Text, '-');
-  N += CountChar(Text, '/');
-  N += CountChar(Text, '.');
-
-  IsSeparator := false;
-  if (WC in ['-','/','.']) then IsSeparator := true;
-  if IsSeparator then WC := DateSeparator;
-
-  if not(WC in DateChars) then exit(false);
-  // No more than two separators.
-  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);     }
   // No separator at start
   if IsSeparator and (Caret = 1) then exit(false);
   // No two consecutive separators.

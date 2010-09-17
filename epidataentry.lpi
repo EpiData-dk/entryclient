@@ -30,17 +30,20 @@
         <LaunchingApplication PathPlusParams="/usr/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="2">
+    <RequiredPackages Count="3">
       <Item1>
+        <PackageName Value="lnetbase"/>
+      </Item1>
+      <Item2>
         <PackageName Value="epidatacore"/>
         <MaxVersion Minor="5" Valid="True"/>
         <MinVersion Minor="5" Valid="True"/>
-      </Item1>
-      <Item2>
-        <PackageName Value="LCL"/>
       </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="epidataentry.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -91,6 +94,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="about"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="../../EpiData.dk/checkversion.php"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

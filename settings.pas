@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons;
+  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, epiversionutils;
 
 type
 
@@ -34,12 +34,13 @@ type
     IniFileName:           string;
   end;
 
-  TEntryVersion = record
-    VersionNo: Integer;
-    MajorRev:  Integer;
-    MinorRev:  Integer;
-    BuildNo:   Integer;
-  end;
+const
+  EntryVersion: TEpiVersionInfo = (
+    VersionNo: 0;
+    MajorRev:  1;
+    MinorRev:  1;
+    BuildNo:   0;
+  );
 
 var
   EntrySettings: TEntrySettings = (
@@ -62,15 +63,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLProc, IniFiles, epimiscutils;
-
-const
-  EntryVersion: TEpiVersionInfo = (
-    VersionNo: 0;
-    MajorRev:  1;
-    MinorRev:  1;
-    BuildNo:   0;
-  );
+  LCLProc, IniFiles;
 
 function GetEntryVersion: String;
 begin
