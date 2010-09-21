@@ -349,7 +349,8 @@ end;
 
 function TIntegerEdit.ValidateEntry: boolean;
 var
-  I, Code: integer;
+  I: EpiInteger;
+  Code: integer;
 begin
   result := true;
   if not Modified then exit;

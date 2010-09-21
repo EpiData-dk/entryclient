@@ -228,14 +228,16 @@ begin
 
   with EntryVersion do
     S := Format('Current Version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
-  if NewStable then with Stable do
-    S := S + Format('New stable release available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
-  else
-    S := S + 'No new stable release available.';
-  if NewTest then with Test do
-    S := S + Format('New test version available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
-  else
-    S := S + 'No new test version available.';
+  with Stable do
+    if NewStable then
+      S := S + Format('New public release available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
+    else
+      S := S + Format('Latest public release: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
+   with Test do
+     if NewTest then
+      S := S + Format('New test version available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo])
+    else
+      S := S + Format('Latest test version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]);
   ShowMessage(S);
 end;
 
