@@ -102,6 +102,16 @@ type
     function    ValidateEntry: boolean; override;
   end;
 
+  { TBoolEdit }
+
+  TBoolEdit = class(TFieldEdit)
+  protected
+    function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    Characters: TCharSet; override;
+  public
+    function    ValidateEntry: boolean; override;
+  end;
+
 implementation
 
 uses
@@ -398,19 +408,6 @@ var
 begin
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
-{  N := CountChar(Text, '.');
-  N += CountChar(Text, ',');
-
-  IsSeparator := false;
-  if (WC in ['.',',']) then IsSeparator := true;
-
-  // Check for allowed keys.
-  if not(WC in FloatChars) then exit;
-  // Sign operators are only allowed at pos 0.
-  if (WC in ['+','-']) and (Caret > 1) then exit;
-  // No more than 1 separator is allowed at any time.
-  if IsSeparator and (N >= 1) then exit;        }
-
   // Validate position of separator... (cannot be placed beyond #integers)
   if IsSeparator and (Caret > (Field.Length - Field.Decimals)) then
     exit;
@@ -509,7 +506,9 @@ begin
           if (Al > 0) then D := StrToInt(A);
           if (Bl > 0) then M := StrToInt(B);
         end else begin
-          if (Al > 0) then M := StrToInt(A);
+          // Only 2 digits enteres -> any case, it's considered to be the day.
+          if (Al > 0) and (Bl = 0) then D := StrToInt(A);
+          if (Al > 0) and (Bl > 0) then M := StrToInt(A);
           if (Bl > 0) then D := StrToInt(B);
         end;
         if (Cl > 0) then Y := StrToInt(C);
@@ -517,9 +516,13 @@ begin
     ftYMDDate:
       begin
         if (Al > 4) or (Bl > 2) or (Cl > 2) then exit(false);
-        if (Al > 0) then Y := StrToInt(A);
-        if (Bl > 0) then M := StrToInt(B);
-        if (Cl > 0) then D := StrToInt(C);
+        if (Al > 0) and (Al <= 2) and (Bl+Cl = 0) then
+          D := StrToInt(A)
+        else begin
+          if (Al > 0) then Y := StrToInt(A);
+          if (Bl > 0) then M := StrToInt(B);
+          if (Cl > 0) then D := StrToInt(C);
+        end;
       end;
   end;
 
@@ -589,6 +592,7 @@ begin
     end;
   end;
 
+  if IsSeparator then WC := DateSeparator;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -652,18 +656,7 @@ var
   AutoPlace: Boolean;
 begin
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
-{
-  N := CountChar(Text, '-');
-  N += CountChar(Text, ':');
-  N += CountChar(Text, '.');
 
-  IsSeparator := false;
-  if (WC in ['-',':','.']) then IsSeparator := true;
-  if IsSeparator then WC := TimeSeparator;
-
-  if not(WC in TimeChars) then exit;
-  // No more than two separators.
-  if IsSeparator and (N >= 2) and (SelLength = 0) then exit(false);}
   // No separator at start
   if IsSeparator and (Caret = 1) then exit(false);
   // No two consecutive separators.
@@ -682,6 +675,7 @@ begin
     end;
   end;
 
+  if IsSeparator then WC := TimeSeparator;
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
@@ -701,6 +695,31 @@ end;
 function TTimeEdit.SeparatorCount: integer;
 begin
   Result := 2;
+end;
+
+{ TBoolEdit }
+
+function TBoolEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
+var
+  N: integer;
+begin
+  if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
+  // TODO : Use some sort of localized boolean chars.
+  if WC in BooleanYesChars then
+    WC := 'Y'
+  else
+    WC := 'N';
+  Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+function TBoolEdit.Characters: TCharSet;
+begin
+  Result := BooleanChars;
+end;
+
+function TBoolEdit.ValidateEntry: boolean;
+begin
+  Result := true;
 end;
 
 end.

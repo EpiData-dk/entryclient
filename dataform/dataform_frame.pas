@@ -396,6 +396,7 @@ function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
   case TEpiField(EpiControl).FieldType of
+    ftBoolean:  Result := TBoolEdit.Create(AParent);
     ftInteger,
     ftAutoInc:  Result := TIntegerEdit.Create(AParent);
 

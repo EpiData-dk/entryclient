@@ -14,6 +14,9 @@ const
   TimeChars:       TCharSet=['0'..'9',':','.'];
   BooleanChars:    TCharSet=['y','Y','n','N','1','0'];
 
+  BooleanYesChars: TCharSet=['Y','y','1'];
+  BooleanNoChars:  TCharSet=['N','n','0'];
+
 type
   TCharArray = array of char;
 
