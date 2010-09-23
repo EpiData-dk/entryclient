@@ -1,0 +1,86 @@
+#
+#   Makefile.fpc for epidataentryclient
+#
+
+[package]
+name=epidataentryclient
+version=0.1.1.0
+
+[target]
+programs=epidataentry
+
+[compiler]
+options=-dLCL -dLCL$(LCL_PLATFORM) -MObjFPC -Schi -dEPI_SHOWREVISION
+unittargetdir=./lib/$(CPU_TARGET)-$(OS_TARGET)
+unitdir=dataform \
+	$(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET) $(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) \
+	$(CORE_PATH)/lib/$(CPU_TARGET)-$(OS_TARGET) \
+	$(DCPCRYPT_PATH)/lib/$(CPU_TARGET)-$(OS_TARGET) \
+	$(LNET_PATH)/lazaruspackage/lib/$(CPU_TARGET)-$(OS_TARGET) \
+	.
+targetdir=.
+
+[install]
+fpcpackage=n
+
+
+[clean]
+files=$(wildcard $(COMPILER_UNITTARGETDIR)/*$(OEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*$(PPUEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*$(RSTEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.lfm) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.res) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.or) \
+      $(wildcard ./dataform/*$(OEXT)) $(wildcard ./dataform/*$(PPUEXT)) \
+      $(wildcard *$(OEXT)) $(wildcard *$(PPUEXT)) $(wildcard *$(RSTEXT))
+
+[prerules]
+# EpiData defined.
+include Makefile.rc
+RELEASE_OPT=-dEPI_RELEASE -Xs -O2 -WG
+DEBUG_OPT=-dEPI_DEBUG -g -gl -gw
+
+# LCL Platform
+ifndef LCL_PLATFORM
+ifeq ($(OS_TARGET),win32)
+LCL_PLATFORM=win32
+else
+ifeq ($(OS_TARGET),win64)
+LCL_PLATFORM=win32
+else
+ifeq ($(OS_TARGET),darwin)
+LCL_PLATFORM=carbon
+else
+LCL_PLATFORM=gtk2
+endif
+endif
+endif
+endif
+export LCL_PLATFORM
+
+[rules]
+.PHONY: all
+
+clean:	fpc_clean
+	$(MAKE) -C $(CORE_PATH) clean
+
+revisioninc:
+	./update_revision.sh
+
+core:
+	$(MAKE) -C $(CORE_PATH) all
+
+core_debug:
+	$(MAKE) -C $(CORE_PATH) all OPT='$(DEBUG_OPT) $(OPT)'
+
+core_release:
+	$(MAKE) -C $(CORE_PATH) all OPT='$(RELEASE_OPT) $(OPT)'
+
+all:	$(COMPILER_UNITTARGETDIR) core revisioninc
+	$(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT)
+
+debug:   $(COMPILER_UNITTARGETDIR) core_debug revisioninc
+	 $(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT) OPT='$(DEBUG_OPT) $(OPT)'
+
+release: $(COMPILER_UNITTARGETDIR) core_release revisioninc
+	 $(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT) OPT='$(RELEASE_OPT) $(OPT)'
