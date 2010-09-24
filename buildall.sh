@@ -1,10 +1,9 @@
 #!/bin/bash
-# Compile all versions of manager!
+# Compile all versions!
 
 ###########################################
 #  DO NOT EDIT			          #
 ###########################################
-PROGRAMNAME="epidataentry"
 LOCALIZATIONS_FILE="buildall.rc"
 . "$LOCALIZATIONS_FILE"
 
@@ -72,13 +71,14 @@ compile() {
             POSTFIX="intel"
             ;;
         esac
+	ln -sf $FILENAME $OUTPUTFN
         FINALZIP_NAME=$ZIP_NAME.mac.$POSTFIX.zip
         zip -r -9 $FINALZIP_NAME "$PROGRAMNAME.app"
         ;;
       *)
        ;;
     esac
-#  mv $FINALZIP_NAME "$HOME/epiexec/"		
+    mv $FINALZIP_NAME "$HOME/epiexec/"		
   else
     echo "Error in compilation!"
     return
@@ -116,10 +116,10 @@ get_version_info() {
 }
 get_version_info
 
-echo "**********************"
-echo " Start compiling..."
-echo " Entryls version: $PROGRAM_VERSION"
-echo "**********************"
+echo "**********************************"
+echo " Start compiling... ($PROGRAMNAME)"
+echo " Version: $PROGRAM_VERSION"
+echo "**********************************"
 
 for TARGET in $ALL_TARGETS ; do {
   MY_CPU_TARGET=`echo "$TARGET" | cut -f 1-1 -d '-'`
