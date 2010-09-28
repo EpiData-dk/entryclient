@@ -56,7 +56,6 @@ type
     TabNameCount: integer;
     procedure LoadIniFile;
     procedure SetCaption;
-    Procedure ExceptionHandler(Sender : TObject; E : Exception);
   public
     { public declarations }
     property  ActiveFrame: TFrame read FActiveFrame;
@@ -131,11 +130,6 @@ begin
   Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
 end;
 
-procedure TMainForm.ExceptionHandler(Sender: TObject; E: Exception);
-begin
-  Halt;
-end;
-
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
@@ -151,9 +145,6 @@ begin
   LoadIniFile;
 
   NewProjectAction.Execute;
-
-//  Application.OnException := @ExceptionHandler;
-//  Application.AddOnExceptionHandler(@ExceptionHandler);
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -166,26 +157,29 @@ begin
 
   // TODO : Optimize NOT to used casting, and units specific to the dataform_frame
   // TODO : Works only on a single datafile in a single document - expand to be more generic.
-  if (Assigned(TProjectFrame(ActiveFrame).EpiDocument)) and
-     ((TProjectFrame(ActiveFrame).EpiDocument.Modified) or
-      (TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).Modified))
-  then begin
-    Res := MessageDlg('Warning',
-      'Project data content modified.' + LineEnding +
-      'Save before exit?',
-      mtWarning, mbYesNoCancel, 0, mbCancel);
-
-    if Res = mrCancel then exit;
-
-    if Res = mrYes then
+  if (Assigned(TProjectFrame(ActiveFrame).EpiDocument)) then
+  begin
+    if ((TProjectFrame(ActiveFrame).EpiDocument.Modified) or
+        (TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).Modified)) then
     begin
-      // Commit field (in case they are not already.
-      List := TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).FieldEditList;
-      for i := 0 to List.Count - 1 do
-        TFieldEdit(List[i]).Commit;
+      Res := MessageDlg('Warning',
+        'Project data content modified.' + LineEnding +
+        'Save before exit?',
+        mtWarning, mbYesNoCancel, 0, mbCancel);
 
-      SaveProjectMenuItem.Click;
+      if Res = mrCancel then exit;
+
+      if Res = mrYes then
+      begin
+        // Commit field (in case they are not already.
+        List := TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).FieldEditList;
+        for i := 0 to List.Count - 1 do
+          TFieldEdit(List[i]).Commit;
+
+        SaveProjectMenuItem.Click;
+      end;
     end;
+    TProjectFrame(ActiveFrame).CloseProjectAction.Execute;
   end;
   CanClose := true;
 end;

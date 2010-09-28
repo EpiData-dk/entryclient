@@ -78,7 +78,7 @@ compile() {
       *)
        ;;
     esac
-    mv $FINALZIP_NAME "$HOME/epiexec/"		
+#    mv $FINALZIP_NAME "$HOME/epiexec/"
   else
     echo "Error in compilation!"
     return

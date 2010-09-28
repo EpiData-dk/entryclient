@@ -4,7 +4,7 @@ object MainForm: TMainForm
   Top = 199
   Width = 977
   Caption = 'EpiData Entry - Test Version do NOT use for real data.'
-  ClientHeight = 623
+  ClientHeight = 617
   ClientWidth = 977
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
@@ -150,7 +150,7 @@ object MainForm: TMainForm
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 623
+    Height = 617
     Top = 0
     Width = 977
     Align = alClient

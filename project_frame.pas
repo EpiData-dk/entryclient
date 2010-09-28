@@ -13,6 +13,7 @@ type
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
+    CloseProjectAction: TAction;
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
@@ -27,6 +28,9 @@ type
     ProjectToolButtomDivider2: TToolButton;
     DataFilesTreeView: TTreeView;
     ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    procedure CloseProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
@@ -99,6 +103,11 @@ begin
   DoOpenProject(ProjectOpenDialog.FileName);
 end;
 
+procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
+begin
+  DoCloseProject;
+end;
+
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
   DoSaveProject(FDocumentFilename);
@@ -118,11 +127,27 @@ begin
 end;
 
 procedure TProjectFrame.DoOpenProject(const aFilename: string);
+var
+  Res: LongInt;
+  Fn: String;
 begin
-  DoCloseProject;
+  Fn := aFilename;
+  if FileExistsUTF8(Fn + '.bak') then
+  begin
+    Res := MessageDlg('Information',
+             'A backup file for this project exists.' + LineEnding +
+             'Load the backup instead?',
+             mtInformation, mbYesNoCancel, 0, mbYes);
+    case Res of
+      mrYes:    Fn := aFilename + '.bak';
+      mrNo:     ;
+      mrCancel: Exit;
+    end;
+  end;
 
+  DoCloseProject;
   FEpiDocument := DoCreateNewDocument;
-  FEpiDocument.LoadFromFile(aFilename);
+  FEpiDocument.LoadFromFile(Fn);
   FDocumentFilename := aFilename;
 
   // Create backup process.
@@ -188,7 +213,7 @@ begin
   // TODO : Delete ALL dataforms!
   FreeAndNil(FEpiDocument);
   FreeAndNil(FActiveFrame);
-  FBackupTimer.Free;
+  FreeAndNil(FBackupTimer);
   if FileExistsUTF8(FDocumentFilename + '.bak') then
     DeleteFileUTF8(FDocumentFilename + '.bak');
   DataFilesTreeView.Items.Clear;
@@ -199,7 +224,7 @@ begin
   UpdateMainCaption;
 
   // Activates/Deactivates timed backup.
-  if Assigned(FBackupTimer) then
+  if Assigned(FBackupTimer) and Assigned(EpiDocument) then
     FBackupTimer.Enabled := EpiDocument.Modified;
 end;
 

@@ -151,7 +151,7 @@ begin
     BorderStyle := bsNone;
   case BorderStyle of
     bsNone:   SideBuf := 0;
-    bsSingle: SideBuf := 6;
+    bsSingle: SideBuf := {$IFDEF MSWINDOWS} 7 {$ELSE} 6 {$ENDIF};
   end;
 
   //         Side buffer (pixel from controls left side to first character.
