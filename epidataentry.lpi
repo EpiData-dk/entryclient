@@ -9,7 +9,6 @@
       <Title Value="EpiData Entry Client"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
@@ -37,7 +36,7 @@
       </Item1>
       <Item2>
         <PackageName Value="epidatacore"/>
-        <MaxVersion Minor="5" Valid="True"/>
+        <MaxVersion Minor="5" Release="1" Valid="True"/>
         <MinVersion Minor="5" Valid="True"/>
       </Item2>
       <Item3>
@@ -96,7 +95,7 @@
         <UnitName Value="about"/>
       </Unit7>
       <Unit8>
-        <Filename Value="../../EpiData.dk/checkversion.php"/>
+        <Filename Value="../EpiData.dk/checkversion.php"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
     </Units>

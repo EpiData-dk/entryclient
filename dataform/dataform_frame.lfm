@@ -6,8 +6,8 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 666
   ClientWidth = 973
   TabOrder = 0
-  DesignLeft = 612
-  DesignTop = 239
+  DesignLeft = 328
+  DesignTop = 160
   object DataFormScroolBox: TScrollBox
     Left = 0
     Height = 636

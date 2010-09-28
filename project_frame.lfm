@@ -6,8 +6,8 @@ object ProjectFrame: TProjectFrame
   ClientHeight = 572
   ClientWidth = 739
   TabOrder = 0
-  DesignLeft = 653
-  DesignTop = 336
+  DesignLeft = 505
+  DesignTop = 186
   object ProjectPanel: TPanel
     Left = 0
     Height = 572
@@ -23,7 +23,7 @@ object ProjectFrame: TProjectFrame
       Top = 27
       Width = 168
       Align = alClient
-      DefaultItemHeight = 19
+      DefaultItemHeight = 15
       ReadOnly = True
       ScrollBars = ssAutoBoth
       ShowRoot = False
@@ -62,6 +62,12 @@ object ProjectFrame: TProjectFrame
         Width = 4
         Caption = 'ProjectToolButtomDivider2'
         Style = tbsDivider
+      end
+      object ToolButton1: TToolButton
+        Left = 55
+        Top = 2
+        Caption = 'ToolButton1'
+        OnClick = ToolButton1Click
       end
     end
   end

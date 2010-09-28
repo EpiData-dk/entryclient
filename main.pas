@@ -56,6 +56,7 @@ type
     TabNameCount: integer;
     procedure LoadIniFile;
     procedure SetCaption;
+    Procedure ExceptionHandler(Sender : TObject; E : Exception);
   public
     { public declarations }
     property  ActiveFrame: TFrame read FActiveFrame;
@@ -87,15 +88,10 @@ begin
   TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
   TabSheet.Caption := 'Untitled';
 
-//  if PageControl1.PageCount >= 1 then
-//    PageControl1.ShowTabs := true;
-
   Frame := TProjectFrame.Create(TabSheet);
   Frame.Name := 'ProjectFrame' + IntToStr(TabNameCount);
   Frame.Align := alClient;
   Frame.Parent := TabSheet;
-//  Frame.OnModified := @ProjectModified;
-//  Frame.NewDataFormAction.Execute;
   FActiveFrame := Frame;
   MainFormPageControl.ActivePage := TabSheet;
 
@@ -135,6 +131,11 @@ begin
   Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
 end;
 
+procedure TMainForm.ExceptionHandler(Sender: TObject; E: Exception);
+begin
+  Halt;
+end;
+
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
@@ -147,10 +148,12 @@ begin
   AboutAction.Enabled := true;
   {$ENDIF}
 
-
   LoadIniFile;
 
   NewProjectAction.Execute;
+
+//  Application.OnException := @ExceptionHandler;
+//  Application.AddOnExceptionHandler(@ExceptionHandler);
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
