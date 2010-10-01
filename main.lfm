@@ -145,8 +145,9 @@ object MainForm: TMainForm
   }
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   OnShow = FormShow
-  Position = poOwnerFormCenter
+  Position = poScreenCenter
   LCLVersion = '0.9.29'
   object MainFormPageControl: TPageControl
     Left = 0

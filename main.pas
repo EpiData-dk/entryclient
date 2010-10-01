@@ -47,6 +47,7 @@ type
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
@@ -133,11 +134,6 @@ end;
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
-  {$IFDEF EPI_RELEASE}
-  Width := 800;
-  Height := 600;
-  AboutAction.Enabled := false;
-  {$ENDIF}
   {$IFDEF EPI_DEBUG}
   AboutAction.Enabled := true;
   {$ENDIF}
@@ -179,6 +175,15 @@ begin
     TProjectFrame(ActiveFrame).CloseProjectAction.Execute;
   end;
   CanClose := true;
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  {$IFDEF EPI_RELEASE}
+  Width := 800;
+  Height := 600;
+  AboutAction.Enabled := false;
+  {$ENDIF}
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);
