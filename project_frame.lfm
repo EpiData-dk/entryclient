@@ -1,25 +1,25 @@
 object ProjectFrame: TProjectFrame
   Left = 0
-  Height = 572
+  Height = 580
   Top = 0
-  Width = 739
-  ClientHeight = 572
-  ClientWidth = 739
+  Width = 907
+  ClientHeight = 580
+  ClientWidth = 907
   TabOrder = 0
-  DesignLeft = 505
-  DesignTop = 186
+  DesignLeft = 622
+  DesignTop = 257
   object ProjectPanel: TPanel
     Left = 0
-    Height = 572
+    Height = 580
     Top = 0
     Width = 170
     Align = alLeft
-    ClientHeight = 572
+    ClientHeight = 580
     ClientWidth = 170
     TabOrder = 0
     object DataFilesTreeView: TTreeView
       Left = 1
-      Height = 544
+      Height = 552
       Top = 27
       Width = 168
       Align = alClient
@@ -85,9 +85,47 @@ object ProjectFrame: TProjectFrame
   end
   object Splitter1: TSplitter
     Left = 170
-    Height = 572
+    Height = 580
     Top = 0
     Width = 5
+  end
+  object Panel1: TPanel
+    Left = 720
+    Height = 580
+    Top = 0
+    Width = 187
+    Align = alRight
+    Caption = 'Panel1'
+    ClientHeight = 580
+    ClientWidth = 187
+    TabOrder = 2
+    object Memo1: TMemo
+      Left = 1
+      Height = 528
+      Top = 1
+      Width = 185
+      Align = alClient
+      TabOrder = 0
+    end
+    object Panel2: TPanel
+      Left = 1
+      Height = 50
+      Top = 529
+      Width = 185
+      Align = alBottom
+      ClientHeight = 50
+      ClientWidth = 185
+      TabOrder = 1
+      object Button1: TButton
+        Left = 23
+        Height = 33
+        Top = 7
+        Width = 144
+        Caption = 'CLEAR'
+        OnClick = Button1Click
+        TabOrder = 0
+      end
+    end
   end
   object ProjectActionList: TActionList
     Images = ProjectImageList
@@ -218,6 +256,8 @@ object ProjectFrame: TProjectFrame
     }
   end
   object ProjectOpenDialog: TOpenDialog
+    Width = 920
+    Height = 703
     left = 504
     top = 136
   end

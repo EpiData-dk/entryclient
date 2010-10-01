@@ -172,10 +172,7 @@ begin
       if Res = mrYes then
       begin
         // Commit field (in case they are not already.
-        List := TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).FieldEditList;
-        for i := 0 to List.Count - 1 do
-          TFieldEdit(List[i]).Commit;
-
+        TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).CommitFields;
         SaveProjectMenuItem.Click;
       end;
     end;
@@ -209,7 +206,8 @@ begin
   begin
     ShowMessage(
       'ERROR: Could not find version information.' + LineEnding +
-      'Response: ' + Response);
+      'Response: ' + Response + LineEnding +
+      'Check internet connection!');
     exit;
   end;
 

@@ -66,7 +66,6 @@ type
     procedure UpdateRecordEdit;
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
-    procedure CommitFields;
   private
     { Field Entry Handling }
     function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
@@ -83,8 +82,11 @@ type
       AParent: TWinControl): TControl;
     function  NewHeadingControl(EpiControl: TEpiCustomControlItem;
       AParent: TWinControl): TControl;
+  protected
+    procedure SetCursor(Value: TCursor); override;
   public
     constructor Create(TheOwner: TComponent); override;
+    procedure CommitFields;
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
@@ -442,6 +444,11 @@ begin
     Result.Font.Style := [fsBold];
   end;
   Result.Parent := AParent;
+end;
+
+procedure TDataFormFrame.SetCursor(Value: TCursor);
+begin
+  DataFormScroolBox.Cursor := Value;
 end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);

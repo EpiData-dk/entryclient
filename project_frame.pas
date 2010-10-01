@@ -6,14 +6,18 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
-  Dialogs, epidocument, epidatafiles;
+  Dialogs, StdCtrls, epidocument, epidatafiles;
 
 type
 
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
+    Button1: TButton;
     CloseProjectAction: TAction;
+    Memo1: TMemo;
+    Panel1: TPanel;
+    Panel2: TPanel;
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
@@ -30,6 +34,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    procedure Button1Click(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
@@ -63,7 +68,7 @@ implementation
 {$R *.lfm}
 
 uses
-  main, dataform_frame, epimiscutils, settings, fieldedit;
+  main, dataform_frame, epimiscutils, settings, fieldedit, LCLIntf;
 
 { TProjectFrame }
 
@@ -92,10 +97,7 @@ begin
     if Res = mrYes then
     begin
       // Commit field (in case they are not already).
-      List := TDataFormFrame(ActiveFrame).FieldEditList;
-      for i := 0 to List.Count - 1 do
-        TFieldEdit(List[i]).Commit;
-
+      TDataFormFrame(ActiveFrame).CommitFields;
       SaveProjectAction.Execute;
     end;
   end;
@@ -104,8 +106,34 @@ begin
 end;
 
 procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
+var
+  Res: LongInt;
 begin
+  if (EpiDocument.Modified) or
+     (TDataFormFrame(ActiveFrame).Modified)
+  then
+  begin
+    Res := MessageDlg('Warning',
+      'Project data content modified.' + LineEnding +
+      'Save before exit?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Res = mrCancel then exit;
+
+    if Res = mrYes then
+    begin
+      // Commit field (in case they are not already.
+      TDataFormFrame(ActiveFrame).CommitFields;
+      SaveProjectAction.Execute;
+    end;
+  end;
+
   DoCloseProject;
+end;
+
+procedure TProjectFrame.Button1Click(Sender: TObject);
+begin
+  Memo1.Clear;
 end;
 
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
@@ -132,20 +160,37 @@ var
   Fn: String;
 begin
   Fn := aFilename;
+  Res := mrNone;
   if FileExistsUTF8(Fn + '.bak') then
   begin
     Res := MessageDlg('Information',
-             'A backup file for this project exists.' + LineEnding +
+             'A timed backup file exists. (loading of this overwrites previous project file)' + LineEnding + LineEnding +
+             'File: ' +  #9  + #9  + SysToUTF8(ExtractFileName(UTF8ToSys(Fn)))          +
+               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn))) + ')' + LineEnding +
+             'Recovery: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(Fn + '.bak'))) +
+               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn + '.bak'))) + ')' + LineEnding +  LineEnding +
              'Load the backup instead?',
              mtInformation, mbYesNoCancel, 0, mbYes);
     case Res of
       mrYes:    Fn := aFilename + '.bak';
-      mrNo:     ;
+      mrNo:     begin
+                  Res := MessageDlg('Warning',
+                           'Loading ' + SysToUTF8(ExtractFileName(UTF8ToSys(Fn))) + ' will delete recovery file.' + LineEnding +
+                           'Continue?',
+                           mtWarning, mbYesNo, 0, mbNo);
+                  case Res of
+                    mrNo:  Exit;
+                    mrYes: Res := mrNo;  // Res used later to check for modification state.
+                  end;
+                end;
       mrCancel: Exit;
     end;
   end;
 
   DoCloseProject;
+
+  Cursor := crHourGlass;
+  Application.ProcessMessages;
   FEpiDocument := DoCreateNewDocument;
   FEpiDocument.LoadFromFile(Fn);
   FDocumentFilename := aFilename;
@@ -160,19 +205,58 @@ begin
   end;
 
   DoNewDataForm(FEpiDocument.DataFiles[0]);
+
+  Cursor := crDefault;
+  Application.ProcessMessages;
+  if Res = mrYes then
+    EpiDocument.Modified := true;
+
   UpdateMainCaption;
+  SaveProjectAction.Update;
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
 var
   Ss: TStringStream;
   Fs: TFileStream;
+  S: String;
+  T: DWord;
+  D: DWord;
 begin
-  Ss := TStringStream.Create(EpiDocument.SaveToXml());
-  Fs := TFileStream.Create(aFilename, fmCreate);
-  Fs.CopyFrom(Ss, Ss.Size);
-  Ss.Free;
-  Fs.Free;
+  ActiveFrame.Cursor := crHourGlass;
+  Application.ProcessMessages;
+  try
+    {$IFDEF EPI_RELEASE}
+    Ss := TStringStream.Create(EpiDocument.SaveToXml());
+    Fs := TFileStream.Create(aFilename, fmCreate);
+    Fs.CopyFrom(Ss, Ss.Size);
+    {$ELSE}
+    T := GetTickCount;
+    S := EpiDocument.SaveToXml();
+    D := GetTickCount - T;
+    Memo1.Lines.Add(Format('SaveToXml: %d', [D]));
+
+    T := GetTickCount;
+    Ss := TStringStream.Create(S);
+    D := GetTickCount - T;
+    Memo1.Lines.Add(Format('TStringStream.Create: %d', [D]));
+
+    T := GetTickCount;
+    Fs := TFileStream.Create(aFilename, fmCreate);
+    D := GetTickCount - T;
+    Memo1.Lines.Add(Format('TFileStream.Create: %d', [D]));
+
+    T := GetTickCount;
+    Fs.CopyFrom(Ss, Ss.Size);
+    D := GetTickCount - T;
+    Memo1.Lines.Add(Format('Fs.CopyFrom: %d', [D]));
+    {$ENDIF EPI_RELEASE}
+  finally
+    ActiveFrame.Cursor := crDefault;
+    Application.ProcessMessages;
+    Ss.Free;
+    Fs.Free;
+  end;
 end;
 
 procedure TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile);
@@ -209,7 +293,17 @@ begin
 end;
 
 procedure TProjectFrame.DoCloseProject;
+var
+  S: String;
 begin
+  if not Assigned(FEpiDocument) then exit;
+
+  if FEpiDocument.ProjectSettings.BackupOnShutdown then
+  begin
+    S := ExtractFileNameWithoutExt(DocumentFileName);
+    DoSaveProject(S + '.' + FormatDateTime('YYYY/MM/DD', Now) + '.epx');
+  end;
+
   // TODO : Delete ALL dataforms!
   FreeAndNil(FEpiDocument);
   FreeAndNil(FActiveFrame);
@@ -272,6 +366,10 @@ begin
     ProjectPanel.Visible := false;
     Splitter1.Enabled    := false;
     Splitter1.Visible    := false;
+
+
+    Panel1.Enabled       := false;
+    Panel1.Visible       := false;
   {$ENDIF}
 end;
 

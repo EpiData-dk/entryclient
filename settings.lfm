@@ -3,6 +3,7 @@ object SettingsForm: TSettingsForm
   Height = 113
   Top = 492
   Width = 454
+  ActiveControl = WorkingDirEdit
   Caption = 'Settings'
   ClientHeight = 113
   ClientWidth = 454
@@ -53,19 +54,19 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 55
-      ClientWidth = 446
+      ClientHeight = 57
+      ClientWidth = 448
       object Label17: TLabel
         Left = 16
-        Height = 14
+        Height = 18
         Top = 23
-        Width = 92
+        Width = 124
         Caption = 'Default data folder'
         ParentColor = False
       end
       object WorkingDirEdit: TDirectoryEdit
         Left = 152
-        Height = 21
+        Height = 27
         Top = 16
         Width = 248
         ShowHidden = False
@@ -76,4 +77,4 @@ object SettingsForm: TSettingsForm
       end
     end
   end
-end
+end
