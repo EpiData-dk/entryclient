@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, epiversionutils;
+  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit, epiversionutils;
 
 type
 
@@ -15,6 +15,8 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    Label1: TLabel;
+    RecordsToSkipEdit: TMaskEdit;
     WorkingDirEdit: TDirectoryEdit;
     Label17: TLabel;
     PageControl1: TPageControl;
@@ -31,6 +33,7 @@ type
 
   TEntrySettings = record
     WorkingDirUTF8: string;
+    RecordsToSkip:  Integer;
     IniFileName:           string;
   end;
 
@@ -45,6 +48,7 @@ const
 var
   EntrySettings: TEntrySettings = (
     WorkingDirUTF8: '';
+    RecordsToSkip:  25;
     IniFileName:    '';
   );
 
@@ -86,6 +90,7 @@ begin
       WorkingDirUTF8:        string;}
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
+      WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       Result := true;
     end;
   finally
@@ -111,6 +116,7 @@ begin
     WorkingDirUTF8:        string;}
     Sec := 'advanced';
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
+    RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
   end;
 end;
 
@@ -124,8 +130,11 @@ begin
 
   CanClose := false;
   if not DirectoryExistsUTF8(WorkingDirEdit.Text) then exit;
+  if StrToInt(RecordsToSkipEdit.Text) < 1 then exit;
+
 
   EntrySettings.WorkingDirUTF8 := WorkingDirEdit.Text;
+  EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;

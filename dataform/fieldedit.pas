@@ -322,8 +322,8 @@ end;
 
 destructor TFieldEdit.Destroy;
 begin
-  FNameLabel.Free;
-  FQuestionLabel.Free;
+//  FNameLabel.Free;
+//  FQuestionLabel.Free;
   inherited Destroy;
 end;
 

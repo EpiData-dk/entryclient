@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 958
+  Left = 428
   Height = 367
-  Top = 267
+  Top = 236
   Width = 458
   ActiveControl = AboutPageControl
   BorderIcons = []
@@ -27,10 +27,10 @@ object AboutForm: TAboutForm
       AnchorSideTop.Side = asrCenter
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
-      Left = 194
-      Height = 32
-      Top = 9
-      Width = 71
+      Left = 193
+      Height = 34
+      Top = 8
+      Width = 73
       AutoSize = True
       BorderSpacing.Around = 6
       Cancel = True

@@ -51,6 +51,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
+    procedure SettingsMenuItemClick(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
@@ -112,6 +113,11 @@ var
 begin
   SettingsForm := TSettingsForm.Create(Self);
   SettingsForm.ShowModal;
+end;
+
+procedure TMainForm.SettingsMenuItemClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.LoadIniFile;

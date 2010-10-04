@@ -13,6 +13,8 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    JumpNextRecAction: TAction;
+    JumpPrevRecAction: TAction;
     FileNamePanel: TPanel;
     PageDownAction: TAction;
     PageUpAction: TAction;
@@ -45,6 +47,8 @@ type
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
     procedure GotoRecordActionExecute(Sender: TObject);
+    procedure JumpNextRecActionExecute(Sender: TObject);
+    procedure JumpPrevRecActionExecute(Sender: TObject);
     procedure LastFieldActionExecute(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
@@ -101,7 +105,7 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit, epidatafilestypes, LCLProc,
+  fieldedit, epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
@@ -150,6 +154,16 @@ end;
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
 begin
   RecordEdit.SetFocus;
+end;
+
+procedure TDataFormFrame.JumpNextRecActionExecute(Sender: TObject);
+begin
+  RecNo :=  RecNo + EntrySettings.RecordsToSkip;
+end;
+
+procedure TDataFormFrame.JumpPrevRecActionExecute(Sender: TObject);
+begin
+  RecNo :=  Min(RecNo - EntrySettings.RecordsToSkip, DataFile.Size - EntrySettings.RecordsToSkip);
 end;
 
 procedure TDataFormFrame.LastFieldActionExecute(Sender: TObject);
@@ -340,7 +354,6 @@ begin
 
   // Todo : React to how users have define "new record" behaviour.
   if DataFile.Size = 0 then
-//    DataFile.NewRecords(1);
     NewRecordActionExecute(nil)
   else
     RecNo := (DataFile.Size - 1);
@@ -616,6 +629,7 @@ var
   FieldTop: LongInt;
 begin
   // Occurs whenever a field recieves focus
+
   // - eg. through mouseclik, tab or move.
   FieldTop := FieldEditTop(FieldEdit);
   if FieldTop < DataFormScroolBox.VertScrollBar.Position then
@@ -623,8 +637,6 @@ begin
 
   if FieldTop > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
     DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
-
-
 
   // ********************************
   // **    EpiData Flow Control    **

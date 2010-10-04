@@ -6,7 +6,7 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 666
   ClientWidth = 973
   TabOrder = 0
-  DesignLeft = 440
+  DesignLeft = 419
   DesignTop = 235
   object DataFormScroolBox: TScrollBox
     Left = 0
@@ -251,42 +251,6 @@ object DataFormFrame: TDataFormFrame
       OnUpdate = FirstRecActionUpdate
       ShortCut = 32804
     end
-    object PrevRecAction: TAction
-      Category = 'Record'
-      Caption = 'Previous Record'
-      Hint = 'Previous Record'
-      OnExecute = PrevRecActionExecute
-      OnUpdate = FirstRecActionUpdate
-      SecondaryShortCuts.Strings = (
-        'Alt+Left'
-      )
-      ShortCut = 118
-    end
-    object NextRecAction: TAction
-      Category = 'Record'
-      Caption = 'Next Record'
-      Hint = 'Next Record'
-      OnExecute = NextRecActionExecute
-      OnUpdate = LastRecActionUpdate
-      SecondaryShortCuts.Strings = (
-        'Alt+Right'
-      )
-      ShortCut = 119
-    end
-    object LastRecAction: TAction
-      Category = 'Record'
-      Caption = 'Last Record'
-      Hint = 'Last Record'
-      OnExecute = LastRecActionExecute
-      OnUpdate = LastRecActionUpdate
-      ShortCut = 32803
-    end
-    object NewRecordAction: TAction
-      Category = 'Record'
-      Caption = 'New Record'
-      OnExecute = NewRecordActionExecute
-      ShortCut = 16462
-    end
     object FirstFieldAction: TAction
       Category = 'Field'
       Caption = 'FirstFieldAction'
@@ -315,12 +279,6 @@ object DataFormFrame: TDataFormFrame
       Caption = 'LastFieldAction'
       OnExecute = LastFieldActionExecute
     end
-    object GotoRecordAction: TAction
-      Category = 'Record'
-      Caption = 'Goto Record'
-      OnExecute = GotoRecordActionExecute
-      ShortCut = 16455
-    end
     object PageUpAction: TAction
       Category = 'Screen'
       Caption = 'PageUpAction'
@@ -332,6 +290,60 @@ object DataFormFrame: TDataFormFrame
       Caption = 'PageDownAction'
       OnExecute = PageDownActionExecute
       ShortCut = 34
+    end
+    object JumpPrevRecAction: TAction
+      Category = 'Record'
+      Caption = 'Skip to prev records'
+      OnExecute = JumpPrevRecActionExecute
+      ShortCut = 32886
+    end
+    object PrevRecAction: TAction
+      Category = 'Record'
+      Caption = 'Previous Record'
+      Hint = 'Previous Record'
+      OnExecute = PrevRecActionExecute
+      OnUpdate = FirstRecActionUpdate
+      SecondaryShortCuts.Strings = (
+        'Alt+Left'
+      )
+      ShortCut = 118
+    end
+    object NextRecAction: TAction
+      Category = 'Record'
+      Caption = 'Next Record'
+      Hint = 'Next Record'
+      OnExecute = NextRecActionExecute
+      OnUpdate = LastRecActionUpdate
+      SecondaryShortCuts.Strings = (
+        'Alt+Right'
+      )
+      ShortCut = 119
+    end
+    object JumpNextRecAction: TAction
+      Category = 'Record'
+      Caption = 'JumpNextRecAction'
+      OnExecute = JumpNextRecActionExecute
+      ShortCut = 32887
+    end
+    object LastRecAction: TAction
+      Category = 'Record'
+      Caption = 'Last Record'
+      Hint = 'Last Record'
+      OnExecute = LastRecActionExecute
+      OnUpdate = LastRecActionUpdate
+      ShortCut = 32803
+    end
+    object NewRecordAction: TAction
+      Category = 'Record'
+      Caption = 'New Record'
+      OnExecute = NewRecordActionExecute
+      ShortCut = 16462
+    end
+    object GotoRecordAction: TAction
+      Category = 'Record'
+      Caption = 'Goto Record'
+      OnExecute = GotoRecordActionExecute
+      ShortCut = 16455
     end
   end
 end

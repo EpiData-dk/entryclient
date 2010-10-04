@@ -1,23 +1,23 @@
 object SettingsForm: TSettingsForm
-  Left = 642
-  Height = 113
-  Top = 492
-  Width = 454
+  Left = 571
+  Height = 185
+  Top = 382
+  Width = 478
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 113
-  ClientWidth = 454
+  ClientHeight = 185
+  ClientWidth = 478
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   LCLVersion = '0.9.29'
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 63
-    Width = 454
+    Top = 135
+    Width = 478
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 454
+    ClientWidth = 478
     TabOrder = 0
     object BitBtn1: TBitBtn
       Left = 368
@@ -44,9 +44,9 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 63
+    Height = 135
     Top = 0
-    Width = 454
+    Width = 478
     ActivePage = TabSheet1
     Align = alClient
     ShowTabs = False
@@ -54,8 +54,8 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 57
-      ClientWidth = 448
+      ClientHeight = 129
+      ClientWidth = 472
       object Label17: TLabel
         Left = 16
         Height = 18
@@ -74,6 +74,26 @@ object SettingsForm: TSettingsForm
         NumGlyphs = 0
         MaxLength = 0
         TabOrder = 0
+      end
+      object Label1: TLabel
+        Left = 16
+        Height = 18
+        Top = 62
+        Width = 149
+        Caption = 'Skip number of record:'
+        ParentColor = False
+      end
+      object RecordsToSkipEdit: TMaskEdit
+        Left = 341
+        Height = 27
+        Top = 53
+        Width = 59
+        CharCase = ecNormal
+        MaxLength = 3
+        TabOrder = 1
+        EditMask = '999;1;_'
+        Text = '   '
+        SpaceChar = '_'
       end
     end
   end

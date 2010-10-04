@@ -180,6 +180,7 @@ object MainForm: TMainForm
       Caption = '&Edit'
       object SettingsMenuItem: TMenuItem
         Action = SettingsAction
+        OnClick = SettingsMenuItemClick
       end
     end
     object BrowseMenu: TMenuItem
