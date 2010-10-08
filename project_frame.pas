@@ -13,11 +13,7 @@ type
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
-    Button1: TButton;
     CloseProjectAction: TAction;
-    Memo1: TMemo;
-    Panel1: TPanel;
-    Panel2: TPanel;
     ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
@@ -34,7 +30,6 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
-    procedure Button1Click(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
@@ -79,7 +74,7 @@ var
   i: Integer;
 begin
   ProjectOpenDialog.InitialDir := EntrySettings.WorkingDirUTF8;
-  ProjectOpenDialog.Filter := GetEpiDialogFilter(true, false, false, false,
+  ProjectOpenDialog.Filter := GetEpiDialogFilter(true, true, false, false, false,
     false, false, false, false, false, true);
   if not ProjectOpenDialog.Execute then exit;
 
@@ -131,11 +126,6 @@ begin
   DoCloseProject;
 end;
 
-procedure TProjectFrame.Button1Click(Sender: TObject);
-begin
-  Memo1.Clear;
-end;
-
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
   DoSaveProject(FDocumentFilename);
@@ -158,6 +148,7 @@ procedure TProjectFrame.DoOpenProject(const aFilename: string);
 var
   Res: LongInt;
   Fn: String;
+  St: TMemoryStream;
 begin
   Fn := aFilename;
   Res := mrNone;
@@ -191,9 +182,16 @@ begin
 
   Cursor := crHourGlass;
   Application.ProcessMessages;
+
+  St := TMemoryStream.Create;
+  if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
+    ZipFileToStream(St, Fn)
+  else
+    St.LoadFromFile(Fn);
+  St.Position := 0;
   FEpiDocument := DoCreateNewDocument;
-  FEpiDocument.LoadFromFile(Fn);
-  FDocumentFilename := aFilename;
+  FEpiDocument.LoadFromStream(St);
+  FDocumentFilename := Fn;
 
   // Create backup process.
   if EpiDocument.ProjectSettings.BackupInterval > 0 then
@@ -217,45 +215,27 @@ end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
 var
-  Ss: TStringStream;
   Fs: TFileStream;
-  S: String;
-  T: DWord;
-  D: DWord;
+  Ms: TMemoryStream;
 begin
   ActiveFrame.Cursor := crHourGlass;
   Application.ProcessMessages;
   try
-    {$IFDEF EPI_RELEASE}
-    Ss := TStringStream.Create(EpiDocument.SaveToXml());
-    Fs := TFileStream.Create(aFilename, fmCreate);
-    Fs.CopyFrom(Ss, Ss.Size);
-    {$ELSE}
-    T := GetTickCount;
-    S := EpiDocument.SaveToXml();
-    D := GetTickCount - T;
-    Memo1.Lines.Add(Format('SaveToXml: %d', [D]));
+    Ms := TMemoryStream.Create;
+    EpiDocument.SaveToStream(Ms);
+    Ms.Position := 0;
 
-    T := GetTickCount;
-    Ss := TStringStream.Create(S);
-    D := GetTickCount - T;
-    Memo1.Lines.Add(Format('TStringStream.Create: %d', [D]));
-
-    T := GetTickCount;
-    Fs := TFileStream.Create(aFilename, fmCreate);
-    D := GetTickCount - T;
-    Memo1.Lines.Add(Format('TFileStream.Create: %d', [D]));
-
-    T := GetTickCount;
-    Fs.CopyFrom(Ss, Ss.Size);
-    D := GetTickCount - T;
-    Memo1.Lines.Add(Format('Fs.CopyFrom: %d', [D]));
-    {$ENDIF EPI_RELEASE}
+    if ExtractFileExt(UTF8ToSys(aFilename)) = '.epz' then
+      StreamToZipFile(Ms, aFilename)
+    else begin
+      Fs := TFileStream.Create(aFilename, fmCreate);
+      Fs.CopyFrom(Ms, Ms.Size);
+      Fs.Free;
+    end;
   finally
     ActiveFrame.Cursor := crDefault;
     Application.ProcessMessages;
-    Ss.Free;
-    Fs.Free;
+    Ms.Free;
   end;
 end;
 
