@@ -13,7 +13,7 @@ uses
 {$R *.res}
 
 begin
-  Application.Title := 'EpiData Entry Client';
+  Application.Title := 'epidataentryclient';
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;

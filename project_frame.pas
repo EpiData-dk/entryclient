@@ -14,7 +14,6 @@ type
 
   TProjectFrame = class(TFrame)
     CloseProjectAction: TAction;
-    ProjectOpenDialog: TOpenDialog;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
     OpenProjectAction: TAction;
@@ -70,13 +69,14 @@ uses
 procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
 var
   Res: LongInt;
-  List: TFPList;
-  i: Integer;
+  Dlg: TOpenDialog;
 begin
-  ProjectOpenDialog.InitialDir := EntrySettings.WorkingDirUTF8;
-  ProjectOpenDialog.Filter := GetEpiDialogFilter(true, true, false, false, false,
-    false, false, false, false, false, true);
-  if not ProjectOpenDialog.Execute then exit;
+  Dlg := TOpenDialog.Create(self);
+  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
+  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
+    false, false, false, false, true, true);
+  Dlg.FilterIndex := 0;
+  if not Dlg.Execute then exit;
 
   if (Assigned(EpiDocument)) and
      ((EpiDocument.Modified) or
@@ -97,7 +97,8 @@ begin
     end;
   end;
 
-  DoOpenProject(ProjectOpenDialog.FileName);
+  DoOpenProject(Dlg.FileName);
+  Dlg.Free;
 end;
 
 procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
@@ -306,22 +307,18 @@ procedure TProjectFrame.UpdateMainCaption;
 var
   S: String;
 begin
-  S := 'EpiData Entry Client';
+  S := 'EpiData Entry Client (v' + GetEntryVersion + ')';
 
   if Assigned(EpiDocument) then
   begin
-    if Assigned(ActiveFrame) then
-      S := S + ' "' + TDataFormFrame(ActiveFrame).DataFile.Name.Text + '"';
-  end;
-  MainForm.Caption := S + ' (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
-
-  if Assigned(EpiDocument) and Assigned(ActiveFrame) then
-  begin
-    S := FDocumentFilename;
+    S := S + ' - ' + ExtractFileName(FDocumentFilename);
     if EpiDocument.Modified then
       S := S + '*';
-    TDataFormFrame(ActiveFrame).FileNameEdit.Text := S;
+
+    if Assigned(ActiveFrame) and (TDataFormFrame(ActiveFrame).DataFile.Name.Text <> '') then
+      S := S + ' [' + Copy(TDataFormFrame(ActiveFrame).DataFile.Name.Text, 1, 15) + ']';
   end;
+  MainForm.Caption := S;
 end;
 
 procedure TProjectFrame.TimedBackup(Sender: TObject);
@@ -346,10 +343,6 @@ begin
     ProjectPanel.Visible := false;
     Splitter1.Enabled    := false;
     Splitter1.Visible    := false;
-
-
-    Panel1.Enabled       := false;
-    Panel1.Visible       := false;
   {$ENDIF}
 end;
 

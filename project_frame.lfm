@@ -217,10 +217,4 @@ object ProjectFrame: TProjectFrame
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
   end
-  object ProjectOpenDialog: TOpenDialog
-    Width = 920
-    Height = 703
-    left = 504
-    top = 136
-  end
 end

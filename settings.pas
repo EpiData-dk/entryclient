@@ -144,7 +144,8 @@ procedure TSettingsForm.FormCreate(Sender: TObject);
 begin
   with EntrySettings do
   begin
-    WorkingDirEdit.Text := EntrySettings.WorkingDirUTF8;
+    WorkingDirEdit.Text := WorkingDirUTF8;
+    RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
   end;
 end;
 

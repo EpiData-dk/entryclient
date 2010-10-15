@@ -13,9 +13,12 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    FieldTypeLabel: TLabel;
+    FieldTypePanel: TPanel;
     JumpNextRecAction: TAction;
     JumpPrevRecAction: TAction;
-    FileNamePanel: TPanel;
+    FieldNamePanel: TPanel;
+    FieldNameLabel: TLabel;
     PageDownAction: TAction;
     PageUpAction: TAction;
     GotoRecordAction: TAction;
@@ -42,7 +45,6 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
-    FileNameEdit: TEdit;
     procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
@@ -606,37 +608,41 @@ begin
     FieldEdit.OnKeyDown(FieldEdit, Key, []);
     Exit;
   end;
-
-{
-
-  // This sort of works, but a lot of special characters exists
-  //  and we cannot capture them all. Is there a better way perhaps
-  //  that also ensure legal UTF-8 character can be entered into
-  //  string fields.
-  if (Key < VK_0) and (Key <> VK_SPACE) then exit;
-
-  if UTF8Length(FieldEdit.Text) = FieldEdit.Field.Length then
-  begin
-    Key := VK_RETURN;
-    FieldEdit.OnKeyDown(FieldEdit, Key, []);
-    Exit;
-  end;    }
 end;
 
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
   FieldTop: LongInt;
+  S: String;
 begin
   // Occurs whenever a field recieves focus
-
   // - eg. through mouseclik, tab or move.
+
   FieldTop := FieldEditTop(FieldEdit);
   if FieldTop < DataFormScroolBox.VertScrollBar.Position then
     DataFormScroolBox.VertScrollBar.Position := FieldTop - 5;
 
   if FieldTop > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
     DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
+
+  // * Update content of "statusbar"
+  with FieldEdit.Field do
+  begin
+    FieldNameLabel.Caption := Name;
+    case FieldType of
+      ftInteger:     S := 'Integer: 0-9 allowed';
+      ftFloat:       S := 'Float: 0-9 and commas/points allowed';
+      ftDMYDate:     S := 'Date (DMY): 0-9, "/", "-" and "." allowed';
+      ftMDYDate:     S := 'Date (MDY): 0-9, "/", "-" and "." allowed';
+      ftYMDDate:     S := 'Date (YMD): 0-9, "/", "-" and "." allowed';
+      ftTime:        S := 'Time: 0-9, ":", "-" and "." allowed';
+      ftBoolean:     S := 'Boolean: y, Y, n, N, 1, and 0 allowed';
+      ftString:      S := 'String: All entries allowed';
+      ftUpperString: S := 'String (UPPERCASE): All entries allowed';
+    end;
+    FieldTypeLabel.Caption := S;
+  end;
 
   // ********************************
   // **    EpiData Flow Control    **
@@ -646,7 +652,6 @@ begin
 
   // Before field script:
   // TODO : Before field script
-
 
   // AutoInc/Today:
   if FieldEdit.Field.FieldType in AutoFieldTypes then

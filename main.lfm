@@ -1,9 +1,9 @@
 object MainForm: TMainForm
-  Left = 335
+  Left = 334
   Height = 642
   Top = 199
   Width = 977
-  Caption = 'EpiData Entry - Test Version do NOT use for real data.'
+  Caption = 'epidataentryclient'
   ClientHeight = 617
   ClientWidth = 977
   Icon.Data = {
@@ -180,7 +180,6 @@ object MainForm: TMainForm
       Caption = '&Edit'
       object SettingsMenuItem: TMenuItem
         Action = SettingsAction
-        OnClick = SettingsMenuItemClick
       end
     end
     object BrowseMenu: TMenuItem

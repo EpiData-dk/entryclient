@@ -1,18 +1,18 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 666
+  Height = 686
   Top = 0
-  Width = 973
-  ClientHeight = 666
-  ClientWidth = 973
+  Width = 1041
+  ClientHeight = 686
+  ClientWidth = 1041
   TabOrder = 0
   DesignLeft = 419
   DesignTop = 235
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 636
+    Height = 656
     Top = 0
-    Width = 973
+    Width = 1041
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -21,11 +21,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 636
-    Width = 973
+    Top = 656
+    Width = 1041
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 973
+    ClientWidth = 1041
     TabOrder = 1
     object NavigationPanel: TPanel
       Left = 1
@@ -211,32 +211,50 @@ object DataFormFrame: TDataFormFrame
         NumGlyphs = 2
       end
     end
-    object FileNamePanel: TPanel
+    object FieldNamePanel: TPanel
       Left = 270
       Height = 24
       Top = 3
-      Width = 700
-      Anchors = [akTop, akLeft, akRight]
+      Width = 146
+      Alignment = taLeftJustify
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 700
+      ClientWidth = 146
+      Color = clWhite
+      ParentColor = False
       TabOrder = 2
-      object FileNameEdit: TEdit
-        Left = 1
-        Height = 22
-        Top = 1
-        Width = 698
-        Align = alClient
-        AutoSize = False
-        AutoSelect = False
-        Font.Height = -11
-        Font.Name = 'Courier 10 Pitch'
-        OnEditingDone = RecordEditEditingDone
-        OnEnter = RecordEditEnter
-        ParentFont = False
-        ReadOnly = True
-        TabStop = False
-        TabOrder = 0
+      object FieldNameLabel: TLabel
+        Left = 4
+        Height = 18
+        Top = 4
+        Width = 106
+        Caption = 'FieldNameLabel'
+        ParentColor = False
+      end
+    end
+    object FieldTypePanel: TPanel
+      AnchorSideLeft.Control = FieldNamePanel
+      AnchorSideLeft.Side = asrBottom
+      Left = 418
+      Height = 24
+      Top = 3
+      Width = 620
+      Alignment = taLeftJustify
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 2
+      BevelOuter = bvLowered
+      ClientHeight = 24
+      ClientWidth = 620
+      Color = clWhite
+      ParentColor = False
+      TabOrder = 3
+      object FieldTypeLabel: TLabel
+        Left = 4
+        Height = 18
+        Top = 4
+        Width = 97
+        Caption = 'FieldTypeLabel'
+        ParentColor = False
       end
     end
   end
@@ -255,6 +273,7 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'FirstFieldAction'
       OnExecute = FirstFieldActionExecute
+      ShortCut = 16420
     end
     object PgUpFieldAction: TAction
       Category = 'Field'
@@ -278,6 +297,7 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'LastFieldAction'
       OnExecute = LastFieldActionExecute
+      ShortCut = 16419
     end
     object PageUpAction: TAction
       Category = 'Screen'

@@ -6,7 +6,7 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <AutoCreateForms Value="False"/>
-      <Title Value="EpiData Entry Client"/>
+      <Title Value="epidataentryclient"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
     </General>
@@ -18,6 +18,9 @@
       <CharSet Value="04B0"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>

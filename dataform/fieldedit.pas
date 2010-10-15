@@ -287,7 +287,13 @@ begin
   if (SelLength = 0) and (UTF8Length(Text) = MaxLength) then
     exit(true);
   FJumpToNext := false;
-  if (SelLength = 0) and (UTF8Length(Text) = (MaxLength-1)) then
+  if (SelLength = 0) and
+     (
+      (UTF8Length(Text) = (MaxLength-1)) or
+      // This is because autoplacing a seperator right before the last keystroke
+      // didn't previously got caugth correctly. (Can only happen with floats)
+      ((UTF8Length(Text) = (MaxLength-2)) and (Field.Decimals = 1))
+     ) then
     FJumpToNext := true;
   result := false;
 end;

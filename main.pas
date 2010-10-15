@@ -51,7 +51,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
-    procedure SettingsMenuItemClick(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
@@ -115,26 +114,28 @@ begin
   SettingsForm.ShowModal;
 end;
 
-procedure TMainForm.SettingsMenuItemClick(Sender: TObject);
-begin
-
-end;
-
 procedure TMainForm.LoadIniFile;
 const
   IniName = 'epidataentry.ini';
+var
+  S: String;
 begin
   // TODO : Settings can be loaded from commandline?
 
-  if LoadSettingsFromIni(GetAppConfigDirUTF8(false) + IniName) then exit;
+  if LoadSettingsFromIni(GetAppConfigFileUTF8(false)) then exit;
 
   // Todo - this is not optimal on Non-windows OS's. Do some checks for writeability first.
   if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
+
+  if not DirectoryExistsUTF8(GetAppConfigDirUTF8(false)) then
+    CreateDirUTF8(GetAppConfigDirUTF8(false));
+
+  EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
 end;
 
 procedure TMainForm.SetCaption;
 begin
-  Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')  WARNING: TEST VERSION';
+  Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')';
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
