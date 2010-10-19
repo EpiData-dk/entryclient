@@ -79,8 +79,8 @@ object SettingsForm: TSettingsForm
         Left = 16
         Height = 18
         Top = 62
-        Width = 149
-        Caption = 'Skip number of record:'
+        Width = 228
+        Caption = 'Skip number of record (Alt+F7/F8):'
         ParentColor = False
       end
       object RecordsToSkipEdit: TMaskEdit

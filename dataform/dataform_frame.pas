@@ -215,9 +215,6 @@ begin
   begin
     if MessageDlg('Confirmation', 'Save Record?',
       mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
-
-    // Expand datafile so that current text can be commited...
-    DataFile.NewRecords();
     // Commit text to data.
     CommitFields;
   end;
@@ -495,8 +492,6 @@ begin
       mrYes:    begin
                   // if a new record is being edited the datafile has NOT been
                   // expanded at this point.
-                  if RecNo = NewRecord then
-                    DataFile.NewRecords;
                   CommitFields;
                 end;
       mrNo:     Modified := false; // do nothing.
@@ -519,6 +514,9 @@ procedure TDataFormFrame.CommitFields;
 var
   i: Integer;
 begin
+  // Expand datafile so that current text can be commited...
+  if RecNo = NewRecord then
+    DataFile.NewRecords();
   for i := 0 to FFieldEditList.Count - 1 do
     TFieldEdit(FFieldEditList[i]).Commit;
   Modified := false;

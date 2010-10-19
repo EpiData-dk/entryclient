@@ -8,18 +8,24 @@ LOCALIZATIONS_FILE="buildall.rc"
 . "$LOCALIZATIONS_FILE"
 
 get_filename() {
-  FILENAME="$PROGRAMNAME.$PROGRAM_VERSION.$MY_CPU_TARGET-$MY_OS_TARGET"
+  FILENAME="$PROGRAMNAME.$PROGRAM_VERSION.$MY_CPU_TARGET.$MY_OS_TARGET"
+
   if [ $MY_LCL_TARGET = "win32" ]
   then
     FILENAME="$FILENAME.exe"
-    ln -sf "$FILENAME" "$PROGRAMNAME.$MY_OS_TARGET.exe"
+  fi
+
+  mv -f $OUTPUTFN $FILENAME
+
+  if [ $MY_LCL_TARGET = "win32" ]
+  then
+    ln -f "$FILENAME" "$PROGRAMNAME.$MY_OS_TARGET.exe"
   fi
 }
 
 compile() {
   echo "Compiling for: $MY_CPU_TARGET-$MY_OS_TARGET ($MY_LCL_TARGET)"
   echo "------------------------------"
-  get_filename
 
 #  echo "make clean release CPU_TARGET=$MY_CPU_TARGET OS_TARGET=$MY_OS_TARGET > /dev/null"
   make clean release CPU_TARGET=$MY_CPU_TARGET OS_TARGET=$MY_OS_TARGET > /dev/null
@@ -32,7 +38,7 @@ compile() {
  
   if [ -a $OUTPUTFN ]
   then
-    mv -f $OUTPUTFN $FILENAME
+    get_filename
 
     ZIP_NAME=$PROGRAMNAME.$PROGRAM_VERSION
     echo "$ZIP_NAME"

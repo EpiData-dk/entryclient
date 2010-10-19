@@ -129,7 +129,6 @@ begin
 
   if not DirectoryExistsUTF8(GetAppConfigDirUTF8(false)) then
     CreateDirUTF8(GetAppConfigDirUTF8(false));
-
   EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
 end;
 

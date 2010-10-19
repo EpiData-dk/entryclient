@@ -40,6 +40,7 @@ type
     FEpiDocument: TEpiDocument;
     FDocumentFilename: string;
     FBackupTimer: TTimer;
+    FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
     procedure DoSaveProject(Const aFilename: string);
     procedure DoNewDataForm(DataFile: TEpiDataFile);
     function  DoCreateNewDocument: TEpiDocument;
@@ -62,7 +63,8 @@ implementation
 {$R *.lfm}
 
 uses
-  main, dataform_frame, epimiscutils, settings, fieldedit, LCLIntf;
+  main, dataform_frame, epimiscutils, settings, fieldedit, LCLIntf,
+  epistringutils;
 
 { TProjectFrame }
 
@@ -192,6 +194,7 @@ begin
   St.Position := 0;
   FEpiDocument := DoCreateNewDocument;
   FEpiDocument.LoadFromStream(St);
+  FEpiDocument.OnModified := @EpiDocModified;
   FDocumentFilename := Fn;
 
   // Create backup process.
@@ -270,7 +273,6 @@ end;
 function TProjectFrame.DoCreateNewDocument: TEpiDocument;
 begin
   Result := TEpiDocument.Create('en');
-  Result.OnModified := @EpiDocModified;
 end;
 
 procedure TProjectFrame.DoCloseProject;
@@ -279,10 +281,11 @@ var
 begin
   if not Assigned(FEpiDocument) then exit;
 
-  if FEpiDocument.ProjectSettings.BackupOnShutdown then
+  if FAllowForEndBackup and
+     FEpiDocument.ProjectSettings.BackupOnShutdown then
   begin
     S := ExtractFileNameWithoutExt(DocumentFileName);
-    DoSaveProject(S + '.' + FormatDateTime('YYYY/MM/DD', Now) + '.epx');
+    DoSaveProject(S + '.' + FormatDateTime('YYYY/MM/DD', Now) + '.epz');
   end;
 
   // TODO : Delete ALL dataforms!
@@ -297,6 +300,7 @@ end;
 procedure TProjectFrame.EpiDocModified(Sendet: TObject);
 begin
   UpdateMainCaption;
+  FAllowForEndBackup := true;
 
   // Activates/Deactivates timed backup.
   if Assigned(FBackupTimer) and Assigned(EpiDocument) then
@@ -306,8 +310,9 @@ end;
 procedure TProjectFrame.UpdateMainCaption;
 var
   S: String;
+  T: String;
 begin
-  S := 'EpiData Entry Client (v' + GetEntryVersion + ')';
+  S := 'EpiData Entry Client (v' + GetEntryVersion + ') test version';
 
   if Assigned(EpiDocument) then
   begin
@@ -315,8 +320,12 @@ begin
     if EpiDocument.Modified then
       S := S + '*';
 
-    if Assigned(ActiveFrame) and (TDataFormFrame(ActiveFrame).DataFile.Name.Text <> '') then
-      S := S + ' [' + Copy(TDataFormFrame(ActiveFrame).DataFile.Name.Text, 1, 15) + ']';
+    if Assigned(ActiveFrame) then
+    begin
+      T := TDataFormFrame(ActiveFrame).DataFile.Name.Text;
+      if (T <> '') then
+        S := S + ' [' + EpiCutString(T, 20) + ']';
+    end;
   end;
   MainForm.Caption := S;
 end;
@@ -337,6 +346,7 @@ begin
   inherited Create(TheOwner);
   FEpiDocument := nil;
   FActiveFrame := nil;
+  FAllowForEndBackup := false;;
 
   {$IFDEF EPI_RELEASE}
     ProjectPanel.Enabled := false;

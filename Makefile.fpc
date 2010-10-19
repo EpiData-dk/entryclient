@@ -10,7 +10,7 @@ version=0.1.1.0
 programs=epidataentry
 
 [compiler]
-options=-dLCL -dLCL$(LCL_PLATFORM) -MObjFPC -Schi -dEPI_SHOWREVISION
+options=-l -dLCL -dLCL$(LCL_PLATFORM) -MObjFPC -Schi -dEPI_SHOWREVISION
 unittargetdir=./lib/$(CPU_TARGET)-$(OS_TARGET)
 unitdir=dataform \
 	$(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET) $(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) \
