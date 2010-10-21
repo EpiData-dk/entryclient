@@ -125,11 +125,11 @@ procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
 var
   Fn: String;
 begin
-  Fn := UTF8Encode(ExtractFilePath(Application.ExeName) + '/epidataentryintro.pdf');
+  Fn := UTF8Encode(ExtractFilePath(Application.ExeName) + '/epidataentryclientintro.pdf');
   if FileExistsUTF8(Fn) then
     OpenURL(Fn)
   else
-    OpenURL('http://epidata.dk/php/downloadc.php?file=epidataentryintro.pdf');
+    OpenURL('http://epidata.dk/php/downloadc.php?file=epidataentryclientintro.pdf');
 end;
 
 procedure TMainForm.ShowShortCutsActionExecute(Sender: TObject);
