@@ -122,6 +122,8 @@ begin
     if Res = mrYes then
     begin
       // Commit field (in case they are not already.
+      if (MainForm.ActiveControl is TFieldEdit) and
+         (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
       TDataFormFrame(ActiveFrame).CommitFields;
       SaveProjectAction.Execute;
     end;

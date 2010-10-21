@@ -520,8 +520,8 @@ begin
   begin
     FHintWindow := THintWindow.Create(self);
     FHintWindow.AutoHide := true;
-    FHintWindow.HideInterval := 20 * 1000; //TTimer.interval is in millisecs.
   end;
+  FHintWindow.HideInterval := EntrySettings.HintTimeOut * 1000; //TTimer.interval is in millisecs.
   result := FHintWindow;
 end;
 
