@@ -10,6 +10,8 @@ uses
 
 type
 
+  TFieldValidateErrorProc = procedure (Sender: TObject; Const Msg: String) of object;
+
   { TFieldEdit }
 
   TFieldEdit = class(TEdit)
@@ -17,7 +19,7 @@ type
     FField: TEpiField;
     FJumpToNext: boolean;
     FNameLabel: TLabel;
-    FOnEditDoneError: TNotifyEvent;
+    FOnValidateError: TFieldValidateErrorProc;
     FQuestionLabel: TLabel;
     FRecNo: integer;
     procedure   SetField(const AValue: TEpiField);
@@ -36,6 +38,7 @@ type
     function    Separators: TCharArray; virtual;
     function    SeparatorCount: integer; virtual;
     function    UseSigns: boolean; virtual;
+    function    ValidateError(const ErrorMsg: string): boolean;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
@@ -44,6 +47,7 @@ type
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
     property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
+    property    OnValidateError: TFieldValidateErrorProc read FOnValidateError write FOnValidateError;
   end;
 
   { TIntegerEdit }
@@ -318,6 +322,13 @@ begin
   result := false;
 end;
 
+function TFieldEdit.ValidateError(const ErrorMsg: string): boolean;
+begin
+  result := false;
+  if Assigned(OnValidateError) then
+    OnValidateError(Self, ErrorMsg);
+end;
+
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -328,8 +339,6 @@ end;
 
 destructor TFieldEdit.Destroy;
 begin
-//  FNameLabel.Free;
-//  FQuestionLabel.Free;
   inherited Destroy;
 end;
 
@@ -373,7 +382,8 @@ begin
   if Inherited ValidateEntry then exit;
 
   Val(Text, I, Code);
-  if (Code <> 0) then exit(false);
+  if Code <> 0 then
+    result := ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code]));
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -399,24 +409,44 @@ end;
 function TFloatEdit.ValidateEntry: boolean;
 var
   F: EpiFloat;
-  Code: Integer;
+  P, IntL: Integer;
 begin
   result := true;
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
 
-  if not TryStrToFloat(Text, F) then exit(false);
+  // Final check on decimal point placement.
+  IntL := (Field.Length - Field.Decimals) - 1;
+  P := Pos(DecimalSeparator, Text);
+  if (P > (IntL + 1)) or  // Covers integral part with decimals.
+     ((P = 0) and (Length(Text) > (IntL))) then
+    exit(ValidateError(Format('Invalid format. Accepted format is %d.%d', [IntL, Field.Decimals])));
+
+  if not TryStrToFloat(Text, F) then
+    exit(ValidateError('Invalid floating point number.'));
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: Integer;
+  P: Int64;
 begin
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
 
   // Validate position of separator... (cannot be placed beyond #integers)
   if IsSeparator and (Caret > (Field.Length - Field.Decimals)) then
     exit;
+
+  // Check number of decimals.
+  if (N > 0) then
+  begin
+    P := Pos(DecimalSeparator, Text);
+    if (Length(Text) - P) = (Field.Decimals - 1) then
+      JumpToNext := true;
+    if ((Length(Text) - P) = Field.Decimals) and
+       (Caret > P)then
+      Exit;
+  end;
 
   // Auto place the separator...
   if (not IsSeparator) and (N=0) and
@@ -540,18 +570,18 @@ begin
       Y += 1900;
 
   // I don't what to use try-except... :)
-  if (Y <= 0) or (Y >= 2100) then exit(false);
-  if (M <= 0) or (M > 12) then exit(false);
+  if (Y <= 0) or (Y >= 2100) then exit(ValidateError(Format('Incorrect year: %d', [Y])));
+  if (M <= 0) or (M > 12) then exit(ValidateError(Format('Incorrect month: %d', [M])));
   case M of
     1,3,5,7,8,10,12:
-      if (D <= 0) or (D > 31) then exit(false);
+      if (D <= 0) or (D > 31) then exit(ValidateError(Format('Incorrect day: %d', [D])));
     4,6,9,11:
-      if (D <= 0) or (D > 30) then exit(false);
+      if (D <= 0) or (D > 30) then exit(ValidateError(Format('Incorrect day: %d', [D])));
     2:
       if ((Y mod 4  = 0) and (Y mod 100 <> 0)) or (Y mod 400 = 0) then      // leap year
-        begin if (D <= 0) or (D > 29) then exit(false); end
+        begin if (D <= 0) or (D > 29) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end
       else
-        begin if (D <= 0) or (D > 28) then exit(false); end;
+        begin if (D <= 0) or (D > 28) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end;
   end;
 
   case Field.FieldType of
@@ -649,9 +679,9 @@ begin
   if Bl > 0 then M := StrToInt(B);
   if Cl > 0 then S := StrToInt(C);
 
-  if H > 23 then exit(false);
-  if M > 59 then exit(false);
-  if S > 59 then exit(false);
+  if H > 23 then exit(ValidateError(Format('Incorrect hour: %d', [H])));
+  if M > 59 then exit(ValidateError(Format('Incorrect minut: %d', [M])));
+  if S > 59 then exit(ValidateError(Format('Incorrect second: %d', [S])));
 
   Text := FormatDateTime('HH:NN:SS', EncodeTime(H, M, S, 0));
 end;

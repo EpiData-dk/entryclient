@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 334
+  Left = 396
   Height = 642
-  Top = 199
+  Top = 291
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617
@@ -212,13 +212,22 @@ object MainForm: TMainForm
     end
     object HelpMenu: TMenuItem
       Caption = '&Help'
+      object IntroMenuItem: TMenuItem
+        Action = ShowIntroAction
+      end
+      object ShowShortcutsMenutItem: TMenuItem
+        Action = ShowShortCutsAction
+      end
+      object HelpMenuDivider1: TMenuItem
+        Caption = '-'
+      end
       object CopyVersionInfoMenuItem: TMenuItem
         Action = CopyProjectInfoAction
       end
       object CheckVersionMenuItem: TMenuItem
         Action = CheckVersionAction
       end
-      object HelpMenuDivider1: TMenuItem
+      object HelpMenuDivider2: TMenuItem
         Caption = '-'
       end
       object AboutMenuItem: TMenuItem
@@ -257,14 +266,24 @@ object MainForm: TMainForm
     end
     object CopyProjectInfoAction: TAction
       Category = 'Help'
-      Caption = 'Copy Version Info'
+      Caption = '&Copy Version Info'
       OnExecute = CopyProjectInfoActionExecute
     end
     object CheckVersionAction: TAction
       Category = 'Help'
-      Caption = 'Check Version Online'
+      Caption = 'Check &Version Online'
       Hint = 'Check for new version online (requires internet)'
       OnExecute = CheckVersionActionExecute
+    end
+    object ShowIntroAction: TAction
+      Category = 'Help'
+      Caption = 'Short &Introduction'
+      OnExecute = ShowIntroActionExecute
+    end
+    object ShowShortCutsAction: TAction
+      Category = 'Help'
+      Caption = 'Show &Shortcuts'
+      OnExecute = ShowShortCutsActionExecute
     end
   end
 end

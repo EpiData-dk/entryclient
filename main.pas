@@ -14,13 +14,18 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    ShowShortCutsAction: TAction;
+    ShowIntroAction: TAction;
     CheckVersionAction: TAction;
     CopyProjectInfoAction: TAction;
     HelpMenu: TMenuItem;
     AboutMenuItem: TMenuItem;
-    HelpMenuDivider1: TMenuItem;
+    HelpMenuDivider2: TMenuItem;
     CopyVersionInfoMenuItem: TMenuItem;
     CheckVersionMenuItem: TMenuItem;
+    IntroMenuItem: TMenuItem;
+    HelpMenuDivider1: TMenuItem;
+    ShowShortcutsMenutItem: TMenuItem;
     SettingsAction: TAction;
     FirstRecordMenuItem: TMenuItem;
     LastRecordMenuItem: TMenuItem;
@@ -51,6 +56,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
+    procedure ShowIntroActionExecute(Sender: TObject);
+    procedure ShowShortCutsActionExecute(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
@@ -71,7 +78,7 @@ implementation
 
 uses
   project_frame, dataform_frame, fieldedit, settings, about, Clipbrd,
-  epiversionutils;
+  epiversionutils, LCLIntf;
 
 { TMainForm }
 
@@ -112,6 +119,22 @@ var
 begin
   SettingsForm := TSettingsForm.Create(Self);
   SettingsForm.ShowModal;
+end;
+
+procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
+var
+  Fn: String;
+begin
+  Fn := UTF8Encode(ExtractFilePath(Application.ExeName) + '/epidataentryintro.pdf');
+  if FileExistsUTF8(Fn) then
+    OpenURL(Fn)
+  else
+    OpenURL('http://epidata.dk/php/downloadc.php?file=epidataentryintro.pdf');
+end;
+
+procedure TMainForm.ShowShortCutsActionExecute(Sender: TObject);
+begin
+  OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:program_keys');
 end;
 
 procedure TMainForm.LoadIniFile;
@@ -155,32 +178,11 @@ var
   Res: LongInt;
   i: Integer;
 begin
-  CanClose := false;
-
-  // TODO : Optimize NOT to used casting, and units specific to the dataform_frame
-  // TODO : Works only on a single datafile in a single document - expand to be more generic.
-  if (Assigned(TProjectFrame(ActiveFrame).EpiDocument)) then
+  with TProjectFrame(ActiveFrame) do
   begin
-    if ((TProjectFrame(ActiveFrame).EpiDocument.Modified) or
-        (TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).Modified)) then
-    begin
-      Res := MessageDlg('Warning',
-        'Project data content modified.' + LineEnding +
-        'Save before exit?',
-        mtWarning, mbYesNoCancel, 0, mbCancel);
-
-      if Res = mrCancel then exit;
-
-      if Res = mrYes then
-      begin
-        // Commit field (in case they are not already.
-        TDataFormFrame(TProjectFrame(ActiveFrame).ActiveFrame).CommitFields;
-        SaveProjectMenuItem.Click;
-      end;
-    end;
-    TProjectFrame(ActiveFrame).CloseProjectAction.Execute;
+    CloseProjectAction.Execute;
+    CanClose := not Assigned(EpiDocument);
   end;
-  CanClose := true;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);

@@ -107,8 +107,9 @@ procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
 var
   Res: LongInt;
 begin
-  if (EpiDocument.Modified) or
-     (TDataFormFrame(ActiveFrame).Modified)
+  if Assigned(EpiDocument) and
+     ((EpiDocument.Modified) or
+      (TDataFormFrame(ActiveFrame).Modified))
   then
   begin
     Res := MessageDlg('Warning',
@@ -278,6 +279,7 @@ end;
 procedure TProjectFrame.DoCloseProject;
 var
   S: String;
+  Y, M, D: word;
 begin
   if not Assigned(FEpiDocument) then exit;
 
@@ -285,7 +287,8 @@ begin
      FEpiDocument.ProjectSettings.BackupOnShutdown then
   begin
     S := ExtractFileNameWithoutExt(DocumentFileName);
-    DoSaveProject(S + '.' + FormatDateTime('YYYY/MM/DD', Now) + '.epz');
+    DecodeDate(Now, Y, M, D);
+    DoSaveProject(S + '.' + Format('%d-%.2d-%.2d', [Y,M,D]) + '.epz');
   end;
 
   // TODO : Delete ALL dataforms!

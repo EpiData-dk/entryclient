@@ -42,7 +42,6 @@ object DataFormFrame: TDataFormFrame
         Top = 1
         Width = 22
         Action = FirstRecAction
-        Color = clBtnFace
         Glyph.Data = {
           66010000424D660100000000000076000000280000001E0000000F0000000100
           040000000000F000000000000000000000000000000000000000000000000000
@@ -68,7 +67,6 @@ object DataFormFrame: TDataFormFrame
         Top = 1
         Width = 22
         Action = PrevRecAction
-        Color = clBtnFace
         Glyph.Data = {
           66010000424D660100000000000076000000280000001E0000000F0000000100
           040000000000F000000000000000000000000000000000000000000000000000
@@ -110,7 +108,6 @@ object DataFormFrame: TDataFormFrame
         Top = 1
         Width = 22
         Action = NextRecAction
-        Color = clBtnFace
         Glyph.Data = {
           66010000424D660100000000000076000000280000001E0000000F0000000100
           040000000000F000000000000000000000000000000000000000000000000000
@@ -136,7 +133,6 @@ object DataFormFrame: TDataFormFrame
         Top = 1
         Width = 22
         Action = LastRecAction
-        Color = clBtnFace
         Glyph.Data = {
           66010000424D660100000000000076000000280000001E0000000F0000000100
           040000000000F000000000000000000000000000000000000000000000000000
@@ -171,7 +167,6 @@ object DataFormFrame: TDataFormFrame
         Height = 22
         Top = 1
         Width = 22
-        Color = clBtnFace
         Enabled = False
         Glyph.Data = {
           46010000424D460100000000000076000000280000001E0000000D0000000100
@@ -193,7 +188,6 @@ object DataFormFrame: TDataFormFrame
         Height = 22
         Top = 1
         Width = 22
-        Color = clBtnFace
         Enabled = False
         Glyph.Data = {
           46010000424D460100000000000076000000280000001E0000000D0000000100

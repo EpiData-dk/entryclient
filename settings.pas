@@ -16,7 +16,9 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     Label1: TLabel;
+    Label2: TLabel;
     RecordsToSkipEdit: TMaskEdit;
+    HintTimeOutEdit: TMaskEdit;
     WorkingDirEdit: TDirectoryEdit;
     Label17: TLabel;
     PageControl1: TPageControl;
@@ -34,6 +36,7 @@ type
   TEntrySettings = record
     WorkingDirUTF8: string;
     RecordsToSkip:  Integer;
+    HintTimeOut:    Integer;
     IniFileName:           string;
   end;
 
@@ -49,6 +52,7 @@ var
   EntrySettings: TEntrySettings = (
     WorkingDirUTF8: '';
     RecordsToSkip:  25;
+    HintTimeOut:    15;
     IniFileName:    '';
   );
 
@@ -91,6 +95,7 @@ begin
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
+      WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       Result := true;
     end;
   finally
@@ -117,6 +122,7 @@ begin
     Sec := 'advanced';
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
+    HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
   end;
 end;
 
@@ -135,6 +141,7 @@ begin
 
   EntrySettings.WorkingDirUTF8 := WorkingDirEdit.Text;
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
+  EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;
@@ -146,6 +153,7 @@ begin
   begin
     WorkingDirEdit.Text := WorkingDirUTF8;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
+    HintTimeOutEdit.Text := IntToStr(HintTimeOut);
   end;
 end;
 

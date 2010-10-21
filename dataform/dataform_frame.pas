@@ -5,7 +5,7 @@ unit dataform_frame;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, epidatafiles,
+  Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
   epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType;
 
 type
@@ -67,11 +67,13 @@ type
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
     FRecNo: integer;
+    FHintWindow: THintWindow;
     procedure SetDataFile(const AValue: TEpiDataFile);
     procedure LoadRecord(RecordNo: Integer);
     procedure UpdateRecordEdit;
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
+    function  GetHintWindow: THintWindow;
   private
     { Field Entry Handling }
     function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
@@ -80,6 +82,7 @@ type
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldEnter(Sender: TObject);
     procedure FieldExit(Sender: TObject);
+    procedure FieldValidateError(Sender: TObject; const Msg: string);
   private
     FModified: boolean;
     { DataForm Control }
@@ -438,6 +441,7 @@ begin
     OnExit    := @FieldExit;
     OnKeyDown := @FieldKeyDown;
     OnKeyUp   := @FieldKeyUp;
+    OnValidateError := @FieldValidateError;
   end;
 
   FFieldEditList.Add(Result);
@@ -508,6 +512,17 @@ begin
   if FModified = AValue then exit;
   FModified := AValue;
   UpdateRecordEdit;
+end;
+
+function TDataFormFrame.GetHintWindow: THintWindow;
+begin
+  if not Assigned(FHintWindow) then
+  begin
+    FHintWindow := THintWindow.Create(self);
+    FHintWindow.AutoHide := true;
+    FHintWindow.HideInterval := 20 * 1000; //TTimer.interval is in millisecs.
+  end;
+  result := FHintWindow;
 end;
 
 procedure TDataFormFrame.CommitFields;
@@ -684,9 +699,25 @@ begin
   begin
     FE.SetFocus;
     Beep;
-  end;
+  end else
+    GetHintWindow.Hide;
   FE.JumpToNext := false;
   FE.SelLength := 0;
+end;
+
+procedure TDataFormFrame.FieldValidateError(Sender: TObject; const Msg: string
+  );
+var
+  FE: TFieldEdit absolute Sender;
+  H: THintWindow;
+  R: TRect;
+  P: TPoint;
+begin
+  H := GetHintWindow;
+  R := H.CalcHintRect(0, Msg, nil);
+  P := FE.ClientToScreen(Point(0,0));
+  OffsetRect(R, P.X, P.Y + FE.Height);
+  H.ActivateHint(R, Msg);
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
@@ -694,6 +725,7 @@ begin
   inherited Create(TheOwner);
 
   FFieldEditList := TFPList.Create;
+  FHintWindow := nil;
   FRecNo := -1;
 end;
 

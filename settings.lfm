@@ -79,8 +79,8 @@ object SettingsForm: TSettingsForm
         Left = 16
         Height = 18
         Top = 62
-        Width = 228
-        Caption = 'Skip number of record (Alt+F7/F8):'
+        Width = 235
+        Caption = 'Skip number of records (Alt+F7/F8):'
         ParentColor = False
       end
       object RecordsToSkipEdit: TMaskEdit
@@ -91,6 +91,25 @@ object SettingsForm: TSettingsForm
         CharCase = ecNormal
         MaxLength = 3
         TabOrder = 1
+        EditMask = '999;0;_'
+        SpaceChar = '_'
+      end
+      object Label2: TLabel
+        Left = 16
+        Height = 18
+        Top = 101
+        Width = 216
+        Caption = 'Hint timeout on errors (seconds):'
+        ParentColor = False
+      end
+      object HintTimeOutEdit: TMaskEdit
+        Left = 341
+        Height = 27
+        Top = 92
+        Width = 59
+        CharCase = ecNormal
+        MaxLength = 3
+        TabOrder = 2
         EditMask = '999;0;_'
         SpaceChar = '_'
       end
