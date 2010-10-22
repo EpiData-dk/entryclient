@@ -49,9 +49,9 @@
     </RequiredPackages>
     <Units Count="9">
       <Unit0>
-        <Filename Value="epidataentry.lpr"/>
+        <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="epidataentry"/>
+        <UnitName Value="epidataentryclient"/>
       </Unit0>
       <Unit1>
         <Filename Value="main.pas"/>
@@ -107,7 +107,7 @@
   <CompilerOptions>
     <Version Value="9"/>
     <Target>
-      <Filename Value="epidataentry"/>
+      <Filename Value="epidataentryclient"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

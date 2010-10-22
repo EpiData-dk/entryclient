@@ -1,4 +1,4 @@
-program epidataentry;
+program epidataentryclient;
 
 {$mode objfpc}{$H+}
 

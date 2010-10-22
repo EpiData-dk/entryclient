@@ -7,7 +7,7 @@ name=epidataentryclient
 version=0.1.1.0
 
 [target]
-programs=epidataentry
+programs=epidataentryclient
 
 [compiler]
 options=-l -dLCL -dLCL$(LCL_PLATFORM) -MObjFPC -Schi -dEPI_SHOWREVISION
@@ -77,10 +77,10 @@ core_release:
 	$(MAKE) -C $(CORE_PATH) all OPT='$(RELEASE_OPT) $(OPT)'
 
 all:	$(COMPILER_UNITTARGETDIR) core revisioninc
-	$(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT)
+	$(MAKE) --assume-new=epidataentryclient.lpr epidataentryclient$(EXEEXT)
 
 debug:   $(COMPILER_UNITTARGETDIR) core_debug revisioninc
-	 $(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT) OPT='$(DEBUG_OPT) $(OPT)'
+	 $(MAKE) --assume-new=epidataentryclient.lpr epidataentryclient$(EXEEXT) OPT='$(DEBUG_OPT) $(OPT)'
 
 release: $(COMPILER_UNITTARGETDIR) core_release revisioninc
-	 $(MAKE) --assume-new=epidataentry.lpr epidataentry$(EXEEXT) OPT='$(RELEASE_OPT) $(OPT)'
+	 $(MAKE) --assume-new=epidataentryclient.lpr epidataentryclient$(EXEEXT) OPT='$(RELEASE_OPT) $(OPT)'
