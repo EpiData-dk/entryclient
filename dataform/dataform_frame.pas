@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
-  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType;
+  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, fieldedit;
 
 type
 
@@ -84,6 +84,9 @@ type
     procedure FieldExit(Sender: TObject);
     procedure FieldValidateError(Sender: TObject; const Msg: string);
   private
+    { Flow control/Validation/Script handling}
+    function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
+  private
     FModified: boolean;
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
@@ -110,8 +113,9 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit, epidatafilestypes, LCLProc, settings,
-  main, Menus, Dialogs, math, Graphics;
+  epidatafilestypes, LCLProc, settings,
+  main, Menus, Dialogs, math, Graphics, epimiscutils,
+  picklist;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 var
@@ -579,8 +583,8 @@ procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   FieldEdit: TFieldEdit absolute Sender;
-begin
-  if ((Key = VK_RETURN) and (Shift = [])) then
+
+  procedure NextFieldOnKeyDown;
   begin
     if NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false) = -1 then
       if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
@@ -591,6 +595,12 @@ begin
       end
     else
       NextFieldAction.Execute;
+  end;
+
+begin
+  if ((Key = VK_RETURN) and (Shift = [])) then
+  begin
+    NextFieldOnKeyDown;
     Key := VK_UNKNOWN;
   end;
 
@@ -603,6 +613,14 @@ begin
   if (Key = VK_UP) and (Shift = []) then
   Begin
     PrevFieldAction.Execute;
+    Key := VK_UNKNOWN;
+  end;
+                             // 187 = Plus sign that is NOT part of numpad!
+  if (Key in [VK_ADD, VK_F9, 187]) and (Shift = []) then
+  begin
+    if Assigned(FieldEdit.Field.ValueLabelSet) and
+       ShowValueLabelPickList(FieldEdit) then
+      NextFieldOnKeyDown;
     Key := VK_UNKNOWN;
   end;
 end;
@@ -628,6 +646,7 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   FieldTop: LongInt;
   S: String;
+  HelpHeader: String;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
@@ -643,18 +662,23 @@ begin
   with FieldEdit.Field do
   begin
     FieldNameLabel.Caption := Name;
+    HelpHeader := EpiTypeNames[FieldType] + ': ';
     case FieldType of
-      ftInteger:     S := 'Integer: 0-9 allowed';
-      ftFloat:       S := 'Float: 0-9 and commas/points allowed';
-      ftDMYDate:     S := 'Date (DMY): 0-9, "/", "-" and "." allowed';
-      ftMDYDate:     S := 'Date (MDY): 0-9, "/", "-" and "." allowed';
-      ftYMDDate:     S := 'Date (YMD): 0-9, "/", "-" and "." allowed';
-      ftTime:        S := 'Time: 0-9, ":", "-" and "." allowed';
-      ftBoolean:     S := 'Boolean: y, Y, n, N, 1, and 0 allowed';
-      ftString:      S := 'String: All entries allowed';
-      ftUpperString: S := 'String (UPPERCASE): All entries allowed';
+      ftInteger:     S := '0-9 allowed';
+      ftFloat:       S := '0-9 and commas/points allowed';
+      ftDMYDate,
+      ftMDYDate,
+      ftYMDDate:     S := '0-9, "/", "-" and "." allowed';
+      ftTime:        S := '0-9, ":", "-" and "." allowed';
+      ftBoolean:     S := 'y, Y, n, N, 1, and 0 allowed';
+      ftString,
+      ftUpperString: S := 'All entries allowed';
     end;
-    FieldTypeLabel.Caption := S;
+
+    if Assigned(ValueLabelSet) then
+      S := 'Press + or F9 to see value labels.';
+
+    FieldTypeLabel.Caption := HelpHeader + S;
   end;
 
   // ********************************
@@ -677,10 +701,8 @@ begin
       ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);
       ftTimeNow:  FieldEdit.Text := FormatDateTime('HH:NN:SS',   Now);
     end;
-//    Self.Modified := true;
     Exit;
   end;
-
 
   // NoEnter property?
 
@@ -718,6 +740,22 @@ begin
   P := FE.ClientToScreen(Point(0,0));
   OffsetRect(R, P.X, P.Y + FE.Height);
   H.ActivateHint(R, Msg);
+end;
+
+function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
+var
+  VLForm: TValueLabelsPickListForm;
+  P: TPoint;
+begin
+  VLForm := TValueLabelsPickListForm.Create(Self, AFieldEdit.Field);
+  VLForm.SetInitialValue(AFieldEdit.Text);
+  P := AFieldEdit.Parent.ClientToScreen(Point(AFieldEdit.Left + AFieldEdit.Width + 2, AFieldEdit.Top));
+  VLForm.Top := P.Y;
+  VLForm.Left := P.X;
+  result := VLForm.ShowModal = mrOK;
+  if Result then
+    AFieldEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
+  VLForm.Free;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
