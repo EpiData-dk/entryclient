@@ -25,6 +25,7 @@ type
     procedure LabelsListBoxSelectionChange(Sender: TObject; User: boolean);
   private
     { private declarations }
+    FUpdatingListBox: boolean;
     FField: TEpiField;
     FInitialValue: string;
     FSelectedValueLabel: TEpiCustomValueLabel;
@@ -64,6 +65,8 @@ begin
     LabelsListBox.Items.AddObject(ValueLabelSet[i].TheLabel.Text, ValueLabelSet[i]);
   end;
   ValueListBox.Width := W;
+
+  Panel1.Height := {$IFNDEF MSWINDOWS}26{$ELSE}24{$ENDIF};
 
   Edit1.Text := FInitialValue;
 end;
@@ -107,19 +110,29 @@ var
 begin
   if (Key in [VK_CANCEL, VK_ESCAPE]) and (Shift = []) then ModalResult := mrCancel;
 
-  if (Sender = Edit1) and
-     (Key = VK_RETURN) and
-     (Shift = []) then
+  if (Sender = Edit1) then
   begin
-    S := UTF8UpperCase(TEdit(Sender).Text);
-    if (LocateListBoxIndex(ValueListBox, S, Idx)) or
-       (LocateListBoxIndex(LabelsListBox, S, Idx)) then
-      ModalResult := mrOK;
+    if (Key = VK_RETURN) and (Shift = []) then
+    begin
+      S := UTF8UpperCase(TEdit(Sender).Text);
+      if (LocateListBoxIndex(ValueListBox, S, Idx)) or
+         (LocateListBoxIndex(LabelsListBox, S, Idx)) then
+        ModalResult := mrOK;
+    end;
+
+    if (Key = VK_DOWN) and (Shift = []) then
+    begin
+      ValueListBox.SetFocus;
+      if ValueListBox.ItemIndex = -1 then
+        ValueListBox.ItemIndex := 0;
+      Key := VK_UNKNOWN;
+    end;
   end;
 
-  if (Sender <> Edit1) and
-     (Key = VK_RETURN) and
-     (Shift = []) then ModalResult := mrOK;
+  if (Sender <> Edit1) then
+  begin
+     if (Key = VK_RETURN) and (Shift = []) then ModalResult := mrOK;
+  end;
 end;
 
 procedure TValueLabelsPickListForm.LabelsListBoxSelectionChange(
@@ -127,10 +140,14 @@ procedure TValueLabelsPickListForm.LabelsListBoxSelectionChange(
 var
   SenderList: TListBox absolute Sender;
 begin
+  if FUpdatingListBox then exit;
+
+  FUpdatingListBox := true;
   ValueListBox.ItemIndex := SenderList.ItemIndex;
   LabelsListBox.ItemIndex := SenderList.ItemIndex;
   if SenderList.ItemIndex >= 0 then
     FSelectedValueLabel := TEpiCustomValueLabel(SenderList.Items.Objects[SenderList.ItemIndex]);
+  FUpdatingListBox := false;
 end;
 
 constructor TValueLabelsPickListForm.Create(TheOwner: TComponent);

@@ -1,30 +1,32 @@
 object ValueLabelsPickListForm: TValueLabelsPickListForm
   Left = 758
-  Height = 228
+  Height = 229
   Top = 370
-  Width = 211
+  Width = 248
+  ActiveControl = Edit1
   Caption = 'Value Labels'
-  ClientHeight = 228
-  ClientWidth = 211
+  ClientHeight = 229
+  ClientWidth = 248
   OnShow = FormShow
   LCLVersion = '0.9.29'
   object Panel1: TPanel
     Left = 0
     Height = 32
     Top = 0
-    Width = 211
+    Width = 248
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 211
+    ClientWidth = 248
     TabOrder = 0
     object Edit1: TEdit
-      Left = 2
-      Height = 28
-      Top = 2
-      Width = 207
+      Left = 1
+      Height = 30
+      Top = 1
+      Width = 246
       Align = alClient
-      BorderSpacing.Around = 2
+      AutoSize = False
+      BorderSpacing.Around = 1
       OnChange = Edit1Change
       OnKeyDown = LabelsListBoxKeyDown
       TabOrder = 0
@@ -32,9 +34,9 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   end
   object LabelsListBox: TListBox
     Left = 78
-    Height = 194
+    Height = 195
     Top = 33
-    Width = 132
+    Width = 169
     Align = alClient
     BorderSpacing.Around = 1
     ItemHeight = 0
@@ -46,7 +48,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   end
   object ValueListBox: TListBox
     Left = 1
-    Height = 194
+    Height = 195
     Top = 33
     Width = 76
     Align = alLeft
