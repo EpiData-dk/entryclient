@@ -383,7 +383,11 @@ begin
 
   Val(Text, I, Code);
   if Code <> 0 then
-    result := ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code]));
+    Exit(ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code])));
+
+  if Assigned(FField.ValueLabelSet) and
+     (not FField.ValueLabelSet.ValueLabelExists[I]) then
+     exit(ValidateError('Incorrect Valuelabel'));
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -424,6 +428,10 @@ begin
 
   if not TryStrToFloat(Text, F) then
     exit(ValidateError('Invalid floating point number.'));
+
+  if Assigned(FField.ValueLabelSet) and
+     (not FField.ValueLabelSet.ValueLabelExists[F]) then
+     exit(ValidateError('Incorrect Valuelabel'));
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -489,6 +497,10 @@ begin
   Result := true;
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
+
+  if Assigned(FField.ValueLabelSet) and
+     (not FField.ValueLabelSet.ValueLabelExists[Text]) then
+     exit(ValidateError('Incorrect Valuelabel'));
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;

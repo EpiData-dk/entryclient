@@ -598,6 +598,8 @@ var
   end;
 
 begin
+  GetHintWindow.Hide;
+
   if ((Key = VK_RETURN) and (Shift = [])) then
   begin
     NextFieldOnKeyDown;
@@ -637,6 +639,7 @@ begin
   begin
     Key := VK_RETURN;
     FieldEdit.OnKeyDown(FieldEdit, Key, []);
+    FieldEdit.JumpToNext := false;
     Exit;
   end;
 end;
