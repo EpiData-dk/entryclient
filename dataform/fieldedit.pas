@@ -24,12 +24,12 @@ type
     FRecNo: integer;
     procedure   SetField(const AValue: TEpiField);
     procedure   SetRecNo(const AValue: integer);
-    procedure   UpdateText;
     procedure   FieldChange(Sender: TObject; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
   protected
     WC:         WideChar;
     Caret:      Integer;
     IsSeparator: boolean;
+    procedure   UpdateText; virtual;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
     function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var SepCount: integer;
@@ -70,6 +70,7 @@ type
     function    Separators: TCharArray; override;
     function    SeparatorCount: integer; override;
     function    UseSigns: boolean; override;
+    procedure   UpdateText; override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -432,6 +433,8 @@ begin
   if Assigned(FField.ValueLabelSet) and
      (not FField.ValueLabelSet.ValueLabelExists[F]) then
      exit(ValidateError('Incorrect Valuelabel'));
+
+  Text := Format('%'+IntToStr(IntL)+'.'+IntToStr(Field.Decimals)+'f', [F]);
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -488,6 +491,14 @@ end;
 function TFloatEdit.UseSigns: boolean;
 begin
   Result := true;
+end;
+
+procedure TFloatEdit.UpdateText;
+begin
+  if (RecNo = NewRecord) or (Field.IsMissing[RecNo]) then
+    Text := ''
+  else
+    Text := Format('%' + IntToStr(Field.Length - Field.Decimals - 1) + '.' + IntToStr(Field.Decimals) + 'f', [Field.AsFloat[RecNo]]);
 end;
 
 { TStringEdit }
