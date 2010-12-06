@@ -434,7 +434,7 @@ begin
      (not FField.ValueLabelSet.ValueLabelExists[F]) then
      exit(ValidateError('Incorrect Valuelabel'));
 
-  Text := Format('%'+IntToStr(IntL)+'.'+IntToStr(Field.Decimals)+'f', [F]);
+  Text := Format(TEpiFloatField(Field).FormatString, [F]);
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -498,7 +498,7 @@ begin
   if (RecNo = NewRecord) or (Field.IsMissing[RecNo]) then
     Text := ''
   else
-    Text := Format('%' + IntToStr(Field.Length - Field.Decimals - 1) + '.' + IntToStr(Field.Decimals) + 'f', [Field.AsFloat[RecNo]]);
+    Text := Format(TEpiFloatField(Field).FormatString, [Field.AsFloat[RecNo]]);
 end;
 
 { TStringEdit }
