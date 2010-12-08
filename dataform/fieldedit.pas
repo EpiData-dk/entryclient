@@ -11,6 +11,7 @@ uses
 type
 
   TFieldValidateErrorProc = procedure (Sender: TObject; Const Msg: String) of object;
+  TFieldValidateResult = (fvrAccept, fvrReject, fvrNone);
 
   { TFieldEdit }
 
@@ -386,9 +387,21 @@ begin
   if Code <> 0 then
     Exit(ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code])));
 
-  if Assigned(FField.ValueLabelSet) and
-     (not FField.ValueLabelSet.ValueLabelExists[I]) then
-     exit(ValidateError('Incorrect Valuelabel'));
+
+  if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
+  begin
+    if not ((FField.ValueLabelSet.ValueLabelExists[I]) or
+            (FField.Ranges.InRange(I))) then
+      exit(ValidateError('Incorrect Valuelabel or Value not within defined range(s)'));
+  end else begin
+    if Assigned(FField.ValueLabelSet) and
+       (not FField.ValueLabelSet.ValueLabelExists[I]) then
+       exit(ValidateError('Incorrect Valuelabel'));
+
+    if Assigned(FField.Ranges) and
+       (not FField.Ranges.InRange(I)) then
+       exit(ValidateError('Value not within defined range(s)'));
+  end;
 end;
 
 function TIntegerEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -430,9 +443,20 @@ begin
   if not TryStrToFloat(Text, F) then
     exit(ValidateError('Invalid floating point number.'));
 
-  if Assigned(FField.ValueLabelSet) and
-     (not FField.ValueLabelSet.ValueLabelExists[F]) then
-     exit(ValidateError('Incorrect Valuelabel'));
+  if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
+  begin
+    if not ((FField.ValueLabelSet.ValueLabelExists[F]) or
+            (FField.Ranges.InRange(F))) then
+      exit(ValidateError('Incorrect Valuelabel or Value not within defined range(s)'));
+  end else begin
+    if Assigned(FField.ValueLabelSet) and
+       (not FField.ValueLabelSet.ValueLabelExists[F]) then
+      exit(ValidateError('Incorrect Valuelabel'));
+
+    if Assigned(FField.Ranges) and
+       (not FField.Ranges.InRange(F)) then
+      exit(ValidateError('Value not within defined range(s)'));
+  end;
 
   Text := Format(TEpiFloatField(Field).FormatString, [F]);
 end;
@@ -536,6 +560,7 @@ var
   Al, Bl, Cl: Integer;
   ThisYear: Word;
   S: String;
+  TheDate: EpiDate;
 begin
   Result := true;
   if not Modified then exit;
@@ -601,7 +626,7 @@ begin
     4,6,9,11:
       if (D <= 0) or (D > 30) then exit(ValidateError(Format('Incorrect day: %d', [D])));
     2:
-      if ((Y mod 4  = 0) and (Y mod 100 <> 0)) or (Y mod 400 = 0) then      // leap year
+      if IsLeapYear(Y) then
         begin if (D <= 0) or (D > 29) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end
       else
         begin if (D <= 0) or (D > 28) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end;
@@ -612,7 +637,14 @@ begin
     ftMDYDate, ftMDYToday: S := 'MM/DD/YYYY';
     ftYMDDate, ftYMDToday: S := 'YYYY/MM/DD';
   end;
-  Text := FormatDateTime(S, EncodeDate(Y,M,D));
+
+  TheDate := Trunc(EncodeDate(Y,M,D));
+
+  if Assigned(FField.Ranges) and
+     (not FField.Ranges.InRange(TheDate)) then
+    exit(ValidateError('Value not within defined range(s)'));
+
+  Text := FormatDateTime(S, TheDate);
 end;
 
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -682,6 +714,7 @@ var
   A,B,C: String;
   Al,Bl,Cl: Integer;
   H, M, S: Word;
+  TheTime: EpiTime;
 begin
   Result := true;;
   if not Modified then exit;
@@ -706,7 +739,13 @@ begin
   if M > 59 then exit(ValidateError(Format('Incorrect minut: %d', [M])));
   if S > 59 then exit(ValidateError(Format('Incorrect second: %d', [S])));
 
-  Text := FormatDateTime('HH:NN:SS', EncodeTime(H, M, S, 0));
+  TheTime := EncodeTime(H, M, S, 0);
+
+  if Assigned(FField.Ranges) and
+     (not FField.Ranges.InRange(TheTime)) then
+    exit(ValidateError('Value not within defined range(s)'));
+
+  Text := FormatDateTime('HH:NN:SS', TheTime);
 end;
 
 function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
