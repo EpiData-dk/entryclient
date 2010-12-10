@@ -83,6 +83,7 @@ type
     procedure FieldEnter(Sender: TObject);
     procedure FieldExit(Sender: TObject);
     procedure FieldValidateError(Sender: TObject; const Msg: string);
+    procedure UpdateFieldPanel(Field: TEpiField);
   private
     { Flow control/Validation/Script handling}
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
@@ -115,7 +116,7 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist;
+  picklist, epistringutils;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 var
@@ -661,28 +662,7 @@ begin
   if FieldTop > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
     DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
 
-  // * Update content of "statusbar"
-  with FieldEdit.Field do
-  begin
-    FieldNameLabel.Caption := Name;
-    HelpHeader := EpiTypeNames[FieldType] + ': ';
-    case FieldType of
-      ftInteger:     S := '0-9 allowed';
-      ftFloat:       S := '0-9 and commas/points allowed';
-      ftDMYDate,
-      ftMDYDate,
-      ftYMDDate:     S := '0-9, "/", "-" and "." allowed';
-      ftTime:        S := '0-9, ":", "-" and "." allowed';
-      ftBoolean:     S := 'y, Y, n, N, 1, and 0 allowed';
-      ftString,
-      ftUpperString: S := 'All entries allowed';
-    end;
-
-    if Assigned(ValueLabelSet) then
-      S := 'Press + or F9 to see value labels.';
-
-    FieldTypeLabel.Caption := HelpHeader + S;
-  end;
+  UpdateFieldPanel(FieldEdit.Field);
 
   // ********************************
   // **    EpiData Flow Control    **
@@ -743,6 +723,36 @@ begin
   P := FE.ClientToScreen(Point(0,0));
   OffsetRect(R, P.X, P.Y + FE.Height);
   H.ActivateHint(R, Msg);
+end;
+
+procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);
+var
+  S: String;
+begin
+  with Field do
+  begin
+    FieldNameLabel.Caption := Name;
+    S := EpiTypeNames[FieldType] + ': ';
+    case FieldType of
+      ftInteger:     S += '0-9 allowed';
+      ftFloat:       S += '0-9 and commas/points allowed';
+      ftDMYDate,
+      ftMDYDate,
+      ftYMDDate:     S += '0-9, "/", "-" and "." allowed';
+      ftTime:        S += '0-9, ":", "-" and "." allowed';
+      ftBoolean:     S += 'y, Y, n, N, 1, and 0 allowed';
+      ftString,
+      ftUpperString: S += 'All entries allowed';
+    end;
+
+    if Assigned(ValueLabelSet) then
+      S := S + '  +/F9: label';
+
+    if Assigned(Ranges) then
+      S := S + '  (' + EpiCutString(Ranges.RangesToText, 15) + ')';
+
+    FieldTypeLabel.Caption := S;
+  end;
 end;
 
 function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;

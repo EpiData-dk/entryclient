@@ -392,15 +392,15 @@ begin
   begin
     if not ((FField.ValueLabelSet.ValueLabelExists[I]) or
             (FField.Ranges.InRange(I))) then
-      exit(ValidateError('Incorrect Valuelabel or Value not within defined range(s)'));
+      exit(ValidateError('Illegal value (valuelabel/range)'));
   end else begin
     if Assigned(FField.ValueLabelSet) and
        (not FField.ValueLabelSet.ValueLabelExists[I]) then
-       exit(ValidateError('Incorrect Valuelabel'));
+       exit(ValidateError('Illegal value (valuelabel)'));
 
     if Assigned(FField.Ranges) and
        (not FField.Ranges.InRange(I)) then
-       exit(ValidateError('Value not within defined range(s)'));
+       exit(ValidateError('Illegal value (range)'));
   end;
 end;
 
@@ -447,15 +447,15 @@ begin
   begin
     if not ((FField.ValueLabelSet.ValueLabelExists[F]) or
             (FField.Ranges.InRange(F))) then
-      exit(ValidateError('Incorrect Valuelabel or Value not within defined range(s)'));
+      exit(ValidateError('Illegal value (valuelabel/range)'));
   end else begin
     if Assigned(FField.ValueLabelSet) and
        (not FField.ValueLabelSet.ValueLabelExists[F]) then
-      exit(ValidateError('Incorrect Valuelabel'));
+      exit(ValidateError('Illegal value (valuelabel)'));
 
     if Assigned(FField.Ranges) and
        (not FField.Ranges.InRange(F)) then
-      exit(ValidateError('Value not within defined range(s)'));
+      exit(ValidateError('Illegal value (range)'));
   end;
 
   Text := Format(TEpiFloatField(Field).FormatString, [F]);
@@ -535,7 +535,7 @@ begin
 
   if Assigned(FField.ValueLabelSet) and
      (not FField.ValueLabelSet.ValueLabelExists[Text]) then
-     exit(ValidateError('Incorrect Valuelabel'));
+      exit(ValidateError('Illegal value (valuelabel)'));
 end;
 
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -642,7 +642,7 @@ begin
 
   if Assigned(FField.Ranges) and
      (not FField.Ranges.InRange(TheDate)) then
-    exit(ValidateError('Value not within defined range(s)'));
+      exit(ValidateError('Illegal value (range)'));
 
   Text := FormatDateTime(S, TheDate);
 end;
@@ -743,7 +743,7 @@ begin
 
   if Assigned(FField.Ranges) and
      (not FField.Ranges.InRange(TheTime)) then
-    exit(ValidateError('Value not within defined range(s)'));
+      exit(ValidateError('Illegal value (range)'));
 
   Text := FormatDateTime('HH:NN:SS', TheTime);
 end;

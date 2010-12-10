@@ -7,8 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lnetbase, main, project_frame, dataform_frame, epidatacore, fieldedit,
-  entryprocs, settings, about, picklist;
+  Forms, lnetbase, main, project_frame, dataform_frame, fieldedit,
+  entryprocs, settings, about, epidatacore, picklist;
 
 {$R *.res}
 

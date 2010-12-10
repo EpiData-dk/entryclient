@@ -36,12 +36,11 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="lnetbase"/>
+        <PackageName Value="epidatacore"/>
+        <MinVersion Minor="5" Valid="True"/>
       </Item1>
       <Item2>
-        <PackageName Value="epidatacore"/>
-        <MaxVersion Minor="5" Release="1" Valid="True"/>
-        <MinVersion Minor="5" Valid="True"/>
+        <PackageName Value="lnetbase"/>
       </Item2>
       <Item3>
         <PackageName Value="LCL"/>
@@ -121,6 +120,11 @@
       <OtherUnitFiles Value="dataform"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <CStyleMacros Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
     <CodeGeneration>
       <Optimizations>
         <OptimizationLevel Value="0"/>
@@ -141,8 +145,8 @@
       <CompilerMessages>
         <UseMsgFile Value="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dEPI_DEBUG1
--dEPI_RELEASE"/>
+      <CustomOptions Value="-dEPI_DEBUG
+-dEPI_RELEASE1"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

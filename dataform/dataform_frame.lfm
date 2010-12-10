@@ -1,18 +1,18 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 686
+  Height = 622
   Top = 0
-  Width = 1041
-  ClientHeight = 686
-  ClientWidth = 1041
+  Width = 1237
+  ClientHeight = 622
+  ClientWidth = 1237
   TabOrder = 0
-  DesignLeft = 419
-  DesignTop = 235
+  DesignLeft = 282
+  DesignTop = 241
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 656
+    Height = 592
     Top = 0
-    Width = 1041
+    Width = 1237
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -21,11 +21,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 656
-    Width = 1041
+    Top = 592
+    Width = 1237
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1041
+    ClientWidth = 1237
     TabOrder = 1
     object NavigationPanel: TPanel
       Left = 1
@@ -227,18 +227,19 @@ object DataFormFrame: TDataFormFrame
       end
     end
     object FieldTypePanel: TPanel
-      AnchorSideLeft.Control = FieldNamePanel
       AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
       Left = 418
       Height = 24
       Top = 3
-      Width = 620
+      Width = 816
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 620
+      ClientWidth = 816
       Color = clWhite
       ParentColor = False
       TabOrder = 3
