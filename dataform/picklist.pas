@@ -15,6 +15,7 @@ type
   TValueLabelsPickListForm = class(TForm)
     Edit1: TEdit;
     LabelsListBox: TListBox;
+    Splitter1: TSplitter;
     ValueListBox: TListBox;
     Panel1: TPanel;
     procedure Edit1Change(Sender: TObject);

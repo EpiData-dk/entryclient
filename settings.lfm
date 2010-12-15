@@ -1,11 +1,11 @@
 object SettingsForm: TSettingsForm
   Left = 571
-  Height = 185
+  Height = 246
   Top = 382
   Width = 478
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 185
+  ClientHeight = 246
   ClientWidth = 478
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -13,7 +13,7 @@ object SettingsForm: TSettingsForm
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 135
+    Top = 196
     Width = 478
     Align = alBottom
     ClientHeight = 50
@@ -44,7 +44,7 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 135
+    Height = 196
     Top = 0
     Width = 478
     ActivePage = TabSheet1
@@ -54,7 +54,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 129
+      ClientHeight = 190
       ClientWidth = 472
       object Label17: TLabel
         Left = 16
@@ -112,6 +112,14 @@ object SettingsForm: TSettingsForm
         TabOrder = 2
         EditMask = '999;0;_'
         SpaceChar = '_'
+      end
+      object ShowWelcomeChkBox: TCheckBox
+        Left = 16
+        Height = 22
+        Top = 133
+        Width = 152
+        Caption = 'Show Welcome Box'
+        TabOrder = 3
       end
     end
   end

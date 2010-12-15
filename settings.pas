@@ -15,6 +15,7 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    ShowWelcomeChkBox: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
     RecordsToSkipEdit: TMaskEdit;
@@ -37,14 +38,15 @@ type
     WorkingDirUTF8: string;
     RecordsToSkip:  Integer;
     HintTimeOut:    Integer;
-    IniFileName:           string;
+    IniFileName:    string;
+    ShowWelcome:    boolean;
   end;
 
 const
   EntryVersion: TEpiVersionInfo = (
     VersionNo: 0;
-    MajorRev:  1;
-    MinorRev:  3;
+    MajorRev:  2;
+    MinorRev:  0;
     BuildNo:   0;
   );
 
@@ -54,6 +56,7 @@ var
     RecordsToSkip:  25;
     HintTimeOut:    15;
     IniFileName:    '';
+    ShowWelcome:    true;
   );
 
   {$IFDEF EPI_SHOWREVISION}
@@ -96,6 +99,7 @@ begin
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
+      WriteBool(Sec, 'ShowWelcome' ,ShowWelcome);
       Result := true;
     end;
   finally
@@ -123,6 +127,7 @@ begin
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
+    ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
   end;
 end;
 
@@ -142,6 +147,7 @@ begin
   EntrySettings.WorkingDirUTF8 := WorkingDirEdit.Text;
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
+  EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;
@@ -154,6 +160,7 @@ begin
     WorkingDirEdit.Text := WorkingDirUTF8;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
+    ShowWelcomeChkBox.Checked := ShowWelcome;
   end;
 end;
 

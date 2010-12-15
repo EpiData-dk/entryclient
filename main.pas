@@ -169,6 +169,13 @@ begin
 
   LoadIniFile;
 
+  {$IFDEF EPI_RELEASE}
+  if EntrySettings.ShowWelcome then
+    ShowMessagePos('EpiData EntryClient:' + LineEnding +
+                   'See help menu above for an introduction.' + LineEnding +
+                   'Get latest version from http://www.epidata.dk', 15, 15);
+  {$ENDIF}
+
   NewProjectAction.Execute;
 end;
 

@@ -732,7 +732,7 @@ begin
   with Field do
   begin
     FieldNameLabel.Caption := Name;
-    S := EpiTypeNames[FieldType] + ': ';
+{    S := EpiTypeNames[FieldType] + ': ';
     case FieldType of
       ftInteger:     S += '0-9 allowed';
       ftFloat:       S += '0-9 and commas/points allowed';
@@ -749,9 +749,9 @@ begin
       S := S + '  +/F9: label';
 
     if Assigned(Ranges) then
-      S := S + '  (' + EpiCutString(Ranges.RangesToText, 15) + ')';
+      S := S + '  (' + EpiCutString(Ranges.RangesToText, 15) + ')';}
 
-    FieldTypeLabel.Caption := S;
+    FieldTypeLabel.Caption := EpiTypeNames[FieldType];
   end;
 end;
 

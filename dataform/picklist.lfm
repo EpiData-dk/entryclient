@@ -4,6 +4,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   Top = 370
   Width = 248
   ActiveControl = Edit1
+  BorderStyle = bsNone
   Caption = 'Value Labels'
   ClientHeight = 229
   ClientWidth = 248
@@ -33,10 +34,10 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     end
   end
   object LabelsListBox: TListBox
-    Left = 78
+    Left = 81
     Height = 195
     Top = 33
-    Width = 169
+    Width = 166
     Align = alClient
     BorderSpacing.Around = 1
     ItemHeight = 0
@@ -50,7 +51,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     Left = 1
     Height = 195
     Top = 33
-    Width = 76
+    Width = 73
     Align = alLeft
     BorderSpacing.Around = 1
     ItemHeight = 0
@@ -59,5 +60,11 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     OnSelectionChange = LabelsListBoxSelectionChange
     TabOrder = 1
     TopIndex = -1
+  end
+  object Splitter1: TSplitter
+    Left = 75
+    Height = 197
+    Top = 32
+    Width = 5
   end
 end
