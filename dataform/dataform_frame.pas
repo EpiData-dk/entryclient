@@ -13,6 +13,8 @@ type
   { TDataFormFrame }
 
   TDataFormFrame = class(TFrame)
+    FieldInfoLabel: TLabel;
+    FieldInfoPanel: TPanel;
     FieldTypeLabel: TLabel;
     FieldTypePanel: TPanel;
     JumpNextRecAction: TAction;
@@ -752,6 +754,10 @@ begin
       S := S + '  (' + EpiCutString(Ranges.RangesToText, 15) + ')';}
 
     FieldTypeLabel.Caption := EpiTypeNames[FieldType];
+    if Assigned(ValueLabelSet) then
+      FieldInfoLabel.Caption := 'Label: +/F9'
+    else
+      FieldInfoLabel.Caption := '';
   end;
 end;
 

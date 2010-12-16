@@ -1,18 +1,18 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 616
+  Height = 635
   Top = 0
-  Width = 766
-  ClientHeight = 616
-  ClientWidth = 766
+  Width = 888
+  ClientHeight = 635
+  ClientWidth = 888
   TabOrder = 0
-  DesignLeft = 498
+  DesignLeft = 288
   DesignTop = 285
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 586
+    Height = 605
     Top = 0
-    Width = 766
+    Width = 888
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -21,11 +21,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 586
-    Width = 766
+    Top = 605
+    Width = 888
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 766
+    ClientWidth = 888
     TabOrder = 1
     object NavigationPanel: TPanel
       Left = 1
@@ -228,18 +228,18 @@ object DataFormFrame: TDataFormFrame
     end
     object FieldTypePanel: TPanel
       AnchorSideLeft.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
+      AnchorSideRight.Control = FieldInfoPanel
       Left = 418
       Height = 24
       Top = 3
-      Width = 345
+      Width = 365
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 345
+      ClientWidth = 365
       Color = clWhite
       ParentColor = False
       TabOrder = 3
@@ -249,6 +249,31 @@ object DataFormFrame: TDataFormFrame
         Top = 4
         Width = 97
         Caption = 'FieldTypeLabel'
+        ParentColor = False
+      end
+    end
+    object FieldInfoPanel: TPanel
+      AnchorSideRight.Control = InformationPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 785
+      Height = 24
+      Top = 3
+      Width = 100
+      Alignment = taLeftJustify
+      Anchors = [akTop, akRight]
+      BorderSpacing.Right = 2
+      BevelOuter = bvLowered
+      ClientHeight = 24
+      ClientWidth = 100
+      Color = clWhite
+      ParentColor = False
+      TabOrder = 4
+      object FieldInfoLabel: TLabel
+        Left = 4
+        Height = 18
+        Top = 4
+        Width = 92
+        Caption = 'FieldInfoLabel'
         ParentColor = False
       end
     end
