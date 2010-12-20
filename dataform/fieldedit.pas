@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, LMessages, epistringutils, entryprocs;
+  LCLType, epistringutils, entryprocs;
 
 type
 
@@ -33,8 +33,8 @@ type
     procedure   UpdateText; virtual;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
-    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; var SepCount: integer;
-      var InheritHandled: boolean): boolean;
+    function    PreUTF8KeyPress(var UTF8Key: TUTF8Char; out SepCount: integer;
+      out InheritHandled: boolean): boolean;
     function    Characters: TCharSet; virtual;
     function    Separators: TCharArray; virtual;
     function    SeparatorCount: integer; virtual;
@@ -122,7 +122,8 @@ implementation
 
 uses
   Forms, epidatafilestypes, LCLProc, strutils,
-  epidocument, episettings, dataform_frame;
+  epidocument, episettings, dataform_frame,
+  epiconvertutils;
 
 { TFieldEdit }
 
@@ -240,9 +241,9 @@ begin
 end;
 
 function TFieldEdit.PreUTF8KeyPress(var UTF8Key: TUTF8Char;
-  var SepCount: integer; var InheritHandled: boolean): boolean;
+  out SepCount: integer; out InheritHandled: boolean): boolean;
 var
-  i, n: integer;
+  i: integer;
   LSeparators: TCharArray;
   LCharacters: TCharSet;
 begin
@@ -556,9 +557,6 @@ var
   DateStr: String;
   Sep: String;
   Y, M, D: word;
-  A, B, C: String;
-  Al, Bl, Cl: Integer;
-  ThisYear: Word;
   S: String;
   TheDate: EpiDate;
 begin
@@ -569,68 +567,8 @@ begin
   Sep := String(DateSeparator);
   DateStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
 
-  DecodeDate(Date, Y, M, D);
-  ThisYear := Y;
-
-  A := Copy2SymbDel(DateStr, DateSeparator);
-  Al := Length(A);
-  B := Copy2SymbDel(DateStr, DateSeparator);
-  Bl := Length(B);
-  C := Copy2SymbDel(DateStr, DateSeparator);
-  Cl := Length(C);
-
-  case Field.FieldType of
-    ftDMYDate,
-    ftMDYDate:
-      begin
-        if (Al > 2) or (Bl > 2) or (Cl > 4) then exit(false);
-
-        if Field.FieldType = ftDMYDate then
-        begin
-          if (Al > 0) then D := StrToInt(A);
-          if (Bl > 0) then M := StrToInt(B);
-        end else begin
-          // Only 2 digits enteres -> any case, it's considered to be the day.
-          if (Al > 0) and (Bl = 0) then D := StrToInt(A);
-          if (Al > 0) and (Bl > 0) then M := StrToInt(A);
-          if (Bl > 0) then D := StrToInt(B);
-        end;
-        if (Cl > 0) then Y := StrToInt(C);
-      end;
-    ftYMDDate:
-      begin
-        if (Al > 4) or (Bl > 2) or (Cl > 2) then exit(false);
-        if (Al > 0) and (Al <= 2) and (Bl+Cl = 0) then
-          D := StrToInt(A)
-        else begin
-          if (Al > 0) then Y := StrToInt(A);
-          if (Bl > 0) then M := StrToInt(B);
-          if (Cl > 0) then D := StrToInt(C);
-        end;
-      end;
-  end;
-
-  // 2 year digit conversion.
-  if Y < 100 then
-    if Y <= (ThisYear-2000) then  // TODO: Make 2-year limit variable.
-      Y += 2000
-    else
-      Y += 1900;
-
-  // I don't what to use try-except... :)
-  if (Y <= 0) or (Y >= 2100) then exit(ValidateError(Format('Incorrect year: %d', [Y])));
-  if (M <= 0) or (M > 12) then exit(ValidateError(Format('Incorrect month: %d', [M])));
-  case M of
-    1,3,5,7,8,10,12:
-      if (D <= 0) or (D > 31) then exit(ValidateError(Format('Incorrect day: %d', [D])));
-    4,6,9,11:
-      if (D <= 0) or (D > 30) then exit(ValidateError(Format('Incorrect day: %d', [D])));
-    2:
-      if IsLeapYear(Y) then
-        begin if (D <= 0) or (D > 29) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end
-      else
-        begin if (D <= 0) or (D > 28) then exit(ValidateError(Format('Incorrect day: %d', [D]))); end;
-  end;
+  if not EpiStrToDate(DateStr, DateSeparator, Field.FieldType, D, M, Y, S) then
+    Exit(ValidateError(S));
 
   case Field.FieldType of
     ftDMYDate, ftDMYToday: S := 'DD/MM/YYYY';
@@ -694,10 +632,11 @@ end;
 
 function TDateEdit.Separators: TCharArray;
 begin
-  SetLength(Result, 3);
+  SetLength(Result, 4);
   Result[0] := '-';
   Result[1] := '.';
   Result[2] := '/';
+  Result[2] := '\';
 end;
 
 function TDateEdit.SeparatorCount: integer;
@@ -711,33 +650,19 @@ function TTimeEdit.ValidateEntry: boolean;
 var
   Sep: String;
   TimeStr: String;
-  A,B,C: String;
-  Al,Bl,Cl: Integer;
   H, M, S: Word;
   TheTime: EpiTime;
+  Msg: string;
 begin
   Result := true;;
   if not Modified then exit;
   if Inherited ValidateEntry then exit;
 
   Sep := String(TimeSeparator);
-  TimeStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
+  TimeStr := StringsReplace(Text, ['-', ':', '.'], [Sep, Sep, Sep], [rfReplaceAll]);
 
-  A := Copy2SymbDel(TimeStr, TimeSeparator);
-  Al := Length(A);
-  B := Copy2SymbDel(TimeStr, TimeSeparator);
-  Bl := Length(B);
-  C := Copy2SymbDel(TimeStr, TimeSeparator);
-  Cl := Length(C);
-
-  H := 0; M := 0; S := 0;
-  if Al > 0 then H := StrToInt(A);
-  if Bl > 0 then M := StrToInt(B);
-  if Cl > 0 then S := StrToInt(C);
-
-  if H > 23 then exit(ValidateError(Format('Incorrect hour: %d', [H])));
-  if M > 59 then exit(ValidateError(Format('Incorrect minut: %d', [M])));
-  if S > 59 then exit(ValidateError(Format('Incorrect second: %d', [S])));
+  if not EpiStrToTime(TimeStr, TimeSeparator, H, M, S, Msg) then
+    Exit(ValidateError(Msg));
 
   TheTime := EncodeTime(H, M, S, 0);
 

@@ -5,8 +5,8 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, epidocument, FileUtil, Forms, Controls, Graphics, Dialogs,
-  Menus, ActnList, StdActns, ComCtrls, LCLType, StdCtrls, ExtCtrls;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
+  Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls;
 
 type
 
@@ -77,7 +77,7 @@ implementation
 {$R *.lfm}
 
 uses
-  project_frame, dataform_frame, fieldedit, settings, about, Clipbrd,
+  project_frame, settings, about, Clipbrd,
   epiversionutils, LCLIntf;
 
 { TMainForm }
@@ -140,8 +140,6 @@ end;
 procedure TMainForm.LoadIniFile;
 const
   IniName = 'epidataentry.ini';
-var
-  S: String;
 begin
   // TODO : Settings can be loaded from commandline?
 
@@ -180,10 +178,6 @@ begin
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
-var
-  List: TFPList;
-  Res: LongInt;
-  i: Integer;
 begin
   with TProjectFrame(ActiveFrame) do
   begin

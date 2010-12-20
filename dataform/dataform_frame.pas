@@ -118,12 +118,9 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epistringutils;
+  picklist;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
-var
-  a: LongInt;
-  b: LongInt;
 begin
   if LocalCtrl.Parent is TScrollBox then
     exit(LocalCtrl.Top);
@@ -476,7 +473,6 @@ end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);
 var
-  i: Integer;
   Res: LongInt;
 begin
   if not (AValue = NewRecord) then
@@ -634,7 +630,6 @@ procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   FieldEdit: TFieldEdit absolute Sender;
-  l: Integer;
 begin
   if FieldEdit.Modified then Modified := true;
 
@@ -651,8 +646,6 @@ procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
   FieldTop: LongInt;
-  S: String;
-  HelpHeader: String;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
@@ -728,31 +721,10 @@ begin
 end;
 
 procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);
-var
-  S: String;
 begin
   with Field do
   begin
     FieldNameLabel.Caption := Name;
-{    S := EpiTypeNames[FieldType] + ': ';
-    case FieldType of
-      ftInteger:     S += '0-9 allowed';
-      ftFloat:       S += '0-9 and commas/points allowed';
-      ftDMYDate,
-      ftMDYDate,
-      ftYMDDate:     S += '0-9, "/", "-" and "." allowed';
-      ftTime:        S += '0-9, ":", "-" and "." allowed';
-      ftBoolean:     S += 'y, Y, n, N, 1, and 0 allowed';
-      ftString,
-      ftUpperString: S += 'All entries allowed';
-    end;
-
-    if Assigned(ValueLabelSet) then
-      S := S + '  +/F9: label';
-
-    if Assigned(Ranges) then
-      S := S + '  (' + EpiCutString(Ranges.RangesToText, 15) + ')';}
-
     FieldTypeLabel.Caption := EpiTypeNames[FieldType];
     if Assigned(ValueLabelSet) then
       FieldInfoLabel.Caption := 'Label: +/F9'

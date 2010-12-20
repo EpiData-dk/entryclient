@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
-  Dialogs, StdCtrls, epidocument, epidatafiles;
+  Dialogs, epidocument, epidatafiles;
 
 type
 
@@ -45,7 +45,7 @@ type
     procedure DoNewDataForm(DataFile: TEpiDataFile);
     function  DoCreateNewDocument: TEpiDocument;
     procedure DoCloseProject;
-    procedure EpiDocModified(Sendet: TObject);
+    procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
     procedure TimedBackup(Sender: TObject);
   public
@@ -302,7 +302,7 @@ begin
   DataFilesTreeView.Items.Clear;
 end;
 
-procedure TProjectFrame.EpiDocModified(Sendet: TObject);
+procedure TProjectFrame.EpiDocModified(Sender: TObject);
 begin
   UpdateMainCaption;
   FAllowForEndBackup := true;
