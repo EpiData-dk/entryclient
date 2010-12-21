@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 396
+  Left = 785
   Height = 642
-  Top = 291
+  Top = 242
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617
@@ -212,6 +212,19 @@ object MainForm: TMainForm
     end
     object HelpMenu: TMenuItem
       Caption = '&Help'
+      object TutorialSubMenu: TMenuItem
+        Caption = 'Tutorials'
+        object TutorialsMenuDivider1: TMenuItem
+          Caption = '-'
+        end
+        object WebTutorialsMenuItem: TMenuItem
+          Caption = 'Tutorials On Web'
+          OnClick = WebTutorialsMenuItemClick
+        end
+      end
+      object HelpMenuDivider3: TMenuItem
+        Caption = '-'
+      end
       object IntroMenuItem: TMenuItem
         Action = ShowIntroAction
       end

@@ -14,6 +14,10 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    TutorialsMenuDivider1: TMenuItem;
+    WebTutorialsMenuItem: TMenuItem;
+    TutorialSubMenu: TMenuItem;
+    HelpMenuDivider3: TMenuItem;
     ShowShortCutsAction: TAction;
     ShowIntroAction: TAction;
     CheckVersionAction: TAction;
@@ -58,11 +62,14 @@ type
     procedure SettingsActionExecute(Sender: TObject);
     procedure ShowIntroActionExecute(Sender: TObject);
     procedure ShowShortCutsActionExecute(Sender: TObject);
+    procedure WebTutorialsMenuItemClick(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TFrame;
     TabNameCount: integer;
     procedure LoadIniFile;
+    procedure OpenTutorialMenuItemClick(Sender: TObject);
+    procedure LoadTutorials;
     procedure SetCaption;
   public
     { public declarations }
@@ -119,6 +126,11 @@ var
 begin
   SettingsForm := TSettingsForm.Create(Self);
   SettingsForm.ShowModal;
+  SettingsForm.Free;
+
+  LoadTutorials;
+
+  TProjectFrame(FActiveFrame).Update;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
@@ -137,6 +149,11 @@ begin
   OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:program_keys');
 end;
 
+procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
+begin
+  OpenURL('http://www.epidata.dk');
+end;
+
 procedure TMainForm.LoadIniFile;
 const
   IniName = 'epidataentry.ini';
@@ -153,6 +170,46 @@ begin
   EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
 end;
 
+procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);
+begin
+  OpenURL(EntrySettings.TutorialDirUTF8 + DirectorySeparator + TMenuItem(Sender).Caption + '.pdf');
+end;
+
+procedure TMainForm.LoadTutorials;
+var
+  FileList: TStringList;
+  MenuItem: TMenuItem;
+  i: Integer;
+begin
+  // First delete all previous tutorials.. (could be a change in tutorial dir).
+  for i := TutorialSubMenu.Count - 1 downto 0 do
+  begin
+    if (TutorialSubMenu[i] = TutorialsMenuDivider1) or
+       (TutorialSubMenu[i] = WebTutorialsMenuItem) then continue;
+
+    MenuItem := TutorialSubMenu[i];
+    TutorialSubMenu.Delete(i);
+    MenuItem.Free;
+  end;
+
+  // Find all .pdf files in the directory set by TutorialsDirUTF8
+  FileList := FindAllFiles(EntrySettings.TutorialDirUTF8, '*.pdf', false);
+  TutorialsMenuDivider1.Visible := FileList.Count > 0;
+
+  if FileList.Count = 0 then Exit;
+
+  for i := 0 to FileList.Count - 1 do
+  begin
+    MenuItem := TMenuItem.Create(TutorialSubMenu);
+    MenuItem.Name := 'TutorialMenuItem' + IntToStr(i);
+    MenuItem.Caption := ExtractFileNameOnly(FileList[i]);
+    MenuItem.OnClick := @OpenTutorialMenuItemClick;
+
+    With TutorialSubMenu do
+      Insert(IndexOf(TutorialsMenuDivider1), MenuItem);
+  end;
+end;
+
 procedure TMainForm.SetCaption;
 begin
   Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')';
@@ -166,6 +223,8 @@ begin
   {$ENDIF}
 
   LoadIniFile;
+
+  LoadTutorials;
 
   {$IFDEF EPI_RELEASE}
   if EntrySettings.ShowWelcome then

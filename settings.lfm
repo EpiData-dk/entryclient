@@ -1,11 +1,11 @@
 object SettingsForm: TSettingsForm
   Left = 571
-  Height = 246
+  Height = 251
   Top = 382
   Width = 478
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 246
+  ClientHeight = 251
   ClientWidth = 478
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -13,7 +13,7 @@ object SettingsForm: TSettingsForm
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 196
+    Top = 201
     Width = 478
     Align = alBottom
     ClientHeight = 50
@@ -44,7 +44,7 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 196
+    Height = 201
     Top = 0
     Width = 478
     ActivePage = TabSheet1
@@ -54,7 +54,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 190
+      ClientHeight = 195
       ClientWidth = 472
       object Label17: TLabel
         Left = 16
@@ -78,7 +78,7 @@ object SettingsForm: TSettingsForm
       object Label1: TLabel
         Left = 16
         Height = 18
-        Top = 62
+        Top = 94
         Width = 235
         Caption = 'Skip number of records (Alt+F7/F8):'
         ParentColor = False
@@ -86,7 +86,7 @@ object SettingsForm: TSettingsForm
       object RecordsToSkipEdit: TMaskEdit
         Left = 341
         Height = 27
-        Top = 53
+        Top = 85
         Width = 59
         CharCase = ecNormal
         MaxLength = 3
@@ -97,7 +97,7 @@ object SettingsForm: TSettingsForm
       object Label2: TLabel
         Left = 16
         Height = 18
-        Top = 101
+        Top = 133
         Width = 216
         Caption = 'Hint timeout on errors (seconds):'
         ParentColor = False
@@ -105,7 +105,7 @@ object SettingsForm: TSettingsForm
       object HintTimeOutEdit: TMaskEdit
         Left = 341
         Height = 27
-        Top = 92
+        Top = 124
         Width = 59
         CharCase = ecNormal
         MaxLength = 3
@@ -116,10 +116,29 @@ object SettingsForm: TSettingsForm
       object ShowWelcomeChkBox: TCheckBox
         Left = 16
         Height = 22
-        Top = 133
+        Top = 165
         Width = 152
         Caption = 'Show Welcome Box'
         TabOrder = 3
+      end
+      object Label18: TLabel
+        Left = 16
+        Height = 18
+        Top = 60
+        Width = 102
+        Caption = 'Tutorials folder:'
+        ParentColor = False
+      end
+      object TutorialDirEdit: TDirectoryEdit
+        Left = 152
+        Height = 27
+        Top = 53
+        Width = 248
+        ShowHidden = False
+        ButtonWidth = 23
+        NumGlyphs = 0
+        MaxLength = 0
+        TabOrder = 4
       end
     end
   end

@@ -15,6 +15,7 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    Label18: TLabel;
     ShowWelcomeChkBox: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -25,6 +26,7 @@ type
     PageControl1: TPageControl;
     Panel1: TPanel;
     TabSheet1: TTabSheet;
+    TutorialDirEdit: TDirectoryEdit;
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
   private
@@ -36,6 +38,7 @@ type
 
   TEntrySettings = record
     WorkingDirUTF8: string;
+    TutorialDirUTF8: string;
     RecordsToSkip:  Integer;
     HintTimeOut:    Integer;
     IniFileName:    string;
@@ -53,6 +56,7 @@ const
 var
   EntrySettings: TEntrySettings = (
     WorkingDirUTF8: '';
+    TutorialDirUTF8: '';
     RecordsToSkip:  25;
     HintTimeOut:    15;
     IniFileName:    '';
@@ -97,6 +101,7 @@ begin
       WorkingDirUTF8:        string;}
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
+      WriteString(Sec, 'TutorialDirectory', TutorialDirUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome' ,ShowWelcome);
@@ -125,6 +130,7 @@ begin
     WorkingDirUTF8:        string;}
     Sec := 'advanced';
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
+    TutorialDirUTF8  := ReadString(Sec, 'TutorialDirectory', TutorialDirUTF8);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
@@ -141,10 +147,11 @@ begin
 
   CanClose := false;
   if not DirectoryExistsUTF8(WorkingDirEdit.Text) then exit;
+  if not DirectoryExistsUTF8(TutorialDirEdit.Text) then exit;
   if StrToInt(RecordsToSkipEdit.Text) < 1 then exit;
 
-
   EntrySettings.WorkingDirUTF8 := WorkingDirEdit.Text;
+  EntrySettings.TutorialDirUTF8 := TutorialDirEdit.Text;
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
   EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
@@ -158,6 +165,7 @@ begin
   with EntrySettings do
   begin
     WorkingDirEdit.Text := WorkingDirUTF8;
+    TutorialDirEdit.Text := TutorialDirUTF8;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     ShowWelcomeChkBox.Checked := ShowWelcome;
@@ -167,9 +175,13 @@ end;
 initialization
 
 begin
-  EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + {$IFDEF UNIX}'/data'{$ELSE}'\data'{$ENDIF};
+  EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
   if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then
     EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8;
+
+  EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'tutorials';
+  if not DirectoryExistsUTF8(EntrySettings.TutorialDirUTF8) then
+    EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
 end;
 
 end.

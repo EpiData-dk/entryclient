@@ -51,6 +51,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
+    procedure   UpdateSettings;
     // TODO : Move DoOpenProject back to private when test-phase over.
     procedure DoOpenProject(Const aFilename: string);
     property  EpiDocument: TEpiDocument read FEpiDocument;
@@ -359,6 +360,11 @@ begin
     Splitter1.Enabled    := false;
     Splitter1.Visible    := false;
   {$ENDIF}
+end;
+
+procedure TProjectFrame.UpdateSettings;
+begin
+  // TODO : Implement recursive call of updated settings.
 end;
 
 end.
