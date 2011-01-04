@@ -118,7 +118,7 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist;
+  picklist, epidocument;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -676,7 +676,17 @@ begin
   with FieldEdit.Field do
   begin
     case FieldType of
-      ftAutoInc:  FieldEdit.Text := IntToStr(DataFile.Size + 1);    // TODO : Auto increment functionality.
+      ftAutoInc:  begin
+                    if DataFile.Size = 0 then
+                      FieldEdit.Text := IntToStr(TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue)
+                    else begin
+                      if RecNo = NewRecord then
+                        FieldEdit.Text := IntToStr(AsInteger[DataFile.Size - 1] + 1)
+                      else
+                        FieldEdit.Text := IntToStr(AsInteger[RecNo - 1] + 1);
+                    end;
+
+                  end;
       ftDMYToday: FieldEdit.Text := FormatDateTime('DD/MM/YYYY', Date);
       ftMDYToday: FieldEdit.Text := FormatDateTime('MM/DD/YYYY', Date);
       ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);
