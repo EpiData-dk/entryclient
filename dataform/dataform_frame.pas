@@ -157,7 +157,7 @@ end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := RecNo > 0;
+  (Sender as TAction).Enabled := (RecNo > 0) and (DataFile.Size > 0);
 end;
 
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
@@ -297,7 +297,10 @@ begin
   Val(RecordEdit.Text, AValue, Code);
   if Code <> 0 then exit;
 
-  RecNo := Min(AValue - 1, DataFile.Size - 1);
+  Code := Min(AValue - 1, DataFile.Size - 1);
+  if Code < 0 then exit;
+
+  RecNo := Code;
   FirstFieldAction.Execute;
 end;
 
@@ -673,7 +676,7 @@ begin
   with FieldEdit.Field do
   begin
     case FieldType of
-      ftAutoInc: ;
+      ftAutoInc:  FieldEdit.Text := IntToStr(DataFile.Size + 1);    // TODO : Auto increment functionality.
       ftDMYToday: FieldEdit.Text := FormatDateTime('DD/MM/YYYY', Date);
       ftMDYToday: FieldEdit.Text := FormatDateTime('MM/DD/YYYY', Date);
       ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);

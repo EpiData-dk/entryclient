@@ -73,6 +73,12 @@ var
   function SaveSettingToIni(Const FileName: string): boolean;
   function LoadSettingsFromIni(Const FileName: string): boolean;
 
+  procedure AddToRecent(const AFilename: string);
+
+
+var
+  RecentFiles: TStringList;
+
 implementation
 
 {$R *.lfm}
@@ -89,6 +95,7 @@ function SaveSettingToIni(Const FileName: string): boolean;
 var
   Ini: TIniFile;
   Sec: string;
+  i: Integer;
 begin
   Result := false;
 
@@ -105,8 +112,13 @@ begin
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome' ,ShowWelcome);
-      Result := true;
     end;
+
+    // Read recent files.
+    for i := 0 to RecentFiles.Count - 1 do
+      Ini.WriteString('recent', 'file'+inttostr(i), RecentFiles[i]);
+
+    Result := true;
   finally
     Ini.Free;
   end;
@@ -116,6 +128,8 @@ function LoadSettingsFromIni(Const FileName: string): boolean;
 var
   Ini: TIniFile;
   Sec: String;
+  i: Integer;
+  S: String;
 begin
   Result := false;
   EntrySettings.IniFileName := FileName;
@@ -134,7 +148,29 @@ begin
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
+
+      // Read recent files.
+    Sec := 'recent';
+    for i := 0 to 9 do
+    begin
+      S := Ini.ReadString(sec, 'file'+inttostr(i), '');
+      if S > '' then
+        RecentFiles.Add(S);
+    end;
   end;
+end;
+
+procedure AddToRecent(const AFilename: string);
+var
+  Idx: Integer;
+begin
+  Idx := RecentFiles.IndexOf(AFilename);
+  if (Idx >= 0) then
+    RecentFiles.Exchange(Idx, 0)
+  else
+    RecentFiles.Insert(0, AFilename);
+  if RecentFiles.Count > 10 then
+    RecentFiles.Delete(10);
 end;
 
 
@@ -182,6 +218,14 @@ begin
   EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'tutorials';
   if not DirectoryExistsUTF8(EntrySettings.TutorialDirUTF8) then
     EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
+
+  RecentFiles := TStringList.Create;
+end;
+
+finalization
+
+begin
+  RecentFiles.Free;
 end;
 
 end.

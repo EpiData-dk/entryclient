@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls;
+  Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame;
 
 type
 
@@ -14,6 +14,10 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    OpenProjectAction: TAction;
+    CloseProjectAction: TAction;
+    CloseProjectMenuItem: TMenuItem;
+    RecentFilesSubMenu: TMenuItem;
     TutorialsMenuDivider1: TMenuItem;
     WebTutorialsMenuItem: TMenuItem;
     TutorialSubMenu: TMenuItem;
@@ -54,26 +58,36 @@ type
     OpenProjectMenuItem: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
+    procedure CloseProjectActionExecute(Sender: TObject);
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
+    procedure OpenProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
     procedure ShowIntroActionExecute(Sender: TObject);
     procedure ShowShortCutsActionExecute(Sender: TObject);
     procedure WebTutorialsMenuItemClick(Sender: TObject);
   private
     { private declarations }
-    FActiveFrame: TFrame;
+    FActiveFrame: TProjectFrame;
     TabNameCount: integer;
     procedure LoadIniFile;
     procedure OpenTutorialMenuItemClick(Sender: TObject);
     procedure LoadTutorials;
+    procedure DoNewProject;
+    function  DoCloseProject: boolean;
+    procedure DoOpenProject(Const AFileName: string);
+    procedure UpdateMainMenu;
+    procedure UpdateSettings;
     procedure SetCaption;
+    procedure OpenRecentMenuItemClick(Sender: TObject);
   public
     { public declarations }
-    property  ActiveFrame: TFrame read FActiveFrame;
+    constructor Create(TheOwner: TComponent); override;
+    procedure UpdateRecentFiles;
+    property  ActiveFrame: TProjectFrame read FActiveFrame;
   end; 
 
 var
@@ -84,40 +98,31 @@ implementation
 {$R *.lfm}
 
 uses
-  project_frame, settings, about, Clipbrd,
+  settings, about, Clipbrd, epimiscutils,
   epiversionutils, LCLIntf;
 
 { TMainForm }
 
 procedure TMainForm.NewProjectActionExecute(Sender: TObject);
-var
-  TabSheet: TTabSheet;
-  Frame: TProjectFrame;
-  S: String;
-const
-  SampleFileName = 'sample.epx';
 begin
-  TabSheet := TTabSheet.Create(MainFormPageControl);
-  TabSheet.PageControl := MainFormPageControl;
-  TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
-  TabSheet.Caption := 'Untitled';
+  DoNewProject;
+end;
 
-  Frame := TProjectFrame.Create(TabSheet);
-  Frame.Name := 'ProjectFrame' + IntToStr(TabNameCount);
-  Frame.Align := alClient;
-  Frame.Parent := TabSheet;
-  FActiveFrame := Frame;
-  MainFormPageControl.ActivePage := TabSheet;
+procedure TMainForm.OpenProjectActionExecute(Sender: TObject);
+var
+  Dlg: TOpenDialog;
+begin
+  Dlg := TOpenDialog.Create(self);
+  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
+  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
+    false, false, false, false, true, true);
+  Dlg.FilterIndex := 0;
 
-  // Only as long as one project is created!
-  SaveProjectMenuItem.Action := Frame.SaveProjectAction;
-  OpenProjectMenuItem.Action := Frame.OpenProjectAction;
+  if not Dlg.Execute then exit;
+  if not DoCloseProject then exit;
 
-  S := ExtractFilePath(Application.ExeName) + SampleFileName;
-  if FileExistsUTF8(S) then
-    Frame.DoOpenProject(S);
-
-  Inc(TabNameCount);
+  DoOpenProject(Dlg.FileName);
+  Dlg.Free;
 end;
 
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
@@ -210,9 +215,96 @@ begin
   end;
 end;
 
+procedure TMainForm.DoNewProject;
+var
+  TabSheet: TTabSheet;
+begin
+  // Close Old project
+  if not DoCloseProject then exit;
+
+  TabSheet := TTabSheet.Create(MainFormPageControl);
+  TabSheet.PageControl := MainFormPageControl;
+  TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
+  TabSheet.Caption := 'Untitled';
+
+  FActiveFrame := TProjectFrame.Create(TabSheet);
+  FActiveFrame.Name := 'ProjectFrame' + IntToStr(TabNameCount);
+  FActiveFrame.Align := alClient;
+  FActiveFrame.Parent := TabSheet;
+  MainFormPageControl.ActivePage := TabSheet;
+
+  // Only as long as one project is created!
+  UpdateMainMenu;
+  SaveProjectMenuItem.Action := FActiveFrame.SaveProjectAction;
+
+  Inc(TabNameCount);
+end;
+
+function TMainForm.DoCloseProject: boolean;
+begin
+  result := true;
+  if Assigned(FActiveFrame) then
+  begin
+    FActiveFrame.CloseQuery(result);
+    if not Result then exit;
+
+    MainFormPageControl.ActivePage.Free;
+    FActiveFrame := nil;
+  end;
+  UpdateMainMenu;
+  SetCaption;
+end;
+
+procedure TMainForm.DoOpenProject(const AFileName: string);
+begin
+  DoNewProject;
+  FActiveFrame.OpenProject(AFileName);
+end;
+
+procedure TMainForm.UpdateMainMenu;
+begin
+  SaveProjectMenuItem.Visible := Assigned(FActiveFrame);
+  CloseProjectAction.Enabled := Assigned(FActiveFrame);
+end;
+
+procedure TMainForm.UpdateSettings;
+begin
+  LoadTutorials;
+end;
+
 procedure TMainForm.SetCaption;
 begin
   Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')';
+end;
+
+procedure TMainForm.OpenRecentMenuItemClick(Sender: TObject);
+begin
+  DoOpenProject(ExpandFileNameUTF8(TMenuItem(Sender).Caption));
+end;
+
+constructor TMainForm.Create(TheOwner: TComponent);
+begin
+  inherited Create(TheOwner);
+  FActiveFrame := nil;
+  UpdateMainMenu;
+end;
+
+procedure TMainForm.UpdateRecentFiles;
+var
+  Mi: TMenuItem;
+  i: Integer;
+begin
+  RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
+
+  RecentFilesSubMenu.Clear;
+  for i := 0 to RecentFiles.Count - 1 do
+  begin
+    Mi := TMenuItem.Create(RecentFilesSubMenu);
+    Mi.Name := 'recent' + inttostr(i);
+    Mi.Caption := RecentFiles[i];
+    Mi.OnClick := @OpenRecentMenuItemClick;
+    RecentFilesSubMenu.Add(Mi);
+  end;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -223,8 +315,8 @@ begin
   {$ENDIF}
 
   LoadIniFile;
-
-  LoadTutorials;
+  UpdateSettings;
+  UpdateRecentFiles;
 
   {$IFDEF EPI_RELEASE}
   if EntrySettings.ShowWelcome then
@@ -232,17 +324,17 @@ begin
                    'See help menu above for an introduction.' + LineEnding +
                    'Get latest version from http://www.epidata.dk', 15, 15);
   {$ENDIF}
-
-  NewProjectAction.Execute;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
-  with TProjectFrame(ActiveFrame) do
-  begin
-    CloseProjectAction.Execute;
-    CanClose := not Assigned(EpiDocument);
-  end;
+  CanClose := true;
+
+  {$IFDEF EPI_RELEASE}
+  if Assigned(FActiveFrame) then
+    FActiveFrame.CloseQuery(CanClose);
+  {$ENDIF}
+  SaveSettingToIni(EntrySettings.IniFileName);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -307,6 +399,11 @@ begin
     else
       S := S + Format('Latest test version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]);
   ShowMessage(S);
+end;
+
+procedure TMainForm.CloseProjectActionExecute(Sender: TObject);
+begin
+  DoCloseProject;
 end;
 
 procedure TMainForm.CopyProjectInfoActionExecute(Sender: TObject);

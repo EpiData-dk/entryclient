@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 785
+  Left = 635
   Height = 642
-  Top = 242
+  Top = 255
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617
@@ -148,7 +148,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object MainFormPageControl: TPageControl
     Left = 0
     Height = 617
@@ -164,10 +164,16 @@ object MainForm: TMainForm
     object FileMenu: TMenuItem
       Caption = '&File'
       object OpenProjectMenuItem: TMenuItem
-        Caption = 'Open'
+        Action = OpenProjectAction
+      end
+      object RecentFilesSubMenu: TMenuItem
+        Caption = 'Open Recent...'
       end
       object SaveProjectMenuItem: TMenuItem
         Caption = 'Save'
+      end
+      object CloseProjectMenuItem: TMenuItem
+        Action = CloseProjectAction
       end
       object FileMenuDivider1: TMenuItem
         Caption = '-'
@@ -297,6 +303,18 @@ object MainForm: TMainForm
       Category = 'Help'
       Caption = 'Show &Shortcuts'
       OnExecute = ShowShortCutsActionExecute
+    end
+    object CloseProjectAction: TAction
+      Category = 'File'
+      Caption = 'Close Project'
+      OnExecute = CloseProjectActionExecute
+      ShortCut = 16499
+    end
+    object OpenProjectAction: TAction
+      Category = 'File'
+      Caption = 'Open Project'
+      OnExecute = OpenProjectActionExecute
+      ShortCut = 16463
     end
   end
 end

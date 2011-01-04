@@ -6,17 +6,15 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
-  Dialogs, epidocument, epidatafiles;
+  Dialogs, epidocument, epidatafiles, dataform_frame;
 
 type
 
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
-    CloseProjectAction: TAction;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
-    OpenProjectAction: TAction;
     ProjectActionList: TActionList;
     ProjectPanel: TPanel;
     Splitter1: TSplitter;
@@ -29,14 +27,12 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
-    procedure CloseProjectActionExecute(Sender: TObject);
-    procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
   private
     { private declarations }
-    FActiveFrame: TFrame;
+    FActiveFrame: TDataFormFrame;
     FEpiDocument: TEpiDocument;
     FDocumentFilename: string;
     FBackupTimer: TTimer;
@@ -48,15 +44,17 @@ type
     procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
     procedure TimedBackup(Sender: TObject);
+    procedure DoOpenProject(Const aFilename: string);
+    procedure AddToRecent(Const aFilename: string);
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
+    procedure   CloseQuery(var CanClose: boolean);
+    procedure   OpenProject(Const aFilename: string);
     procedure   UpdateSettings;
-    // TODO : Move DoOpenProject back to private when test-phase over.
-    procedure DoOpenProject(Const aFilename: string);
-    property  EpiDocument: TEpiDocument read FEpiDocument;
-    property  ActiveFrame: TFrame read FActiveFrame;
-    property  DocumentFileName: string read FDocumentFilename;
+    property    EpiDocument: TEpiDocument read FEpiDocument;
+    property    ActiveFrame: TDataFormFrame read FActiveFrame;
+    property    DocumentFileName: string read FDocumentFilename;
   end; 
 
 implementation
@@ -64,74 +62,10 @@ implementation
 {$R *.lfm}
 
 uses
-  main, dataform_frame, epimiscutils, settings, fieldedit, LCLIntf,
+  main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils;
 
 { TProjectFrame }
-
-procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
-var
-  Res: LongInt;
-  Dlg: TOpenDialog;
-begin
-  Dlg := TOpenDialog.Create(self);
-  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
-  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
-    false, false, false, false, true, true);
-  Dlg.FilterIndex := 0;
-  if not Dlg.Execute then exit;
-
-  if (Assigned(EpiDocument)) and
-     ((EpiDocument.Modified) or
-      (TDataFormFrame(ActiveFrame).Modified))
-  then begin
-    Res := MessageDlg('Warning',
-      'Project data content modified.' + LineEnding +
-      'Save?',
-      mtWarning, mbYesNoCancel, 0, mbCancel);
-
-    if Res = mrCancel then exit;
-
-    if Res = mrYes then
-    begin
-      // Commit field (in case they are not already).
-      TDataFormFrame(ActiveFrame).CommitFields;
-      SaveProjectAction.Execute;
-    end;
-  end;
-
-  DoOpenProject(Dlg.FileName);
-  Dlg.Free;
-end;
-
-procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
-var
-  Res: LongInt;
-begin
-  if Assigned(EpiDocument) and
-     ((EpiDocument.Modified) or
-      (TDataFormFrame(ActiveFrame).Modified))
-  then
-  begin
-    Res := MessageDlg('Warning',
-      'Project data content modified.' + LineEnding +
-      'Save before exit?',
-      mtWarning, mbYesNoCancel, 0, mbCancel);
-
-    if Res = mrCancel then exit;
-
-    if Res = mrYes then
-    begin
-      // Commit field (in case they are not already.
-      if (MainForm.ActiveControl is TFieldEdit) and
-         (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
-      TDataFormFrame(ActiveFrame).CommitFields;
-      SaveProjectAction.Execute;
-    end;
-  end;
-
-  DoCloseProject;
-end;
 
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
@@ -217,8 +151,15 @@ begin
   if Res = mrYes then
     EpiDocument.Modified := true;
 
+  AddToRecent(DocumentFileName);
   UpdateMainCaption;
   SaveProjectAction.Update;
+end;
+
+procedure TProjectFrame.AddToRecent(const aFilename: string);
+begin
+  Settings.AddToRecent(AFileName);
+  MainForm.UpdateRecentFiles;
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
@@ -360,6 +301,36 @@ begin
     Splitter1.Enabled    := false;
     Splitter1.Visible    := false;
   {$ENDIF}
+end;
+
+procedure TProjectFrame.CloseQuery(var CanClose: boolean);
+var
+  Res: LongInt;
+begin
+  if (EpiDocument.Modified) or (ActiveFrame.Modified) then
+  begin
+    Res := MessageDlg('Warning',
+      'Project data content modified.' + LineEnding +
+      'Save before exit?',
+      mtWarning, mbYesNoCancel, 0, mbCancel);
+
+    if Res = mrCancel then exit;
+
+    if Res = mrYes then
+    begin
+      // Commit field (in case they are not already.
+      if (MainForm.ActiveControl is TFieldEdit) and
+         (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
+      ActiveFrame.CommitFields;
+      SaveProjectAction.Execute;
+      CanClose := true;
+    end;
+  end;
+end;
+
+procedure TProjectFrame.OpenProject(const aFilename: string);
+begin
+  DoOpenProject(aFilename);
 end;
 
 procedure TProjectFrame.UpdateSettings;
