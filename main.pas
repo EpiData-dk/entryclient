@@ -135,7 +135,8 @@ begin
 
   LoadTutorials;
 
-  TProjectFrame(FActiveFrame).Update;
+  if Assigned(FActiveFrame) then
+    TProjectFrame(FActiveFrame).Update;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
@@ -164,14 +165,13 @@ const
   IniName = 'epidataentry.ini';
 begin
   // TODO : Settings can be loaded from commandline?
-
   if LoadSettingsFromIni(GetAppConfigFileUTF8(false)) then exit;
 
   // Todo - this is not optimal on Non-windows OS's. Do some checks for writeability first.
   if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
 
-  if not DirectoryExistsUTF8(GetAppConfigDirUTF8(false)) then
-    CreateDirUTF8(GetAppConfigDirUTF8(false));
+  if not DirectoryExistsUTF8(ExtractFilePath(GetAppConfigFileUTF8(false))) then
+    ForceDirectoriesUTF8(ExtractFilePath(GetAppConfigFileUTF8(false)));
   EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
 end;
 

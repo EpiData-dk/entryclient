@@ -157,7 +157,7 @@ begin
   if not Settings.ShowFieldBorders then
     BorderStyle := bsNone;
   case BorderStyle of
-    bsNone:   SideBuf := 0;
+    bsNone:   SideBuf := {$IFDEF DARWIN}    6 {$ELSE} 0 {$ENDIF};
     bsSingle: SideBuf := {$IFDEF MSWINDOWS} 7 {$ELSE} 6 {$ENDIF};
   end;
 
