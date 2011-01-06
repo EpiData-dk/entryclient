@@ -411,7 +411,7 @@ var
   S: String;
 begin
   S := GetProgramInfo;
-  if Assigned(TProjectFrame(ActiveFrame).EpiDocument) then
+  if Assigned(ActiveFrame) then
   with TProjectFrame(ActiveFrame).EpiDocument do
   begin
     S := S + LineEnding +
