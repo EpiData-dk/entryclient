@@ -15,7 +15,9 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    TutorialURLEdit: TEdit;
     Label18: TLabel;
+    Label3: TLabel;
     ShowWelcomeChkBox: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -39,6 +41,7 @@ type
   TEntrySettings = record
     WorkingDirUTF8: string;
     TutorialDirUTF8: string;
+    TutorialURLUTF8: string;
     RecordsToSkip:  Integer;
     HintTimeOut:    Integer;
     IniFileName:    string;
@@ -57,6 +60,7 @@ var
   EntrySettings: TEntrySettings = (
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
+    TutorialURLUTF8: 'http://epidata.dk/documentation.php';
     RecordsToSkip:  25;
     HintTimeOut:    15;
     IniFileName:    '';
@@ -109,6 +113,7 @@ begin
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
       WriteString(Sec, 'TutorialDirectory', TutorialDirUTF8);
+      WriteString(Sec, 'TutorialURL', TutorialURLUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome' ,ShowWelcome);
@@ -145,6 +150,7 @@ begin
     Sec := 'advanced';
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
     TutorialDirUTF8  := ReadString(Sec, 'TutorialDirectory', TutorialDirUTF8);
+    TutorialURLUTF8  := ReadString(Sec, 'TutorialURL', TutorialURLUTF8);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
@@ -184,10 +190,14 @@ begin
   CanClose := false;
   if not DirectoryExistsUTF8(WorkingDirEdit.Text) then exit;
   if not DirectoryExistsUTF8(TutorialDirEdit.Text) then exit;
+  if not (
+      (LeftStr(UTF8LowerCase(TutorialURLEdit.Text), 7) = 'http://') or
+      (LeftStr(UTF8LowerCase(TutorialURLEdit.Text), 8) = 'https://')) then exit;
   if StrToInt(RecordsToSkipEdit.Text) < 1 then exit;
 
   EntrySettings.WorkingDirUTF8 := WorkingDirEdit.Text;
   EntrySettings.TutorialDirUTF8 := TutorialDirEdit.Text;
+  EntrySettings.TutorialURLUTF8 := TutorialURLEdit.Text;
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
   EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
@@ -202,6 +212,7 @@ begin
   begin
     WorkingDirEdit.Text := WorkingDirUTF8;
     TutorialDirEdit.Text := TutorialDirUTF8;
+    TutorialURLEdit.Text := TutorialURLUTF8;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     ShowWelcomeChkBox.Checked := ShowWelcome;

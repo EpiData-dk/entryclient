@@ -649,6 +649,7 @@ procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
   FieldTop: LongInt;
+  AVal: Int64;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
@@ -672,20 +673,17 @@ begin
   // TODO : Before field script
 
   // AutoInc/Today:
+  // TODO : Shoudl not be placed in the "OnEnter" event.
   if FieldEdit.Field.FieldType in AutoFieldTypes then
   with FieldEdit.Field do
   begin
     case FieldType of
       ftAutoInc:  begin
+                    AVal := TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue;
                     if DataFile.Size = 0 then
-                      FieldEdit.Text := IntToStr(TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue)
-                    else begin
-                      if RecNo = NewRecord then
-                        FieldEdit.Text := IntToStr(AsInteger[DataFile.Size - 1] + 1)
-                      else
-                        FieldEdit.Text := IntToStr(AsInteger[RecNo - 1] + 1);
-                    end;
-
+                      FieldEdit.Text := IntToStr(AVal)
+                    else
+                      FieldEdit.Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
                   end;
       ftDMYToday: FieldEdit.Text := FormatDateTime('DD/MM/YYYY', Date);
       ftMDYToday: FieldEdit.Text := FormatDateTime('MM/DD/YYYY', Date);

@@ -157,7 +157,7 @@ end;
 
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
 begin
-  OpenURL('http://www.epidata.dk');
+  OpenURL(EntrySettings.TutorialURLUTF8);
 end;
 
 procedure TMainForm.LoadIniFile;

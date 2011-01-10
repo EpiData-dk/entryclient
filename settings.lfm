@@ -1,29 +1,36 @@
 object SettingsForm: TSettingsForm
-  Left = 571
-  Height = 251
-  Top = 382
-  Width = 478
+  Left = 439
+  Height = 339
+  Top = 389
+  Width = 517
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 251
-  ClientWidth = 478
+  ClientHeight = 339
+  ClientWidth = 517
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   LCLVersion = '0.9.31'
   object Panel1: TPanel
     Left = 0
-    Height = 50
-    Top = 201
-    Width = 478
+    Height = 42
+    Top = 297
+    Width = 517
     Align = alBottom
-    ClientHeight = 50
-    ClientWidth = 478
+    ClientHeight = 42
+    ClientWidth = 517
     TabOrder = 0
     object BitBtn1: TBitBtn
-      Left = 368
-      Height = 30
-      Top = 12
-      Width = 75
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      Left = 427
+      Height = 32
+      Top = 5
+      Width = 79
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      BorderSpacing.Right = 10
       Cancel = True
       Caption = 'Cancel'
       Kind = bkCancel
@@ -31,10 +38,16 @@ object SettingsForm: TSettingsForm
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 280
-      Height = 30
-      Top = 12
-      Width = 75
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = BitBtn1
+      Left = 363
+      Height = 32
+      Top = 5
+      Width = 54
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      BorderSpacing.Right = 10
       Caption = '&OK'
       Default = True
       Kind = bkOK
@@ -44,9 +57,9 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 201
+    Height = 297
     Top = 0
-    Width = 478
+    Width = 517
     ActivePage = TabSheet1
     Align = alClient
     ShowTabs = False
@@ -54,40 +67,58 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 195
-      ClientWidth = 472
+      ClientHeight = 291
+      ClientWidth = 511
       object Label17: TLabel
-        Left = 16
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = WorkingDirEdit
+        AnchorSideTop.Side = asrCenter
+        Left = 10
         Height = 18
-        Top = 23
+        Top = 14
         Width = 124
+        BorderSpacing.Left = 10
         Caption = 'Default data folder'
         ParentColor = False
       end
       object WorkingDirEdit: TDirectoryEdit
-        Left = 152
+        AnchorSideTop.Control = TabSheet1
+        AnchorSideRight.Side = asrBottom
+        Left = 165
         Height = 27
-        Top = 16
-        Width = 248
+        Top = 10
+        Width = 309
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 0
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 10
         MaxLength = 0
         TabOrder = 0
       end
       object Label1: TLabel
-        Left = 16
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = RecordsToSkipEdit
+        AnchorSideTop.Side = asrCenter
+        Left = 10
         Height = 18
-        Top = 94
+        Top = 125
         Width = 235
+        BorderSpacing.Left = 10
         Caption = 'Skip number of records (Alt+F7/F8):'
         ParentColor = False
       end
       object RecordsToSkipEdit: TMaskEdit
-        Left = 341
+        AnchorSideTop.Control = TutorialURLEdit
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = TutorialDirEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 383
         Height = 27
-        Top = 85
-        Width = 59
+        Top = 121
+        Width = 91
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 10
         CharCase = ecNormal
         MaxLength = 3
         TabOrder = 1
@@ -95,18 +126,28 @@ object SettingsForm: TSettingsForm
         SpaceChar = '_'
       end
       object Label2: TLabel
-        Left = 16
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = HintTimeOutEdit
+        AnchorSideTop.Side = asrCenter
+        Left = 10
         Height = 18
-        Top = 133
+        Top = 162
         Width = 216
+        BorderSpacing.Left = 10
         Caption = 'Hint timeout on errors (seconds):'
         ParentColor = False
       end
       object HintTimeOutEdit: TMaskEdit
-        Left = 341
+        AnchorSideTop.Control = RecordsToSkipEdit
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = RecordsToSkipEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 383
         Height = 27
-        Top = 124
-        Width = 59
+        Top = 158
+        Width = 91
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 10
         CharCase = ecNormal
         MaxLength = 3
         TabOrder = 2
@@ -114,31 +155,73 @@ object SettingsForm: TSettingsForm
         SpaceChar = '_'
       end
       object ShowWelcomeChkBox: TCheckBox
-        Left = 16
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = HintTimeOutEdit
+        AnchorSideTop.Side = asrBottom
+        Left = 10
         Height = 22
-        Top = 165
+        Top = 195
         Width = 152
+        BorderSpacing.Left = 10
+        BorderSpacing.Top = 10
         Caption = 'Show Welcome Box'
         TabOrder = 3
       end
       object Label18: TLabel
-        Left = 16
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = TutorialDirEdit
+        AnchorSideTop.Side = asrCenter
+        Left = 10
         Height = 18
-        Top = 60
+        Top = 51
         Width = 102
+        BorderSpacing.Left = 10
         Caption = 'Tutorials folder:'
         ParentColor = False
       end
       object TutorialDirEdit: TDirectoryEdit
-        Left = 152
+        AnchorSideLeft.Control = WorkingDirEdit
+        AnchorSideTop.Control = WorkingDirEdit
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = WorkingDirEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 165
         Height = 27
-        Top = 53
-        Width = 248
+        Top = 47
+        Width = 309
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 0
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 10
         MaxLength = 0
         TabOrder = 4
+      end
+      object Label3: TLabel
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = TutorialURLEdit
+        AnchorSideTop.Side = asrCenter
+        Left = 10
+        Height = 18
+        Top = 88
+        Width = 114
+        BorderSpacing.Left = 10
+        Caption = 'Tutorial web URL:'
+        ParentColor = False
+      end
+      object TutorialURLEdit: TEdit
+        AnchorSideLeft.Control = TutorialDirEdit
+        AnchorSideTop.Control = TutorialDirEdit
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = TutorialDirEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 165
+        Height = 27
+        Top = 84
+        Width = 309
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 10
+        TabOrder = 5
       end
     end
   end
