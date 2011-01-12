@@ -10,6 +10,8 @@ uses
 
 type
 
+  EInvalidTimeStampException = class(Exception);
+
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
@@ -35,6 +37,7 @@ type
     FActiveFrame: TDataFormFrame;
     FEpiDocument: TEpiDocument;
     FDocumentFilename: string;
+    FDocumentFileTimeStamp: longint;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
     procedure DoSaveProject(Const aFilename: string);
@@ -69,7 +72,20 @@ uses
 
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
-  DoSaveProject(FDocumentFilename);
+  try
+    DoSaveProject(FDocumentFilename);
+  except
+    on E: EFCreateError do
+      begin
+        MessageDlg('Error',
+          'Unable to save project to:' + LineEnding +
+          FDocumentFilename + LineEnding +
+          'Error message: ' + E.Message,
+          mtError, [mbOK], 0);
+        Exit;
+      end;
+
+  end;
   EpiDocument.Modified := false;
 end;
 
@@ -124,16 +140,25 @@ begin
   Cursor := crHourGlass;
   Application.ProcessMessages;
 
-  St := TMemoryStream.Create;
-  if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
-    ZipFileToStream(St, Fn)
-  else
-    St.LoadFromFile(Fn);
-  St.Position := 0;
-  FEpiDocument := DoCreateNewDocument;
-  FEpiDocument.LoadFromStream(St);
-  FEpiDocument.OnModified := @EpiDocModified;
-  FDocumentFilename := Fn;
+  St := nil;
+  try
+    St := TMemoryStream.Create;
+    if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
+      ZipFileToStream(St, Fn)
+    else
+      St.LoadFromFile(Fn);
+    St.Position := 0;
+    FEpiDocument := DoCreateNewDocument;
+    FEpiDocument.LoadFromStream(St);
+    FEpiDocument.OnModified := @EpiDocModified;
+    FDocumentFilename := Fn;
+  except
+    if Assigned(St) then FreeAndNil(St);
+    if Assigned(FEpiDocument) then FreeAndNil(FEpiDocument);
+    if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
+    raise;
+  end;
+  FDocumentFileTimeStamp := FileAgeUTF8(Fn);
 
   // Create backup process.
   if EpiDocument.ProjectSettings.BackupInterval > 0 then
@@ -169,7 +194,16 @@ var
 begin
   ActiveFrame.Cursor := crHourGlass;
   Application.ProcessMessages;
+  Fs := nil;
+  Ms := nil;
   try
+    if (RightStr(aFilename, 4) <> '.bak') and
+       (FileAgeUTF8(aFilename) <> FDocumentFileTimeStamp) then
+    begin
+      if MessageDlg('WARNING', 'Project file: ' + aFilename + ' has been modified by another program since last save.' + LineEnding+
+       'Overwrite modified file?', mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
+    end;
+
     Ms := TMemoryStream.Create;
     EpiDocument.SaveToStream(Ms);
     Ms.Position := 0;
@@ -179,12 +213,13 @@ begin
     else begin
       Fs := TFileStream.Create(aFilename, fmCreate);
       Fs.CopyFrom(Ms, Ms.Size);
-      Fs.Free;
     end;
+    FDocumentFileTimeStamp := FileAgeUTF8(aFilename);
   finally
     ActiveFrame.Cursor := crDefault;
     Application.ProcessMessages;
-    Ms.Free;
+    if Assigned(Ms) then FreeAndNil(Ms);
+    if Assigned(Fs) then FreeAndNil(Fs);
   end;
 end;
 
@@ -232,7 +267,11 @@ begin
   begin
     S := ExtractFileNameWithoutExt(DocumentFileName);
     DecodeDate(Now, Y, M, D);
-    DoSaveProject(S + '.' + Format('%d-%.2d-%.2d', [Y,M,D]) + '.epz');
+    try
+      DoSaveProject(S + '.' + Format('%d-%.2d-%.2d', [Y,M,D]) + '.epz');
+    except
+      // TODO : Warn about not saving backup file?
+    end;
   end;
 
   // TODO : Delete ALL dataforms!
@@ -281,7 +320,12 @@ procedure TProjectFrame.TimedBackup(Sender: TObject);
 begin
   try
     FBackupTimer.Enabled := false;
-    DoSaveProject(DocumentFileName + '.bak');
+    try
+      DoSaveProject(DocumentFileName + '.bak');
+    except
+      // TODO : Warn about not saving timed backup file.
+      exit;
+    end;
     FBackupTimer.Enabled := true;
   except
     //

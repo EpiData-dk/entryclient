@@ -98,7 +98,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings, about, Clipbrd, epimiscutils,
+  settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf;
 
 { TMainForm }
@@ -258,7 +258,28 @@ end;
 procedure TMainForm.DoOpenProject(const AFileName: string);
 begin
   DoNewProject;
-  FActiveFrame.OpenProject(AFileName);
+  try
+    FActiveFrame.OpenProject(AFileName);
+  except
+    on E: TEpiCoreException do
+      begin
+        ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
+                    E.Message);
+        DoCloseProject;
+      end;
+    on E: EFOpenError do
+      begin
+        ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
+                    'File is corrupt or does not exist.');
+        DoCloseProject;
+      end;
+  else
+    begin
+      ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
+                  'An unknown error occured.');
+      DoCloseProject;
+    end;
+  end;
 end;
 
 procedure TMainForm.UpdateMainMenu;

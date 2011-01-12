@@ -8,7 +8,8 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, lnetbase, main, project_frame, dataform_frame, fieldedit,
-  entryprocs, settings, about, epidatacore, picklist, sysutils;
+  entryprocs, settings, about, epidatacore, picklist, sysutils,
+  UniqueInstanceRaw;
 
 {$R *.res}
 
@@ -20,6 +21,7 @@ end;
 
 begin
   OnGetApplicationName := @EpiDataApplicationName;
+  if InstanceRunning(EpiDataApplicationName) then exit;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;

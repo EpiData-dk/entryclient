@@ -673,7 +673,7 @@ begin
   // TODO : Before field script
 
   // AutoInc/Today:
-  // TODO : Shoudl not be placed in the "OnEnter" event.
+  // TODO : Should not be placed in the "OnEnter" event.
   if FieldEdit.Field.FieldType in AutoFieldTypes then
   with FieldEdit.Field do
   begin
