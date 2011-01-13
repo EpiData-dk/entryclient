@@ -20,10 +20,27 @@ const
 type
   TCharArray = array of char;
 
+procedure LoadIniFile;
+
 implementation
 
 uses
-  lclproc, strutils, epidatafiles;
+  lclproc, strutils, epidatafiles, FileUtil, settings, forms;
+
+procedure LoadIniFile;
+const
+  IniName = 'epidataentry.ini';
+begin
+  // TODO : Settings can be loaded from commandline?
+  if LoadSettingsFromIni(GetAppConfigFileUTF8(false)) then exit;
+
+  // Todo - this is not optimal on Non-windows OS's. Do some checks for writeability first.
+  if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
+
+  if not DirectoryExistsUTF8(ExtractFilePath(GetAppConfigFileUTF8(false))) then
+    ForceDirectoriesUTF8(ExtractFilePath(GetAppConfigFileUTF8(false)));
+  EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
+end;
 
 end.
 

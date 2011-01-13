@@ -223,6 +223,19 @@ object SettingsForm: TSettingsForm
         BorderSpacing.Top = 10
         TabOrder = 5
       end
+      object MultipleInstanceChkBox: TCheckBox
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = ShowWelcomeChkBox
+        AnchorSideTop.Side = asrBottom
+        Left = 10
+        Height = 22
+        Top = 227
+        Width = 243
+        BorderSpacing.Left = 10
+        BorderSpacing.Top = 10
+        Caption = 'Allow multiple program instances'
+        TabOrder = 6
+      end
     end
   end
 end

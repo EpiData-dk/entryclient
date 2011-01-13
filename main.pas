@@ -73,7 +73,6 @@ type
     { private declarations }
     FActiveFrame: TProjectFrame;
     TabNameCount: integer;
-    procedure LoadIniFile;
     procedure OpenTutorialMenuItemClick(Sender: TObject);
     procedure LoadTutorials;
     procedure DoNewProject;
@@ -158,21 +157,6 @@ end;
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
 begin
   OpenURL(EntrySettings.TutorialURLUTF8);
-end;
-
-procedure TMainForm.LoadIniFile;
-const
-  IniName = 'epidataentry.ini';
-begin
-  // TODO : Settings can be loaded from commandline?
-  if LoadSettingsFromIni(GetAppConfigFileUTF8(false)) then exit;
-
-  // Todo - this is not optimal on Non-windows OS's. Do some checks for writeability first.
-  if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
-
-  if not DirectoryExistsUTF8(ExtractFilePath(GetAppConfigFileUTF8(false))) then
-    ForceDirectoriesUTF8(ExtractFilePath(GetAppConfigFileUTF8(false)));
-  EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
 end;
 
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);
@@ -335,7 +319,6 @@ begin
   AboutAction.Enabled := true;
   {$ENDIF}
 
-  LoadIniFile;
   UpdateSettings;
   UpdateRecentFiles;
 

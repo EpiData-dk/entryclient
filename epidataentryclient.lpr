@@ -21,7 +21,10 @@ end;
 
 begin
   OnGetApplicationName := @EpiDataApplicationName;
-  if InstanceRunning(EpiDataApplicationName) then exit;
+
+  LoadIniFile;
+  if (not EntrySettings.MultipleInstances) and
+     InstanceRunning(EpiDataApplicationName) then exit;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;

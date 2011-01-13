@@ -15,6 +15,7 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    MultipleInstanceChkBox: TCheckBox;
     TutorialURLEdit: TEdit;
     Label18: TLabel;
     Label3: TLabel;
@@ -46,6 +47,7 @@ type
     HintTimeOut:    Integer;
     IniFileName:    string;
     ShowWelcome:    boolean;
+    MultipleInstances: boolean;
   end;
 
 const
@@ -65,6 +67,7 @@ var
     HintTimeOut:    15;
     IniFileName:    '';
     ShowWelcome:    true;
+    MultipleInstances: false;
   );
 
   {$IFDEF EPI_SHOWREVISION}
@@ -116,7 +119,8 @@ begin
       WriteString(Sec, 'TutorialURL', TutorialURLUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
-      WriteBool(Sec, 'ShowWelcome' ,ShowWelcome);
+      WriteBool(Sec, 'ShowWelcome', ShowWelcome);
+      WriteBool(Sec, 'MultipleInstances', MultipleInstances);
     end;
 
     // Read recent files.
@@ -154,6 +158,7 @@ begin
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
+    MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
 
       // Read recent files.
     Sec := 'recent';
@@ -201,6 +206,7 @@ begin
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
   EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
+  EntrySettings.MultipleInstances := MultipleInstanceChkBox.Checked;
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;
@@ -216,6 +222,7 @@ begin
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     ShowWelcomeChkBox.Checked := ShowWelcome;
+    MultipleInstanceChkBox.Checked := MultipleInstances;
   end;
 end;
 
