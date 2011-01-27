@@ -11,6 +11,7 @@ uses
 type
 
   { TDataFormFrame }
+  TFieldExitFlowType = (fxtNone, fxtJump);
 
   TDataFormFrame = class(TFrame)
     FieldInfoLabel: TLabel;
@@ -26,10 +27,6 @@ type
     GotoRecordAction: TAction;
     LastFieldAction: TAction;
     FirstFieldAction: TAction;
-    PgDnFieldAction: TAction;
-    PgUpFieldAction: TAction;
-    PrevFieldAction: TAction;
-    NextFieldAction: TAction;
     NewRecordAction: TAction;
     LastRecAction: TAction;
     NextRecAction: TAction;
@@ -57,11 +54,9 @@ type
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
     procedure NewRecordActionExecute(Sender: TObject);
-    procedure NextFieldActionExecute(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
     procedure PageDownActionExecute(Sender: TObject);
     procedure PageUpActionExecute(Sender: TObject);
-    procedure PrevFieldActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
@@ -76,18 +71,22 @@ type
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
     function  GetHintWindow: THintWindow;
+    function  DoNewRecord: boolean;
   private
-    { Field Entry Handling }
+    { Field Enter/Exit Handling }
     function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FieldClick(Sender: TObject);
     procedure FieldEnter(Sender: TObject);
-    procedure FieldExit(Sender: TObject);
-    procedure FieldValidateError(Sender: TObject; const Msg: string);
     procedure UpdateFieldPanel(Field: TEpiField);
   private
     { Flow control/Validation/Script handling}
+    procedure FieldEnterFlow(FE: TFieldEdit);
+    function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+    function  FieldValidate(FE: TFieldEdit): boolean;
+    procedure FieldValidateError(Sender: TObject; const Msg: string);
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
   private
     FModified: boolean;
@@ -118,7 +117,7 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epidocument;
+  picklist, epidocument, epivaluelabels;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -197,62 +196,17 @@ end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
 var
-  i: Integer;
-  Res: LongInt;
+  FE: TFieldEdit;
+  Idx: LongInt;
 begin
-  // Sanity check - current focused field may not have been validated.
-  if (MainForm.ActiveControl is TFieldEdit) and
-     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
+  if not DoNewRecord then exit;
 
-  // *******************
-  // * Commit old data *
-  // *******************
-  if (RecNo <> NewRecord) and Modified then
-  begin
-    Res := MessageDlg('Warning',
-             'Current record modified.' + LineEnding +
-             'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
-    case Res of
-      mrCancel: Exit;
-      mrYes:    CommitFields;
-      mrNo:     ; // Do nothing
-    end;
-  end;
-  if (RecNo = NewRecord) then
-  begin
-    if MessageDlg('Confirmation', 'Save Record?',
-      mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
-    // Commit text to data.
-    CommitFields;
-  end;
+  Idx := NextNonAutoFieldIndex(-1, false);
+  if Idx = -1 then exit;
 
-  // **********************************
-  // * Prepare system for new record  *
-  // **********************************
-  RecNo := NewRecord;
-  for i := 0 to FieldEditList.Count - 1 do
-  with TFieldEdit(FieldEditList[i]) do
-  begin
-    // Check for AutoInc/Today fields.
-    if Field.FieldType in AutoFieldTypes then
-      DoEnter;
-  end;
-
-  // Set focus to first field.
-  FirstFieldAction.Execute;
-end;
-
-procedure TDataFormFrame.NextFieldActionExecute(Sender: TObject);
-var
-  i: Integer;
-begin
-  if not (MainForm.ActiveControl is TFieldEdit) then exit;
-
-  i := FieldEditList.IndexOf(MainForm.ActiveControl);
-  i := NextNonAutoFieldIndex(i, true);
-
-  if i = -1  then exit;
-  TFieldEdit(FFieldEditList[i]).SetFocus;  // Jump to next control.
+  FE := TFieldEdit(FieldEditList[Idx]);
+  FieldEnterFlow(FE);
+  FE.SetFocus;
 end;
 
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
@@ -270,19 +224,6 @@ procedure TDataFormFrame.PageUpActionExecute(Sender: TObject);
 begin
   With DataFormScroolBox.VertScrollBar do
     Position := Position - Page;
-end;
-
-procedure TDataFormFrame.PrevFieldActionExecute(Sender: TObject);
-var
-  i: Integer;
-begin
-  if not (MainForm.ActiveControl is TFieldEdit) then exit;
-
-  i := FieldEditList.IndexOf(MainForm.ActiveControl);
-  i := PrevNonAutoFieldIndex(i, true);
-
-  if i = -1  then exit;
-  TFieldEdit(FFieldEditList[i]).SetFocus;  // Jump to prev control.
 end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
@@ -444,10 +385,10 @@ begin
   with TFieldEdit(Result) do
   begin
     Field     := TEpiField(EpiControl);
-    OnEnter   := @FieldEnter;
-    OnExit    := @FieldExit;
     OnKeyDown := @FieldKeyDown;
     OnKeyUp   := @FieldKeyUp;
+    OnClick   := @FieldClick;
+    OnEnter   := @FieldEnter;
     OnValidateError := @FieldValidateError;
   end;
 
@@ -531,6 +472,69 @@ begin
   result := FHintWindow;
 end;
 
+function TDataFormFrame.DoNewRecord: boolean;
+var
+  i: Integer;
+  Res: LongInt;
+  AVal: Int64;
+begin
+  Result := false;
+
+  // Sanity check - current focused field may not have been validated.
+  if (MainForm.ActiveControl is TFieldEdit) and
+     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
+
+  // *******************
+  // * Commit old data *
+  // *******************
+  if (RecNo <> NewRecord) and Modified then
+  begin
+    Res := MessageDlg('Warning',
+             'Current record modified.' + LineEnding +
+             'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
+    case Res of
+      mrCancel: Exit;
+      mrYes:    CommitFields;
+      mrNo:     ; // Do nothing
+    end;
+  end;
+  if (RecNo = NewRecord) then
+  begin
+    if MessageDlg('Confirmation', 'Save Record?',
+      mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
+    // Commit text to data.
+    CommitFields;
+  end;
+
+  // **********************************
+  // * Prepare system for new record  *
+  // **********************************
+  RecNo := NewRecord;
+  for i := 0 to FieldEditList.Count - 1 do
+  with TFieldEdit(FieldEditList[i]) do
+  begin
+    // Check for AutoInc/Today fields.
+    if Field.FieldType in AutoFieldTypes then
+    with Field do
+    begin
+      case FieldType of
+        ftAutoInc:  begin
+                      AVal := TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue;
+                      if DataFile.Size = 0 then
+                        Text := IntToStr(AVal)
+                      else
+                        Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
+                    end;
+        ftDMYToday: Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYToday: Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDToday: Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeNow:  Text := FormatDateTime('HH:NN:SS',   Now);
+      end;
+    end;
+  end;
+  Result := true;
+end;
+
 procedure TDataFormFrame.CommitFields;
 var
   i: Integer;
@@ -559,7 +563,7 @@ begin
     if (Result >= FieldEditList.Count) and Wrap then
       Result := 0;
   end;
-  if Result = FieldEditList.Count then
+  if Result >= FieldEditList.Count then
     Result := -1;
 end;
 
@@ -585,46 +589,71 @@ procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   FieldEdit: TFieldEdit absolute Sender;
+  NextFieldEdit: TFieldEdit;
 
-  procedure NextFieldOnKeyDown;
+
+  function NextFieldOnKeyDown: TFieldEdit;
+  var
+    Idx: LongInt;
   begin
-    if NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false) = -1 then
+    Result := nil;
+    Idx := NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    if Idx = -1 then
+    begin
       if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
-        NewRecordAction.Execute
+        exit
       else begin
         NextRecAction.Execute;
-        FirstFieldAction.Execute;
+        Idx := NextNonAutoFieldIndex(-1, false);
       end
-    else
-      NextFieldAction.Execute;
+    end;
+    if Idx = -1 then ; // TODO : This should never happend?
+    result := TFieldEdit(FieldEditList[Idx]);
+  end;
+
+  function PrevFieldOnKeyDown: TFieldEdit;
+  var
+    Idx: LongInt;
+  begin
+    Result := nil;
+    Idx := PrevNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    if Idx = -1 then exit;
+    Result := TFieldEdit(FieldEditList[Idx]);
   end;
 
 begin
   GetHintWindow.Hide;
 
-  if ((Key = VK_RETURN) and (Shift = [])) then
-  begin
-    NextFieldOnKeyDown;
-    Key := VK_UNKNOWN;
-  end;
+  if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
+              VK_ADD, VK_F9, 187]) and   // 187 = Plus sign that is NOT part of numpad!
+     (Shift = [])
+  then begin
+    if (Key in [VK_ADD, VK_F9, 187]) and
+       (Assigned(FieldEdit.Field.ValueLabelSet)) and
+       (not ShowValueLabelPickList(FieldEdit)) then exit;
 
-  if ((Key = VK_DOWN) and (Shift = []))then
-  begin
-    NextFieldAction.Execute;
+    if not FieldValidate(FieldEdit) then exit;
+
+    if (FieldExitFlow(FieldEdit, NextFieldEdit) = fxtNone) then
+      NextFieldEdit := NextFieldOnKeyDown;
+
+    if not Assigned(NextFieldEdit) then
+    begin
+      if not DoNewRecord then exit;
+      NextFieldEdit := TFieldEdit(FieldEditList[NextNonAutoFieldIndex(-1, false)]);
+    end;
+    FieldEnterFlow(NextFieldEdit);
+    NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
 
   if (Key = VK_UP) and (Shift = []) then
   Begin
-    PrevFieldAction.Execute;
-    Key := VK_UNKNOWN;
-  end;
-                             // 187 = Plus sign that is NOT part of numpad!
-  if (Key in [VK_ADD, VK_F9, 187]) and (Shift = []) then
-  begin
-    if Assigned(FieldEdit.Field.ValueLabelSet) and
-       ShowValueLabelPickList(FieldEdit) then
-      NextFieldOnKeyDown;
+    if not FieldValidate(FieldEdit) then exit;
+
+    NextFieldEdit := PrevFieldOnKeyDown;
+    if Assigned(NextFieldEdit) then
+      NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
 end;
@@ -645,15 +674,18 @@ begin
   end;
 end;
 
+procedure TDataFormFrame.FieldClick(Sender: TObject);
+begin
+  //
+end;
+
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
-  FieldEdit: TFieldEdit absolute Sender;
+  FieldEdit: TFieldEdit absolute sender;
   FieldTop: LongInt;
-  AVal: Int64;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
-
   FieldTop := FieldEditTop(FieldEdit);
   if FieldTop < DataFormScroolBox.VertScrollBar.Position then
     DataFormScroolBox.VertScrollBar.Position := FieldTop - 5;
@@ -662,36 +694,18 @@ begin
     DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
 
   UpdateFieldPanel(FieldEdit.Field);
+end;
 
-  // ********************************
-  // **    EpiData Flow Control    **
-  // ********************************
+procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
+begin
+  // *************************************
+  // **    EpiData Flow Control (Pre)   **
+  // *************************************
   // Should all these things happen each time, or only first time
   //   field is entered.
 
   // Before field script:
   // TODO : Before field script
-
-  // AutoInc/Today:
-  // TODO : Should not be placed in the "OnEnter" event.
-  if FieldEdit.Field.FieldType in AutoFieldTypes then
-  with FieldEdit.Field do
-  begin
-    case FieldType of
-      ftAutoInc:  begin
-                    AVal := TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue;
-                    if DataFile.Size = 0 then
-                      FieldEdit.Text := IntToStr(AVal)
-                    else
-                      FieldEdit.Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
-                  end;
-      ftDMYToday: FieldEdit.Text := FormatDateTime('DD/MM/YYYY', Date);
-      ftMDYToday: FieldEdit.Text := FormatDateTime('MM/DD/YYYY', Date);
-      ftYMDToday: FieldEdit.Text := FormatDateTime('YYYY/MM/DD', Date);
-      ftTimeNow:  FieldEdit.Text := FormatDateTime('HH:NN:SS',   Now);
-    end;
-    Exit;
-  end;
 
   // NoEnter property?
 
@@ -702,18 +716,149 @@ begin
   // Top-of-screen?
 end;
 
-procedure TDataFormFrame.FieldExit(Sender: TObject);
+function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
+  NewFieldEdit: TFieldEdit): TFieldExitFlowType;
 var
-  FE: TFieldEdit absolute sender;
+  Field: TEpiField;
+  Jump: TEpiJump;
+  Idx: LongInt;
+  Section: TEpiSection;
+  EIdx: LongInt;
+  NewField: TEpiField;
+
+  procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
+  var
+    i: LongInt;
+    Cnt: Integer;
+    j: Integer;
+    CachedVLS: TEpiValueLabelSet;
+    CachedVL: TEpiCustomValueLabel;
+  begin
+    if ResetType = jrLeaveAsIs then exit;
+
+    CachedVLS := nil;
+    for i := StartIdx to EndIdx do
+    with TFieldEdit(FieldEditList[i]) do
+    begin
+      case ResetType of
+        jrSystemMissing: Text := '.';
+        jrMaxMissing:    with Field do
+                         begin
+                           if not Assigned(ValueLabelSet) then continue;
+
+                           // A little cacheing make it faster, works well if
+                           // lots of fields use the same VLSet.
+                           if CachedVLS = ValueLabelSet then
+                             Text := CachedVL.ValueAsString
+                           else begin
+                             for j := ValueLabelSet.Count - 1 downto 0 do
+                             with ValueLabelSet[j] do
+                             begin
+                               if IsMissingValue then
+                               begin
+                                 CachedVLS := ValueLabelSet;
+                                 CachedVL := ValueLabelSet[j];
+                                 Text := ValueAsString;
+                                 Break;
+                               end;
+                             end;
+                           end;
+                         end;
+        jr2ndMissing:    with Field do
+                         begin
+                           if not Assigned(ValueLabelSet) then continue;
+
+                           // A little cacheing make it faster, works well if
+                           // lots of fields use the same VLSet.
+                           if CachedVLS = ValueLabelSet then
+                             Text := CachedVL.ValueAsString
+                           else begin
+                             Cnt := 0;
+                             for j := ValueLabelSet.Count - 1 downto 0 do
+                             with ValueLabelSet[j] do
+                             begin
+                               if IsMissingValue then inc(Cnt);
+                               if (Cnt = 2) then
+                               begin
+                                 CachedVLS := ValueLabelSet;
+                                 CachedVL := ValueLabelSet[j];
+                                 Text := ValueAsString;
+                                 Break;
+                               end;
+                             end;
+                           end;
+                         end;
+      end;
+    end;
+  end;
+
 begin
-  if not FE.ValidateEntry then
+  // **************************************
+  // **    EpiData Flow Control (Post)   **
+  // **************************************
+  result := fxtNone;
+  Field := FE.Field;
+  // Type Comment
+
+  // After Entry Script
+
+  // Jumps
+  NewFieldEdit := nil;
+  if Assigned(Field.Jumps) then
+  begin
+    Idx := FieldEditList.IndexOf(FE);
+    Jump := Field.Jumps.JumpFromValue[FE.Text];
+    if Assigned(Jump) then
+    begin
+      case Jump.JumpType of
+        jtSaveRecord:    begin
+                           PerformJump(Idx + 1, FieldEditList.Count - 1, Jump.ResetType);
+                         end;
+        jtExitSection:   begin
+                           Section := Field.Section;
+                           EIdx := Idx + 1;
+                           while (EIdx <= FieldEditList.Count) and
+                                 (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
+                             Inc(EIdx);
+                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                           NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                         end;
+        jtSkipNextField: begin
+                           EIdx := NextNonAutoFieldIndex(Idx + 1, false);
+                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                           if EIdx = -1 then
+                             NewRecordAction.Execute
+                           else
+                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                         end;
+        jtToField:       begin
+                           NewField := Jump.JumpToField;
+                           EIdx := Idx + 1;
+                           while (EIdx <= FieldEditList.Count) and
+                                 (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
+                             Inc(EIdx);
+                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                           NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                         end;
+      end;
+      Exit(fxtJump);
+    end;
+  end;
+
+end;
+
+function TDataFormFrame.FieldValidate(FE: TFieldEdit): boolean;
+begin
+  FE.JumpToNext := false;
+  FE.SelLength := 0;
+
+  Result := FE.ValidateEntry;
+  if not Result then
   begin
     FE.SetFocus;
     Beep;
   end else
     GetHintWindow.Hide;
-  FE.JumpToNext := false;
-  FE.SelLength := 0;
 end;
 
 procedure TDataFormFrame.FieldValidateError(Sender: TObject; const Msg: string

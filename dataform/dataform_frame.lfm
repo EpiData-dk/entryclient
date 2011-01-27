@@ -295,24 +295,6 @@ object DataFormFrame: TDataFormFrame
       OnExecute = FirstFieldActionExecute
       ShortCut = 16420
     end
-    object PgUpFieldAction: TAction
-      Category = 'Field'
-      Caption = 'PgUpFieldAction'
-    end
-    object PrevFieldAction: TAction
-      Category = 'Field'
-      Caption = 'PrevFieldAction'
-      OnExecute = PrevFieldActionExecute
-    end
-    object NextFieldAction: TAction
-      Category = 'Field'
-      Caption = 'NextFieldAction'
-      OnExecute = NextFieldActionExecute
-    end
-    object PgDnFieldAction: TAction
-      Category = 'Field'
-      Caption = 'PgDnFieldAction'
-    end
     object LastFieldAction: TAction
       Category = 'Field'
       Caption = 'LastFieldAction'
