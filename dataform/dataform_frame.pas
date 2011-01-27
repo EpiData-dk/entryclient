@@ -78,8 +78,8 @@ type
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FieldClick(Sender: TObject);
     procedure FieldEnter(Sender: TObject);
+    procedure FieldExit(Sender: TObject);
     procedure UpdateFieldPanel(Field: TEpiField);
   private
     { Flow control/Validation/Script handling}
@@ -387,8 +387,8 @@ begin
     Field     := TEpiField(EpiControl);
     OnKeyDown := @FieldKeyDown;
     OnKeyUp   := @FieldKeyUp;
-    OnClick   := @FieldClick;
     OnEnter   := @FieldEnter;
+    OnExit    := @FieldExit;
     OnValidateError := @FieldValidateError;
   end;
 
@@ -674,11 +674,6 @@ begin
   end;
 end;
 
-procedure TDataFormFrame.FieldClick(Sender: TObject);
-begin
-  //
-end;
-
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute sender;
@@ -694,6 +689,11 @@ begin
     DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
 
   UpdateFieldPanel(FieldEdit.Field);
+end;
+
+procedure TDataFormFrame.FieldExit(Sender: TObject);
+begin
+  FieldValidate(TFieldEdit(Sender));
 end;
 
 procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
