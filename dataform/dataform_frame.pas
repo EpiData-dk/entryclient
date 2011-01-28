@@ -74,7 +74,7 @@ type
     function  DoNewRecord: boolean;
   private
     { Field Enter/Exit Handling }
-    function  NextNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
+    function  NextUsableFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -85,7 +85,8 @@ type
     { Flow control/Validation/Script handling}
     procedure FieldEnterFlow(FE: TFieldEdit);
     function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
-    function  FieldValidate(FE: TFieldEdit): boolean;
+    function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
+    function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
   private
@@ -148,7 +149,7 @@ procedure TDataFormFrame.FirstFieldActionExecute(Sender: TObject);
 var
   I: LongInt;
 begin
-  I := NextNonAutoFieldIndex(-1, false);
+  I := NextUsableFieldIndex(-1, false);
   if i = -1 then exit;
 
   TFieldEdit(FieldEditList[i]).SetFocus;
@@ -201,7 +202,7 @@ var
 begin
   if not DoNewRecord then exit;
 
-  Idx := NextNonAutoFieldIndex(-1, false);
+  Idx := NextUsableFieldIndex(-1, false);
   if Idx = -1 then exit;
 
   FE := TFieldEdit(FieldEditList[Idx]);
@@ -380,6 +381,9 @@ begin
     ftTimeNow,
     ftTime:     Result := TTimeEdit.Create(AParent);
   end;
+  if TEpiField(EpiControl).EntryMode = emNoEnter then
+    Result.Enabled := false;
+
   Result.Parent := AParent;
 
   with TFieldEdit(Result) do
@@ -426,12 +430,6 @@ begin
     if AValue < 0 then AValue := 0;
   end;
 
-  // Before setting new record no. do a "ValidateEntry" on the Edit with focus.
-  // - this is because when using shortcuts to change record, the active Edit is
-  //   not exited, hence not triggering of OnExit event.
-  if (MainForm.ActiveControl is TFieldEdit) and
-     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
-
   if (not (AValue = NewRecord)) and Modified then
   begin
     Res := MessageDlg('Warning',
@@ -443,6 +441,7 @@ begin
       mrYes:    begin
                   // if a new record is being edited the datafile has NOT been
                   // expanded at this point.
+                  if not AllFieldsValidate(false) then exit;
                   CommitFields;
                 end;
       mrNo:     Modified := false; // do nothing.
@@ -480,15 +479,19 @@ var
 begin
   Result := false;
 
-  // Sanity check - current focused field may not have been validated.
+{  //- current focused field may not have been validated.
   if (MainForm.ActiveControl is TFieldEdit) and
-     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
+     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;}
 
   // *******************
   // * Commit old data *
   // *******************
   if (RecNo <> NewRecord) and Modified then
   begin
+    // Sanity check
+    // - go through all fields for a validity check.
+    if not AllFieldsValidate(false) then exit;
+
     Res := MessageDlg('Warning',
              'Current record modified.' + LineEnding +
              'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
@@ -500,6 +503,10 @@ begin
   end;
   if (RecNo = NewRecord) then
   begin
+    // Sanity check
+    // - go through all fields for a validity check.
+    if not AllFieldsValidate(false) then exit;
+
     if MessageDlg('Confirmation', 'Save Record?',
       mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
     // Commit text to data.
@@ -547,7 +554,7 @@ begin
   Modified := false;
 end;
 
-function TDataFormFrame.NextNonAutoFieldIndex(const Index: integer;
+function TDataFormFrame.NextUsableFieldIndex(const Index: integer;
   const Wrap: boolean): integer;
 begin
   // Assume Index is always valid (or -1 to get the first field).
@@ -557,7 +564,8 @@ begin
     Result := 0;
 
   while (Result <= (FieldEditList.Count - 1)) and
-        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) do
+        ((TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) or
+         (not TFieldEdit(FieldEditList[Result]).Enabled)) do
   begin
     inc(Result);
     if (Result >= FieldEditList.Count) and Wrap then
@@ -577,7 +585,8 @@ begin
     Result := FieldEditList.Count - 1;
 
   while (Result >= 0) and
-        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) do
+        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) and
+        (TFieldEdit(FieldEditList[Result]).Enabled) do
   begin
     dec(Result);
     if (Result < 0) and Wrap then
@@ -597,14 +606,14 @@ var
     Idx: LongInt;
   begin
     Result := nil;
-    Idx := NextNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    Idx := NextUsableFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
     if Idx = -1 then
     begin
       if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
         exit
       else begin
         NextRecAction.Execute;
-        Idx := NextNonAutoFieldIndex(-1, false);
+        Idx := NextUsableFieldIndex(-1, false);
       end
     end;
     if Idx = -1 then ; // TODO : This should never happend?
@@ -632,7 +641,11 @@ begin
        (Assigned(FieldEdit.Field.ValueLabelSet)) and
        (not ShowValueLabelPickList(FieldEdit)) then exit;
 
-    if not FieldValidate(FieldEdit) then exit;
+    if not FieldValidate(FieldEdit, false) then
+    begin
+      Key := VK_UNKNOWN;
+      exit;
+    end;
 
     if (FieldExitFlow(FieldEdit, NextFieldEdit) = fxtNone) then
       NextFieldEdit := NextFieldOnKeyDown;
@@ -640,7 +653,7 @@ begin
     if not Assigned(NextFieldEdit) then
     begin
       if not DoNewRecord then exit;
-      NextFieldEdit := TFieldEdit(FieldEditList[NextNonAutoFieldIndex(-1, false)]);
+      NextFieldEdit := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
     end;
     FieldEnterFlow(NextFieldEdit);
     NextFieldEdit.SetFocus;
@@ -665,7 +678,7 @@ var
 begin
   if FieldEdit.Modified then Modified := true;
 
-  if FieldEdit.JumpToNext then
+  if (FieldEdit.JumpToNext) and (not FieldEdit.Field.ConfirmEntry) then
   begin
     Key := VK_RETURN;
     FieldEdit.OnKeyDown(FieldEdit, Key, []);
@@ -824,7 +837,7 @@ begin
                            NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
                          end;
         jtSkipNextField: begin
-                           EIdx := NextNonAutoFieldIndex(Idx + 1, false);
+                           EIdx := NextUsableFieldIndex(Idx + 1, false);
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            if EIdx = -1 then
                              NewRecordAction.Execute
@@ -847,7 +860,20 @@ begin
 
 end;
 
-function TDataFormFrame.FieldValidate(FE: TFieldEdit): boolean;
+function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
+var
+  i: Integer;
+begin
+  result := false;
+
+  for i := 0 to FieldEditList.Count - 1 do
+    if not FieldValidate(TFieldEdit(FieldEditList[i]), IgnoreMustEnter) then exit;
+
+  result := true;
+end;
+
+function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
+  ): boolean;
 begin
   FE.JumpToNext := false;
   FE.SelLength := 0;
@@ -859,6 +885,14 @@ begin
     Beep;
   end else
     GetHintWindow.Hide;
+
+  if (not IgnoreMustEnter) and
+     (FE.Field.EntryMode = emMustEnter) and
+     (FE.Text = '') then
+  begin
+    FieldValidateError(FE, 'Field must not be empty!');
+    result := false;
+  end;
 end;
 
 procedure TDataFormFrame.FieldValidateError(Sender: TObject; const Msg: string

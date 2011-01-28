@@ -347,15 +347,13 @@ end;
 
 function TFieldEdit.ValidateEntry: boolean;
 var
-  S: WideString;
+  S: string;
 begin
-  S := Trim(UTF8ToUTF16(Text));
+  result := true;
+
+  S := Trim(Text);
   if (S = '.') or (S = '') then
-  begin
     Text := '';
-    exit(true);
-  end else
-    exit(false);
 end;
 
 procedure TFieldEdit.Commit;
@@ -380,9 +378,8 @@ var
   I: EpiInteger;
   Code: integer;
 begin
-  result := true;
-  if not Modified then exit;
-  if Inherited ValidateEntry then exit;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 
   Val(Text, I, Code);
   if Code <> 0 then
@@ -430,9 +427,8 @@ var
   F: EpiFloat;
   P, IntL: Integer;
 begin
-  result := true;
-  if not Modified then exit;
-  if Inherited ValidateEntry then exit;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 
   // Final check on decimal point placement.
   IntL := (Field.Length - Field.Decimals) - 1;
@@ -530,9 +526,8 @@ end;
 
 function TStringEdit.ValidateEntry: boolean;
 begin
-  Result := true;
-  if not Modified then exit;
-  if Inherited ValidateEntry then exit;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 
   if Assigned(FField.ValueLabelSet) and
      (not FField.ValueLabelSet.ValueLabelExists[Text]) then
@@ -560,9 +555,8 @@ var
   S: String;
   TheDate: EpiDate;
 begin
-  Result := true;
-  if not Modified then exit;
-  if Inherited ValidateEntry then exit;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 
   Sep := String(DateSeparator);
   DateStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
@@ -654,9 +648,8 @@ var
   TheTime: EpiTime;
   Msg: string;
 begin
-  Result := true;;
-  if not Modified then exit;
-  if Inherited ValidateEntry then exit;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 
   Sep := String(TimeSeparator);
   TimeStr := StringsReplace(Text, ['-', ':', '.'], [Sep, Sep, Sep], [rfReplaceAll]);
@@ -742,7 +735,8 @@ end;
 
 function TBoolEdit.ValidateEntry: boolean;
 begin
-  Result := true;
+  result := inherited ValidateEntry;
+  if (not result) or (Text = '') or (not Modified) then exit;
 end;
 
 end.
