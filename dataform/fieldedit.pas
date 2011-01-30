@@ -165,17 +165,11 @@ begin
   Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * FField.Length;
 
   with FQuestionLabel do
-  begin
-    Left    := Field.Question.Left;
-    Top     := Field.Question.Top;
-    Caption := Field.Question.Caption.Text;
-  end;
+    Caption := Field.Question.Text;
 
   with FNameLabel do
   begin
     Caption := Field.Name;
-    Left    := FQuestionLabel.Left - (FNameLabel.Width + 5);
-    Top     := FQuestionLabel.Top;
     if not Settings.ShowFieldNames then
       Visible := false;
   end;
@@ -230,8 +224,15 @@ begin
   inherited SetParent(NewParent);
   if csDestroying in ComponentState then exit;
 
-  FNameLabel.Parent := NewParent;
   FQuestionLabel.Parent := NewParent;
+  FQuestionLabel.Anchors := [];
+  FQuestionLabel.AnchorToNeighbour(akRight, 5, Self);
+  FQuestionLabel.AnchorParallel(akBottom, 0, Self);
+
+  FNameLabel.Parent := NewParent;
+  FNameLabel.Anchors := [];
+  FNameLabel.AnchorToNeighbour(akRight, 5, FQuestionLabel);
+  FNameLabel.AnchorParallel(akBottom, 0, FQuestionLabel);
 end;
 
 function TFieldEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -335,8 +336,9 @@ end;
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FNameLabel := TLabel.Create(Self);
   FQuestionLabel := TLabel.Create(Self);
+  FNameLabel := TLabel.Create(Self);
+
   FRecNo := -1;
 end;
 
