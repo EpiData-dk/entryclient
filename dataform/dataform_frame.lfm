@@ -6,7 +6,7 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 635
   ClientWidth = 888
   TabOrder = 0
-  DesignLeft = 581
+  DesignLeft = 504
   DesignTop = 237
   object DataFormScroolBox: TScrollBox
     Left = 0
@@ -317,7 +317,7 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'Skip to prev records'
       OnExecute = JumpPrevRecActionExecute
-      ShortCut = 32886
+      ShortCut = 116
     end
     object PrevRecAction: TAction
       Category = 'Record'
@@ -328,7 +328,7 @@ object DataFormFrame: TDataFormFrame
       SecondaryShortCuts.Strings = (
         'Alt+Left'
       )
-      ShortCut = 118
+      ShortCut = 117
     end
     object NextRecAction: TAction
       Category = 'Record'
@@ -339,13 +339,13 @@ object DataFormFrame: TDataFormFrame
       SecondaryShortCuts.Strings = (
         'Alt+Right'
       )
-      ShortCut = 119
+      ShortCut = 118
     end
     object JumpNextRecAction: TAction
       Category = 'Record'
       Caption = 'JumpNextRecAction'
       OnExecute = JumpNextRecActionExecute
-      ShortCut = 32887
+      ShortCut = 119
     end
     object LastRecAction: TAction
       Category = 'Record'

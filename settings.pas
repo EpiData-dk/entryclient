@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit, epiversionutils;
+  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit, ColorBox,
+  epiversionutils;
 
 type
 
@@ -15,6 +16,8 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    ValidateErrorColourBtn: TColorButton;
+    Label4: TLabel;
     MultipleInstanceChkBox: TCheckBox;
     TutorialURLEdit: TEdit;
     Label18: TLabel;
@@ -48,6 +51,7 @@ type
     IniFileName:    string;
     ShowWelcome:    boolean;
     MultipleInstances: boolean;
+    ValidateErrorColour: TColor;
   end;
 
 const
@@ -68,6 +72,7 @@ var
     IniFileName:    '';
     ShowWelcome:    true;
     MultipleInstances: false;
+    ValidateErrorColour: clRed;
   );
 
   {$IFDEF EPI_SHOWREVISION}
@@ -121,6 +126,7 @@ begin
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
+      WriteInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
     end;
 
     // Read recent files.
@@ -159,6 +165,7 @@ begin
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
+    ValidateErrorColour := ReadInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
 
       // Read recent files.
     Sec := 'recent';
@@ -207,6 +214,7 @@ begin
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
   EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
   EntrySettings.MultipleInstances := MultipleInstanceChkBox.Checked;
+  EntrySettings.ValidateErrorColour := ValidateErrorColourBtn.ButtonColor;
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;
@@ -223,6 +231,7 @@ begin
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     ShowWelcomeChkBox.Checked := ShowWelcome;
     MultipleInstanceChkBox.Checked := MultipleInstances;
+    ValidateErrorColourBtn.ButtonColor := ValidateErrorColour;
   end;
 end;
 

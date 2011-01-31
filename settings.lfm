@@ -1,11 +1,11 @@
 object SettingsForm: TSettingsForm
-  Left = 439
-  Height = 339
-  Top = 389
+  Left = 338
+  Height = 413
+  Top = 453
   Width = 517
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 339
+  ClientHeight = 413
   ClientWidth = 517
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -13,7 +13,7 @@ object SettingsForm: TSettingsForm
   object Panel1: TPanel
     Left = 0
     Height = 42
-    Top = 297
+    Top = 371
     Width = 517
     Align = alBottom
     ClientHeight = 42
@@ -57,7 +57,7 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 297
+    Height = 371
     Top = 0
     Width = 517
     ActivePage = TabSheet1
@@ -67,7 +67,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 291
+      ClientHeight = 365
       ClientWidth = 511
       object Label17: TLabel
         AnchorSideLeft.Control = TabSheet1
@@ -235,6 +235,33 @@ object SettingsForm: TSettingsForm
         BorderSpacing.Top = 10
         Caption = 'Allow multiple program instances'
         TabOrder = 6
+      end
+      object Label4: TLabel
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = ValidateErrorColourBtn
+        AnchorSideTop.Side = asrCenter
+        Left = 10
+        Height = 18
+        Top = 262
+        Width = 185
+        BorderSpacing.Left = 10
+        Caption = 'Field colour on invalid entry:'
+        ParentColor = False
+      end
+      object ValidateErrorColourBtn: TColorButton
+        AnchorSideTop.Control = MultipleInstanceChkBox
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = HintTimeOutEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 383
+        Height = 25
+        Top = 259
+        Width = 91
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 10
+        BorderWidth = 2
+        ButtonColorSize = 16
+        ButtonColor = clBlack
       end
     end
   end

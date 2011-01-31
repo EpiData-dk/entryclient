@@ -79,17 +79,21 @@
         <LaunchingApplication PathPlusParams="/usr/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="epidatacore"/>
-        <MinVersion Minor="5" Valid="True"/>
+        <PackageName Value="LCLBase"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item1>
       <Item2>
-        <PackageName Value="lnetbase"/>
+        <PackageName Value="epidatacore"/>
+        <MinVersion Minor="5" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
+        <PackageName Value="lnetbase"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
     <Units Count="10">
       <Unit0>

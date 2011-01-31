@@ -874,6 +874,14 @@ end;
 
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
   ): boolean;
+
+  procedure DoError(LocalFE: TFieldEdit);
+  begin
+    LocalFE.Color := EntrySettings.ValidateErrorColour;
+    LocalFE.SetFocus;
+    Beep;
+  end;
+
 begin
   FE.JumpToNext := false;
   FE.SelLength := 0;
@@ -881,17 +889,20 @@ begin
   Result := FE.ValidateEntry;
   if not Result then
   begin
-    FE.SetFocus;
-    Beep;
-  end else
+    DoError(FE);
+    Exit;
+  end else begin
+    FE.Color := clDefault;
     GetHintWindow.Hide;
+  end;
 
   if (not IgnoreMustEnter) and
      (FE.Field.EntryMode = emMustEnter) and
      (FE.Text = '') then
   begin
+    DoError(FE);
     FieldValidateError(FE, 'Field must not be empty!');
-    result := false;
+    Result := false;
   end;
 end;
 
