@@ -22,6 +22,7 @@ type
     FNameLabel: TLabel;
     FOnValidateError: TFieldValidateErrorProc;
     FQuestionLabel: TLabel;
+    FValueLabelLabel: TLabel;
     FRecNo: integer;
     procedure   SetField(const AValue: TEpiField);
     procedure   SetRecNo(const AValue: integer);
@@ -40,6 +41,7 @@ type
     function    SeparatorCount: integer; virtual;
     function    UseSigns: boolean; virtual;
     function    ValidateError(const ErrorMsg: string): boolean;
+    procedure   RealSetText(const AValue: TCaption); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
@@ -80,6 +82,7 @@ type
   TStringEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    procedure   RealSetText(const AValue: TCaption); override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -174,6 +177,12 @@ begin
       Visible := false;
   end;
 
+  with FValueLabelLabel do
+  begin
+    Visible := Field.ShowValueLabel;
+    Caption := '';
+  end;
+
   if Field.FieldType in AutoFieldTypes then
   begin
     ReadOnly := True;
@@ -233,6 +242,11 @@ begin
   FNameLabel.Anchors := [];
   FNameLabel.AnchorToNeighbour(akRight, 5, FQuestionLabel);
   FNameLabel.AnchorParallel(akBottom, 0, FQuestionLabel);
+
+  FValueLabelLabel.Parent := NewParent;
+  FValueLabelLabel.Anchors := [];
+  FValueLabelLabel.AnchorToNeighbour(akLeft, 10, Self);
+  FValueLabelLabel.AnchorParallel(akBottom, 0, Self);
 end;
 
 function TFieldEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -333,11 +347,21 @@ begin
     OnValidateError(Self, ErrorMsg);
 end;
 
+procedure TFieldEdit.RealSetText(const AValue: TCaption);
+begin
+  inherited RealSetText(AValue);
+  if (Field.ShowValueLabel) and Assigned(Field.ValueLabelSet) and
+     (Field.ValueLabelSet.ValueLabelExists[AValue]) then
+    FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabel[AValue];
+end;
+
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FQuestionLabel := TLabel.Create(Self);
   FNameLabel := TLabel.Create(Self);
+  FValueLabelLabel := TLabel.Create(Self);
+  FValueLabelLabel.Font.Color := clLime;
 
   FRecNo := -1;
 end;
@@ -545,6 +569,12 @@ begin
   if Field.FieldType = ftUpperString then
     WC := WideUpperCase(WC)[1];
   Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+procedure TStringEdit.RealSetText(const AValue: TCaption);
+begin
+  if Field.FieldType = ftUpperString;
+  inherited RealSetText(AValue);
 end;
 
 { TDateEdit }
