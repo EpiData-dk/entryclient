@@ -647,6 +647,9 @@ begin
       exit;
     end;
 
+    // Field is validated - check for Valuelabels and update FieldEdit.
+    FieldEdit.UpdateValueLabel;
+
     if (FieldExitFlow(FieldEdit, NextFieldEdit) = fxtNone) then
       NextFieldEdit := NextFieldOnKeyDown;
 

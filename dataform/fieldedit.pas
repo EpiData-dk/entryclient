@@ -41,12 +41,12 @@ type
     function    SeparatorCount: integer; virtual;
     function    UseSigns: boolean; virtual;
     function    ValidateError(const ErrorMsg: string): boolean;
-    procedure   RealSetText(const AValue: TCaption); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
     function    ValidateEntry: boolean; virtual;
     procedure   Commit;
+    procedure   UpdateValueLabel;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
     property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
@@ -82,7 +82,6 @@ type
   TStringEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
-    procedure   RealSetText(const AValue: TCaption); override;
   public
     function    ValidateEntry: boolean; override;
   end;
@@ -141,10 +140,11 @@ begin
   FField := AValue;
   Settings :=  TEpiDocument(Field.RootOwner).ProjectSettings;
 
+  // Trick to avoid updaing "SetRealText" with the field.id;
   Name := FField.Id;
   MaxLength := Field.Length;
 
-  Caption   := '';
+  Text      := '';
   Left      := Field.Left;
   Top       := Field.Top;
   if Self.Parent is TScrollBox then
@@ -217,6 +217,7 @@ begin
     Text := ''
   else
     Text := Field.AsString[RecNo];
+  UpdateValueLabel;
 end;
 
 procedure TFieldEdit.FieldChange(Sender: TObject; EventGroup: TEpiEventGroup;
@@ -347,17 +348,10 @@ begin
     OnValidateError(Self, ErrorMsg);
 end;
 
-procedure TFieldEdit.RealSetText(const AValue: TCaption);
-begin
-  inherited RealSetText(AValue);
-  if (Field.ShowValueLabel) and Assigned(Field.ValueLabelSet) and
-     (Field.ValueLabelSet.ValueLabelExists[AValue]) then
-    FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabel[AValue];
-end;
-
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  ControlStyle := ControlStyle - [csSetCaption];
   FQuestionLabel := TLabel.Create(Self);
   FNameLabel := TLabel.Create(Self);
   FValueLabelLabel := TLabel.Create(Self);
@@ -395,6 +389,16 @@ begin
     Field.IsMissing[LRecNo] := true
   else
     Field.AsString[LRecNo] := Text;
+end;
+
+procedure TFieldEdit.UpdateValueLabel;
+begin
+  if (Field.ShowValueLabel) and
+     (Assigned(Field.ValueLabelSet)) and
+     (Text <> '') then
+    FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabel[Text]
+  else
+    FValueLabelLabel.Caption := '';
 end;
 
 { TIntegerEdit }
@@ -546,6 +550,7 @@ begin
     Text := ''
   else
     Text := Format(TEpiFloatField(Field).FormatString, [Field.AsFloat[RecNo]]);
+  UpdateValueLabel;
 end;
 
 { TStringEdit }
@@ -569,12 +574,6 @@ begin
   if Field.FieldType = ftUpperString then
     WC := WideUpperCase(WC)[1];
   Result := inherited DoUTF8KeyPress(UTF8Key);
-end;
-
-procedure TStringEdit.RealSetText(const AValue: TCaption);
-begin
-  if Field.FieldType = ftUpperString;
-  inherited RealSetText(AValue);
 end;
 
 { TDateEdit }
