@@ -351,6 +351,8 @@ procedure TProjectFrame.CloseQuery(var CanClose: boolean);
 var
   Res: LongInt;
 begin
+  if not Assigned(EpiDocument) then exit;
+
   if (EpiDocument.Modified) or (ActiveFrame.Modified) then
   begin
     Res := MessageDlg('Warning',
