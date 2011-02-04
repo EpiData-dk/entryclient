@@ -125,7 +125,7 @@ implementation
 uses
   Forms, epidatafilestypes, LCLProc, strutils,
   epidocument, episettings, dataform_frame,
-  epiconvertutils;
+  epiconvertutils, settings;
 
 { TFieldEdit }
 
@@ -355,7 +355,7 @@ begin
   FQuestionLabel := TLabel.Create(Self);
   FNameLabel := TLabel.Create(Self);
   FValueLabelLabel := TLabel.Create(Self);
-  FValueLabelLabel.Font.Color := clLime;
+  FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
 
   FRecNo := -1;
 end;
@@ -393,6 +393,7 @@ end;
 
 procedure TFieldEdit.UpdateValueLabel;
 begin
+  FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
   if (Field.ShowValueLabel) and
      (Assigned(Field.ValueLabelSet)) and
      (Text <> '') then

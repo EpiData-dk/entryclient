@@ -66,7 +66,7 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils;
+  epistringutils, Menus, LCLType;
 
 { TProjectFrame }
 
@@ -339,6 +339,10 @@ begin
   FActiveFrame := nil;
   FAllowForEndBackup := false;;
 
+  {$IFDEF DARWIN}
+  SaveProjectAction.ShortCut := ShortCut(VK_S, [ssMeta]);
+  {$ENDIF}
+
   {$IFDEF EPI_RELEASE}
     ProjectPanel.Enabled := false;
     ProjectPanel.Visible := false;
@@ -381,7 +385,8 @@ end;
 
 procedure TProjectFrame.UpdateSettings;
 begin
-  // TODO : Implement recursive call of updated settings.
+  if Assigned(ActiveFrame) then
+    ActiveFrame.UpdateSettings;
 end;
 
 end.

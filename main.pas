@@ -135,7 +135,7 @@ begin
   LoadTutorials;
 
   if Assigned(FActiveFrame) then
-    TProjectFrame(FActiveFrame).Update;
+    TProjectFrame(FActiveFrame).UpdateSettings;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
@@ -343,10 +343,10 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  {$IFDEF EPI_RELEASE}
-  Width := 800;
-  Height := 600;
-  AboutAction.Enabled := false;
+  {$IFDEF DARWIN}
+  OpenProjectAction.ShortCut  := ShortCut(VK_O, [ssMeta]);
+  CloseProjectAction.ShortCut := ShortCut(VK_W, [ssShift, ssMeta]);
+  SettingsAction.ShortCut     := ShortCut(VK_OEM_COMMA, [ssMeta]);
   {$ENDIF}
 end;
 

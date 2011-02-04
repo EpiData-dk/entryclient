@@ -293,13 +293,11 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'FirstFieldAction'
       OnExecute = FirstFieldActionExecute
-      ShortCut = 16420
     end
     object LastFieldAction: TAction
       Category = 'Field'
       Caption = 'LastFieldAction'
       OnExecute = LastFieldActionExecute
-      ShortCut = 16419
     end
     object PageUpAction: TAction
       Category = 'Screen'

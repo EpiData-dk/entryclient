@@ -102,6 +102,7 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
+    procedure UpdateSettings;
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
@@ -554,6 +555,15 @@ begin
   Modified := false;
 end;
 
+procedure TDataFormFrame.UpdateSettings;
+var
+  i: Integer;
+begin
+  for i := 0 to FieldEditList.Count - 1 do
+    with TFieldEdit(FieldEditList[i]) do
+      UpdateValueLabel;
+end;
+
 function TDataFormFrame.NextUsableFieldIndex(const Index: integer;
   const Wrap: boolean): integer;
 begin
@@ -833,7 +843,7 @@ begin
         jtExitSection:   begin
                            Section := Field.Section;
                            EIdx := Idx + 1;
-                           while (EIdx <= FieldEditList.Count) and
+                           while (EIdx < FieldEditList.Count) and
                                  (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
                              Inc(EIdx);
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
@@ -850,7 +860,7 @@ begin
         jtToField:       begin
                            NewField := Jump.JumpToField;
                            EIdx := Idx + 1;
-                           while (EIdx <= FieldEditList.Count) and
+                           while (EIdx < FieldEditList.Count) and
                                  (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
                              Inc(EIdx);
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
@@ -960,6 +970,17 @@ begin
   FFieldEditList := TFPList.Create;
   FHintWindow := nil;
   FRecNo := -1;
+
+  {$IFDEF DARWIN}
+  FirstRecAction.ShortCut    := ShortCut(VK_HOME, [ssMeta]);
+  JumpPrevRecAction.ShortCut := ShortCut(VK_F5, [ssMeta]);
+  PrevRecAction.ShortCut     := ShortCut(VK_F6, [ssMeta]);
+  NextRecAction.ShortCut     := ShortCut(VK_F7, [ssMeta]);
+  JumpNextRecAction.ShortCut := ShortCut(VK_F8, [ssMeta]);
+  LastRecAction.ShortCut     := ShortCut(VK_END, [ssMeta]);
+  NewRecordAction.ShortCut   := ShortCut(VK_N, [ssMeta]);
+  GotoRecordAction.ShortCut  := ShortCut(VK_G, [ssMeta]);
+  {$ENDIF}
 end;
 
 

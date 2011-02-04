@@ -1,7 +1,7 @@
 object SettingsForm: TSettingsForm
-  Left = 338
+  Left = 735
   Height = 413
-  Top = 453
+  Top = 363
   Width = 517
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
@@ -262,6 +262,33 @@ object SettingsForm: TSettingsForm
         BorderWidth = 2
         ButtonColorSize = 16
         ButtonColor = clBlack
+      end
+      object ValueLabelColourBtn: TColorButton
+        AnchorSideTop.Control = ValidateErrorColourBtn
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = HintTimeOutEdit
+        AnchorSideRight.Side = asrBottom
+        Left = 383
+        Height = 25
+        Top = 294
+        Width = 91
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 10
+        BorderWidth = 2
+        ButtonColorSize = 16
+        ButtonColor = clBlack
+      end
+      object Label5: TLabel
+        AnchorSideLeft.Control = TabSheet1
+        AnchorSideTop.Control = ValueLabelColourBtn
+        AnchorSideTop.Side = asrCenter
+        Left = 10
+        Height = 18
+        Top = 297
+        Width = 124
+        BorderSpacing.Left = 10
+        Caption = 'Value Label colour:'
+        ParentColor = False
       end
     end
   end

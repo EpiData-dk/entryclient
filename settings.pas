@@ -16,6 +16,7 @@ type
   TSettingsForm = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    Label5: TLabel;
     ValidateErrorColourBtn: TColorButton;
     Label4: TLabel;
     MultipleInstanceChkBox: TCheckBox;
@@ -27,6 +28,7 @@ type
     Label2: TLabel;
     RecordsToSkipEdit: TMaskEdit;
     HintTimeOutEdit: TMaskEdit;
+    ValueLabelColourBtn: TColorButton;
     WorkingDirEdit: TDirectoryEdit;
     Label17: TLabel;
     PageControl1: TPageControl;
@@ -52,6 +54,7 @@ type
     ShowWelcome:    boolean;
     MultipleInstances: boolean;
     ValidateErrorColour: TColor;
+    ValueLabelColour: TColor;
   end;
 
 const
@@ -72,7 +75,8 @@ var
     IniFileName:    '';
     ShowWelcome:    true;
     MultipleInstances: false;
-    ValidateErrorColour: clRed;
+    ValidateErrorColour: clYellow;
+    ValueLabelColour: clBlue;
   );
 
   {$IFDEF EPI_SHOWREVISION}
@@ -127,6 +131,7 @@ begin
       WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
       WriteInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
+      WriteInteger(Sec, 'ValueLabelColour', ValueLabelColour);
     end;
 
     // Read recent files.
@@ -166,6 +171,7 @@ begin
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
     ValidateErrorColour := ReadInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
+    ValueLabelColour := ReadInteger(Sec, 'ValueLabelColour', ValueLabelColour);
 
       // Read recent files.
     Sec := 'recent';
@@ -215,6 +221,7 @@ begin
   EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
   EntrySettings.MultipleInstances := MultipleInstanceChkBox.Checked;
   EntrySettings.ValidateErrorColour := ValidateErrorColourBtn.ButtonColor;
+  EntrySettings.ValueLabelColour := ValueLabelColourBtn.ButtonColor;
 
   SaveSettingToIni(EntrySettings.IniFileName);
   CanClose := true;
@@ -232,6 +239,7 @@ begin
     ShowWelcomeChkBox.Checked := ShowWelcome;
     MultipleInstanceChkBox.Checked := MultipleInstances;
     ValidateErrorColourBtn.ButtonColor := ValidateErrorColour;
+    ValueLabelColourBtn.ButtonColor := ValueLabelColour;
   end;
 end;
 
