@@ -863,6 +863,7 @@ begin
                            while (EIdx < FieldEditList.Count) and
                                  (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
                              Inc(EIdx);
+                           if Eidx >= FieldEditList.Count then exit;
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
                          end;
