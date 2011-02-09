@@ -60,7 +60,7 @@ type
 const
   EntryVersion: TEpiVersionInfo = (
     VersionNo: 0;
-    MajorRev:  2;
+    MajorRev:  3;
     MinorRev:  0;
     BuildNo:   0;
   );

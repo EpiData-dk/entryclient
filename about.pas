@@ -53,7 +53,12 @@ end;
 
 function RevisionCaption: string;
 begin
-  result := 'Revision: ' + RevisionStr;
+  result := 'r' + RevisionStr;
+end;
+
+function CoreRevisionCaption: string;
+begin
+  result := 'r' + GetCoreRevision;
 end;
 
 function FPCCaption: string;
@@ -69,9 +74,8 @@ end;
 function GetProgramInfo: string;
 begin
   Result := 'EpiData Entry Client' + LineEnding +
-            EntryVersionCaption + LineEnding +
-            CoreVersionCaption + LineEnding +
-            RevisionCaption + LineEnding +
+            EntryVersionCaption + ' ' + RevisionCaption + LineEnding +
+            CoreVersionCaption + ' ' + CoreRevisionCaption + LineEnding +
             FPCCaption + LineEnding +
             PlatformCaption;
 end;

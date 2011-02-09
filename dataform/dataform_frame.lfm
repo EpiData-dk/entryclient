@@ -17,6 +17,7 @@ object DataFormFrame: TDataFormFrame
     Color = clWhite
     ParentColor = False
     TabOrder = 0
+    OnMouseWheel = DataFormScroolBoxMouseWheel
   end
   object InformationPanel: TPanel
     Left = 0

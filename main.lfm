@@ -223,6 +223,10 @@ object MainForm: TMainForm
         object TutorialsMenuDivider1: TMenuItem
           Caption = '-'
         end
+        object EpiDataWebTutorialsMenuItem: TMenuItem
+          Caption = 'Tutorials On EpiData Web'
+          OnClick = EpiDataWebTutorialsMenuItemClick
+        end
         object WebTutorialsMenuItem: TMenuItem
           Caption = 'Tutorials On Web'
           OnClick = WebTutorialsMenuItemClick

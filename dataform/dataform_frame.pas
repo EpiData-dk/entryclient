@@ -44,6 +44,8 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
@@ -119,7 +121,7 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epidocument, epivaluelabels;
+  picklist, epidocument, epivaluelabels, LCLIntf, LMessages;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -154,6 +156,15 @@ begin
   if i = -1 then exit;
 
   TFieldEdit(FieldEditList[i]).SetFocus;
+end;
+
+procedure TDataFormFrame.DataFormScroolBoxMouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+  with DataFormScroolBox.VertScrollBar do
+    Position := Position - WheelDelta;
+  Handled := true;
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -256,10 +267,44 @@ function FieldSort(Item1, Item2: Pointer): Integer;
 var
   F1: TFieldEdit absolute Item1;
   F2: TFieldEdit absolute Item2;
+  MainSection: TEpiSection;
 begin
-  result := FieldEditTop(F1) - FieldEditTop(F2);
-  if result = 0 then
-    result := FieldEditLeft(F1) - FieldEditLeft(F2);
+  // Simple comparison
+  if F1.Parent = F2.Parent then
+  begin
+    result := F1.Top - F2.Top;
+    if result = 0 then
+      result := F1.Left - F2.Left;
+    exit;
+  end;
+
+  MainSection := F1.Field.DataFile.MainSection;
+
+  // Cross section comparison.
+  if (F1.Field.Section <> MainSection) and (F2.Field.Section <> MainSection) then
+  begin
+    result := F1.Parent.Top - F2.Parent.Top;
+    if result = 0 then
+      Result := F1.Parent.Left - F2.Parent.Left;
+    Exit;
+  end;
+
+  // Main <-> Section comparison
+  if (F1.Field.Section = MainSection) then
+  begin
+    result := F1.Top - F2.Parent.Top;
+    if Result = 0 then
+      result := F1.Left - F2.Parent.Left;
+    exit;
+  end;
+
+  // Section <-> Main comparison
+  if (F2.Field.Section = MainSection) then
+  begin
+    result := F1.Parent.Top - F2.Top;
+    if Result = 0 then
+      result := F1.Parent.Left - F2.Left;
+  end;
 end;
 
 procedure TDataFormFrame.SetDataFile(const AValue: TEpiDataFile);
@@ -595,8 +640,8 @@ begin
     Result := FieldEditList.Count - 1;
 
   while (Result >= 0) and
-        (TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) and
-        (TFieldEdit(FieldEditList[Result]).Enabled) do
+        ((TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) or
+         (not TFieldEdit(FieldEditList[Result]).Enabled)) do
   begin
     dec(Result);
     if (Result < 0) and Wrap then
@@ -704,15 +749,21 @@ procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute sender;
   FieldTop: LongInt;
+  Delta: Integer;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
   FieldTop := FieldEditTop(FieldEdit);
-  if FieldTop < DataFormScroolBox.VertScrollBar.Position then
-    DataFormScroolBox.VertScrollBar.Position := FieldTop - 5;
+  Delta := DataFormScroolBox.Height div 4;
 
-  if FieldTop > (DataFormScroolBox.VertScrollBar.Position + DataFormScroolBox.VertScrollBar.Page) then
-    DataFormScroolBox.VertScrollBar.Position := FieldTop - DataFormScroolBox.VertScrollBar.Page + FieldEdit.Height + 5;
+  With DataFormScroolBox.VertScrollBar do
+  begin
+    if FieldTop < (Position + Delta) then
+      Position := FieldTop - Delta;
+
+    if FieldTop > (Position + Page - Delta) then
+      Position := FieldTop - Page + FieldEdit.Height + Delta;
+  end;
 
   UpdateFieldPanel(FieldEdit.Field);
 end;
@@ -847,7 +898,9 @@ begin
                                  (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
                              Inc(EIdx);
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                           // Making this check also forces a "new record" event since NewFieldEdit = nil;
+                           if EIdx < FieldEditList.Count then
+                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
                          end;
         jtSkipNextField: begin
                            EIdx := NextUsableFieldIndex(Idx + 1, false);
@@ -904,6 +957,8 @@ begin
   if not Result then
   begin
     DoError(FE);
+    if Assigned(FE.Field.ValueLabelSet) then
+      PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
     Exit;
   end else begin
     FE.Color := clDefault;

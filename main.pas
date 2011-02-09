@@ -14,6 +14,7 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    EpiDataWebTutorialsMenuItem: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
@@ -63,6 +64,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
@@ -174,7 +176,9 @@ begin
   for i := TutorialSubMenu.Count - 1 downto 0 do
   begin
     if (TutorialSubMenu[i] = TutorialsMenuDivider1) or
-       (TutorialSubMenu[i] = WebTutorialsMenuItem) then continue;
+       (TutorialSubMenu[i] = WebTutorialsMenuItem) or
+       (TutorialSubMenu[i] = EpiDataWebTutorialsMenuItem)
+       then continue;
 
     MenuItem := TutorialSubMenu[i];
     TutorialSubMenu.Delete(i);
@@ -308,6 +312,12 @@ begin
     Mi.Name := 'recent' + inttostr(i);
     Mi.Caption := RecentFiles[i];
     Mi.OnClick := @OpenRecentMenuItemClick;
+    if i < 9 then
+      {$IFDEF DARWIN}
+      Mi.ShortCut := ShortCut(VK_1 + i, [ssMeta, ssShift]);
+      {$ELSE}
+      Mi.ShortCut := ShortCut(VK_1 + i, [ssCtrl, ssShift]);
+      {$ENDIF}
     RecentFilesSubMenu.Add(Mi);
   end;
 end;
@@ -328,6 +338,11 @@ begin
                    'See help menu above for an introduction.' + LineEnding +
                    'Get latest version from http://www.epidata.dk', 15, 15);
   {$ENDIF}
+end;
+
+procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
+begin
+  OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:tutorials');
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
