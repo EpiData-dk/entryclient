@@ -397,7 +397,7 @@ begin
   if (Field.ShowValueLabel) and
      (Assigned(Field.ValueLabelSet)) and
      (Text <> '') then
-    FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabel[Text]
+    FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabelString[Text]
   else
     FValueLabelLabel.Caption := '';
 end;

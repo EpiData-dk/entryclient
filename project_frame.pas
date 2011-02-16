@@ -52,6 +52,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
+    destructor  Destroy; override;
     procedure   CloseQuery(var CanClose: boolean);
     procedure   OpenProject(Const aFilename: string);
     procedure   UpdateSettings;
@@ -73,6 +74,11 @@ uses
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
   try
+    if (FileAgeUTF8(FDocumentFilename) <> FDocumentFileTimeStamp) then
+    begin
+      if MessageDlg('WARNING', 'Project file: ' + FDocumentFilename  + ' has been modified by another program since last save.' + LineEnding+
+       'Overwrite modified file?', mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
+    end;
     DoSaveProject(FDocumentFilename);
   except
     on E: EFCreateError do
@@ -197,13 +203,6 @@ begin
   Fs := nil;
   Ms := nil;
   try
-    if (RightStr(aFilename, 4) <> '.bak') and
-       (FileAgeUTF8(aFilename) <> FDocumentFileTimeStamp) then
-    begin
-      if MessageDlg('WARNING', 'Project file: ' + aFilename + ' has been modified by another program since last save.' + LineEnding+
-       'Overwrite modified file?', mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
-    end;
-
     Ms := TMemoryStream.Create;
     EpiDocument.SaveToStream(Ms);
     Ms.Position := 0;
@@ -349,6 +348,12 @@ begin
     Splitter1.Enabled    := false;
     Splitter1.Visible    := false;
   {$ENDIF}
+end;
+
+destructor TProjectFrame.Destroy;
+begin
+  DoCloseProject;
+  inherited Destroy;
 end;
 
 procedure TProjectFrame.CloseQuery(var CanClose: boolean);
