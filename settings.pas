@@ -61,7 +61,7 @@ const
   EntryVersion: TEpiVersionInfo = (
     VersionNo: 0;
     MajorRev:  3;
-    MinorRev:  0;
+    MinorRev:  1;
     BuildNo:   0;
   );
 
