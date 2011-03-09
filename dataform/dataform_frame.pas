@@ -784,8 +784,6 @@ begin
   // Before field script:
   // TODO : Before field script
 
-  // NoEnter property?
-
 
   // Repeat?
 

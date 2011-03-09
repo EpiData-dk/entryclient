@@ -204,6 +204,7 @@ begin
   Ms := nil;
   try
     Ms := TMemoryStream.Create;
+    EpiDocument.Study.ModifiedDate := Now;
     EpiDocument.SaveToStream(Ms);
     Ms.Position := 0;
 
