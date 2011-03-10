@@ -891,14 +891,20 @@ begin
                          end;
         jtExitSection:   begin
                            Section := Field.Section;
-                           EIdx := Idx + 1;
-                           while (EIdx < FieldEditList.Count) and
-                                 (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
-                             Inc(EIdx);
-                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           // Making this check also forces a "new record" event since NewFieldEdit = nil;
-                           if EIdx < FieldEditList.Count then
-                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                           if Section = DataFile.MainSection then
+                           begin
+                             EIdx := FieldEditList.Count;
+                             PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                           end else begin
+                             EIdx := Idx + 1;
+                             while (EIdx < FieldEditList.Count) and
+                                   (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
+                               Inc(EIdx);
+                             PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                             // Making this check also forces a "new record" event since NewFieldEdit = nil;
+                             if EIdx < FieldEditList.Count then
+                               NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                           end;
                          end;
         jtSkipNextField: begin
                            EIdx := NextUsableFieldIndex(Idx + 1, false);
