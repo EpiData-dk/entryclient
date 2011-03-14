@@ -815,6 +815,8 @@ var
     for i := StartIdx to EndIdx do
     with TFieldEdit(FieldEditList[i]) do
     begin
+      if Field.FieldType in AutoFieldTypes then continue;
+
       case ResetType of
         jrSystemMissing: Text := '.';
         jrMaxMissing:    with Field do
@@ -897,9 +899,10 @@ begin
                              PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            end else begin
                              EIdx := Idx + 1;
-                             while (EIdx < FieldEditList.Count) and
+                             while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
                                    (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
-                               Inc(EIdx);
+                               EIdx := NextUsableFieldIndex(EIdx, false);
+                             if EIdx = -1 then EIdx := FieldEditList.Count;
                              PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                              // Making this check also forces a "new record" event since NewFieldEdit = nil;
                              if EIdx < FieldEditList.Count then
@@ -908,19 +911,23 @@ begin
                          end;
         jtSkipNextField: begin
                            EIdx := NextUsableFieldIndex(Idx + 1, false);
+                           if EIdx = -1 then EIdx := FieldEditList.Count;
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           if EIdx = -1 then
-                             NewRecordAction.Execute
+                           if EIdx < FieldEditList.Count then
+                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx])
                            else
-                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                             NewRecordAction.Execute;
                          end;
         jtToField:       begin
                            NewField := Jump.JumpToField;
                            EIdx := Idx + 1;
-                           while (EIdx < FieldEditList.Count) and
+                           while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
                                  (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
-                             Inc(EIdx);
+                             EIdx := NextUsableFieldIndex(Idx + 1, false);
+
+                           if EIdx = -1 then EIdx := FieldEditList.Count;
                            if Eidx >= FieldEditList.Count then exit;
+
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
                          end;
