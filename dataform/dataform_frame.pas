@@ -923,7 +923,7 @@ begin
                            EIdx := Idx + 1;
                            while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
                                  (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
-                             EIdx := NextUsableFieldIndex(Idx + 1, false);
+                             EIdx := NextUsableFieldIndex(EIdx + 1, false);
 
                            if EIdx = -1 then EIdx := FieldEditList.Count;
                            if Eidx >= FieldEditList.Count then exit;

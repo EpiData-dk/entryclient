@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit, ColorBox,
+  EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit,
   epiversionutils;
 
 type
@@ -61,7 +61,7 @@ const
   EntryVersion: TEpiVersionInfo = (
     VersionNo: 0;
     MajorRev:  3;
-    MinorRev:  2;
+    MinorRev:  3;
     BuildNo:   0;
   );
 
