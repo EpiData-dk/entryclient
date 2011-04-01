@@ -50,7 +50,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="12">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -112,6 +112,18 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="picklist"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="dataform/notes_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="NotesForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="notes_form"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="dataform/dataform_field_calculations.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="dataform_field_calculations"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

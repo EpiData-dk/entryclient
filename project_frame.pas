@@ -56,6 +56,7 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     procedure   OpenProject(Const aFilename: string);
     procedure   UpdateSettings;
+    procedure   RestoreDefaultPos;
     property    EpiDocument: TEpiDocument read FEpiDocument;
     property    ActiveFrame: TDataFormFrame read FActiveFrame;
     property    DocumentFileName: string read FDocumentFilename;
@@ -233,7 +234,7 @@ begin
   Frame.DataFile := DataFile;
   FActiveFrame := Frame;
 
-  DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Name.Text, Frame);
+  DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Caption.Text, Frame);
 
   // TODO : Adapt to multiple datafiles.
   With MainForm do
@@ -306,12 +307,9 @@ begin
     if EpiDocument.Modified then
       S := S + '*';
 
-    if Assigned(ActiveFrame) then
-    begin
-      T := TDataFormFrame(ActiveFrame).DataFile.Name.Text;
-      if (T <> '') then
-        S := S + ' [' + EpiCutString(T, 20) + ']';
-    end;
+    T := EpiDocument.Study.Title.Text;
+    if (T <> '') then
+      S := S + ' [' + EpiCutString(T, 20) + ']';
   end;
   MainForm.Caption := S;
 end;
@@ -361,6 +359,8 @@ procedure TProjectFrame.CloseQuery(var CanClose: boolean);
 var
   Res: LongInt;
 begin
+  CanClose := true;
+
   if not Assigned(EpiDocument) then exit;
 
   if (EpiDocument.Modified) or (ActiveFrame.Modified) then
@@ -370,7 +370,8 @@ begin
       'Save before exit?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
 
-    if Res = mrCancel then exit;
+    if Res = mrCancel then
+      CanClose := false;
 
     if Res = mrYes then
     begin
@@ -379,7 +380,6 @@ begin
          (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
       ActiveFrame.CommitFields;
       SaveProjectAction.Execute;
-      CanClose := true;
     end;
   end;
 end;
@@ -393,6 +393,12 @@ procedure TProjectFrame.UpdateSettings;
 begin
   if Assigned(ActiveFrame) then
     ActiveFrame.UpdateSettings;
+end;
+
+procedure TProjectFrame.RestoreDefaultPos;
+begin
+  if Assigned(FActiveFrame) then
+    FActiveFrame.RestoreDefaultPos;
 end;
 
 end.

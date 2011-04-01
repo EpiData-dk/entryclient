@@ -14,7 +14,9 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
+    DefaultPosMenuItem: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
@@ -61,6 +63,7 @@ type
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure CopyProjectInfoActionExecute(Sender: TObject);
+    procedure DefaultPosActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -88,6 +91,7 @@ type
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
     procedure UpdateRecentFiles;
+    procedure ResoreDefaultPos;
     property  ActiveFrame: TProjectFrame read FActiveFrame;
   end; 
 
@@ -322,12 +326,29 @@ begin
   end;
 end;
 
+procedure TMainForm.ResoreDefaultPos;
+begin
+  BeginFormUpdate;
+  Width := 700;
+  Height := 600;
+  Top := (Monitor.Height div 2) - (Height div 2);
+  Left := (Monitor.Width div 2) - (Width div 2);
+  EndFormUpdate;
+  SaveFormPosition(Self, 'MainForm');
+
+  if Assigned(FActiveFrame) then
+    FActiveFrame.RestoreDefaultPos;
+end;
+
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
   {$IFDEF EPI_DEBUG}
   AboutAction.Enabled := true;
   {$ENDIF}
+
+//  if ManagerSettings.SaveWindowPositions then
+    LoadFormPosition(Self, 'MainForm');
 
   UpdateSettings;
   UpdateRecentFiles;
@@ -353,6 +374,10 @@ begin
   if Assigned(FActiveFrame) then
     FActiveFrame.CloseQuery(CanClose);
   {$ENDIF}
+
+  if CanClose {and ManagerSettings.SaveWindowPositions} then
+    SaveFormPosition(Self, 'MainForm');
+
   SaveSettingToIni(EntrySettings.IniFileName);
 end;
 
@@ -440,6 +465,11 @@ begin
       'Record count: ' + IntToStr(DataFiles[0].Size);
   end;
   Clipboard.AsText := S;
+end;
+
+procedure TMainForm.DefaultPosActionExecute(Sender: TObject);
+begin
+  ResoreDefaultPos;
 end;
 
 end.

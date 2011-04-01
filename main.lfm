@@ -187,6 +187,9 @@ object MainForm: TMainForm
       object SettingsMenuItem: TMenuItem
         Action = SettingsAction
       end
+      object DefaultPosMenuItem: TMenuItem
+        Action = DefaultPosAction
+      end
     end
     object BrowseMenu: TMenuItem
       Caption = '&Browse'
@@ -319,6 +322,11 @@ object MainForm: TMainForm
       Caption = 'Open Project'
       OnExecute = OpenProjectActionExecute
       ShortCut = 16463
+    end
+    object DefaultPosAction: TAction
+      Category = 'Edit'
+      Caption = 'Default Window Position'
+      OnExecute = DefaultPosActionExecute
     end
   end
 end

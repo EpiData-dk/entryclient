@@ -9,7 +9,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, lnetbase, main, project_frame, dataform_frame, fieldedit,
   entryprocs, settings, about, epidatacore, picklist, sysutils,
-  UniqueInstanceRaw;
+  UniqueInstanceRaw, notes_form, dataform_field_calculations;
 
 {$R *.res}
 

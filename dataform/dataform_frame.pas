@@ -6,12 +6,13 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
-  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, fieldedit;
+  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, fieldedit,
+  notes_form;
 
 type
 
   { TDataFormFrame }
-  TFieldExitFlowType = (fxtNone, fxtJump);
+  TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
     FieldInfoLabel: TLabel;
@@ -74,6 +75,11 @@ type
     procedure SetModified(const AValue: boolean);
     function  GetHintWindow: THintWindow;
     function  DoNewRecord: boolean;
+    function  FieldEditFromField(Field: TEpiField): TFieldEdit;
+  private
+    { Notes }
+    FNotesForm: TNotesForm;
+    procedure ShowNotes(FE: TFieldEdit; ForceShow: boolean = false);
   private
     { Field Enter/Exit Handling }
     function  NextUsableFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
@@ -105,6 +111,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
     procedure UpdateSettings;
+    procedure RestoreDefaultPos;
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
@@ -121,7 +128,8 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epidocument, epivaluelabels, LCLIntf, LMessages;
+  picklist, epidocument, epivaluelabels, LCLIntf, LMessages,
+  dataform_field_calculations;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -399,7 +407,7 @@ begin
     Result.Left := Left;
     Result.Width := TEpiSection(EpiControl).Width;
     Result.Height := TEpiSection(EpiControl).Height;
-    Result.Caption := TEpiSection(EpiControl).Name.Text;
+    Result.Caption := TEpiSection(EpiControl).Caption.Text;
   end;
   Result.Parent := DataFormScroolBox;
 end;
@@ -525,10 +533,6 @@ var
 begin
   Result := false;
 
-{  //- current focused field may not have been validated.
-  if (MainForm.ActiveControl is TFieldEdit) and
-     (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;}
-
   // *******************
   // * Commit old data *
   // *******************
@@ -567,7 +571,7 @@ begin
   with TFieldEdit(FieldEditList[i]) do
   begin
     // Check for AutoInc/Today fields.
-    if Field.FieldType in AutoFieldTypes then
+    if (Field.FieldType in AutoFieldTypes) then
     with Field do
     begin
       case FieldType of
@@ -578,6 +582,59 @@ begin
                       else
                         Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
                     end;
+        ftDMYToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeNow:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
+      end;
+    end;
+
+    // Default Value
+    if (Field.HasDefaultValue) then
+      Text := Field.DefaultValueAsString;
+
+    // Repeat
+    if (Field.RepeatValue) and (Field.Size > 0) then
+      Text := Field.AsString[Field.Size - 1];
+  end;
+  Result := true;
+end;
+
+function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
+var
+  i: Integer;
+begin
+  for i := 0 to FieldEditList.Count - 1 do
+    if TFieldEdit(FieldEditList[i]).Field = Field then
+      Exit(TFieldEdit(FieldEditList[i]));
+
+  result := nil;
+end;
+
+procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
+begin
+  if not Assigned(FNotesForm) then
+    FNotesForm := TNotesForm.Create(Self);
+  FNotesForm.NotesMemo.Text := FE.Field.Notes.Text;
+
+  if not FNotesForm.Showing and ForceShow then
+    FNotesForm.Show;
+end;
+
+procedure TDataFormFrame.CommitFields;
+var
+  i: Integer;
+begin
+  // Add text to auto field with Update mode set.
+  for i := 0 to FieldEditList.Count - 1 do
+  with TFieldEdit(FieldEditList[i]) do
+  begin
+    // Check for AutoInc/Today fields.
+    if (Field is TEpiCustomAutoField) and
+       (TEpiCustomAutoField(Field).AutoMode = umUpdated) then
+    with Field do
+    begin
+      case FieldType of
         ftDMYToday: Text := FormatDateTime('DD/MM/YYYY', Date);
         ftMDYToday: Text := FormatDateTime('MM/DD/YYYY', Date);
         ftYMDToday: Text := FormatDateTime('YYYY/MM/DD', Date);
@@ -585,13 +642,7 @@ begin
       end;
     end;
   end;
-  Result := true;
-end;
 
-procedure TDataFormFrame.CommitFields;
-var
-  i: Integer;
-begin
   // Expand datafile so that current text can be commited...
   if RecNo = NewRecord then
     DataFile.NewRecords();
@@ -607,6 +658,12 @@ begin
   for i := 0 to FieldEditList.Count - 1 do
     with TFieldEdit(FieldEditList[i]) do
       UpdateValueLabel;
+end;
+
+procedure TDataFormFrame.RestoreDefaultPos;
+begin
+  if Assigned(FNotesForm) then
+    FNotesForm.RestoreDefaultPos;
 end;
 
 function TDataFormFrame.NextUsableFieldIndex(const Index: integer;
@@ -654,6 +711,7 @@ procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
 var
   FieldEdit: TFieldEdit absolute Sender;
   NextFieldEdit: TFieldEdit;
+  Res: TFieldExitFlowType;
 
 
   function NextFieldOnKeyDown: TFieldEdit;
@@ -689,7 +747,7 @@ begin
   GetHintWindow.Hide;
 
   if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
-              VK_ADD, VK_F9, 187]) and   // 187 = Plus sign that is NOT part of numpad!
+              VK_ADD, VK_F9, VK_OEM_PLUS]) and
      (Shift = [])
   then begin
     if (Key in [VK_ADD, VK_F9, 187]) and
@@ -705,8 +763,15 @@ begin
     // Field is validated - check for Valuelabels and update FieldEdit.
     FieldEdit.UpdateValueLabel;
 
-    if (FieldExitFlow(FieldEdit, NextFieldEdit) = fxtNone) then
-      NextFieldEdit := NextFieldOnKeyDown;
+    Res := FieldExitFlow(FieldEdit, NextFieldEdit);
+    case Res of
+      fxtOk:    NextFieldEdit := NextFieldOnKeyDown;
+      fxtError: begin
+                  Key := VK_UNKNOWN;
+                  Exit;
+                end;
+      fxtJump:  ; // Do nothing - NextFieldEdit is set.
+    end;
 
     if not Assigned(NextFieldEdit) then
     begin
@@ -715,6 +780,12 @@ begin
     end;
     FieldEnterFlow(NextFieldEdit);
     NextFieldEdit.SetFocus;
+    Key := VK_UNKNOWN;
+  end;
+
+  if (Key = VK_F12) and (Shift = []) then
+  begin
+    ShowNotes(FieldEdit, true);
     Key := VK_UNKNOWN;
   end;
 
@@ -766,6 +837,7 @@ begin
   end;
 
   UpdateFieldPanel(FieldEdit.Field);
+  ShowNotes(FieldEdit);
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);
@@ -784,10 +856,6 @@ begin
   // Before field script:
   // TODO : Before field script
 
-
-  // Repeat?
-
-
   // Top-of-screen?
 end;
 
@@ -800,6 +868,8 @@ var
   Section: TEpiSection;
   EIdx: LongInt;
   NewField: TEpiField;
+  Err: string;
+  ErrFieldEdit: TFieldEdit;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -873,11 +943,34 @@ begin
   // **************************************
   // **    EpiData Flow Control (Post)   **
   // **************************************
-  result := fxtNone;
+  result := fxtOk;
   Field := FE.Field;
-  // Type Comment
 
-  // After Entry Script
+  // Type Comment
+  if Assigned(Field.ValueLabelWriteField) then
+  begin
+    NewFieldEdit := FieldEditFromField(Field.ValueLabelWriteField);
+    NewFieldEdit.Text := Field.ValueLabelSet.ValueLabelString[FE.Text];
+  end;
+
+  // After Entry Script (Calculation)
+  if Assigned(Field.Calculation) then
+  begin
+    NewFieldEdit := FieldEditFromField(Field.Calculation.ResultField);
+    Err := '';
+    case Field.Calculation.CalcType of
+      ctTimeDiff:      NewFieldEdit.Text := CalcTimeDiff(FieldEditList, TEpiTimeCalc(Field.Calculation));
+      ctCombineDate:   NewFieldEdit.Text := CalcCombineDate(FieldEditList, TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
+      ctCombineString: NewFieldEdit.Text := CalcCombineString(FieldEditList, TEpiCombineStringCalc(Field.Calculation));
+    end;
+    if Err <> '' then
+    begin
+      ErrFieldEdit.SetFocus;
+      FieldValidateError(ErrFieldEdit, Err);
+      Exit(fxtError);
+    end;
+  end;
+
 
   // Jumps
   NewFieldEdit := nil;

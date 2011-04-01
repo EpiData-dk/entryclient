@@ -1,0 +1,69 @@
+object NotesForm: TNotesForm
+  Left = 1100
+  Height = 349
+  Top = 270
+  Width = 337
+  Caption = 'Notes'
+  ClientHeight = 349
+  ClientWidth = 337
+  OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '0.9.31'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 299
+    Width = 337
+    Align = alBottom
+    ClientHeight = 50
+    ClientWidth = 337
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Panel1
+      Left = 255
+      Height = 32
+      Top = 9
+      Width = 71
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      BorderSpacing.Right = 10
+      Caption = '&Close'
+      Kind = bkClose
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 299
+    Top = 0
+    Width = 337
+    Align = alClient
+    ClientHeight = 299
+    ClientWidth = 337
+    TabOrder = 1
+    object NotesMemo: TMemo
+      AnchorSideLeft.Control = Panel2
+      AnchorSideTop.Control = Panel2
+      AnchorSideRight.Control = Panel2
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Panel2
+      AnchorSideBottom.Side = asrBottom
+      Left = 11
+      Height = 277
+      Top = 11
+      Width = 315
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Left = 10
+      BorderSpacing.Top = 10
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      TabOrder = 0
+    end
+  end
+end

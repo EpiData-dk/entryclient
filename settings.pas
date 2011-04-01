@@ -89,6 +89,9 @@ var
   function SaveSettingToIni(Const FileName: string): boolean;
   function LoadSettingsFromIni(Const FileName: string): boolean;
 
+  procedure SaveFormPosition(Const AForm: TForm; Const SectionName: string);
+  procedure LoadFormPosition(Var AForm: TForm; Const SectionName: string);
+
   procedure AddToRecent(const AFilename: string);
 
 
@@ -181,6 +184,47 @@ begin
       if S > '' then
         RecentFiles.Add(S);
     end;
+  end;
+end;
+
+procedure SaveFormPosition(const AForm: TForm; const SectionName: string);
+var
+  Ini: TIniFile;
+begin
+  if EntrySettings.IniFileName = '' then exit;
+
+  try
+    Ini := TIniFile.Create(EntrySettings.IniFileName);
+    With Ini, AForm do
+    begin
+      WriteInteger(SectionName, 'Top', Top);
+      WriteInteger(SectionName, 'Left', Left);
+      WriteInteger(SectionName, 'Width', Width);
+      WriteInteger(SectionName, 'Height', Height);
+    end;
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure LoadFormPosition(var AForm: TForm; const SectionName: string);
+var
+  Ini: TIniFile;
+begin
+  if EntrySettings.IniFileName = '' then exit;
+
+  try
+    Ini := TIniFile.Create(EntrySettings.IniFileName);
+    With Ini do
+    with AForm do
+    begin
+      Top     := ReadInteger(SectionName, 'Top', Top);
+      Left    := ReadInteger(SectionName, 'Left', Left);
+      Width   := ReadInteger(SectionName, 'Width', Width);
+      Height  := ReadInteger(SectionName, 'Height', Height);
+    end;
+  finally
+    Ini.Free;
   end;
 end;
 
