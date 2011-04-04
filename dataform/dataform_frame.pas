@@ -876,6 +876,7 @@ var
   NewField: TEpiField;
   Err: string;
   ErrFieldEdit: TFieldEdit;
+  Txt: String;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -983,7 +984,9 @@ begin
   if Assigned(Field.Jumps) then
   begin
     Idx := FieldEditList.IndexOf(FE);
-    Jump := Field.Jumps.JumpFromValue[FE.Text];
+    Txt := FE.Text;
+    if Txt = '' then Txt := '.';
+    Jump := Field.Jumps.JumpFromValue[Txt];
     if Assigned(Jump) then
     begin
       case Jump.JumpType of
@@ -1055,6 +1058,7 @@ function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
   procedure DoError(LocalFE: TFieldEdit);
   begin
     LocalFE.Color := EntrySettings.ValidateErrorColour;
+    LocalFE.SelectAll;
     LocalFE.SetFocus;
     Beep;
   end;
@@ -1071,7 +1075,6 @@ begin
       PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
     Exit;
   end else begin
-//    FE.Color := clDefault;
     GetHintWindow.Hide;
   end;
 
@@ -1080,7 +1083,7 @@ begin
      (FE.Text = '') then
   begin
     DoError(FE);
-    FieldValidateError(FE, 'Field must not be empty!');
+    FieldValidateError(FE, 'Field cannot be empty!');
     Result := false;
   end;
 end;

@@ -14,7 +14,7 @@ function CalcCombineString(Const FieldEditList: TFpList; Calculation: TEpiCombin
 implementation
 
 uses
-  dateutils, epidatafilestypes, epiconvertutils;
+  dateutils, epidatafilestypes, epiconvertutils, math;
 
 function GetFieldEditFromField(Const List: TFpList; Const Field: TEpiField): TFieldEdit;
 var
@@ -34,20 +34,28 @@ var
   function ExtractDate(Const Field: TEpiDateField): EpiDateTime;
   var
     Backup: String;
+    Txt: String;
   begin
+    Txt := GetFieldEditFromField(FieldEditList, Field).Text;
+    if Txt = '' then Exit(0);
+
     Backup := DefaultFormatSettings.ShortDateFormat;
     DefaultFormatSettings.ShortDateFormat := Field.FormatString;
-    Result := StrToDate(GetFieldEditFromField(FieldEditList, Field).Text);
+    Result := StrToDate(Txt);
     DefaultFormatSettings.ShortDateFormat := Backup;
   end;
 
   function ExtractTime(Const Field: TEpiDateTimeField): EpiDateTime;
   var
     Backup: String;
+    Txt: String;
   begin
+    Txt := GetFieldEditFromField(FieldEditList, Field).Text;
+    if Txt = '' then Exit(0);
+
     Backup := DefaultFormatSettings.ShortTimeFormat;
     DefaultFormatSettings.ShortTimeFormat := Field.FormatString;
-    Result := StrToTime(GetFieldEditFromField(FieldEditList, Field).Text);
+    Result := StrToTime(Txt);
     DefaultFormatSettings.ShortTimeFormat := Backup;
   end;
 
@@ -66,12 +74,14 @@ begin
     if Assigned(EndTime) then
       E += ExtractTime(EndTime);
 
+    if (S = 0) or (E = 0) then exit('');
+
     case TimeCalcType of
-      ctAsYear:        Result := IntToStr(dateutils.YearsBetween(S, E));
-      ctAsMonths:      Result := IntToStr(dateutils.MonthsBetween(S, E));
-      ctAsWeeks:       Result := IntToStr(dateutils.WeeksBetween(S, E));
-      ctAsDays:        Result := IntToStr(dateutils.DaysBetween(S, E));
-      ctAsDayFraction: Result := FloatToStr(frac(S-E));
+      ctAsYear:        Result := IntToStr(Sign(S-E) * dateutils.YearsBetween(S, E));
+      ctAsMonths:      Result := IntToStr(Sign(S-E) * dateutils.MonthsBetween(S, E));
+      ctAsWeeks:       Result := IntToStr(Sign(S-E) * dateutils.WeeksBetween(S, E));
+      ctAsDays:        Result := IntToStr(Sign(S-E) * dateutils.DaysBetween(S, E));
+      ctAsDayFraction: Result := FloatToStr(S-E);
     end;
   end;
 end;

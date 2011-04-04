@@ -307,6 +307,10 @@ begin
     if EpiDocument.Modified then
       S := S + '*';
 
+    T := EpiDocument.Study.Version;
+    if (T <> '') then
+      S := S + ' Version: ' + T;
+
     T := EpiDocument.Study.Title.Text;
     if (T <> '') then
       S := S + ' [' + EpiCutString(T, 20) + ']';
