@@ -50,7 +50,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="17">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -124,6 +124,39 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="dataform_field_calculations"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="settings/settings2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Settings2Form"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings2"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="settings/settings2_interface.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="settings2_interface"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="settings/settings2_paths_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SettingsPathsFrame"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings2_paths_frame"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="settings/settings2_colours_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SettingsColourFrame"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings2_colours_frame"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="settings/settings_general_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SettingsGeneralFrame"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings_general_frame"/>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -133,7 +166,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="dataform"/>
+      <OtherUnitFiles Value="dataform;settings"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

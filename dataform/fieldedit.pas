@@ -46,7 +46,7 @@ type
     destructor  Destroy; override;
     function    ValidateEntry: boolean; virtual;
     procedure   Commit;
-    procedure   UpdateValueLabel;
+    procedure   UpdateSettings;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
     property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
@@ -217,7 +217,7 @@ begin
     Text := ''
   else
     Text := Field.AsString[RecNo];
-  UpdateValueLabel;
+  UpdateSettings;
 end;
 
 procedure TFieldEdit.FieldChange(Sender: TObject; EventGroup: TEpiEventGroup;
@@ -391,7 +391,7 @@ begin
     Field.AsString[LRecNo] := Text;
 end;
 
-procedure TFieldEdit.UpdateValueLabel;
+procedure TFieldEdit.UpdateSettings;
 begin
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
   if (Field.ShowValueLabel) and
@@ -400,6 +400,10 @@ begin
     FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabelString[Text]
   else
     FValueLabelLabel.Caption := '';
+  if Focused then
+    Color := EntrySettings.ActiveFieldColour
+  else
+    Color := EntrySettings.InactiveFieldColour;
 end;
 
 { TIntegerEdit }
@@ -551,7 +555,7 @@ begin
     Text := ''
   else
     Text := Format(TEpiFloatField(Field).FormatString, [Field.AsFloat[RecNo]]);
-  UpdateValueLabel;
+  UpdateSettings;
 end;
 
 { TStringEdit }

@@ -1,0 +1,123 @@
+object SettingsColourFrame: TSettingsColourFrame
+  Left = 0
+  Height = 406
+  Top = 0
+  Width = 780
+  ClientHeight = 406
+  ClientWidth = 780
+  TabOrder = 0
+  DesignLeft = 249
+  DesignTop = 182
+  object Label4: TLabel
+    AnchorSideTop.Control = ValidateErrorColourBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 18
+    Top = 13
+    Width = 176
+    BorderSpacing.Left = 10
+    Caption = 'Field colour on invalid entry:'
+    ParentColor = False
+  end
+  object ValidateErrorColourBtn: TColorButton
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 199
+    Height = 25
+    Top = 10
+    Width = 571
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object ValueLabelColourBtn: TColorButton
+    AnchorSideLeft.Control = ValidateErrorColourBtn
+    AnchorSideTop.Control = ValidateErrorColourBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 199
+    Height = 25
+    Top = 45
+    Width = 571
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object Label5: TLabel
+    AnchorSideTop.Control = ValueLabelColourBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 18
+    Top = 48
+    Width = 121
+    BorderSpacing.Left = 10
+    Caption = 'Value Label colour:'
+    ParentColor = False
+  end
+  object Label6: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = ActiveFieldClrBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 18
+    Top = 83
+    Width = 74
+    BorderSpacing.Left = 10
+    Caption = 'Active field:'
+    ParentColor = False
+  end
+  object ActiveFieldClrBtn: TColorButton
+    AnchorSideLeft.Control = ValidateErrorColourBtn
+    AnchorSideTop.Control = ValueLabelColourBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 199
+    Height = 25
+    Top = 80
+    Width = 571
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object Label7: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = InActiveFieldClrBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 18
+    Top = 118
+    Width = 84
+    BorderSpacing.Left = 10
+    Caption = 'Inactive field:'
+    ParentColor = False
+  end
+  object InActiveFieldClrBtn: TColorButton
+    AnchorSideLeft.Control = ValidateErrorColourBtn
+    AnchorSideTop.Control = ActiveFieldClrBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 199
+    Height = 25
+    Top = 115
+    Width = 571
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+end

@@ -1,0 +1,101 @@
+object SettingsPathsFrame: TSettingsPathsFrame
+  Left = 0
+  Height = 227
+  Top = 0
+  Width = 863
+  ClientHeight = 227
+  ClientWidth = 863
+  TabOrder = 0
+  DesignLeft = 383
+  DesignTop = 316
+  object Label17: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 10
+    Height = 18
+    Top = 10
+    Width = 120
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Default data folder'
+    ParentColor = False
+  end
+  object WorkingDirEdit: TDirectoryEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label17
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 27
+    Top = 30
+    Width = 822
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 0
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 2
+    MaxLength = 0
+    TabOrder = 0
+  end
+  object Label18: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = WorkingDirEdit
+    AnchorSideTop.Side = asrBottom
+    Left = 10
+    Height = 18
+    Top = 67
+    Width = 97
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Tutorials folder:'
+    ParentColor = False
+  end
+  object TutorialDirEdit: TDirectoryEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label18
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = WorkingDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 27
+    Top = 87
+    Width = 822
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 0
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 2
+    MaxLength = 0
+    TabOrder = 1
+  end
+  object Label3: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = TutorialDirEdit
+    AnchorSideTop.Side = asrBottom
+    Left = 10
+    Height = 18
+    Top = 124
+    Width = 108
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Tutorial web URL:'
+    ParentColor = False
+  end
+  object TutorialURLEdit: TEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label3
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = TutorialDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 27
+    Top = 144
+    Width = 822
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 2
+    TabOrder = 2
+  end
+end

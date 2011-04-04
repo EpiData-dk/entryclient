@@ -657,7 +657,9 @@ var
 begin
   for i := 0 to FieldEditList.Count - 1 do
     with TFieldEdit(FieldEditList[i]) do
-      UpdateValueLabel;
+      UpdateSettings;
+  if MainForm.ActiveControl is TFieldEdit then
+    TFieldEdit(MainForm.ActiveControl).Color := EntrySettings.ActiveFieldColour;
 end;
 
 procedure TDataFormFrame.RestoreDefaultPos;
@@ -761,7 +763,7 @@ begin
     end;
 
     // Field is validated - check for Valuelabels and update FieldEdit.
-    FieldEdit.UpdateValueLabel;
+    FieldEdit.UpdateSettings;
 
     Res := FieldExitFlow(FieldEdit, NextFieldEdit);
     case Res of
@@ -836,13 +838,17 @@ begin
       Position := FieldTop - Page + FieldEdit.Height + Delta;
   end;
 
+  FieldEdit.Color := EntrySettings.ActiveFieldColour;
   UpdateFieldPanel(FieldEdit.Field);
   ShowNotes(FieldEdit);
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);
+var
+  FieldEdit: TFieldEdit absolute Sender;
 begin
-  FieldValidate(TFieldEdit(Sender));
+  FieldEdit.Color := EntrySettings.InactiveFieldColour;
+  FieldValidate(FieldEdit);
 end;
 
 procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
@@ -1065,7 +1071,7 @@ begin
       PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
     Exit;
   end else begin
-    FE.Color := clDefault;
+//    FE.Color := clDefault;
     GetHintWindow.Hide;
   end;
 

@@ -190,6 +190,10 @@ object MainForm: TMainForm
       object DefaultPosMenuItem: TMenuItem
         Action = DefaultPosAction
       end
+      object MenuItem1: TMenuItem
+        Caption = 'Old Settings'
+        OnClick = MenuItem1Click
+      end
     end
     object BrowseMenu: TMenuItem
       Caption = '&Browse'

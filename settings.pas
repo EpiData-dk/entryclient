@@ -45,17 +45,27 @@ type
 
 
   TEntrySettings = record
+    // Non-user changeable
+    IniFileName:    string;
+
+    // General:
+    RecordsToSkip:  Integer;
+    HintTimeOut:    Integer;
+    ShowWelcome:    boolean;
+    MultipleInstances: boolean;
+
+    // Paths:
     WorkingDirUTF8: string;
     TutorialDirUTF8: string;
     TutorialURLUTF8: string;
-    RecordsToSkip:  Integer;
-    HintTimeOut:    Integer;
-    IniFileName:    string;
-    ShowWelcome:    boolean;
-    MultipleInstances: boolean;
+
+    // Colours
     ValidateErrorColour: TColor;
     ValueLabelColour: TColor;
+    ActiveFieldColour: TColor;
+    InactiveFieldColour: TColor;
   end;
+  PEntrySettings = ^TEntrySettings;
 
 const
   EntryVersion: TEpiVersionInfo = (
@@ -67,16 +77,21 @@ const
 
 var
   EntrySettings: TEntrySettings = (
+    IniFileName:    '';
+
+    RecordsToSkip:  25;
+    HintTimeOut:    15;
+    ShowWelcome:    true;
+    MultipleInstances: false;
+
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
     TutorialURLUTF8: 'http://epidata.dk/documentation.php';
-    RecordsToSkip:  25;
-    HintTimeOut:    15;
-    IniFileName:    '';
-    ShowWelcome:    true;
-    MultipleInstances: false;
+
     ValidateErrorColour: clYellow;
     ValueLabelColour: clBlue;
+    ActiveFieldColour: clHighlight;
+    InactiveFieldColour: clWhite;
   );
 
   {$IFDEF EPI_SHOWREVISION}

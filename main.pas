@@ -17,6 +17,7 @@ type
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
+    MenuItem1: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
@@ -68,6 +69,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
@@ -104,7 +106,7 @@ implementation
 
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
-  epiversionutils, LCLIntf;
+  epiversionutils, LCLIntf, settings2;
 
 { TMainForm }
 
@@ -132,9 +134,9 @@ end;
 
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
 var
-  SettingsForm: TSettingsForm;
+  SettingsForm: TSettings2Form;
 begin
-  SettingsForm := TSettingsForm.Create(Self);
+  SettingsForm := TSettings2Form.Create(Self);
   SettingsForm.ShowModal;
   SettingsForm.Free;
 
@@ -278,6 +280,9 @@ procedure TMainForm.UpdateMainMenu;
 begin
   SaveProjectMenuItem.Visible := Assigned(FActiveFrame);
   CloseProjectAction.Enabled := Assigned(FActiveFrame);
+  {$IFDEF EPI_RELEASE}
+  MenuItem1.Visible := false;
+  {$ENDIF}
 end;
 
 procedure TMainForm.UpdateSettings;
@@ -364,6 +369,20 @@ end;
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
 begin
   OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:tutorials');
+end;
+
+procedure TMainForm.MenuItem1Click(Sender: TObject);
+var
+  SettingsForm: TSettingsForm;
+begin
+  SettingsForm := TSettingsForm.Create(Self);
+  SettingsForm.ShowModal;
+  SettingsForm.Free;
+
+  LoadTutorials;
+
+  if Assigned(FActiveFrame) then
+    TProjectFrame(FActiveFrame).UpdateSettings;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
