@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
   epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, fieldedit,
-  notes_form;
+  notes_form, search;
 
 type
 
@@ -15,6 +15,9 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    FindPrevAction: TAction;
+    FindNextAction: TAction;
+    FindRecordAction: TAction;
     FieldInfoLabel: TLabel;
     FieldInfoPanel: TPanel;
     FieldTypeLabel: TLabel;
@@ -47,6 +50,9 @@ type
     LastRecSpeedButton: TSpeedButton;
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure FindNextActionExecute(Sender: TObject);
+    procedure FindRecordActionExecute(Sender: TObject);
+    procedure FindPrevActionExecute(Sender: TObject);
     procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
     procedure FirstRecActionUpdate(Sender: TObject);
@@ -76,6 +82,10 @@ type
     function  GetHintWindow: THintWindow;
     function  DoNewRecord: boolean;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
+  private
+    { Search }
+    FRecentSearch: TSearch;
+    procedure DoPerformSearch(Search: TSearch; Idx: Integer);
   private
     { Notes }
     FNotesForm: TNotesForm;
@@ -129,7 +139,7 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, LMessages,
-  dataform_field_calculations;
+  dataform_field_calculations, searchform, resultlist_form;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -173,6 +183,16 @@ begin
   with DataFormScroolBox.VertScrollBar do
     Position := Position - WheelDelta;
   Handled := true;
+end;
+
+procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
+var
+  idx: LongInt;
+begin
+  if not Assigned(FRecentSearch) then exit;
+  FRecentSearch.Direction := sdBackward;
+  Idx := Min(RecNo, FDataFile.Size) - 1;
+  DoPerformSearch(FRecentSearch, Idx);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -269,6 +289,59 @@ end;
 procedure TDataFormFrame.RecordEditEnter(Sender: TObject);
 begin
   RecordEdit.SelectAll;
+end;
+
+procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
+var
+  idx: LongInt;
+begin
+  if not Assigned(FRecentSearch) then exit;
+  FRecentSearch.Direction := sdForward;
+  Idx := Min(RecNo, FDataFile.Size) + 1;
+  DoPerformSearch(FRecentSearch, Idx);
+end;
+
+procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
+var
+  SF: TSearchForm1;
+  RF: TResultListForm;
+  Res: LongInt;
+  idx: LongInt;
+  List: TBoundArray;
+begin
+  try
+    SF := TSearchForm1.Create(Self, DataFile);
+    if MainForm.ActiveControl is TFieldEdit then
+      SF.ActiveField := TFieldEdit(MainForm.ActiveControl).Field;
+    Res := SF.ShowModal;
+    if Res = mrCancel then exit;
+
+    if Res = mrFind then
+    begin
+      // Find single record.
+      FRecentSearch := SF.Search;
+      DoPerformSearch(SF.Search, Min(RecNo, FDataFile.Size));
+    end;
+    if res = mrList then
+    begin
+      FRecentSearch := nil;
+      List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
+      if Length(List) = 0 then exit;
+
+      try
+        RF := TResultListForm.Create(Self, DataFile, FieldEditList);
+        RF.ApplyList(SF.Search, List);
+        if RF.ShowModal <> mrOK then exit;
+
+        if RF.SelectedRecordNo <> -1 then
+          RecNo := RF.SelectedRecordNo ;
+      finally
+        RF.Free;
+      end;
+    end;
+  finally
+    SF.Free;
+  end;
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
@@ -611,6 +684,25 @@ begin
   result := nil;
 end;
 
+procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer);
+var
+  H: THintWindow;
+  R: TRect;
+  P: TPoint;
+begin
+  if not Assigned(Search) then exit;
+  idx := SearchFindNext(Search, Idx);
+  if idx <> -1 then
+    RecNo := idx
+  else begin
+    H := GetHintWindow;
+    R := H.CalcHintRect(0, 'No records found.', nil);
+    P := RecordEdit.ClientToScreen(Point(0,0));
+    OffsetRect(R, P.X, P.Y + RecordEdit.Height);
+    H.ActivateHint(R, 'No records found.');
+  end;
+end;
+
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
 begin
   if not Assigned(FNotesForm) then
@@ -752,7 +844,7 @@ begin
               VK_ADD, VK_F9, VK_OEM_PLUS]) and
      (Shift = [])
   then begin
-    if (Key in [VK_ADD, VK_F9, 187]) and
+    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
        (Assigned(FieldEdit.Field.ValueLabelSet)) and
        (not ShowValueLabelPickList(FieldEdit)) then exit;
 

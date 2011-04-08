@@ -50,7 +50,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="20">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -157,6 +157,25 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings_general_frame"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="search/searchform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SearchForm1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="searchform"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="search/search.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="search"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="search/resultlist_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ResultListForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="resultlist_form"/>
+      </Unit19>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -166,7 +185,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="dataform;settings"/>
+      <OtherUnitFiles Value="dataform;settings;search"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

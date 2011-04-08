@@ -13,6 +13,8 @@ object DataFormFrame: TDataFormFrame
     Height = 605
     Top = 0
     Width = 888
+    HorzScrollBar.Page = 886
+    VertScrollBar.Page = 603
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -222,7 +224,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 4
-        Width = 102
+        Width = 106
         Caption = 'FieldNameLabel'
         ParentColor = False
       end
@@ -248,7 +250,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 4
-        Width = 91
+        Width = 97
         Caption = 'FieldTypeLabel'
         ParentColor = False
       end
@@ -273,7 +275,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 4
-        Width = 86
+        Width = 92
         Caption = 'FieldInfoLabel'
         ParentColor = False
       end
@@ -365,6 +367,24 @@ object DataFormFrame: TDataFormFrame
       Caption = 'Goto Record'
       OnExecute = GotoRecordActionExecute
       ShortCut = 16455
+    end
+    object FindRecordAction: TAction
+      Category = 'Search'
+      Caption = 'Find...'
+      OnExecute = FindRecordActionExecute
+      ShortCut = 16454
+    end
+    object FindNextAction: TAction
+      Category = 'Search'
+      Caption = 'Find Next'
+      OnExecute = FindNextActionExecute
+      ShortCut = 114
+    end
+    object FindPrevAction: TAction
+      Category = 'Search'
+      Caption = 'Find Previous'
+      OnExecute = FindPrevActionExecute
+      ShortCut = 8306
     end
   end
 end

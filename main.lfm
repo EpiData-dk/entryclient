@@ -195,6 +195,18 @@ object MainForm: TMainForm
         OnClick = MenuItem1Click
       end
     end
+    object SearchMenu: TMenuItem
+      Caption = 'Search'
+      object FindMenuItem: TMenuItem
+        Caption = 'New Item35'
+      end
+      object FindNextMenuItem: TMenuItem
+        Caption = 'New Item36'
+      end
+      object FindPrevMenuItem: TMenuItem
+        Caption = 'New Item37'
+      end
+    end
     object BrowseMenu: TMenuItem
       Caption = '&Browse'
       Visible = False

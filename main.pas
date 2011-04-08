@@ -18,6 +18,10 @@ type
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
     MenuItem1: TMenuItem;
+    FindMenuItem: TMenuItem;
+    FindNextMenuItem: TMenuItem;
+    FindPrevMenuItem: TMenuItem;
+    SearchMenu: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
@@ -106,7 +110,7 @@ implementation
 
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
-  epiversionutils, LCLIntf, settings2;
+  epiversionutils, LCLIntf, settings2, searchform;
 
 { TMainForm }
 
@@ -340,6 +344,9 @@ begin
   Left := (Monitor.Width div 2) - (Width div 2);
   EndFormUpdate;
   SaveFormPosition(Self, 'MainForm');
+
+  TSettings2Form.RestoreDefaultPos;
+  TSearchForm1.RestoreDefaultPos;
 
   if Assigned(FActiveFrame) then
     FActiveFrame.RestoreDefaultPos;

@@ -13,6 +13,8 @@ programs=epidataentryclient
 options=-l -dLCL -dLCL$(LCL_PLATFORM) -MObjFPC -Schi -dEPI_SHOWREVISION
 unittargetdir=./lib/$(CPU_TARGET)-$(OS_TARGET)
 unitdir=dataform \
+	settings \
+	search \
 	$(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET) $(LAZ_PATH)/lcl/units/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) \
 	$(CORE_PATH)/lib/$(CPU_TARGET)-$(OS_TARGET) \
 	$(DCPCRYPT_PATH)/lib/$(CPU_TARGET)-$(OS_TARGET) \
@@ -31,7 +33,9 @@ files=$(wildcard $(COMPILER_UNITTARGETDIR)/*$(OEXT)) \
       $(wildcard $(COMPILER_UNITTARGETDIR)/*.lfm) \
       $(wildcard $(COMPILER_UNITTARGETDIR)/*.res) \
       $(wildcard $(COMPILER_UNITTARGETDIR)/*.or) \
+      $(wildcard ./settings/*$(OEXT)) $(wildcard ./settings/*$(PPUEXT)) \
       $(wildcard ./dataform/*$(OEXT)) $(wildcard ./dataform/*$(PPUEXT)) \
+      $(wildcard ./search/*$(OEXT)) $(wildcard ./search/*$(PPUEXT)) \
       $(wildcard *$(OEXT)) $(wildcard *$(PPUEXT)) $(wildcard *$(RSTEXT))
 
 [prerules]

@@ -239,6 +239,7 @@ begin
   // TODO : Adapt to multiple datafiles.
   With MainForm do
   begin
+    // Browse menu
     GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
     // -
     FirstRecordMenuItem.Action := Frame.FirstRecAction;
@@ -248,6 +249,11 @@ begin
     // -
     NewRecordMenuItem.Action   := Frame.NewRecordAction;
     BrowseMenu.Visible := true;
+
+    // Search Menu
+    FindMenuItem.Action        := Frame.FindRecordAction;
+    FindNextMenuItem.Action    := Frame.FindNextAction;
+    FindPrevMenuItem.Action    := Frame.FindPrevAction;
   end;
 end;
 
