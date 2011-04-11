@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, Graphics, Dialogs, Grids,
-  epidatafiles, search;
+  epidatafiles, search, LMessages;
 
 type
 
@@ -14,8 +14,9 @@ type
 
   TResultListForm = class(TForm)
     ListGrid: TStringGrid;
-procedure ListGridDblClick(Sender: TObject);
-procedure ListGridHeaderClick(Sender: TObject; IsColumn: Boolean;
+    procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+    procedure ListGridDblClick(Sender: TObject);
+    procedure ListGridHeaderClick(Sender: TObject; IsColumn: Boolean;
       Index: Integer);
   private
     { private declarations }
@@ -34,7 +35,7 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit;
+  fieldedit, LCLType;
 
 { TResultListForm }
 
@@ -58,6 +59,23 @@ begin
 
   FSelectedRecordNo := StrToInt(ListGrid.Cells[0, P.Y]) - 1;
   ModalResult := mrOk;
+end;
+
+procedure TResultListForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+begin
+  if Msg.CharCode = VK_ESCAPE then
+  begin
+    ModalResult := mrCancel;
+    Handled := true;
+  end;
+
+  if Msg.CharCode = VK_RETURN then
+  begin
+    ModalResult := mrOk;
+    Handled := true;
+
+    FSelectedRecordNo := StrToInt(ListGrid.Cells[0, ListGrid.Row]) - 1;
+  end;
 end;
 
 constructor TResultListForm.Create(TheOwner: TComponent;

@@ -15,6 +15,8 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    FindFastListAction: TAction;
+    FindFastAction: TAction;
     FindPrevAction: TAction;
     FindNextAction: TAction;
     FindRecordAction: TAction;
@@ -50,6 +52,8 @@ type
     LastRecSpeedButton: TSpeedButton;
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure FindFastActionExecute(Sender: TObject);
+    procedure FindFastListActionExecute(Sender: TObject);
     procedure FindNextActionExecute(Sender: TObject);
     procedure FindRecordActionExecute(Sender: TObject);
     procedure FindPrevActionExecute(Sender: TObject);
@@ -85,7 +89,8 @@ type
   private
     { Search }
     FRecentSearch: TSearch;
-    procedure DoPerformSearch(Search: TSearch; Idx: Integer);
+    procedure DoPerformSearch(Search: TSearch; Idx: Integer; Wrap: boolean);
+    function  CreateSearchFromFieldEdits: TSearch;
   private
     { Notes }
     FNotesForm: TNotesForm;
@@ -185,6 +190,38 @@ begin
   Handled := true;
 end;
 
+procedure TDataFormFrame.FindFastActionExecute(Sender: TObject);
+var
+  S: TSearch;
+  Idx: LongInt;
+begin
+  // Search data using current text in field for lookup. Will always be
+  // from first record and forward.
+  S := CreateSearchFromFieldEdits;
+
+  Idx := SearchFindNext(S, 0);
+  if Idx <> -1 then
+    RecNo := Idx;
+end;
+
+procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
+var
+  S: TSearch;
+  Lst: TBoundArray;
+  LF: TResultListForm;
+begin
+  S := CreateSearchFromFieldEdits;
+
+  Lst := SearchFindList(S, 0);
+  if Length(Lst) = 0 then exit;
+
+  LF := TResultListForm.Create(Self, DataFile, FieldEditList);
+  LF.ApplyList(S, Lst);
+  if (LF.ShowModal = mrOK) and (LF.SelectedRecordNo <> -1) then
+    RecNo := LF.SelectedRecordNo;
+  LF.Free;
+end;
+
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
 var
   idx: LongInt;
@@ -192,7 +229,7 @@ begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
   Idx := Min(RecNo, FDataFile.Size) - 1;
-  DoPerformSearch(FRecentSearch, Idx);
+  DoPerformSearch(FRecentSearch, Idx, true);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -298,7 +335,7 @@ begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdForward;
   Idx := Min(RecNo, FDataFile.Size) + 1;
-  DoPerformSearch(FRecentSearch, Idx);
+  DoPerformSearch(FRecentSearch, Idx, true);
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
@@ -312,7 +349,10 @@ begin
   try
     SF := TSearchForm1.Create(Self, DataFile);
     if MainForm.ActiveControl is TFieldEdit then
+    begin
       SF.ActiveField := TFieldEdit(MainForm.ActiveControl).Field;
+      SF.ActiveText := TFieldEdit(MainForm.ActiveControl).Text;
+    end;
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 
@@ -320,7 +360,7 @@ begin
     begin
       // Find single record.
       FRecentSearch := SF.Search;
-      DoPerformSearch(SF.Search, Min(RecNo, FDataFile.Size));
+      DoPerformSearch(SF.Search, Min(RecNo, FDataFile.Size), false);
     end;
     if res = mrList then
     begin
@@ -684,7 +724,8 @@ begin
   result := nil;
 end;
 
-procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer);
+procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer;
+  Wrap: boolean);
 var
   H: THintWindow;
   R: TRect;
@@ -694,13 +735,56 @@ begin
   idx := SearchFindNext(Search, Idx);
   if idx <> -1 then
     RecNo := idx
-  else begin
+  else if wrap then begin
+    case Search.Direction of
+      sdForward:  Idx := 0;
+      sdBackward: Idx := FDataFile.Size - 1;
+    end;
+    Idx := SearchFindNext(Search, Idx);
+    if idx <> -1 then
+    begin
+      RecNo := idx;
+      H := GetHintWindow;
+      R := H.CalcHintRect(0, 'Wrapped search. Reached end of datafile.', nil);
+      P := RecordEdit.ClientToScreen(Point(0,0));
+      OffsetRect(R, P.X, P.Y + RecordEdit.Height);
+      H.ActivateHint(R, 'Wrapped search. Reached end of datafile.');
+    end;
+  end else begin
     H := GetHintWindow;
     R := H.CalcHintRect(0, 'No records found.', nil);
     P := RecordEdit.ClientToScreen(Point(0,0));
     OffsetRect(R, P.X, P.Y + RecordEdit.Height);
     H.ActivateHint(R, 'No records found.');
   end;
+end;
+
+function TDataFormFrame.CreateSearchFromFieldEdits: TSearch;
+var
+  SC: TSearchCondition;
+  i: Integer;
+begin
+  // Search is saved in FRecentSearch!
+  Result := TSearch.Create;
+  Result.DataFile := DataFile;
+  Result.Direction := sdForward;
+  Result.Origin := soBeginning;
+
+  for i := 0 to FieldEditList.Count - 1 do
+  with TFieldEdit(FieldEditList[i]) do
+  begin
+    if (Field.FieldType in AutoFieldTypes) or
+       (Text = '') then continue;
+
+
+    SC := TSearchCondition.Create;
+    SC.BinOp := boAnd;
+    SC.Field := Field;
+    SC.Text := Text;
+    SC.MatchCriteria := mcEq;
+    Result.List.Add(SC);
+  end;
+  FRecentSearch := Result;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);

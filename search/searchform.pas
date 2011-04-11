@@ -55,12 +55,14 @@ type
     procedure ListBtnClick(Sender: TObject);
   private
     FActiveField: TEpiField;
+    FActiveText: String;
     { private declarations }
     FDataFile: TEpiDataFile;
     FSearch: TSearch;
     FSearchConditionList: TList;
     FHintWindow: THintWindow;
     procedure SetActiveField(const AValue: TEpiField);
+    procedure SetActiveText(const AValue: String);
     procedure SetDataFile(const AValue: TEpiDataFile);
     function  DoAddNewSearchCondition: Pointer;
     procedure AddBinOpToCombo(Combo: TComboBox);
@@ -81,6 +83,7 @@ type
     constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile);
     class procedure RestoreDefaultPos;
     property ActiveField: TEpiField read FActiveField write SetActiveField;
+    property ActiveText: String read FActiveText write SetActiveText;
     property Search: TSearch read FSearch;
   end; 
 
@@ -93,7 +96,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings;
+  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils;
 
 type
   TSearchConditions = record
@@ -193,6 +196,14 @@ begin
 
   with PSearchConditions(FSearchConditionList[0])^.FieldListCmb do
     ItemIndex := Items.IndexOfObject(AValue);
+end;
+
+procedure TSearchForm1.SetActiveText(const AValue: String);
+begin
+  if FActiveText = AValue then exit;
+  FActiveText := AValue;
+  with PSearchConditions(FSearchConditionList[0])^.ValueEdit do
+    Text := AValue;
 end;
 
 function TSearchForm1.DoAddNewSearchCondition: Pointer;
@@ -300,7 +311,9 @@ begin
     Items.BeginUpdate;
     Clear;
     for i := 0 to FDataFile.Fields.Count - 1 do
-      AddItem(FDataFile.Field[i].Name, FDataFile.Field[i]);
+      AddItem(FDataFile.Field[i].Name + ': ' +
+              EpiCutString(FDataFile.Field[i].Question.Text, 10),
+        FDataFile.Field[i]);
     Items.EndUpdate;
   end;
 end;

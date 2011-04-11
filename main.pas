@@ -6,10 +6,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame;
+  Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame,
+  LMessages;
+
+
+const
+  LM_CLOSE_PROJECT = LM_USER + 1;
+  LM_OPEN_PROJECT  = LM_USER + 2;
+  LM_OPEN_RECENT   = LM_USER + 3;
 
 type
-
   { TMainForm }
 
   TMainForm = class(TForm)
@@ -93,6 +99,9 @@ type
     procedure UpdateSettings;
     procedure SetCaption;
     procedure OpenRecentMenuItemClick(Sender: TObject);
+    procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
+    procedure LMOpenProject(var Msg: TLMessage); message LM_OPEN_PROJECT;
+    procedure LMOpenRecent(var Msg: TLMessage); message LM_OPEN_RECENT;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -120,20 +129,8 @@ begin
 end;
 
 procedure TMainForm.OpenProjectActionExecute(Sender: TObject);
-var
-  Dlg: TOpenDialog;
 begin
-  Dlg := TOpenDialog.Create(self);
-  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
-  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
-    false, false, false, false, true, true);
-  Dlg.FilterIndex := 0;
-
-  if not Dlg.Execute then exit;
-  if not DoCloseProject then exit;
-
-  DoOpenProject(Dlg.FileName);
-  Dlg.Free;
+  PostMessage(Self.Handle, LM_OPEN_PROJECT, 0, 0);
 end;
 
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
@@ -301,7 +298,37 @@ end;
 
 procedure TMainForm.OpenRecentMenuItemClick(Sender: TObject);
 begin
-  DoOpenProject(ExpandFileNameUTF8(TMenuItem(Sender).Caption));
+  PostMessage(Self.Handle, LM_OPEN_RECENT, WParam(Sender), 0);
+end;
+
+procedure TMainForm.LMCLoseProject(var Msg: TLMessage);
+begin
+  DoCloseProject;
+end;
+
+procedure TMainForm.LMOpenProject(var Msg: TLMessage);
+var
+  Dlg: TOpenDialog;
+begin
+  Dlg := TOpenDialog.Create(self);
+  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
+  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
+    false, false, false, false, true, true);
+  Dlg.FilterIndex := 0;
+
+  if not Dlg.Execute then exit;
+  if not DoCloseProject then exit;
+
+  DoOpenProject(Dlg.FileName);
+  Dlg.Free;
+end;
+
+procedure TMainForm.LMOpenRecent(var Msg: TLMessage);
+var
+  MI: TMenuItem;
+begin
+  MI := TMenuItem(Msg.WParam);
+  DoOpenProject(ExpandFileNameUTF8(MI.Caption));
 end;
 
 constructor TMainForm.Create(TheOwner: TComponent);
@@ -473,7 +500,7 @@ end;
 
 procedure TMainForm.CloseProjectActionExecute(Sender: TObject);
 begin
-  DoCloseProject;
+  PostMessage(Self.Handle, LM_CLOSE_PROJECT, 0, 0);
 end;
 
 procedure TMainForm.CopyProjectInfoActionExecute(Sender: TObject);
