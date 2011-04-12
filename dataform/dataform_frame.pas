@@ -15,6 +15,9 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    DeleteLabel: TLabel;
+    DeletePanel: TPanel;
+    ShowFieldNotesAction: TAction;
     FindFastListAction: TAction;
     FindFastAction: TAction;
     FindPrevAction: TAction;
@@ -52,6 +55,7 @@ type
     LastRecSpeedButton: TSpeedButton;
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure DeleteRecSpeedButtonClick(Sender: TObject);
     procedure FindFastActionExecute(Sender: TObject);
     procedure FindFastListActionExecute(Sender: TObject);
     procedure FindNextActionExecute(Sender: TObject);
@@ -67,25 +71,32 @@ type
     procedure LastRecActionExecute(Sender: TObject);
     procedure LastRecActionUpdate(Sender: TObject);
     procedure NewRecordActionExecute(Sender: TObject);
+    procedure NewRecordActionUpdate(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
     procedure PageDownActionExecute(Sender: TObject);
     procedure PageUpActionExecute(Sender: TObject);
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
+    procedure ShowFieldNotesActionExecute(Sender: TObject);
+    procedure ShowFieldNotesActionUpdate(Sender: TObject);
   private
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
     FRecNo: integer;
-    FHintWindow: THintWindow;
     procedure SetDataFile(const AValue: TEpiDataFile);
     procedure LoadRecord(RecordNo: Integer);
     procedure UpdateRecordEdit;
+    procedure UpdateRecActionPanel;
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
-    function  GetHintWindow: THintWindow;
     function  DoNewRecord: boolean;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
+  private
+    { Hint }
+    FHintWindow: THintWindow;
+    function  GetHintWindow: THintWindow;
+    procedure ShowHintMsg(Const Msg: string; Const Ctrl: TControl);
   private
     { Search }
     FRecentSearch: TSearch;
@@ -190,6 +201,14 @@ begin
   Handled := true;
 end;
 
+procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);
+begin
+  if RecNo = NewRecord then exit;
+
+  FDataFile.Deleted[RecNo] := not FDataFile.Deleted[RecNo];
+  UpdateRecordEdit;
+end;
+
 procedure TDataFormFrame.FindFastActionExecute(Sender: TObject);
 var
   S: TSearch;
@@ -198,10 +217,7 @@ begin
   // Search data using current text in field for lookup. Will always be
   // from first record and forward.
   S := CreateSearchFromFieldEdits;
-
-  Idx := SearchFindNext(S, 0);
-  if Idx <> -1 then
-    RecNo := Idx;
+  DoPerformSearch(S, 0, false);
 end;
 
 procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
@@ -209,11 +225,16 @@ var
   S: TSearch;
   Lst: TBoundArray;
   LF: TResultListForm;
+  H: THintWindow;
 begin
   S := CreateSearchFromFieldEdits;
 
   Lst := SearchFindList(S, 0);
-  if Length(Lst) = 0 then exit;
+  if Length(Lst) = 0 then
+  begin
+    ShowHintMsg('No records found', RecordEdit);
+    exit;
+  end;
 
   LF := TResultListForm.Create(Self, DataFile, FieldEditList);
   LF.ApplyList(S, Lst);
@@ -287,6 +308,12 @@ begin
   FE.SetFocus;
 end;
 
+procedure TDataFormFrame.NewRecordActionUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled := (RecNo <> NewRecord);
+  NewRecSpeedButton.ShowHint := (RecNo <> NewRecord);
+end;
+
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
 begin
   RecNo := RecNo + 1;
@@ -326,6 +353,21 @@ end;
 procedure TDataFormFrame.RecordEditEnter(Sender: TObject);
 begin
   RecordEdit.SelectAll;
+end;
+
+procedure TDataFormFrame.ShowFieldNotesActionExecute(Sender: TObject);
+begin
+  if MainForm.ActiveControl is TFieldEdit then
+    ShowNotes(TFieldEdit(MainForm.ActiveControl), true);
+end;
+
+procedure TDataFormFrame.ShowFieldNotesActionUpdate(Sender: TObject);
+var
+  LAction: TAction absolute Sender;
+begin
+  LAction.Enabled :=
+    (MainForm.ActiveControl is TFieldEdit) and
+    (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');
 end;
 
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
@@ -504,15 +546,31 @@ begin
       RecordEdit.Text :=
         Format('%d / %d', [RecNo + 1, DataFile.Size]);
   end;
+  UpdateRecActionPanel;
 
   if DataFile.Size = 0 then
     RecordEdit.Text := 'Empty';
+end;
+
+procedure TDataFormFrame.UpdateRecActionPanel;
+var
+  B: Boolean;
+begin
+  B := RecNo <> NewRecord;
+  DeleteRecSpeedButton.Enabled  := B;
+  DeleteRecSpeedButton.ShowHint := B;
+
+  B := B and FDataFile.Deleted[RecNo];
+  DeleteRecSpeedButton.Hint := BoolToStr(B, 'UnDelete', 'Delete');
+  DeleteLabel.Caption       := BoolToStr(B, 'DEL',      '');
 end;
 
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
   result := TGroupBox.Create(DataFormScroolBox);
+
+  Move();
 
   with EpiControl do
   begin
@@ -633,9 +691,28 @@ begin
   begin
     FHintWindow := THintWindow.Create(self);
     FHintWindow.AutoHide := true;
+    FHintWindow.HideInterval := EntrySettings.HintTimeOut * 1000; //TTimer.interval is in millisecs.
   end;
-  FHintWindow.HideInterval := EntrySettings.HintTimeOut * 1000; //TTimer.interval is in millisecs.
   result := FHintWindow;
+end;
+
+procedure TDataFormFrame.ShowHintMsg(const Msg: string; const Ctrl: TControl);
+var
+  H: THintWindow;
+  R: TRect;
+  P: TPoint;
+begin
+  H := GetHintWindow;
+  if (Msg = '') or (Ctrl = nil) then
+  begin
+    H.Hide;
+    Exit;
+  end;
+
+  R := H.CalcHintRect(0, Msg, nil);
+  P := Ctrl.ClientToScreen(Point(0,0));
+  OffsetRect(R, P.X, P.Y + Ctrl.Height);
+  H.ActivateHint(R, Msg);
 end;
 
 function TDataFormFrame.DoNewRecord: boolean;
@@ -744,18 +821,10 @@ begin
     if idx <> -1 then
     begin
       RecNo := idx;
-      H := GetHintWindow;
-      R := H.CalcHintRect(0, 'Wrapped search. Reached end of datafile.', nil);
-      P := RecordEdit.ClientToScreen(Point(0,0));
-      OffsetRect(R, P.X, P.Y + RecordEdit.Height);
-      H.ActivateHint(R, 'Wrapped search. Reached end of datafile.');
+      ShowHintMsg('Wrapped search. Reached end of datafile', RecordEdit);
     end;
   end else begin
-    H := GetHintWindow;
-    R := H.CalcHintRect(0, 'No records found.', nil);
-    P := RecordEdit.ClientToScreen(Point(0,0));
-    OffsetRect(R, P.X, P.Y + RecordEdit.Height);
-    H.ActivateHint(R, 'No records found.');
+    ShowHintMsg('No records found', RecordEdit);
   end;
 end;
 
@@ -922,7 +991,7 @@ var
   end;
 
 begin
-  GetHintWindow.Hide;
+  ShowHintMsg('', nil);
 
   if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
               VK_ADD, VK_F9, VK_OEM_PLUS]) and
@@ -958,12 +1027,6 @@ begin
     end;
     FieldEnterFlow(NextFieldEdit);
     NextFieldEdit.SetFocus;
-    Key := VK_UNKNOWN;
-  end;
-
-  if (Key = VK_F12) and (Shift = []) then
-  begin
-    ShowNotes(FieldEdit, true);
     Key := VK_UNKNOWN;
   end;
 
@@ -1251,7 +1314,7 @@ begin
       PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
     Exit;
   end else begin
-    GetHintWindow.Hide;
+    ShowHintMsg('', nil);
   end;
 
   if (not IgnoreMustEnter) and
@@ -1268,15 +1331,8 @@ procedure TDataFormFrame.FieldValidateError(Sender: TObject; const Msg: string
   );
 var
   FE: TFieldEdit absolute Sender;
-  H: THintWindow;
-  R: TRect;
-  P: TPoint;
 begin
-  H := GetHintWindow;
-  R := H.CalcHintRect(0, Msg, nil);
-  P := FE.ClientToScreen(Point(0,0));
-  OffsetRect(R, P.X, P.Y + FE.Height);
-  H.ActivateHint(R, Msg);
+  ShowHintMsg(Msg, FE);
 end;
 
 procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);

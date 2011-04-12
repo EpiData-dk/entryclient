@@ -254,6 +254,10 @@ begin
     FindMenuItem.Action        := Frame.FindRecordAction;
     FindNextMenuItem.Action    := Frame.FindNextAction;
     FindPrevMenuItem.Action    := Frame.FindPrevAction;
+
+    // Help menu.
+    FieldNotesMenuItem.Action  := Frame.ShowFieldNotesAction;
+    FieldNotesMenuItem.Action.Update;
   end;
 end;
 

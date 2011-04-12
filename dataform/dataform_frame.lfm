@@ -1,18 +1,20 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 635
+  Height = 637
   Top = 0
-  Width = 888
-  ClientHeight = 635
-  ClientWidth = 888
+  Width = 1012
+  ClientHeight = 637
+  ClientWidth = 1012
   TabOrder = 0
-  DesignLeft = 438
-  DesignTop = 316
+  DesignLeft = 592
+  DesignTop = 259
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 605
+    Height = 607
     Top = 0
-    Width = 888
+    Width = 1012
+    HorzScrollBar.Page = 1010
+    VertScrollBar.Page = 605
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -22,13 +24,14 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 605
-    Width = 888
+    Top = 607
+    Width = 1012
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 888
+    ClientWidth = 1012
     TabOrder = 1
     object NavigationPanel: TPanel
+      AnchorSideLeft.Control = InformationPanel
       Left = 1
       Height = 24
       Top = 3
@@ -155,10 +158,13 @@ object DataFormFrame: TDataFormFrame
       end
     end
     object RecActionPanel: TPanel
-      Left = 220
+      AnchorSideLeft.Control = NavigationPanel
+      AnchorSideLeft.Side = asrBottom
+      Left = 219
       Height = 24
       Top = 3
       Width = 48
+      BorderSpacing.Left = 2
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 48
@@ -168,7 +174,8 @@ object DataFormFrame: TDataFormFrame
         Height = 22
         Top = 1
         Width = 22
-        Enabled = False
+        Action = NewRecordAction
+        Flat = True
         Glyph.Data = {
           46010000424D460100000000000076000000280000001E0000000D0000000100
           040000000000D000000000000000000000001000000010000000000000000000
@@ -183,13 +190,16 @@ object DataFormFrame: TDataFormFrame
           33333333333333333300
         }
         NumGlyphs = 2
+        ShowCaption = False
+        ShowHint = True
+        ParentShowHint = False
       end
       object DeleteRecSpeedButton: TSpeedButton
         Left = 24
         Height = 22
         Top = 1
         Width = 22
-        Enabled = False
+        Flat = True
         Glyph.Data = {
           46010000424D460100000000000076000000280000001E0000000D0000000100
           040000000000D000000000000000000000001000000010000000000000000000
@@ -204,25 +214,44 @@ object DataFormFrame: TDataFormFrame
           33333333333333333300
         }
         NumGlyphs = 2
+        Spacing = 0
+        OnClick = DeleteRecSpeedButtonClick
+        ShowCaption = False
+        ShowHint = True
+        ParentShowHint = False
       end
     end
     object FieldNamePanel: TPanel
-      Left = 270
+      AnchorSideLeft.Control = DeletePanel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Control = FieldTypePanel
+      Left = 306
       Height = 24
       Top = 3
-      Width = 146
+      Width = 484
       Alignment = taLeftJustify
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 146
+      ClientWidth = 484
       Color = clWhite
+      Constraints.MinWidth = 80
       ParentColor = False
       TabOrder = 2
       object FieldNameLabel: TLabel
-        Left = 4
+        AnchorSideLeft.Control = FieldNamePanel
+        AnchorSideTop.Control = FieldNamePanel
+        AnchorSideTop.Side = asrCenter
+        AnchorSideBottom.Control = FieldNamePanel
+        AnchorSideBottom.Side = asrCenter
+        Left = 6
         Height = 18
-        Top = 4
-        Width = 102
+        Top = 3
+        Width = 106
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
         ParentColor = False
       end
@@ -230,25 +259,27 @@ object DataFormFrame: TDataFormFrame
     object FieldTypePanel: TPanel
       AnchorSideLeft.Side = asrBottom
       AnchorSideRight.Control = FieldInfoPanel
-      Left = 418
+      Left = 792
       Height = 24
       Top = 3
-      Width = 365
+      Width = 115
       Alignment = taLeftJustify
-      Anchors = [akTop, akLeft, akRight]
+      Anchors = [akTop, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 365
+      ClientWidth = 115
       Color = clWhite
       ParentColor = False
       TabOrder = 3
       object FieldTypeLabel: TLabel
+        AnchorSideTop.Control = FieldTypePanel
+        AnchorSideTop.Side = asrCenter
         Left = 4
         Height = 18
-        Top = 4
-        Width = 91
+        Top = 3
+        Width = 97
         Caption = 'FieldTypeLabel'
         ParentColor = False
       end
@@ -256,7 +287,7 @@ object DataFormFrame: TDataFormFrame
     object FieldInfoPanel: TPanel
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 785
+      Left = 909
       Height = 24
       Top = 3
       Width = 100
@@ -270,12 +301,49 @@ object DataFormFrame: TDataFormFrame
       ParentColor = False
       TabOrder = 4
       object FieldInfoLabel: TLabel
+        AnchorSideTop.Control = FieldInfoPanel
+        AnchorSideTop.Side = asrCenter
         Left = 4
         Height = 18
-        Top = 4
-        Width = 86
+        Top = 3
+        Width = 92
         Caption = 'FieldInfoLabel'
         ParentColor = False
+      end
+    end
+    object DeletePanel: TPanel
+      AnchorSideLeft.Control = RecActionPanel
+      AnchorSideLeft.Side = asrBottom
+      Left = 269
+      Height = 24
+      Top = 3
+      Width = 35
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 2
+      BevelOuter = bvLowered
+      ClientHeight = 24
+      ClientWidth = 35
+      Color = clWhite
+      ParentColor = False
+      TabOrder = 5
+      object DeleteLabel: TLabel
+        AnchorSideLeft.Control = DeletePanel
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = DeletePanel
+        AnchorSideTop.Side = asrCenter
+        AnchorSideBottom.Control = FieldNamePanel
+        AnchorSideBottom.Side = asrCenter
+        Left = -22
+        Height = 18
+        Top = 3
+        Width = 79
+        BorderSpacing.Left = 5
+        Caption = 'DeleteLabel'
+        Color = clDefault
+        Font.Color = clRed
+        ParentColor = False
+        ParentFont = False
+        Transparent = False
       end
     end
   end
@@ -357,7 +425,9 @@ object DataFormFrame: TDataFormFrame
     object NewRecordAction: TAction
       Category = 'Record'
       Caption = 'New Record'
+      Hint = 'New Record'
       OnExecute = NewRecordActionExecute
+      OnUpdate = NewRecordActionUpdate
       ShortCut = 16462
     end
     object GotoRecordAction: TAction
@@ -397,6 +467,13 @@ object DataFormFrame: TDataFormFrame
       Hint = 'Find list of records matching current entry'
       OnExecute = FindFastListActionExecute
       ShortCut = 16460
+    end
+    object ShowFieldNotesAction: TAction
+      Category = 'Field'
+      Caption = 'Show Field Notes'
+      OnExecute = ShowFieldNotesActionExecute
+      OnUpdate = ShowFieldNotesActionUpdate
+      ShortCut = 123
     end
   end
 end

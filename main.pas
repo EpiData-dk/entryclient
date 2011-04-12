@@ -27,6 +27,8 @@ type
     FindMenuItem: TMenuItem;
     FindNextMenuItem: TMenuItem;
     FindPrevMenuItem: TMenuItem;
+    FieldNotesDivider: TMenuItem;
+    FieldNotesMenuItem: TMenuItem;
     SearchMenu: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
@@ -281,6 +283,9 @@ procedure TMainForm.UpdateMainMenu;
 begin
   SaveProjectMenuItem.Visible := Assigned(FActiveFrame);
   CloseProjectAction.Enabled := Assigned(FActiveFrame);
+
+  FieldNotesMenuItem.Visible := Assigned(FActiveFrame);
+  FieldNotesDivider.Visible := Assigned(FActiveFrame);
   {$IFDEF EPI_RELEASE}
   MenuItem1.Visible := false;
   {$ENDIF}

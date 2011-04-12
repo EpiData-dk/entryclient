@@ -272,6 +272,12 @@ object MainForm: TMainForm
       object HelpMenuDivider2: TMenuItem
         Caption = '-'
       end
+      object FieldNotesMenuItem: TMenuItem
+        Caption = 'FieldNotes'
+      end
+      object FieldNotesDivider: TMenuItem
+        Caption = '-'
+      end
       object AboutMenuItem: TMenuItem
         Action = AboutAction
       end
