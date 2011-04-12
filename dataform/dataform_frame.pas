@@ -569,9 +569,6 @@ function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
   result := TGroupBox.Create(DataFormScroolBox);
-
-  Move();
-
   with EpiControl do
   begin
     Result.Top := Top;
