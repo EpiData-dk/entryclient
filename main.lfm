@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 415
+  Left = 354
   Height = 642
-  Top = 255
+  Top = 208
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617

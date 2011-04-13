@@ -6,15 +6,13 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 637
   ClientWidth = 1012
   TabOrder = 0
-  DesignLeft = 592
-  DesignTop = 259
+  DesignLeft = 323
+  DesignTop = 209
   object DataFormScroolBox: TScrollBox
     Left = 0
     Height = 607
     Top = 0
     Width = 1012
-    HorzScrollBar.Page = 1010
-    VertScrollBar.Page = 605
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -249,7 +247,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 18
         Top = 3
-        Width = 106
+        Width = 102
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
@@ -279,7 +277,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 3
-        Width = 97
+        Width = 91
         Caption = 'FieldTypeLabel'
         ParentColor = False
       end
@@ -306,7 +304,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 3
-        Width = 92
+        Width = 86
         Caption = 'FieldInfoLabel'
         ParentColor = False
       end
@@ -333,10 +331,10 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
-        Left = -22
+        Left = -21
         Height = 18
         Top = 3
-        Width = 79
+        Width = 77
         BorderSpacing.Left = 5
         Caption = 'DeleteLabel'
         Color = clDefault
@@ -454,11 +452,11 @@ object DataFormFrame: TDataFormFrame
       OnExecute = FindPrevActionExecute
       ShortCut = 8306
     end
-    object FindFastAction: TAction
+    object FindRecordExAction: TAction
       Category = 'Search'
       Caption = 'Lookup'
       Hint = 'Find record matching current entry'
-      OnExecute = FindFastActionExecute
+      OnExecute = FindRecordExActionExecute
       ShortCut = 16454
     end
     object FindFastListAction: TAction

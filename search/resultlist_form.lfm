@@ -1,7 +1,7 @@
 object ResultListForm: TResultListForm
-  Left = 559
+  Left = 475
   Height = 573
-  Top = 333
+  Top = 255
   Width = 765
   Caption = 'ResultListForm'
   ClientHeight = 573

@@ -286,6 +286,8 @@ begin
 
   FieldNotesMenuItem.Visible := Assigned(FActiveFrame);
   FieldNotesDivider.Visible := Assigned(FActiveFrame);
+
+  SearchMenu.Visible := Assigned(FActiveFrame);
   {$IFDEF EPI_RELEASE}
   MenuItem1.Visible := false;
   {$ENDIF}

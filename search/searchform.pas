@@ -61,7 +61,9 @@ type
     FSearch: TSearch;
     FSearchConditionList: TList;
     FHintWindow: THintWindow;
+    FActiveFields: TStringList;
     procedure SetActiveField(const AValue: TEpiField);
+    procedure SetActiveFields(const AValue: TStringList);
     procedure SetActiveText(const AValue: String);
     procedure SetDataFile(const AValue: TEpiDataFile);
     function  DoAddNewSearchCondition: Pointer;
@@ -84,6 +86,7 @@ type
     class procedure RestoreDefaultPos;
     property ActiveField: TEpiField read FActiveField write SetActiveField;
     property ActiveText: String read FActiveText write SetActiveText;
+    property ActiveFields: TStringList read FActiveFields write SetActiveFields;
     property Search: TSearch read FSearch;
   end; 
 
@@ -196,6 +199,31 @@ begin
 
   with PSearchConditions(FSearchConditionList[0])^.FieldListCmb do
     ItemIndex := Items.IndexOfObject(AValue);
+end;
+
+procedure TSearchForm1.SetActiveFields(const AValue: TStringList);
+var
+  i: Integer;
+begin
+  if FActiveFields = AValue then exit;
+  FActiveFields := AValue;
+
+  if FActiveFields.Count <= 0 then exit;
+
+  SetActiveField(TEpiField(FActiveFields.Objects[0]));
+  SetActiveText(FActiveFields[0]);
+
+  for i := 1 to FActiveFields.Count - 1 do
+  begin
+    with PSearchConditions(DoAddNewSearchCondition)^ do
+    begin
+      with FieldListCmb do
+        ItemIndex := Items.IndexOfObject(FActiveFields.Objects[i]);
+      with ValueEdit do
+        Text := FActiveFields[i];
+    end;
+  end;
+  UpdateSearchLabel;
 end;
 
 procedure TSearchForm1.SetActiveText(const AValue: String);
@@ -311,9 +339,11 @@ begin
     Items.BeginUpdate;
     Clear;
     for i := 0 to FDataFile.Fields.Count - 1 do
-      AddItem(FDataFile.Field[i].Name + ': ' +
-              EpiCutString(FDataFile.Field[i].Question.Text, 10),
-        FDataFile.Field[i]);
+      AddItem(FDataFile.Field[i].Name +
+              BoolToStr(FDataFile.Field[i].Question.Text <> '',
+                ': ' + EpiCutString(FDataFile.Field[i].Question.Text, 10),
+                ''),
+              FDataFile.Field[i]);
     Items.EndUpdate;
   end;
 end;

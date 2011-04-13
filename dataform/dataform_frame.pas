@@ -19,7 +19,7 @@ type
     DeletePanel: TPanel;
     ShowFieldNotesAction: TAction;
     FindFastListAction: TAction;
-    FindFastAction: TAction;
+    FindRecordExAction: TAction;
     FindPrevAction: TAction;
     FindNextAction: TAction;
     FindRecordAction: TAction;
@@ -56,7 +56,7 @@ type
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure DeleteRecSpeedButtonClick(Sender: TObject);
-    procedure FindFastActionExecute(Sender: TObject);
+    procedure FindRecordExActionExecute(Sender: TObject);
     procedure FindFastListActionExecute(Sender: TObject);
     procedure FindNextActionExecute(Sender: TObject);
     procedure FindRecordActionExecute(Sender: TObject);
@@ -102,6 +102,7 @@ type
     FRecentSearch: TSearch;
     procedure DoPerformSearch(Search: TSearch; Idx: Integer; Wrap: boolean);
     function  CreateSearchFromFieldEdits: TSearch;
+    function  DoSearchForm(Search: TSearch): Word;
   private
     { Notes }
     FNotesForm: TNotesForm;
@@ -209,15 +210,14 @@ begin
   UpdateRecordEdit;
 end;
 
-procedure TDataFormFrame.FindFastActionExecute(Sender: TObject);
+procedure TDataFormFrame.FindRecordExActionExecute(Sender: TObject);
 var
   S: TSearch;
-  Idx: LongInt;
 begin
   // Search data using current text in field for lookup. Will always be
   // from first record and forward.
   S := CreateSearchFromFieldEdits;
-  DoPerformSearch(S, 0, false);
+  DoSearchForm(S);
 end;
 
 procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
@@ -239,7 +239,10 @@ begin
   LF := TResultListForm.Create(Self, DataFile, FieldEditList);
   LF.ApplyList(S, Lst);
   if (LF.ShowModal = mrOK) and (LF.SelectedRecordNo <> -1) then
+  begin
+    Modified := false;
     RecNo := LF.SelectedRecordNo;
+  end;
   LF.Free;
 end;
 
@@ -381,49 +384,8 @@ begin
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
-var
-  SF: TSearchForm1;
-  RF: TResultListForm;
-  Res: LongInt;
-  idx: LongInt;
-  List: TBoundArray;
 begin
-  try
-    SF := TSearchForm1.Create(Self, DataFile);
-    if MainForm.ActiveControl is TFieldEdit then
-    begin
-      SF.ActiveField := TFieldEdit(MainForm.ActiveControl).Field;
-      SF.ActiveText := TFieldEdit(MainForm.ActiveControl).Text;
-    end;
-    Res := SF.ShowModal;
-    if Res = mrCancel then exit;
-
-    if Res = mrFind then
-    begin
-      // Find single record.
-      FRecentSearch := SF.Search;
-      DoPerformSearch(SF.Search, Min(RecNo, FDataFile.Size), false);
-    end;
-    if res = mrList then
-    begin
-      FRecentSearch := nil;
-      List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
-      if Length(List) = 0 then exit;
-
-      try
-        RF := TResultListForm.Create(Self, DataFile, FieldEditList);
-        RF.ApplyList(SF.Search, List);
-        if RF.ShowModal <> mrOK then exit;
-
-        if RF.SelectedRecordNo <> -1 then
-          RecNo := RF.SelectedRecordNo ;
-      finally
-        RF.Free;
-      end;
-    end;
-  finally
-    SF.Free;
-  end;
+  DoSearchForm(nil);
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
@@ -851,6 +813,63 @@ begin
     Result.List.Add(SC);
   end;
   FRecentSearch := Result;
+end;
+
+function TDataFormFrame.DoSearchForm(Search: TSearch): Word;
+var
+  SF: TSearchForm1;
+  RF: TResultListForm;
+  Res: LongInt;
+  idx: LongInt;
+  List: TBoundArray;
+  L: TStringList;
+  i: Integer;
+begin
+  try
+    SF := TSearchForm1.Create(Self, DataFile);
+
+    L := nil;
+    if Assigned(Search) then
+    begin
+      L := TStringList.Create;
+      for i := 0 to Search.List.Count - 1 do
+      with Search.SearchCondiction[i] do
+        L.AddObject(Text, Field);
+    end;
+
+    SF.ActiveFields := L;
+    Res := SF.ShowModal;
+    if Res = mrCancel then exit;
+
+    if Res = mrFind then
+    begin
+      // Find single record.
+      FRecentSearch := SF.Search;
+      DoPerformSearch(SF.Search, Min(RecNo, FDataFile.Size), false);
+    end;
+    if res = mrList then
+    begin
+      FRecentSearch := nil;
+      List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
+      if Length(List) = 0 then exit;
+
+      try
+        RF := TResultListForm.Create(Self, DataFile, FieldEditList);
+        RF.ApplyList(SF.Search, List);
+        if RF.ShowModal <> mrOK then exit;
+
+        if RF.SelectedRecordNo <> -1 then
+        begin
+          Modified := false;
+          RecNo := RF.SelectedRecordNo ;
+        end;
+      finally
+        RF.Free;
+      end;
+    end;
+  finally
+    SF.Free;
+  end;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
