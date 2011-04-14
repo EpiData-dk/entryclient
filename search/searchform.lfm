@@ -35,7 +35,7 @@ object SearchForm1: TSearchForm1
     Left = 10
     Height = 18
     Top = 10
-    Width = 121
+    Width = 123
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Previous searches:'
@@ -66,6 +66,8 @@ object SearchForm1: TSearchForm1
       Height = 276
       Top = 0
       Width = 627
+      HorzScrollBar.Page = 627
+      VertScrollBar.Page = 276
       Align = alClient
       BorderStyle = bsNone
       ClientHeight = 276
@@ -78,7 +80,7 @@ object SearchForm1: TSearchForm1
         Left = 96
         Height = 18
         Top = 10
-        Width = 33
+        Width = 36
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -92,7 +94,7 @@ object SearchForm1: TSearchForm1
         Left = 250
         Height = 18
         Top = 10
-        Width = 92
+        Width = 95
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -106,7 +108,7 @@ object SearchForm1: TSearchForm1
         Left = 422
         Height = 18
         Top = 10
-        Width = 40
+        Width = 41
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -239,7 +241,7 @@ object SearchForm1: TSearchForm1
         Left = 10
         Height = 18
         Top = 10
-        Width = 68
+        Width = 69
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 5
         Caption = 'Operation:'
@@ -437,10 +439,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 606
+      Left = 605
       Height = 29
       Top = 11
-      Width = 34
+      Width = 35
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -453,10 +455,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = ListBtn
-      Left = 559
+      Left = 556
       Height = 29
       Top = 11
-      Width = 37
+      Width = 39
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -469,10 +471,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FindBtn
-      Left = 469
-      Height = 34
-      Top = 8
-      Width = 80
+      Left = 467
+      Height = 32
+      Top = 9
+      Width = 79
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10

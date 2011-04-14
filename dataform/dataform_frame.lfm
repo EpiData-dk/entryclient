@@ -13,6 +13,8 @@ object DataFormFrame: TDataFormFrame
     Height = 607
     Top = 0
     Width = 1012
+    HorzScrollBar.Page = 1010
+    VertScrollBar.Page = 605
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -247,7 +249,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 18
         Top = 3
-        Width = 102
+        Width = 106
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
@@ -277,7 +279,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 3
-        Width = 91
+        Width = 97
         Caption = 'FieldTypeLabel'
         ParentColor = False
       end
@@ -304,7 +306,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 18
         Top = 3
-        Width = 86
+        Width = 92
         Caption = 'FieldInfoLabel'
         ParentColor = False
       end
@@ -331,10 +333,10 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
-        Left = -21
+        Left = -22
         Height = 18
         Top = 3
-        Width = 77
+        Width = 79
         BorderSpacing.Left = 5
         Caption = 'DeleteLabel'
         Color = clDefault

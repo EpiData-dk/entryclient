@@ -41,12 +41,15 @@ type
     function    SeparatorCount: integer; virtual;
     function    UseSigns: boolean; virtual;
     function    ValidateError(const ErrorMsg: string): boolean;
+    function    DoValidateSyntax: boolean; virtual;
+    function    DoValidateRange: boolean; virtual;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
     function    ValidateEntry: boolean; virtual;
     procedure   Commit;
     procedure   UpdateSettings;
+    function    CompareTo(Const AText: string; ct: TEpiComparisonType): boolean; virtual;
     property    Field: TEpiField read FField write SetField;
     property    RecNo: integer read FRecNo write SetRecNo;
     property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
@@ -60,8 +63,11 @@ type
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
     function    Characters: TCharSet; override;
     function    UseSigns: boolean; override;
+    function    DoValidateSyntax: boolean; override;
+    function    DoValidateRange: boolean; override;
   public
-    function    ValidateEntry: boolean; override;
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+       override;
   end;
 
   { TFloatEdit }
@@ -74,16 +80,17 @@ type
     function    SeparatorCount: integer; override;
     function    UseSigns: boolean; override;
     procedure   UpdateText; override;
+    function    DoValidateSyntax: boolean; override;
+    function    DoValidateRange: boolean; override;
   public
-    function    ValidateEntry: boolean; override;
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+       override;
   end;
 
   { TStringEdit }
   TStringEdit = class(TFieldEdit)
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
-  public
-    function    ValidateEntry: boolean; override;
   end;
 
   { TDateEdit }
@@ -94,8 +101,11 @@ type
     function    Characters: TCharSet; override;
     function    Separators: TCharArray; override;
     function    SeparatorCount: integer; override;
+    function    DoValidateSyntax: boolean; override;
+    function    DoValidateRange: boolean; override;
   public
-    function    ValidateEntry: boolean; override;
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+      override;
   end;
 
   { TTimeEdit }
@@ -106,8 +116,11 @@ type
     function    Characters: TCharSet; override;
     function    Separators: TCharArray; override;
     function    SeparatorCount: integer; override;
+    function    DoValidateSyntax: boolean; override;
+    function    DoValidateRange: boolean; override;
   public
-    function    ValidateEntry: boolean; override;
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+       override;
   end;
 
   { TBoolEdit }
@@ -116,8 +129,6 @@ type
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
     function    Characters: TCharSet; override;
-  public
-    function    ValidateEntry: boolean; override;
   end;
 
 implementation
@@ -125,7 +136,7 @@ implementation
 uses
   Forms, epidatafilestypes, LCLProc, strutils,
   epidocument, episettings, dataform_frame,
-  epiconvertutils, settings;
+  epiconvertutils, settings, math;
 
 { TFieldEdit }
 
@@ -348,6 +359,16 @@ begin
     OnValidateError(Self, ErrorMsg);
 end;
 
+function TFieldEdit.DoValidateSyntax: boolean;
+begin
+  result := true;
+end;
+
+function TFieldEdit.DoValidateRange: boolean;
+begin
+  result := true;
+end;
+
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -370,10 +391,36 @@ var
   S: string;
 begin
   result := true;
+  if not Modified then exit;
 
+  // Always accept empty/system-missing in syntax validate.
+  // handling must enter is done elsewhere.
   S := Trim(Text);
   if (S = '.') or (S = '') then
+  begin
     Text := '';
+    Exit;
+  end;
+
+  // Syntax validation.
+  Result := DoValidateSyntax;
+  if not Result then exit;
+
+  // Valuelabel/Range validation
+  if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
+  begin
+    if not ((FField.ValueLabelSet.ValueLabelExists[Text]) or
+            (DoValidateRange)) then
+      exit(ValidateError('Illegal value (valuelabel/range)'));
+  end else begin
+    if Assigned(FField.ValueLabelSet) and
+       (not FField.ValueLabelSet.ValueLabelExists[Text]) then
+       exit(ValidateError('Illegal value (valuelabel)'));
+
+    if Assigned(FField.Ranges) and
+       (not DoValidateRange) then
+       exit(ValidateError('Illegal value (range)'));
+  end;
 end;
 
 procedure TFieldEdit.Commit;
@@ -406,34 +453,42 @@ begin
     Color := EntrySettings.InactiveFieldColour;
 end;
 
+function TFieldEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+begin
+  result := true;
+end;
+
 { TIntegerEdit }
 
-function TIntegerEdit.ValidateEntry: boolean;
+function TIntegerEdit.DoValidateSyntax: boolean;
 var
   I: EpiInteger;
   Code: integer;
 begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
-
+  Result := true;
   Val(Text, I, Code);
   if Code <> 0 then
-    Exit(ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code])));
+    Result := ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code]));
+end;
 
+function TIntegerEdit.DoValidateRange: boolean;
+begin
+  Result := Field.Ranges.InRange(StrToInt64(Text));
+end;
 
-  if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
-  begin
-    if not ((FField.ValueLabelSet.ValueLabelExists[I]) or
-            (FField.Ranges.InRange(I))) then
-      exit(ValidateError('Illegal value (valuelabel/range)'));
-  end else begin
-    if Assigned(FField.ValueLabelSet) and
-       (not FField.ValueLabelSet.ValueLabelExists[I]) then
-       exit(ValidateError('Illegal value (valuelabel)'));
-
-    if Assigned(FField.Ranges) and
-       (not FField.Ranges.InRange(I)) then
-       exit(ValidateError('Illegal value (range)'));
+function TIntegerEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  OwnVal, CmpVal: EpiInteger;
+begin
+  OwnVal := StrToInt(Text);
+  CmpVal := StrToInt(AText);
+  case ct of
+    fcLT:  result := OwnVal < CmpVal;
+    fcLEq: result := OwnVal <= CmpVal;
+    fcGEq: result := OwnVal >= CmpVal;
+    fcGT:  result := OwnVal > CmpVal;
   end;
 end;
 
@@ -457,13 +512,12 @@ end;
 
 { TFloatEdit }
 
-function TFloatEdit.ValidateEntry: boolean;
+function TFloatEdit.DoValidateSyntax: boolean;
 var
   F: EpiFloat;
   P, IntL: Integer;
 begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
+  Result := true;
 
   // Final check on decimal point placement.
   IntL := (Field.Length - Field.Decimals) - 1;
@@ -475,22 +529,27 @@ begin
   if not TryStrToFloat(Text, F) then
     exit(ValidateError('Invalid floating point number.'));
 
-  if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
-  begin
-    if not ((FField.ValueLabelSet.ValueLabelExists[F]) or
-            (FField.Ranges.InRange(F))) then
-      exit(ValidateError('Illegal value (valuelabel/range)'));
-  end else begin
-    if Assigned(FField.ValueLabelSet) and
-       (not FField.ValueLabelSet.ValueLabelExists[F]) then
-      exit(ValidateError('Illegal value (valuelabel)'));
-
-    if Assigned(FField.Ranges) and
-       (not FField.Ranges.InRange(F)) then
-      exit(ValidateError('Illegal value (range)'));
-  end;
-
   Text := Format(TEpiFloatField(Field).FormatString, [F]);
+end;
+
+function TFloatEdit.DoValidateRange: boolean;
+begin
+  Result := Field.Ranges.InRange(StrToFloat(Text));
+end;
+
+function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  OwnVal, CmpVal: EpiFloat;
+begin
+  OwnVal := StrToFloat(Text);
+  CmpVal := StrToFloat(AText);
+  case ct of
+    fcLT:  result := OwnVal < CmpVal;
+    fcLEq: result := (OwnVal < CmpVal) or SameValue(OwnVal, CmpVal);
+    fcGEq: result := (OwnVal > CmpVal) or SameValue(OwnVal, CmpVal);
+    fcGT:  result := OwnVal > CmpVal;
+  end;
 end;
 
 function TFloatEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -560,16 +619,6 @@ end;
 
 { TStringEdit }
 
-function TStringEdit.ValidateEntry: boolean;
-begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
-
-  if Assigned(FField.ValueLabelSet) and
-     (not FField.ValueLabelSet.ValueLabelExists[Text]) then
-      exit(ValidateError('Illegal value (valuelabel)'));
-end;
-
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: Integer;
@@ -583,7 +632,7 @@ end;
 
 { TDateEdit }
 
-function TDateEdit.ValidateEntry: boolean;
+function TDateEdit.DoValidateSyntax: boolean;
 var
   DateStr: String;
   Sep: String;
@@ -591,8 +640,8 @@ var
   S: String;
   TheDate: EpiDate;
 begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
+  Result := true;
+
 
   Sep := String(DateSeparator);
   DateStr := StringsReplace(Text, ['/', '-', '\', '.'], [Sep, Sep, Sep, Sep], [rfReplaceAll]);
@@ -600,19 +649,31 @@ begin
   if not EpiStrToDate(DateStr, DateSeparator, Field.FieldType, D, M, Y, S) then
     Exit(ValidateError(S));
 
-  case Field.FieldType of
-    ftDMYDate, ftDMYToday: S := 'DD/MM/YYYY';
-    ftMDYDate, ftMDYToday: S := 'MM/DD/YYYY';
-    ftYMDDate, ftYMDToday: S := 'YYYY/MM/DD';
-  end;
-
   TheDate := Trunc(EncodeDate(Y,M,D));
+  Text := FormatDateTime(TEpiDateField(FField).FormatString, TheDate);
+end;
 
-  if Assigned(FField.Ranges) and
-     (not FField.Ranges.InRange(TheDate)) then
-      exit(ValidateError('Illegal value (range)'));
+function TDateEdit.DoValidateRange: boolean;
+var
+  S: string;
+begin
+  Result := Field.Ranges.InRange(EpiStrToDate(Text, DateSeparator, Field.FieldType, S));
+end;
 
-  Text := FormatDateTime(S, TheDate);
+function TDateEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  S: String;
+  OwnVal, CmpVal: EpiDate;
+begin
+  OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
+  CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
+  case ct of
+    fcLT:  result := OwnVal < CmpVal;
+    fcLEq: result := OwnVal <= CmpVal;
+    fcGEq: result := OwnVal >= CmpVal;
+    fcGT:  result := OwnVal > CmpVal;
+  end;
 end;
 
 function TDateEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -676,7 +737,7 @@ end;
 
 { TTimeEdit }
 
-function TTimeEdit.ValidateEntry: boolean;
+function TTimeEdit.DoValidateSyntax: boolean;
 var
   Sep: String;
   TimeStr: String;
@@ -684,8 +745,8 @@ var
   TheTime: EpiTime;
   Msg: string;
 begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
+  Result := true;
+
 
   Sep := String(TimeSeparator);
   TimeStr := StringsReplace(Text, ['-', ':', '.'], [Sep, Sep, Sep], [rfReplaceAll]);
@@ -694,12 +755,30 @@ begin
     Exit(ValidateError(Msg));
 
   TheTime := EncodeTime(H, M, S, 0);
-
-  if Assigned(FField.Ranges) and
-     (not FField.Ranges.InRange(TheTime)) then
-      exit(ValidateError('Illegal value (range)'));
-
   Text := FormatDateTime('HH:NN:SS', TheTime);
+end;
+
+function TTimeEdit.DoValidateRange: boolean;
+var
+  S: string;
+begin
+  Result := Field.Ranges.InRange(EpiStrToTime(Text, TimeSeparator, S));
+end;
+
+function TTimeEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  S: String;
+  OwnVal, CmpVal: EpiTime;
+begin
+  OwnVal := EpiStrToTime(Text, DateSeparator, S);
+  CmpVal := EpiStrToTime(AText, DateSeparator, S);
+  case ct of
+    fcLT:  result := OwnVal < CmpVal;
+    fcLEq: result := OwnVal <= CmpVal;
+    fcGEq: result := OwnVal >= CmpVal;
+    fcGT:  result := OwnVal > CmpVal;
+  end;
 end;
 
 function TTimeEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
@@ -767,12 +846,6 @@ end;
 function TBoolEdit.Characters: TCharSet;
 begin
   Result := BooleanChars;
-end;
-
-function TBoolEdit.ValidateEntry: boolean;
-begin
-  result := inherited ValidateEntry;
-  if (not result) or (Text = '') or (not Modified) then exit;
 end;
 
 end.

@@ -1208,6 +1208,22 @@ begin
   result := fxtOk;
   Field := FE.Field;
 
+  // Comparison
+  if Assigned(Field.Comparison) then
+  begin
+    NewFieldEdit := FieldEditFromField(Field.Comparison.CompareField);
+    if not FE.CompareTo(NewFieldEdit.Text, Field.Comparison.CompareType) then
+    begin
+      Err := Format(
+        'Comparison failed:' + LineEnding +
+        '%s: %s  %s  %s: %s',
+        [Field.Name, FE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
+         NewFieldEdit.Field.Name, NewFieldEdit.Text]);
+      FieldValidateError(FE, Err);
+      Exit(fxtError);
+    end;
+  end;
+
   // Type Comment
   if Assigned(Field.ValueLabelWriteField) then
   begin
