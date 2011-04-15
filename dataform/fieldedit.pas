@@ -391,7 +391,7 @@ var
   S: string;
 begin
   result := true;
-  if not Modified then exit;
+//  if not Modified then exit;
 
   // Always accept empty/system-missing in syntax validate.
   // handling must enter is done elsewhere.
@@ -470,6 +470,7 @@ begin
   Val(Text, I, Code);
   if Code <> 0 then
     Result := ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code]));
+  Text := Format(Field.FormatString, [I]);
 end;
 
 function TIntegerEdit.DoValidateRange: boolean;
@@ -482,6 +483,8 @@ function TIntegerEdit.CompareTo(const AText: string; ct: TEpiComparisonType
 var
   OwnVal, CmpVal: EpiInteger;
 begin
+  if (Text = '') or (AText = '') then exit(false);
+
   OwnVal := StrToInt(Text);
   CmpVal := StrToInt(AText);
   case ct of
@@ -529,7 +532,7 @@ begin
   if not TryStrToFloat(Text, F) then
     exit(ValidateError('Invalid floating point number.'));
 
-  Text := Format(TEpiFloatField(Field).FormatString, [F]);
+  Text := Format(Field.FormatString, [F]);
 end;
 
 function TFloatEdit.DoValidateRange: boolean;
@@ -542,6 +545,8 @@ function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
 var
   OwnVal, CmpVal: EpiFloat;
 begin
+  if (Text = '') or (AText = '') then exit(false);
+
   OwnVal := StrToFloat(Text);
   CmpVal := StrToFloat(AText);
   case ct of
@@ -666,6 +671,8 @@ var
   S: String;
   OwnVal, CmpVal: EpiDate;
 begin
+  if (Text = '') or (AText = '') then exit(false);
+
   OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
   CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
   case ct of
@@ -771,6 +778,8 @@ var
   S: String;
   OwnVal, CmpVal: EpiTime;
 begin
+  if (Text = '') or (AText = '') then exit(false);
+
   OwnVal := EpiStrToTime(Text, DateSeparator, S);
   CmpVal := EpiStrToTime(AText, DateSeparator, S);
   case ct of

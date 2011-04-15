@@ -4,12 +4,12 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   Top = 370
   Width = 248
   ActiveControl = Edit1
-  BorderStyle = bsNone
+  BorderStyle = bsToolWindow
   Caption = 'Value Labels'
   ClientHeight = 229
   ClientWidth = 248
   OnShow = FormShow
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object Panel1: TPanel
     Left = 0
     Height = 32
@@ -44,6 +44,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     OnDblClick = LabelsListBoxDblClick
     OnKeyDown = LabelsListBoxKeyDown
     OnSelectionChange = LabelsListBoxSelectionChange
+    ScrollWidth = 164
     TabOrder = 2
     TopIndex = -1
   end
@@ -58,6 +59,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     OnDblClick = LabelsListBoxDblClick
     OnKeyDown = LabelsListBoxKeyDown
     OnSelectionChange = LabelsListBoxSelectionChange
+    ScrollWidth = 71
     TabOrder = 1
     TopIndex = -1
   end

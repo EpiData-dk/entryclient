@@ -313,8 +313,10 @@ end;
 
 procedure TDataFormFrame.NewRecordActionUpdate(Sender: TObject);
 begin
-  TAction(Sender).Enabled := (RecNo <> NewRecord);
-  NewRecSpeedButton.ShowHint := (RecNo <> NewRecord);
+  TAction(Sender).Enabled :=
+    (RecNo <> NewRecord) or
+    ((RecNo = NewRecord) and (Modified));
+  NewRecSpeedButton.ShowHint := TAction(Sender).Enabled;
 end;
 
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
@@ -1010,12 +1012,18 @@ begin
   ShowHintMsg('', nil);
 
   if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
-              VK_ADD, VK_F9, VK_OEM_PLUS]) and
-     (Shift = [])
+              VK_ADD, VK_F9, VK_OEM_PLUS])
   then begin
     if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
+       (not Assigned(FieldEdit.Field.ValueLabelSet)) then exit;
+
+    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
        (Assigned(FieldEdit.Field.ValueLabelSet)) and
-       (not ShowValueLabelPickList(FieldEdit)) then exit;
+       (not ShowValueLabelPickList(FieldEdit)) then
+    begin
+      Key := VK_UNKNOWN;
+      exit;
+    end;
 
     if not FieldValidate(FieldEdit, false) then
     begin
@@ -1107,6 +1115,8 @@ begin
 end;
 
 procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
+var
+  Field: TEpiField;
 begin
   // *************************************
   // **    EpiData Flow Control (Pre)   **
@@ -1114,10 +1124,19 @@ begin
   // Should all these things happen each time, or only first time
   //   field is entered.
 
+
+  Field := FE.Field;
   // Before field script:
   // TODO : Before field script
 
   // Top-of-screen?
+
+
+  // Force Show Picklist.
+  if (FE.Text = '') and
+     (Assigned(Field.ValueLabelSet)) and
+     (Field.ForcePickList) then
+    PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
 function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
