@@ -734,7 +734,7 @@ begin
   Result[0] := '-';
   Result[1] := '.';
   Result[2] := '/';
-  Result[2] := '\';
+  Result[3] := '\';
 end;
 
 function TDateEdit.SeparatorCount: integer;

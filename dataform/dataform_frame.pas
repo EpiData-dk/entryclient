@@ -1011,6 +1011,20 @@ var
 begin
   ShowHintMsg('', nil);
 
+  // Jumps backward though fields.
+  if ((Key = VK_UP) and (Shift = [])) or
+     ((Key = VK_TAB) and (Shift = [ssShift]))
+  then
+  Begin
+    if not FieldValidate(FieldEdit) then exit;
+
+    NextFieldEdit := PrevFieldOnKeyDown;
+    if Assigned(NextFieldEdit) then
+      NextFieldEdit.SetFocus;
+    Key := VK_UNKNOWN;
+  end;
+
+  // Leave field or see pick-list.
   if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
               VK_ADD, VK_F9, VK_OEM_PLUS])
   then begin
@@ -1051,16 +1065,6 @@ begin
     end;
     FieldEnterFlow(NextFieldEdit);
     NextFieldEdit.SetFocus;
-    Key := VK_UNKNOWN;
-  end;
-
-  if (Key = VK_UP) and (Shift = []) then
-  Begin
-    if not FieldValidate(FieldEdit) then exit;
-
-    NextFieldEdit := PrevFieldOnKeyDown;
-    if Assigned(NextFieldEdit) then
-      NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
 end;
