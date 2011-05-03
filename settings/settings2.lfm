@@ -3,7 +3,7 @@ object Settings2Form: TSettings2Form
   Height = 431
   Top = 263
   Width = 500
-  Caption = 'Settings2Form'
+  Caption = 'Program Settings'
   ClientHeight = 431
   ClientWidth = 500
   OnCloseQuery = FormCloseQuery

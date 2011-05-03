@@ -673,6 +673,7 @@ var
 begin
   if (Text = '') or (AText = '') then exit(false);
 
+
   OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
   CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
   case ct of
