@@ -68,12 +68,18 @@ type
   PEntrySettings = ^TEntrySettings;
 
 const
-  EntryVersion: TEpiVersionInfo = (
-    VersionNo: 0;
-    MajorRev:  4;
-    MinorRev:  0;
-    BuildNo:   0;
-  );
+  {$IFDEF EPI_SHOWREVISION}
+    EntryVersion: TEpiVersionInfo = (
+    {$I epidataentryclient.version.inc}
+    );
+  {$ELSE}
+    EntryVersion: TEpiVersionInfo = (
+      VersionNo: 0;
+      MajorRev:  4;
+      MinorRev:  0;
+      BuildNo:   0;
+    );
+  {$ENDIF}
 
 var
   EntrySettings: TEntrySettings = (
