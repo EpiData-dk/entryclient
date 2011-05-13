@@ -1,0 +1,201 @@
+object SettingsFontsFrame: TSettingsFontsFrame
+  Left = 0
+  Height = 255
+  Top = 0
+  Width = 578
+  ClientHeight = 255
+  ClientWidth = 578
+  TabOrder = 0
+  DesignLeft = 756
+  DesignTop = 477
+  object FieldFontEditBtn: TEditButton
+    AnchorSideRight.Side = asrBottom
+    Left = 182
+    Height = 27
+    Top = 8
+    Width = 335
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    ButtonWidth = 23
+    CharCase = ecNormal
+    MaxLength = 0
+    NumGlyphs = 0
+    OnButtonClick = FieldFontEditBtnButtonClick
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Control = FieldFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 10
+    Height = 18
+    Top = 17
+    Width = 163
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Left = 10
+    Caption = 'Questions / Field Names:'
+    ParentColor = False
+  end
+  object HeadingFontEditBtn: TEditButton
+    AnchorSideLeft.Control = FieldFontEditBtn
+    AnchorSideTop.Control = FieldFontEditBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = FieldFontEditBtn
+    AnchorSideRight.Side = asrBottom
+    Left = 182
+    Height = 27
+    Top = 45
+    Width = 335
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    ButtonWidth = 23
+    CharCase = ecNormal
+    MaxLength = 0
+    NumGlyphs = 0
+    OnButtonClick = FieldFontEditBtnButtonClick
+    TabOrder = 1
+  end
+  object Label9: TLabel
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Control = HeadingFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 10
+    Height = 18
+    Top = 54
+    Width = 66
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Left = 10
+    Caption = 'Headings:'
+    ParentColor = False
+  end
+  object SectionFontEditBtn: TEditButton
+    AnchorSideLeft.Control = FieldFontEditBtn
+    AnchorSideTop.Control = HeadingFontEditBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = FieldFontEditBtn
+    AnchorSideRight.Side = asrBottom
+    Left = 182
+    Height = 27
+    Top = 82
+    Width = 335
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    ButtonWidth = 23
+    CharCase = ecNormal
+    MaxLength = 0
+    NumGlyphs = 0
+    OnButtonClick = FieldFontEditBtnButtonClick
+    TabOrder = 2
+  end
+  object Label10: TLabel
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Control = SectionFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 10
+    Height = 18
+    Top = 91
+    Width = 60
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Left = 10
+    Caption = 'Sections:'
+    ParentColor = False
+  end
+  object FieldColourBtn: TColorButton
+    AnchorSideLeft.Control = FieldFontEditBtn
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = FieldFontEditBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = FieldFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 545
+    Height = 27
+    Top = 8
+    Width = 28
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 28
+    BorderSpacing.Right = 5
+    BorderWidth = 2
+    ButtonColorSize = 20
+    ButtonColor = clBlack
+    ColorDialog = ColorDialog1
+    OnColorChanged = FieldColourBtnColorChanged
+  end
+  object HeadingColourBtn: TColorButton
+    AnchorSideLeft.Control = FieldFontEditBtn
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = HeadingFontEditBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = HeadingFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 545
+    Height = 27
+    Top = 45
+    Width = 28
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 28
+    BorderSpacing.Right = 5
+    BorderWidth = 2
+    ButtonColorSize = 20
+    ButtonColor = clBlack
+    ColorDialog = ColorDialog1
+    OnColorChanged = FieldColourBtnColorChanged
+  end
+  object SectionColourBtn: TColorButton
+    AnchorSideLeft.Control = FieldFontEditBtn
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = SectionFontEditBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = SectionFontEditBtn
+    AnchorSideBottom.Side = asrBottom
+    Left = 545
+    Height = 27
+    Top = 82
+    Width = 28
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 28
+    BorderSpacing.Right = 5
+    BorderWidth = 2
+    ButtonColorSize = 20
+    ButtonColor = clBlack
+    ColorDialog = ColorDialog1
+    OnColorChanged = FieldColourBtnColorChanged
+  end
+  object FontDialog1: TFontDialog
+    Width = 452
+    Height = 336
+    MinFontSize = 0
+    MaxFontSize = 0
+    left = 416
+    top = 168
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    left = 512
+    top = 168
+  end
+end
