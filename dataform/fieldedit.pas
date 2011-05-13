@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, epistringutils, entryprocs;
+  LCLType, epistringutils, entryprocs, LMessages;
 
 type
 
@@ -374,7 +374,10 @@ begin
   inherited Create(AOwner);
   ControlStyle := ControlStyle - [csSetCaption];
   FQuestionLabel := TLabel.Create(Self);
+  FQuestionLabel.Font := EntrySettings.FieldFont;
   FNameLabel := TLabel.Create(Self);
+  FNameLabel.Font := EntrySettings.FieldFont;
+
   FValueLabelLabel := TLabel.Create(Self);
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
 
@@ -451,6 +454,9 @@ begin
     Color := EntrySettings.ActiveFieldColour
   else
     Color := EntrySettings.InactiveFieldColour;
+
+  FQuestionLabel.Font := EntrySettings.FieldFont;
+  FNameLabel.Font := EntrySettings.FieldFont;
 end;
 
 function TFieldEdit.CompareTo(const AText: string; ct: TEpiComparisonType

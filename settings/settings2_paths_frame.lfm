@@ -6,15 +6,15 @@ object SettingsPathsFrame: TSettingsPathsFrame
   ClientHeight = 227
   ClientWidth = 863
   TabOrder = 0
-  DesignLeft = 383
-  DesignTop = 316
+  DesignLeft = 1970
+  DesignTop = 632
   object Label17: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 10
     Height = 18
     Top = 10
-    Width = 120
+    Width = 124
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Default data folder'
@@ -45,7 +45,7 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Left = 10
     Height = 18
     Top = 67
-    Width = 97
+    Width = 102
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Tutorials folder:'
@@ -77,7 +77,7 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Left = 10
     Height = 18
     Top = 124
-    Width = 108
+    Width = 114
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Tutorial web URL:'

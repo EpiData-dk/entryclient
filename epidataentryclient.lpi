@@ -49,7 +49,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="20">
+    <Units Count="21">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -175,6 +175,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="resultlist_form"/>
       </Unit19>
+      <Unit20>
+        <Filename Value="settings/settings2_fonts_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SettingsFontsFrame"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings2_fonts_frame"/>
+      </Unit20>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

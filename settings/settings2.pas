@@ -47,6 +47,8 @@ var
 
 procedure RegisterSettingFrame(const Order: byte;
   const AValue: TCustomFrameClass; const AName: string);
+var
+  i: LongInt;
 begin
   if not Assigned(Frames) then
     Frames := TStringList.Create;
@@ -54,12 +56,13 @@ begin
   if not Supports(AValue, ISettingsFrame) then
     Raise Exception.CreateFmt('Class %s does not support required interface', [AValue.ClassName]);
 
-  if Order >= Frames.Count then
-    Frames.AddObject(AName, TObject(AValue))
-  else
-    Frames.InsertObject(Order, AName, TObject(AValue));
-end;
 
+  for i := Frames.Count to Order do
+    Frames.Add('');
+
+  Frames.Strings[Order] := AName;
+  Frames.Objects[Order] := TObject(AValue);
+end;
 
 procedure FinalizeFrames;
 var

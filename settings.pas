@@ -64,6 +64,11 @@ type
     ValueLabelColour: TColor;
     ActiveFieldColour: TColor;
     InactiveFieldColour: TColor;
+
+    // Fonts
+    FieldFont:             TFont;
+    HeadingFont:           TFont;
+    SectionFont:           TFont;
   end;
   PEntrySettings = ^TEntrySettings;
 
@@ -98,6 +103,10 @@ var
     ValueLabelColour: clBlue;
     ActiveFieldColour: clHighlight;
     InactiveFieldColour: clWhite;
+
+    FieldFont:             nil;
+    HeadingFont:           nil;
+    SectionFont:           nil;
   );
 
   {$IFDEF EPI_SHOWREVISION}
@@ -144,8 +153,6 @@ begin
     With Ini do
     with EntrySettings do
     begin
-  {    // Advanced:
-      WorkingDirUTF8:        string;}
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
       WriteString(Sec, 'TutorialDirectory', TutorialDirUTF8);
@@ -156,6 +163,20 @@ begin
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
       WriteInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
       WriteInteger(Sec, 'ValueLabelColour', ValueLabelColour);
+
+      Sec := 'fonts';
+      WriteString(sec, 'FieldFontName', FieldFont.Name);
+      WriteInteger(sec, 'FieldFontSize', FieldFont.Size);
+      WriteInteger(sec, 'FieldFontStyle', Integer(FieldFont.Style));
+      WriteInteger(sec, 'FieldFontColour', FieldFont.Color);
+      WriteString(sec, 'HeadingFontName', HeadingFont.Name);
+      WriteInteger(sec, 'HeadingFontSize', HeadingFont.Size);
+      WriteInteger(sec, 'HeadingFontStyle', Integer(HeadingFont.Style));
+      WriteInteger(sec, 'HeadingFontColour', HeadingFont.Color);
+      WriteString(sec, 'SectionFontName', SectionFont.Name);
+      WriteInteger(sec, 'SectionFontSize', SectionFont.Size);
+      WriteInteger(sec, 'SectionFontStyle', Integer(SectionFont.Style));
+      WriteInteger(sec, 'SectionFontColour', SectionFont.Color);
     end;
 
     // Read recent files.
@@ -197,7 +218,22 @@ begin
     ValidateErrorColour := ReadInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
     ValueLabelColour := ReadInteger(Sec, 'ValueLabelColour', ValueLabelColour);
 
-      // Read recent files.
+    // Fonts
+    Sec := 'fonts';
+    FieldFont.Name   := ReadString(sec, 'FieldFontName', FieldFont.Name);
+    FieldFont.Size   := ReadInteger(sec, 'FieldFontSize', FieldFont.Size);
+    FieldFont.Style  := TFontStyles(ReadInteger(sec, 'FieldFontStyle', Integer(FieldFont.Style)));
+    FieldFont.Color  := ReadInteger(sec, 'FieldFontColour', FieldFont.Color);
+    HeadingFont.Name   := ReadString(sec, 'HeadingFontName', HeadingFont.Name);
+    HeadingFont.Size   := ReadInteger(sec, 'HeadingFontSize', HeadingFont.Size);
+    HeadingFont.Style  := TFontStyles(ReadInteger(sec, 'HeadingFontStyle', Integer(HeadingFont.Style)));
+    HeadingFont.Color  := ReadInteger(sec, 'HeadingFontColour', HeadingFont.Color);
+    SectionFont.Name   := ReadString(sec, 'SectionFontName', SectionFont.Name);
+    SectionFont.Size   := ReadInteger(sec, 'SectionFontSize', SectionFont.Size);
+    SectionFont.Style  := TFontStyles(ReadInteger(sec, 'SectionFontStyle', Integer(SectionFont.Style)));
+    SectionFont.Color  := ReadInteger(sec, 'SectionFontColour', SectionFont.Color);
+
+    // Read recent files.
     Sec := 'recent';
     for i := 0 to 9 do
     begin
@@ -311,6 +347,10 @@ end;
 initialization
 
 begin
+  EntrySettings.FieldFont := TFont.Create;
+  EntrySettings.HeadingFont := TFont.Create;
+  EntrySettings.SectionFont := TFont.Create;
+
   EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
   if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then
     EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8;

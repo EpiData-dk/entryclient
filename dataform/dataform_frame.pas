@@ -158,6 +158,24 @@ uses
   picklist, epidocument, epivaluelabels, LCLIntf, LMessages,
   dataform_field_calculations, searchform, resultlist_form;
 
+
+type
+
+  { TEntryLabel }
+
+  TEntryLabel = class(TLabel)
+  public
+    procedure Paint; override;
+  end;
+
+  { TEntrySection }
+
+  TEntrySection = class(TGroupBox)
+  protected
+    procedure WMPaint(var Msg: TLMPaint); message LM_PAINT;
+  end;
+
+
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
   if LocalCtrl.Parent is TScrollBox then
@@ -174,6 +192,22 @@ begin
 
   With LocalCtrl do
     result := Parent.Top + (ControlOrigin.x - Parent.ControlOrigin.x);
+end;
+
+{ TEntryLabel }
+
+procedure TEntryLabel.Paint;
+begin
+  Font.Assign(EntrySettings.HeadingFont);
+  inherited Paint;
+end;
+
+{ TEntrySection }
+
+procedure TEntrySection.WMPaint(var Msg: TLMPaint);
+begin
+  Font.Assign(EntrySettings.SectionFont);
+  inherited WMPaint(Msg);
 end;
 
 { TDataFormFrame }
@@ -532,7 +566,7 @@ end;
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
-  result := TGroupBox.Create(DataFormScroolBox);
+  result := TEntrySection.Create(DataFormScroolBox);
   with EpiControl do
   begin
     Result.Top := Top;
@@ -540,6 +574,7 @@ begin
     Result.Width := TEpiSection(EpiControl).Width;
     Result.Height := TEpiSection(EpiControl).Height;
     Result.Caption := TEpiSection(EpiControl).Caption.Text;
+    Result.Font    := EntrySettings.SectionFont;
   end;
   Result.Parent := DataFormScroolBox;
 end;
@@ -588,14 +623,14 @@ end;
 function TDataFormFrame.NewHeadingControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
-  Result := TLabel.Create(AParent);
+  Result := TEntryLabel.Create(AParent);
 
   With TEpiHeading(EpiControl) do
   begin
     Result.Top := Top;
     Result.Left := Left;
     Result.Caption := Caption.Text;
-    Result.Font.Style := [fsBold];
+    Result.Font := EntrySettings.HeadingFont;
   end;
   Result.Parent := AParent;
 end;
@@ -923,6 +958,8 @@ begin
       UpdateSettings;
   if MainForm.ActiveControl is TFieldEdit then
     TFieldEdit(MainForm.ActiveControl).Color := EntrySettings.ActiveFieldColour;
+
+  Invalidate;
 end;
 
 procedure TDataFormFrame.RestoreDefaultPos;
