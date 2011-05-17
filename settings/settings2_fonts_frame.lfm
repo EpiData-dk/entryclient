@@ -6,8 +6,8 @@ object SettingsFontsFrame: TSettingsFontsFrame
   ClientHeight = 255
   ClientWidth = 578
   TabOrder = 0
-  DesignLeft = 756
-  DesignTop = 477
+  DesignLeft = 2020
+  DesignTop = 20
   object FieldFontEditBtn: TEditButton
     AnchorSideRight.Side = asrBottom
     Left = 182
