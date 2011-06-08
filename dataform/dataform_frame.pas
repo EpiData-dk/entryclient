@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
-  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, fieldedit,
-  notes_form, search;
+  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, ComCtrls,
+  fieldedit, notes_form, search;
 
 type
 

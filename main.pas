@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame,
-  LMessages;
+  LMessages, StdCtrls;
 
 
 const
@@ -20,6 +20,7 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    Button1: TButton;
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
@@ -29,6 +30,8 @@ type
     FindPrevMenuItem: TMenuItem;
     FieldNotesDivider: TMenuItem;
     FieldNotesMenuItem: TMenuItem;
+    FindListMenuItem: TMenuItem;
+    ProcessToolPanel: TPanel;
     SearchMenu: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
@@ -99,6 +102,7 @@ type
     procedure DoOpenProject(Const AFileName: string);
     procedure UpdateMainMenu;
     procedure UpdateSettings;
+    procedure UpdateProcessToolPanel;
     procedure SetCaption;
     procedure OpenRecentMenuItemClick(Sender: TObject);
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
@@ -232,6 +236,8 @@ begin
 
   // Only as long as one project is created!
   UpdateMainMenu;
+  UpdateProcessToolPanel;
+
   SaveProjectMenuItem.Action := FActiveFrame.SaveProjectAction;
 
   Inc(TabNameCount);
@@ -249,6 +255,7 @@ begin
     FActiveFrame := nil;
   end;
   UpdateMainMenu;
+  UpdateProcessToolPanel;
   SetCaption;
 end;
 
@@ -296,6 +303,14 @@ end;
 procedure TMainForm.UpdateSettings;
 begin
   LoadTutorials;
+  UpdateProcessToolPanel;
+end;
+
+procedure TMainForm.UpdateProcessToolPanel;
+begin
+  ProcessToolPanel.Visible :=
+    (EntrySettings.ShowWorkToolbar) and
+    (not Assigned(FActiveFrame));
 end;
 
 procedure TMainForm.SetCaption;

@@ -19,6 +19,7 @@ type
     ValueListBox: TListBox;
     Panel1: TPanel;
     procedure Edit1Change(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormShow(Sender: TObject);
     procedure LabelsListBoxDblClick(Sender: TObject);
     procedure LabelsListBoxKeyDown(Sender: TObject; var Key: Word;
@@ -37,6 +38,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TComponent; Const AField: TEpiField);
+    class procedure RestoreDefaultPos;
     procedure   SetInitialValue(Const S: string);
     property    SelectedValueLabel: TEpiCustomValueLabel read FSelectedValueLabel;
   end; 
@@ -46,7 +48,7 @@ implementation
 {$R *.lfm}
 
 uses
-  math, LCLProc, LCLType;
+  math, LCLProc, LCLType, settings;
 
 { TValueLabelsPickListForm }
 
@@ -56,6 +58,7 @@ var
   i: Integer;
 begin
   if not Assigned(Field.ValueLabelSet) then exit;
+  LoadFormPosition(Self, 'PickListForm');
 
   W := 25;
   for i := 0 to Field.ValueLabelSet.Count - 1 do
@@ -93,6 +96,13 @@ begin
   end;
 
   LabelsListBox.ItemIndex := -1;
+end;
+
+procedure TValueLabelsPickListForm.FormCloseQuery(Sender: TObject;
+  var CanClose: boolean);
+begin
+  CanClose := true;
+  SaveFormPosition(Self, 'PickListForm');
 end;
 
 procedure TValueLabelsPickListForm.LabelsListBoxDblClick(Sender: TObject);
@@ -175,6 +185,19 @@ constructor TValueLabelsPickListForm.Create(TheOwner: TComponent; const AField: 
 begin
   Create(TheOwner);
   FField := AField;
+end;
+
+class procedure TValueLabelsPickListForm.RestoreDefaultPos;
+var
+  Aform: TForm;
+begin
+  Aform := TForm.Create(nil);
+  Aform.Width := 250;
+  Aform.Height := 230;
+  Aform.top := (Screen.Monitors[0].Height - Aform.Height) div 2;
+  Aform.Left := (Screen.Monitors[0].Width - Aform.Width) div 2;
+  SaveFormPosition(Aform, 'PickListForm');
+  AForm.free;
 end;
 
 procedure TValueLabelsPickListForm.SetInitialValue(const S: string);

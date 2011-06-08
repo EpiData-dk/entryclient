@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 354
+  Left = 491
   Height = 642
-  Top = 208
+  Top = 353
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617
@@ -151,12 +151,35 @@ object MainForm: TMainForm
   LCLVersion = '0.9.31'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 617
-    Top = 0
+    Height = 575
+    Top = 42
     Width = 977
     Align = alClient
     ShowTabs = False
     TabOrder = 0
+  end
+  object ProcessToolPanel: TPanel
+    Left = 0
+    Height = 42
+    Top = 0
+    Width = 977
+    Align = alTop
+    ClientHeight = 42
+    ClientWidth = 977
+    TabOrder = 1
+    object Button1: TButton
+      AnchorSideLeft.Control = ProcessToolPanel
+      AnchorSideTop.Control = ProcessToolPanel
+      AnchorSideTop.Side = asrCenter
+      Left = 11
+      Height = 29
+      Top = 7
+      Width = 95
+      Action = OpenProjectAction
+      AutoSize = True
+      BorderSpacing.Left = 10
+      TabOrder = 0
+    end
   end
   object MainFormMenu: TMainMenu
     left = 328
@@ -205,6 +228,9 @@ object MainForm: TMainForm
       end
       object FindPrevMenuItem: TMenuItem
         Caption = 'New Item37'
+      end
+      object FindListMenuItem: TMenuItem
+        Caption = 'New Item40'
       end
     end
     object BrowseMenu: TMenuItem

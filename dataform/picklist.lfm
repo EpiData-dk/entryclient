@@ -8,6 +8,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   Caption = 'Value Labels'
   ClientHeight = 229
   ClientWidth = 248
+  OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   LCLVersion = '0.9.31'
   object Panel1: TPanel

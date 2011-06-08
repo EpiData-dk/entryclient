@@ -53,6 +53,7 @@ type
     HintTimeOut:    Integer;
     ShowWelcome:    boolean;
     MultipleInstances: boolean;
+    ShowWorkToolbar: boolean;
 
     // Paths:
     WorkingDirUTF8: string;
@@ -94,6 +95,7 @@ var
     HintTimeOut:    15;
     ShowWelcome:    true;
     MultipleInstances: false;
+    ShowWorkToolbar: true;
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';

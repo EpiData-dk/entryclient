@@ -6,16 +6,16 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   ClientHeight = 253
   ClientWidth = 593
   TabOrder = 0
-  DesignLeft = 683
-  DesignTop = 257
+  DesignLeft = 795
+  DesignTop = 382
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = RecordsToSkipEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 18
-    Top = 78
-    Width = 202
+    Top = 110
+    Width = 206
     BorderSpacing.Left = 10
     Caption = 'Skip number of records (F6/F7):'
     ParentColor = False
@@ -27,7 +27,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 27
-    Top = 74
+    Top = 106
     Width = 327
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -44,8 +44,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 18
-    Top = 115
-    Width = 214
+    Top = 147
+    Width = 216
     BorderSpacing.Left = 10
     Caption = 'Hint timeout on errors (seconds):'
     ParentColor = False
@@ -58,7 +58,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 27
-    Top = 111
+    Top = 143
     Width = 327
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -75,7 +75,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 22
     Top = 10
-    Width = 147
+    Width = 152
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Show Welcome Box'
@@ -83,15 +83,28 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   end
   object MultipleInstanceChkBox: TCheckBox
     AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = ShowProcessToolBarChkBox
+    AnchorSideTop.Side = asrBottom
+    Left = 10
+    Height = 22
+    Top = 74
+    Width = 243
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Allow multiple program instances'
+    TabOrder = 3
+  end
+  object ShowProcessToolBarChkBox: TCheckBox
+    AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = ShowWelcomeChkBox
     AnchorSideTop.Side = asrBottom
     Left = 10
     Height = 22
     Top = 42
-    Width = 235
+    Width = 147
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
-    Caption = 'Allow multiple program instances'
-    TabOrder = 3
+    Caption = 'Show Work Toolbar'
+    TabOrder = 4
   end
 end

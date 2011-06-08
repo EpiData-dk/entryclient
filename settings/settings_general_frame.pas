@@ -13,6 +13,7 @@ type
   { TSettingsGeneralFrame }
 
   TSettingsGeneralFrame = class(TFrame, ISettingsFrame)
+    ShowProcessToolBarChkBox: TCheckBox;
     HintTimeOutEdit: TMaskEdit;
     Label1: TLabel;
     Label2: TLabel;
@@ -44,6 +45,7 @@ begin
   begin
     ShowWelcomeChkBox.Checked := ShowWelcome;
     MultipleInstanceChkBox.Checked := MultipleInstances;
+    ShowProcessToolBarChkBox.Checked := ShowWorkToolbar;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
   end;
@@ -57,6 +59,7 @@ begin
   with FData^ do
   begin
     ShowWelcome := ShowWelcomeChkBox.Checked;
+    ShowWorkToolbar := ShowProcessToolBarChkBox.Checked;
     MultipleInstances := MultipleInstanceChkBox.Checked;
     RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
     HintTimeOut := StrToInt(HintTimeOutEdit.Text);
