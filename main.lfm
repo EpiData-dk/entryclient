@@ -164,8 +164,8 @@ object MainForm: TMainForm
     Top = 0
     Width = 977
     Align = alTop
-    ClientHeight = 42
-    ClientWidth = 977
+    ClientHeight = 38
+    ClientWidth = 973
     TabOrder = 1
     object Button1: TButton
       AnchorSideLeft.Control = ProcessToolPanel
@@ -173,7 +173,7 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrCenter
       Left = 11
       Height = 29
-      Top = 7
+      Top = 5
       Width = 95
       Action = OpenProjectAction
       AutoSize = True

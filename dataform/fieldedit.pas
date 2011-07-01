@@ -24,13 +24,13 @@ type
     FQuestionLabel: TLabel;
     FValueLabelLabel: TLabel;
     FRecNo: integer;
-    procedure   SetField(const AValue: TEpiField);
     procedure   SetRecNo(const AValue: integer);
     procedure   FieldChange(Sender: TObject; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
   protected
     WC:         WideChar;
     Caret:      Integer;
     IsSeparator: boolean;
+    procedure   SetField(const AValue: TEpiField); virtual;
     procedure   UpdateText; virtual;
     procedure   SetParent(NewParent: TWinControl); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
@@ -90,6 +90,7 @@ type
   { TStringEdit }
   TStringEdit = class(TFieldEdit)
   protected
+    procedure   SetField(const AValue: TEpiField); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
   end;
 
@@ -630,14 +631,18 @@ end;
 
 { TStringEdit }
 
+procedure TStringEdit.SetField(const AValue: TEpiField);
+begin
+  inherited SetField(AValue);
+  if AValue.FieldType = ftUpperString then
+    CharCase := ecUppercase;
+end;
+
 function TStringEdit.DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean;
 var
   N: Integer;
 begin
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
-
-  if Field.FieldType = ftUpperString then
-    WC := WideUpperCase(WC)[1];
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
