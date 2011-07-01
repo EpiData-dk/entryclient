@@ -1180,8 +1180,8 @@ begin
     PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
-function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
-  NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+function TDataFormFrame.FieldExitFlow(FE: TFieldEdit;
+  out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
 var
   Field: TEpiField;
   Jump: TEpiJump;
