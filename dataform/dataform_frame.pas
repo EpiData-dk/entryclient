@@ -139,6 +139,7 @@ type
     procedure CommitFields;
     procedure UpdateSettings;
     procedure RestoreDefaultPos;
+    procedure CloseQuery(var CanClose: boolean);
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
@@ -743,10 +744,19 @@ begin
     // - go through all fields for a validity check.
     if not AllFieldsValidate(false) then exit;
 
-    if MessageDlg('Confirmation', 'Save Record?',
-      mtConfirmation, mbYesNo, 0, mbYes) = mrNo then exit;
+    Res := MessageDlg('Confirmation',
+             'Save Record?',
+             mtConfirmation, mbYesNoCancel, 0, mbYes);
+    case Res of
+      mrCancel: Exit;
+      mrYes:    CommitFields;
+      mrNo:     ; // Do nothing
+    end;
+
+{    if MessageDlg('Confirmation', 'Save Record?',
+      mtConfirmation, mbYesNoc, 0, mbYes) = mrNo then exit;
     // Commit text to data.
-    CommitFields;
+    CommitFields;}
   end;
 
   // **********************************
@@ -780,7 +790,7 @@ begin
       Text := Field.DefaultValueAsString;
 
     // Repeat
-    if (Field.RepeatValue) and (Field.Size > 0) then
+    if (Field.RepeatValue) and (Field.Size > 0) and (not Field.IsMissing[Field.Size - 1]) then
       Text := Field.AsString[Field.Size - 1];
   end;
   Result := true;
@@ -966,6 +976,28 @@ procedure TDataFormFrame.RestoreDefaultPos;
 begin
   if Assigned(FNotesForm) then
     FNotesForm.RestoreDefaultPos;
+end;
+
+procedure TDataFormFrame.CloseQuery(var CanClose: boolean);
+var
+  Res: Integer;
+begin
+  CanClose := true;
+  if not Modified then exit;
+
+  Res := MessageDlg('Warning',
+           'Save record before close?',
+           mtConfirmation, mbYesNoCancel, 0, mbCancel);
+  case Res of
+    mrCancel: CanClose := false;
+    mrYes:    begin
+                // Sanity check
+                // - go through all fields for a validity check.
+                if not AllFieldsValidate(false) then exit;
+                CommitFields;
+              end;
+    mrNo:     ; // Do nothing
+  end;
 end;
 
 function TDataFormFrame.NextUsableFieldIndex(const Index: integer;
@@ -1390,7 +1422,8 @@ function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
   begin
     LocalFE.Color := EntrySettings.ValidateErrorColour;
     LocalFE.SelectAll;
-    LocalFE.SetFocus;
+    if LocalFE.Enabled then
+      LocalFE.SetFocus;
     Beep;
   end;
 

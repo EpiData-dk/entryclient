@@ -218,7 +218,9 @@ end;
 
 procedure TFieldEdit.SetRecNo(const AValue: integer);
 begin
-  if FRecNo = AValue then exit;
+  // Commented out because otherwise performing "New Record" on a "New Record"
+  // would not clear Edits.
+//  if FRecNo = AValue then exit;
   FRecNo := AValue;
   UpdateText;
 end;
@@ -534,7 +536,7 @@ begin
   P := Pos(DecimalSeparator, Text);
   if (P > (IntL + 1)) or  // Covers integral part with decimals.
      ((P = 0) and (Length(Text) > (IntL))) then
-    exit(ValidateError(Format('Invalid format. Accepted format is %d.%d', [IntL, Field.Decimals])));
+    exit(ValidateError(Format('Invalid number. (Format is %d.%d)', [IntL, Field.Decimals])));
 
   if not TryStrToFloat(Text, F) then
     exit(ValidateError('Invalid floating point number.'));

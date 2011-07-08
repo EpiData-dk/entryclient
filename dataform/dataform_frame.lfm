@@ -27,8 +27,8 @@ object DataFormFrame: TDataFormFrame
     Top = 607
     Width = 1012
     Align = alBottom
-    ClientHeight = 26
-    ClientWidth = 1008
+    ClientHeight = 30
+    ClientWidth = 1012
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -37,8 +37,8 @@ object DataFormFrame: TDataFormFrame
       Top = 3
       Width = 216
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 212
+      ClientHeight = 24
+      ClientWidth = 216
       TabOrder = 0
       object FirstRecSpeedButton: TSpeedButton
         Left = 1
@@ -166,8 +166,8 @@ object DataFormFrame: TDataFormFrame
       Width = 48
       BorderSpacing.Left = 2
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 44
+      ClientHeight = 24
+      ClientWidth = 48
       TabOrder = 1
       object NewRecSpeedButton: TSpeedButton
         Left = 1
@@ -228,14 +228,14 @@ object DataFormFrame: TDataFormFrame
       Left = 306
       Height = 24
       Top = 3
-      Width = 480
+      Width = 484
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 476
+      ClientHeight = 24
+      ClientWidth = 484
       Color = clWhite
       Constraints.MinWidth = 80
       ParentColor = False
@@ -248,7 +248,7 @@ object DataFormFrame: TDataFormFrame
         AnchorSideBottom.Side = asrCenter
         Left = 6
         Height = 18
-        Top = 1
+        Top = 3
         Width = 106
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
@@ -259,7 +259,7 @@ object DataFormFrame: TDataFormFrame
     object FieldTypePanel: TPanel
       AnchorSideLeft.Side = asrBottom
       AnchorSideRight.Control = FieldInfoPanel
-      Left = 788
+      Left = 792
       Height = 24
       Top = 3
       Width = 115
@@ -268,8 +268,8 @@ object DataFormFrame: TDataFormFrame
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 111
+      ClientHeight = 24
+      ClientWidth = 115
       Color = clWhite
       ParentColor = False
       TabOrder = 3
@@ -278,7 +278,7 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         Left = 4
         Height = 18
-        Top = 1
+        Top = 3
         Width = 97
         Caption = 'FieldTypeLabel'
         ParentColor = False
@@ -287,7 +287,7 @@ object DataFormFrame: TDataFormFrame
     object FieldInfoPanel: TPanel
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 905
+      Left = 909
       Height = 24
       Top = 3
       Width = 100
@@ -295,8 +295,8 @@ object DataFormFrame: TDataFormFrame
       Anchors = [akTop, akRight]
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 96
+      ClientHeight = 24
+      ClientWidth = 100
       Color = clWhite
       ParentColor = False
       TabOrder = 4
@@ -305,7 +305,7 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         Left = 4
         Height = 18
-        Top = 1
+        Top = 3
         Width = 92
         Caption = 'FieldInfoLabel'
         ParentColor = False
@@ -321,8 +321,8 @@ object DataFormFrame: TDataFormFrame
       Alignment = taLeftJustify
       BorderSpacing.Left = 2
       BevelOuter = bvLowered
-      ClientHeight = 20
-      ClientWidth = 31
+      ClientHeight = 24
+      ClientWidth = 35
       Color = clWhite
       ParentColor = False
       TabOrder = 5
@@ -333,9 +333,9 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
-        Left = -24
+        Left = -22
         Height = 18
-        Top = 1
+        Top = 3
         Width = 79
         BorderSpacing.Left = 5
         Caption = 'DeleteLabel'

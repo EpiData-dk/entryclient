@@ -377,8 +377,14 @@ begin
   CanClose := true;
 
   if not Assigned(EpiDocument) then exit;
+  if not Assigned(ActiveFrame) then exit;
 
-  if (EpiDocument.Modified) or (ActiveFrame.Modified) then
+  // Passes control to DataformFrame, which
+  // ensures a potential modified record is commited.
+  ActiveFrame.CloseQuery(CanClose);
+  if not CanClose then exit;
+
+  if (EpiDocument.Modified) {or (ActiveFrame.Modified)} then
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
@@ -389,13 +395,7 @@ begin
       CanClose := false;
 
     if Res = mrYes then
-    begin
-      // Commit field (in case they are not already.
-      if (MainForm.ActiveControl is TFieldEdit) and
-         (not TFieldEdit(MainForm.ActiveControl).ValidateEntry) then exit;
-      ActiveFrame.CommitFields;
       SaveProjectAction.Execute;
-    end;
   end;
 end;
 
