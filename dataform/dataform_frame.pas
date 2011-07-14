@@ -134,6 +134,8 @@ type
       AParent: TWinControl): TControl;
   protected
     procedure SetCursor(Value: TCursor); override;
+  private
+    procedure UpdateShortCuts;
   public
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
@@ -157,7 +159,8 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, LMessages,
-  dataform_field_calculations, searchform, resultlist_form;
+  dataform_field_calculations, searchform, resultlist_form,
+  shortcuts;
 
 
 type
@@ -641,6 +644,27 @@ begin
   DataFormScroolBox.Cursor := Value;
 end;
 
+procedure TDataFormFrame.UpdateShortCuts;
+begin
+  // Dataform
+  ShowFieldNotesAction.ShortCut := D_FieldNotes;
+  FirstRecAction.ShortCut := D_MoveFirstRec;
+  JumpPrevRecAction.ShortCut := D_MoveSkipPrevRec;
+  PrevRecAction.ShortCut := D_MovePrevRec;
+  NextRecAction.ShortCut := D_MoveNextRev;
+  JumpNextRecAction.ShortCut := D_MoveSkipNextRec;
+  LastRecAction.ShortCut := D_MoveLastRec;
+  NewRecordAction.ShortCut := D_NewRec;
+  GotoRecordAction.ShortCut := D_GotoRec;
+  PageUpAction.ShortCut := D_SideUp;
+  PageDownAction.ShortCut := D_SideDown;
+  FindRecordAction.ShortCut := D_SearchRecordEmpty;
+  FindRecordExAction.ShortCut := D_SearchRecordFilled;
+  FindNextAction.ShortCut := D_SearchRepeatForward;
+  FindPrevAction.ShortCut := D_SearchRepeatBackward;
+  FindFastListAction.ShortCut := D_SearchRecordList;
+end;
+
 procedure TDataFormFrame.SetRecNo(AValue: integer);
 var
   Res: LongInt;
@@ -963,6 +987,8 @@ procedure TDataFormFrame.UpdateSettings;
 var
   i: Integer;
 begin
+  UpdateShortCuts;
+
   for i := 0 to FieldEditList.Count - 1 do
     with TFieldEdit(FieldEditList[i]) do
       UpdateSettings;
@@ -1497,16 +1523,7 @@ begin
   FHintWindow := nil;
   FRecNo := -1;
 
-  {$IFDEF DARWIN}
-  FirstRecAction.ShortCut    := ShortCut(VK_HOME, [ssMeta]);
-  JumpPrevRecAction.ShortCut := ShortCut(VK_F5, [ssMeta]);
-  PrevRecAction.ShortCut     := ShortCut(VK_F6, [ssMeta]);
-  NextRecAction.ShortCut     := ShortCut(VK_F7, [ssMeta]);
-  JumpNextRecAction.ShortCut := ShortCut(VK_F8, [ssMeta]);
-  LastRecAction.ShortCut     := ShortCut(VK_END, [ssMeta]);
-  NewRecordAction.ShortCut   := ShortCut(VK_N, [ssMeta]);
-  GotoRecordAction.ShortCut  := ShortCut(VK_G, [ssMeta]);
-  {$ENDIF}
+  UpdateSettings;
 end;
 
 

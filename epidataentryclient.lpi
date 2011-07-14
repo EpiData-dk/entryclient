@@ -50,7 +50,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="23">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -183,6 +183,15 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings2_fonts_frame"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="shortcuts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="shortcuts"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="include/linux/shortcuts.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -191,7 +200,7 @@
       <Filename Value="epidataentryclient"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS)"/>
       <OtherUnitFiles Value="dataform;settings;search"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>

@@ -81,7 +81,6 @@ type
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure DefaultPosActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
-    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -101,6 +100,7 @@ type
     function  DoCloseProject: boolean;
     procedure DoOpenProject(Const AFileName: string);
     procedure UpdateMainMenu;
+    procedure UpdateShortCuts;
     procedure UpdateSettings;
     procedure UpdateProcessToolPanel;
     procedure SetCaption;
@@ -125,7 +125,8 @@ implementation
 
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
-  epiversionutils, LCLIntf, settings2, searchform;
+  epiversionutils, LCLIntf, settings2, searchform,
+  shortcuts;
 
 { TMainForm }
 
@@ -147,10 +148,7 @@ begin
   SettingsForm.ShowModal;
   SettingsForm.Free;
 
-  LoadTutorials;
-
-  if Assigned(FActiveFrame) then
-    TProjectFrame(FActiveFrame).UpdateSettings;
+  UpdateSettings;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
@@ -300,10 +298,28 @@ begin
   {$ENDIF}
 end;
 
+procedure TMainForm.UpdateShortCuts;
+begin
+  // Mainform
+  FileExitAction.ShortCut := M_Exit;
+  NewProjectAction.ShortCut := M_NewProject;
+  SettingsAction.ShortCut := M_Settings;
+  AboutAction.ShortCut := M_ShowAbout;
+  CopyProjectInfoAction.ShortCut := M_CopyProjectInfo;
+  CheckVersionAction.ShortCut := M_CheckVersion;
+  DefaultPosAction.ShortCut := M_DefaultPos;
+  CloseProjectAction.ShortCut := M_CloseProject;
+  OpenProjectAction.ShortCut := M_OpenProject;
+end;
+
 procedure TMainForm.UpdateSettings;
 begin
   LoadTutorials;
   UpdateProcessToolPanel;
+  UpdateShortCuts;
+
+  if Assigned(FActiveFrame) then
+    TProjectFrame(FActiveFrame).UpdateSettings;
 end;
 
 procedure TMainForm.UpdateProcessToolPanel;
@@ -364,9 +380,12 @@ procedure TMainForm.UpdateRecentFiles;
 var
   Mi: TMenuItem;
   i: Integer;
+  K: Word;
+  Shift: TShiftState;
 begin
-  RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
+  ShortCutToKey(M_OpenRecent, K, Shift);
 
+  RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
   RecentFilesSubMenu.Clear;
   for i := 0 to RecentFiles.Count - 1 do
   begin
@@ -375,11 +394,7 @@ begin
     Mi.Caption := RecentFiles[i];
     Mi.OnClick := @OpenRecentMenuItemClick;
     if i < 9 then
-      {$IFDEF DARWIN}
-      Mi.ShortCut := ShortCut(VK_1 + i, [ssMeta, ssShift]);
-      {$ELSE}
-      Mi.ShortCut := ShortCut(VK_1 + i, [ssCtrl, ssShift]);
-      {$ENDIF}
+      Mi.ShortCut := ShortCut(VK_1 + i, Shift);
     RecentFilesSubMenu.Add(Mi);
   end;
 end;
@@ -454,15 +469,6 @@ begin
     SaveFormPosition(Self, 'MainForm');
 
   SaveSettingToIni(EntrySettings.IniFileName);
-end;
-
-procedure TMainForm.FormCreate(Sender: TObject);
-begin
-  {$IFDEF DARWIN}
-  OpenProjectAction.ShortCut  := ShortCut(VK_O, [ssMeta]);
-  CloseProjectAction.ShortCut := ShortCut(VK_W, [ssShift, ssMeta]);
-  SettingsAction.ShortCut     := ShortCut(VK_OEM_COMMA, [ssMeta]);
-  {$ENDIF}
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);

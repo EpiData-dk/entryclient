@@ -49,6 +49,7 @@ type
     procedure TimedBackup(Sender: TObject);
     procedure DoOpenProject(Const aFilename: string);
     procedure AddToRecent(Const aFilename: string);
+    procedure UpdateShortCuts;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -68,7 +69,7 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType;
+  epistringutils, Menus, LCLType, shortcuts;
 
 { TProjectFrame }
 
@@ -192,6 +193,11 @@ procedure TProjectFrame.AddToRecent(const aFilename: string);
 begin
   Settings.AddToRecent(AFileName);
   MainForm.UpdateRecentFiles;
+end;
+
+procedure TProjectFrame.UpdateShortCuts;
+begin
+  SaveProjectAction.ShortCut := P_SaveProject;
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
@@ -352,9 +358,7 @@ begin
   FActiveFrame := nil;
   FAllowForEndBackup := false;;
 
-  {$IFDEF DARWIN}
-  SaveProjectAction.ShortCut := ShortCut(VK_S, [ssMeta]);
-  {$ENDIF}
+  UpdateSettings;
 
   {$IFDEF EPI_RELEASE}
     ProjectPanel.Enabled := false;
@@ -406,6 +410,8 @@ end;
 
 procedure TProjectFrame.UpdateSettings;
 begin
+  UpdateShortCuts;
+
   if Assigned(ActiveFrame) then
     ActiveFrame.UpdateSettings;
 end;

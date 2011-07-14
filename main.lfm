@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 491
+  Left = 629
   Height = 642
-  Top = 353
+  Top = 294
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 617
@@ -145,7 +145,6 @@ object MainForm: TMainForm
   }
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
-  OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '0.9.31'
@@ -316,10 +315,6 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'E&xit'
       Hint = 'Exit'
-      ShortCut = 121
-      SecondaryShortCuts.Strings = (
-        'Alt+Q'
-      )
     end
     object NewProjectAction: TAction
       Category = 'File'
@@ -330,7 +325,6 @@ object MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Settings'
       OnExecute = SettingsActionExecute
-      ShortCut = 32851
     end
     object AboutAction: TAction
       Category = 'Help'
@@ -363,13 +357,11 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Close Project'
       OnExecute = CloseProjectActionExecute
-      ShortCut = 16499
     end
     object OpenProjectAction: TAction
       Category = 'File'
       Caption = 'Open Project'
       OnExecute = OpenProjectActionExecute
-      ShortCut = 16463
     end
     object DefaultPosAction: TAction
       Category = 'Edit'

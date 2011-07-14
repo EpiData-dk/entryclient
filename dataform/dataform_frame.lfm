@@ -356,7 +356,6 @@ object DataFormFrame: TDataFormFrame
       Hint = 'First Record'
       OnExecute = FirstRecActionExecute
       OnUpdate = FirstRecActionUpdate
-      ShortCut = 32804
     end
     object FirstFieldAction: TAction
       Category = 'Field'
@@ -372,20 +371,17 @@ object DataFormFrame: TDataFormFrame
       Category = 'Screen'
       Caption = 'PageUpAction'
       OnExecute = PageUpActionExecute
-      ShortCut = 33
     end
     object PageDownAction: TAction
       Category = 'Screen'
       Caption = 'PageDownAction'
       OnExecute = PageDownActionExecute
-      ShortCut = 34
     end
     object JumpPrevRecAction: TAction
       Category = 'Record'
       Caption = 'Skip to prev records'
       OnExecute = JumpPrevRecActionExecute
       OnUpdate = FirstRecActionUpdate
-      ShortCut = 116
     end
     object PrevRecAction: TAction
       Category = 'Record'
@@ -393,10 +389,6 @@ object DataFormFrame: TDataFormFrame
       Hint = 'Previous Record'
       OnExecute = PrevRecActionExecute
       OnUpdate = FirstRecActionUpdate
-      SecondaryShortCuts.Strings = (
-        'Alt+Left'
-      )
-      ShortCut = 117
     end
     object NextRecAction: TAction
       Category = 'Record'
@@ -404,17 +396,12 @@ object DataFormFrame: TDataFormFrame
       Hint = 'Next Record'
       OnExecute = NextRecActionExecute
       OnUpdate = LastRecActionUpdate
-      SecondaryShortCuts.Strings = (
-        'Alt+Right'
-      )
-      ShortCut = 118
     end
     object JumpNextRecAction: TAction
       Category = 'Record'
       Caption = 'JumpNextRecAction'
       OnExecute = JumpNextRecActionExecute
       OnUpdate = LastRecActionUpdate
-      ShortCut = 119
     end
     object LastRecAction: TAction
       Category = 'Record'
@@ -422,7 +409,6 @@ object DataFormFrame: TDataFormFrame
       Hint = 'Last Record'
       OnExecute = LastRecActionExecute
       OnUpdate = LastRecActionUpdate
-      ShortCut = 32803
     end
     object NewRecordAction: TAction
       Category = 'Record'
@@ -430,52 +416,44 @@ object DataFormFrame: TDataFormFrame
       Hint = 'New Record'
       OnExecute = NewRecordActionExecute
       OnUpdate = NewRecordActionUpdate
-      ShortCut = 16462
     end
     object GotoRecordAction: TAction
       Category = 'Record'
       Caption = 'Goto Record'
       OnExecute = GotoRecordActionExecute
-      ShortCut = 16455
     end
     object FindRecordAction: TAction
       Category = 'Search'
       Caption = 'Find...'
       OnExecute = FindRecordActionExecute
-      ShortCut = 24646
     end
     object FindNextAction: TAction
       Category = 'Search'
       Caption = 'Find Forward'
       OnExecute = FindNextActionExecute
-      ShortCut = 114
     end
     object FindPrevAction: TAction
       Category = 'Search'
       Caption = 'Find Backwards'
       OnExecute = FindPrevActionExecute
-      ShortCut = 8306
     end
     object FindRecordExAction: TAction
       Category = 'Search'
       Caption = 'Lookup'
       Hint = 'Find record matching current entry'
       OnExecute = FindRecordExActionExecute
-      ShortCut = 16454
     end
     object FindFastListAction: TAction
       Category = 'Search'
       Caption = 'List Records'
       Hint = 'Find list of records matching current entry'
       OnExecute = FindFastListActionExecute
-      ShortCut = 16460
     end
     object ShowFieldNotesAction: TAction
       Category = 'Field'
       Caption = 'Show Field Notes'
       OnExecute = ShowFieldNotesActionExecute
       OnUpdate = ShowFieldNotesActionUpdate
-      ShortCut = 123
     end
   end
 end

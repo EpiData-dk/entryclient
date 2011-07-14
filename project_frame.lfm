@@ -102,7 +102,6 @@ object ProjectFrame: TProjectFrame
       ImageIndex = 1
       OnExecute = SaveProjectActionExecute
       OnUpdate = SaveProjectActionUpdate
-      ShortCut = 16467
     end
   end
   object ProjectImageList: TImageList
