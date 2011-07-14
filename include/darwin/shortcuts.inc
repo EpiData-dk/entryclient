@@ -19,12 +19,12 @@ begin
 
   // Dataform
   D_FieldNotes := KeyToShortCut(VK_N, [ssMeta]);
-  D_MoveFirstRec := KeyToShortCut(VK_F, [ssMeta]);
+  D_MoveFirstRec := KeyToShortCut(VK_LEFT, [ssShift, ssMeta]);
   D_MoveSkipPrevRec := KeyToShortCut(VK_LEFT, [ssMeta]);
   D_MovePrevRec := KeyToShortCut(VK_LEFT, [ssShift]);
   D_MoveNextRev := KeyToShortCut(VK_RIGHT, [ssShift]);
   D_MoveSkipNextRec := KeyToShortCut(VK_RIGHT, [ssMeta]);
-  D_MoveLastRec := KeyToShortCut(VK_L, [ssMeta]);
+  D_MoveLastRec := KeyToShortCut(VK_RIGHT, [ssShift, ssMeta]);
   D_NewRec := KeyToShortCut(VK_N, [ssMeta]);
   D_GotoRec := KeyToShortCut(VK_G, [ssMeta]);
   D_SideUp := KeyToShortCut(VK_UP, [ssMeta]);
