@@ -21,6 +21,8 @@ unitdir=dataform \
 	$(LNET_PATH)/lazaruspackage/lib/$(CPU_TARGET)-$(OS_TARGET) \
 	.
 targetdir=.
+includedir=include \
+	   include/$(OS_TARGET)
 
 [install]
 fpcpackage=n
