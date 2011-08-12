@@ -18,7 +18,7 @@ begin
   P_SaveProject := KeyToShortCut(VK_S, [ssMeta]);
 
   // Dataform
-  D_FieldNotes := KeyToShortCut(VK_N, [ssMeta]);
+  D_FieldNotes := KeyToShortCut(VK_N, [ssShift, ssMeta]);
   D_MoveFirstRec := KeyToShortCut(VK_LEFT, [ssShift, ssMeta]);
   D_MoveSkipPrevRec := KeyToShortCut(VK_LEFT, [ssMeta]);
   D_MovePrevRec := KeyToShortCut(VK_LEFT, [ssShift]);
