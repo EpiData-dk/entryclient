@@ -526,8 +526,10 @@ procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
 var
   i: Integer;
 begin
+  MainForm.BeginUpdateForm;
   for i := 0 to FFieldEditList.Count - 1 do
-    TFieldEdit(FFieldEditList[i]).RecNo := RecordNo
+    TFieldEdit(FFieldEditList[i]).RecNo := RecordNo;
+  MainForm.EndUpdateForm;
 end;
 
 procedure TDataFormFrame.UpdateRecordEdit;

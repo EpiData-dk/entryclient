@@ -113,6 +113,8 @@ type
     constructor Create(TheOwner: TComponent); override;
     procedure UpdateRecentFiles;
     procedure ResoreDefaultPos;
+    procedure BeginUpdateForm;
+    procedure EndUpdateForm;
     property  ActiveFrame: TProjectFrame read FActiveFrame;
   end; 
 
@@ -414,6 +416,16 @@ begin
 
   if Assigned(FActiveFrame) then
     FActiveFrame.RestoreDefaultPos;
+end;
+
+procedure TMainForm.BeginUpdateForm;
+begin
+  BeginFormUpdate;
+end;
+
+procedure TMainForm.EndUpdateForm;
+begin
+  EndFormUpdate;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);

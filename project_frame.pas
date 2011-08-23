@@ -114,6 +114,7 @@ var
   Res: LongInt;
   Fn: String;
   St: TMemoryStream;
+  T: TDateTime;
 begin
   Fn := aFilename;
   Res := mrNone;
@@ -147,6 +148,7 @@ begin
 
   Cursor := crHourGlass;
   Application.ProcessMessages;
+  MainForm.BeginUpdateForm;
 
   St := nil;
   try
@@ -181,6 +183,8 @@ begin
 
   Cursor := crDefault;
   Application.ProcessMessages;
+  MainForm.EndUpdateForm;
+
   if Res = mrYes then
     EpiDocument.Modified := true;
 
