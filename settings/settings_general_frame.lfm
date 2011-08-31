@@ -13,11 +13,11 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = RecordsToSkipEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 18
-    Top = 110
-    Width = 206
+    Height = 39
+    Top = 100
+    Width = 152
     BorderSpacing.Left = 10
-    Caption = 'Skip number of records (F6/F7):'
+    Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
     ParentColor = False
   end
   object RecordsToSkipEdit: TMaskEdit

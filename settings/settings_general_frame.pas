@@ -34,7 +34,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings2;
+  settings2, shortcuts;
 
 { TSettingsGeneralFrame }
 
