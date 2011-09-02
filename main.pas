@@ -352,8 +352,7 @@ var
 begin
   Dlg := TOpenDialog.Create(self);
   Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
-  Dlg.Filter := GetEpiDialogFilter(true, true, false, false, false,
-    false, false, false, false, true, true);
+  Dlg.Filter := GetEpiDialogFilter([dfEPX, dfEPZ, dfCollection]);
   Dlg.FilterIndex := 0;
 
   if not Dlg.Execute then exit;
