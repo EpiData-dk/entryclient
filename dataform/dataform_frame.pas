@@ -17,6 +17,8 @@ type
   TDataFormFrame = class(TFrame)
     DeleteLabel: TLabel;
     DeletePanel: TPanel;
+    Label1: TLabel;
+    Panel1: TPanel;
     ShowFieldNotesAction: TAction;
     FindFastListAction: TAction;
     FindRecordExAction: TAction;
@@ -75,6 +77,8 @@ type
     procedure NextRecActionExecute(Sender: TObject);
     procedure PageDownActionExecute(Sender: TObject);
     procedure PageUpActionExecute(Sender: TObject);
+    procedure Panel1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
+      );
     procedure PrevRecActionExecute(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
@@ -224,11 +228,15 @@ end;
 procedure TDataFormFrame.FirstFieldActionExecute(Sender: TObject);
 var
   I: LongInt;
+  FE: TFieldEdit;
 begin
   I := NextUsableFieldIndex(-1, false);
   if i = -1 then exit;
 
-  TFieldEdit(FieldEditList[i]).SetFocus;
+  FE := TFieldEdit(FieldEditList[i]);
+  FieldEnterFlow(FE);
+  FE.SetFocus;
+  Application.ProcessMessages;
 end;
 
 procedure TDataFormFrame.DataFormScroolBoxMouseWheel(Sender: TObject;
@@ -372,6 +380,13 @@ procedure TDataFormFrame.PageUpActionExecute(Sender: TObject);
 begin
   With DataFormScroolBox.VertScrollBar do
     Position := Position - Page;
+end;
+
+procedure TDataFormFrame.Panel1MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  if Assigned(MainForm.ActiveControl) then
+    Label1.Caption := 'Focused control: ' + MainForm.ActiveControl.Name;
 end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
@@ -1240,8 +1255,8 @@ begin
     PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
-function TDataFormFrame.FieldExitFlow(FE: TFieldEdit;
-  out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
+  NewFieldEdit: TFieldEdit): TFieldExitFlowType;
 var
   Field: TEpiField;
   Jump: TEpiJump;
@@ -1524,6 +1539,10 @@ begin
   FFieldEditList := TFPList.Create;
   FHintWindow := nil;
   FRecNo := -1;
+
+  {$IFNDEF EPI_DEBUG}
+  Panel1.Hide;
+  {$ENDIF}
 
   UpdateSettings;
 end;

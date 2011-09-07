@@ -298,6 +298,7 @@ begin
     RecentFiles.Insert(0, AFilename);
   if RecentFiles.Count > 10 then
     RecentFiles.Delete(10);
+  SaveSettingToIni(EntrySettings.IniFileName);
 end;
 
 

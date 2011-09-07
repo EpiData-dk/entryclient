@@ -12,13 +12,14 @@ object DataFormFrame: TDataFormFrame
     Left = 0
     Height = 607
     Top = 0
-    Width = 1012
-    HorzScrollBar.Page = 1010
+    Width = 842
+    HorzScrollBar.Page = 840
     VertScrollBar.Page = 605
     Align = alClient
     Color = clWhite
     ParentColor = False
     TabOrder = 0
+    OnMouseMove = Panel1MouseMove
     OnMouseWheel = DataFormScroolBoxMouseWheel
   end
   object InformationPanel: TPanel
@@ -345,6 +346,25 @@ object DataFormFrame: TDataFormFrame
         ParentFont = False
         Transparent = False
       end
+    end
+  end
+  object Panel1: TPanel
+    Left = 842
+    Height = 607
+    Top = 0
+    Width = 170
+    Align = alRight
+    ClientHeight = 607
+    ClientWidth = 170
+    TabOrder = 2
+    OnMouseMove = Panel1MouseMove
+    object Label1: TLabel
+      Left = 30
+      Height = 18
+      Top = 48
+      Width = 44
+      Caption = 'Label1'
+      ParentColor = False
     end
   end
   object ActionList1: TActionList

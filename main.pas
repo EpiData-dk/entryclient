@@ -434,8 +434,7 @@ begin
   AboutAction.Enabled := true;
   {$ENDIF}
 
-//  if ManagerSettings.SaveWindowPositions then
-    LoadFormPosition(Self, 'MainForm');
+  LoadFormPosition(Self, 'MainForm');
 
   UpdateSettings;
   UpdateRecentFiles;
