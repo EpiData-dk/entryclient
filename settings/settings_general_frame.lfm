@@ -13,9 +13,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = RecordsToSkipEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 39
-    Top = 100
-    Width = 152
+    Height = 34
+    Top = 101
+    Width = 150
     BorderSpacing.Left = 10
     Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
     ParentColor = False
@@ -26,7 +26,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 256
-    Height = 27
+    Height = 25
     Top = 106
     Width = 327
     Anchors = [akTop, akLeft, akRight]
@@ -43,9 +43,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = HintTimeOutEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 18
-    Top = 147
-    Width = 216
+    Height = 16
+    Top = 145
+    Width = 214
     BorderSpacing.Left = 10
     Caption = 'Hint timeout on errors (seconds):'
     ParentColor = False
@@ -57,8 +57,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 256
-    Height = 27
-    Top = 143
+    Height = 25
+    Top = 141
     Width = 327
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -75,7 +75,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 22
     Top = 10
-    Width = 152
+    Width = 147
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Show Welcome Box'
@@ -88,7 +88,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 22
     Top = 74
-    Width = 243
+    Width = 235
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Allow multiple program instances'
@@ -101,10 +101,55 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 22
     Top = 42
-    Width = 147
+    Width = 141
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Show Work Toolbar'
     TabOrder = 4
+  end
+  object AssociateLabel: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = AssociateBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 16
+    Top = 181
+    Width = 200
+    BorderSpacing.Left = 10
+    Caption = 'Associate filetypes (.epx, .epz):'
+    ParentColor = False
+  end
+  object UnAssociateBtn: TButton
+    AnchorSideTop.Control = AssociateBtn
+    AnchorSideRight.Control = AssociateBtn
+    Left = 402
+    Height = 27
+    Top = 176
+    Width = 97
+    Anchors = [akTop, akRight]
+    AutoSize = True
+    BorderSpacing.Right = 10
+    Caption = 'Un-Associate'
+    OnClick = UnAssociateBtnClick
+    TabOrder = 5
+  end
+  object AssociateBtn: TButton
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = HintTimeOutEdit
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 509
+    Height = 27
+    Top = 176
+    Width = 74
+    Anchors = [akTop, akRight]
+    AutoSize = True
+    BorderSpacing.Left = 5
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    Caption = 'Associate'
+    OnClick = AssociateBtnClick
+    TabOrder = 6
   end
 end
