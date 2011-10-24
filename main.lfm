@@ -4,7 +4,7 @@ object MainForm: TMainForm
   Top = 294
   Width = 977
   Caption = 'epidataentryclient'
-  ClientHeight = 617
+  ClientHeight = 619
   ClientWidth = 977
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
@@ -145,12 +145,13 @@ object MainForm: TMainForm
   }
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '0.9.31'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 575
+    Height = 577
     Top = 42
     Width = 977
     Align = alClient
@@ -171,9 +172,9 @@ object MainForm: TMainForm
       AnchorSideTop.Control = ProcessToolPanel
       AnchorSideTop.Side = asrCenter
       Left = 11
-      Height = 29
-      Top = 7
-      Width = 95
+      Height = 27
+      Top = 8
+      Width = 94
       Action = OpenProjectAction
       AutoSize = True
       BorderSpacing.Left = 10

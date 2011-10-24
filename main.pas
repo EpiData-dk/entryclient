@@ -81,6 +81,7 @@ type
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure DefaultPosActionExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -128,7 +129,7 @@ implementation
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
-  shortcuts;
+  shortcuts, epistringutils;
 
 { TMainForm }
 
@@ -349,17 +350,25 @@ end;
 procedure TMainForm.LMOpenProject(var Msg: TLMessage);
 var
   Dlg: TOpenDialog;
+  Fn: String;
 begin
-  Dlg := TOpenDialog.Create(self);
-  Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
-  Dlg.Filter := GetEpiDialogFilter([dfEPX, dfEPZ, dfCollection]);
-  Dlg.FilterIndex := 0;
+  if Msg.WParam = 0 then
+  begin
+    Dlg := TOpenDialog.Create(self);
+    Dlg.InitialDir := EntrySettings.WorkingDirUTF8;
+    Dlg.Filter := GetEpiDialogFilter([dfEPX, dfEPZ, dfCollection]);
+    Dlg.FilterIndex := 0;
 
-  if not Dlg.Execute then exit;
+    if not Dlg.Execute then exit;
+    Fn := Dlg.FileName;
+    Dlg.Free;
+  end else begin
+    Fn := TString(Msg.WParam).Str;
+    TString(Msg.WParam).Free;
+  end;
+
   if not DoCloseProject then exit;
-
-  DoOpenProject(Dlg.FileName);
-  Dlg.Free;
+  DoOpenProject(Fn);
 end;
 
 procedure TMainForm.LMOpenRecent(var Msg: TLMessage);
@@ -479,6 +488,16 @@ begin
     SaveFormPosition(Self, 'MainForm');
 
   SaveSettingToIni(EntrySettings.IniFileName);
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+var
+  Fn: String;
+begin
+  if Paramcount < 1 then exit;
+  Fn := ParamStrUTF8(1);
+  if FileExistsUTF8(Fn) then
+    PostMessage(Self.Handle, LM_OPEN_PROJECT, WPARAM(TString.Create(Fn)), 0);
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);
