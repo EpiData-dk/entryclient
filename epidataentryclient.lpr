@@ -23,6 +23,7 @@ begin
 end;
 
 begin
+  Application.Title := 'EpiData EntryClient';
   OnGetApplicationName := @EpiDataApplicationName;
 
   LoadIniFile;
