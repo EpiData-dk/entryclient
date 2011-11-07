@@ -3,9 +3,9 @@ program epidataentryclient;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}//{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}//{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, lnetbase, main, project_frame, dataform_frame, fieldedit,
   entryprocs, settings, about, epidatacore, picklist, sysutils,
