@@ -153,7 +153,7 @@ begin
   Settings :=  TEpiDocument(Field.RootOwner).ProjectSettings;
 
   // Trick to avoid updaing "SetRealText" with the field.id;
-  Name := FField.Id;
+  Name := FField.Name;
   MaxLength := Field.Length;
 
   Text      := '';

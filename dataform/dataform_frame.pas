@@ -497,7 +497,7 @@ begin
   FDataFile := AValue;
 
   // Create components.
-  Name := DataFile.Id;
+  Name := DataFile.Name;
 
   // Register the visual feedback hook.
   DataFile.BeginUpdate;
