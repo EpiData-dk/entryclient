@@ -614,13 +614,13 @@ begin
     ftString:   Result := TStringEdit.Create(AParent);
 
     ftDMYDate,
-    ftDMYToday,
+    ftDMYAuto,
     ftMDYDate,
-    ftMDYToday,
+    ftMDYAuto,
     ftYMDDate,
-    ftYMDToday: Result := TDateEdit.Create(AParent);
+    ftYMDAuto: Result := TDateEdit.Create(AParent);
 
-    ftTimeNow,
+    ftTimeAuto,
     ftTime:     Result := TTimeEdit.Create(AParent);
   end;
   if TEpiField(EpiControl).EntryMode = emNoEnter then
@@ -819,10 +819,10 @@ begin
                       else
                         Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
                     end;
-        ftDMYToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
-        ftMDYToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
-        ftYMDToday: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
-        ftTimeNow:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
+        ftDMYAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
       end;
     end;
 
@@ -984,10 +984,10 @@ begin
     with Field do
     begin
       case FieldType of
-        ftDMYToday: Text := FormatDateTime('DD/MM/YYYY', Date);
-        ftMDYToday: Text := FormatDateTime('MM/DD/YYYY', Date);
-        ftYMDToday: Text := FormatDateTime('YYYY/MM/DD', Date);
-        ftTimeNow:  Text := FormatDateTime('HH:NN:SS',   Now);
+        ftDMYAuto: Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYAuto: Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDAuto: Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeAuto:  Text := FormatDateTime('HH:NN:SS',   Now);
       end;
     end;
   end;

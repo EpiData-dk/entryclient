@@ -492,7 +492,7 @@ begin
             Exit;
           end;
         end;
-      ftTime, ftTimeNow:
+      ftTime, ftTimeAuto:
         begin
           if not EpiStrToTime(ValueEdit.Text, TimeSeparator, W1, W2, W3, S) then
           begin
@@ -500,9 +500,9 @@ begin
             Exit;
           end;
         end;
-      ftDMYDate, ftDMYToday,
-      ftMDYDate, ftMDYToday,
-      ftYMDDate, ftYMDToday:
+      ftDMYDate, ftDMYAuto,
+      ftMDYDate, ftMDYAuto,
+      ftYMDDate, ftYMDAuto:
         begin
           if not EpiStrToDate(ValueEdit.Text, DateSeparator, Field.FieldType, W1, W2, W3, S) then
           begin

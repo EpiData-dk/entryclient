@@ -80,11 +80,11 @@ var
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
-      ftDMYToday,
-      ftMDYToday,
-      ftYMDToday: Result := Field.AsDate[Idx] = StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
+      ftDMYAuto,
+      ftMDYAuto,
+      ftYMDAuto: Result := Field.AsDate[Idx] = StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
       ftTime,
-      ftTimeNow:  Result := Field.AsTime[Idx] = StrToTime(Text);
+      ftTimeAuto:  Result := Field.AsTime[Idx] = StrToTime(Text);
       ftString,
       ftUpperString: Result := Field.AsString[Idx] = Text;
     end;
@@ -101,11 +101,11 @@ var
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
-      ftDMYToday,
-      ftMDYToday,
-      ftYMDToday: Result := Field.AsDate[Idx] < StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
+      ftDMYAuto,
+      ftMDYAuto,
+      ftYMDAuto: Result := Field.AsDate[Idx] < StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
       ftTime,
-      ftTimeNow:  Result := Field.AsTime[Idx] < StrToTime(Text);
+      ftTimeAuto:  Result := Field.AsTime[Idx] < StrToTime(Text);
       ftString,
       ftUpperString: Result := AnsiCompareStr(Field.AsString[Idx], Text) < 0;
     end;
