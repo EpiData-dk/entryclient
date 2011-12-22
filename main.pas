@@ -439,10 +439,6 @@ end;
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
-  {$IFDEF EPI_DEBUG}
-  AboutAction.Enabled := true;
-  {$ENDIF}
-
   LoadFormPosition(Self, 'MainForm');
 
   UpdateSettings;
