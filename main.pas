@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame,
-  LMessages, StdCtrls, episervice_ipc, episervice_ipctypes, simpleipc;
+  LMessages, StdCtrls;
 
 
 const
@@ -109,12 +109,6 @@ type
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
     procedure LMOpenProject(var Msg: TLMessage); message LM_OPEN_PROJECT;
     procedure LMOpenRecent(var Msg: TLMessage); message LM_OPEN_RECENT;
-  private
-    { Process communication }
-    FEpiIPC:  TEpiIPC;
-    procedure  SetupIPC;
-    function   CheckManagerOpenFile(Const FileName: string): boolean;
-    procedure  CheckHasOpenFile(Const MsgType: TMessageType; Const Msg: string; out Ack: TMessageType);
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -373,20 +367,6 @@ begin
     TString(Msg.WParam).Free;
   end;
 
-  // TODO: Display msg about file being open.
-  if CheckManagerOpenFile(Fn) then
-  begin
-    if MessageDlg('Warning',
-      'The file: ' + LineEnding +
-      Fn + LineEnding +
-      'is already opened by EpiData Manager.' + LineEnding +
-      'Having the same file open in both programs may cause loss of data, due to overwriting of the file.' + LineEnding +
-      'Do you wish to open file anyway?',
-      mtWarning,
-      mbYesNo,
-      0,
-      mbNo) = mrNo then exit;
-  end;
   if not DoCloseProject then exit;
   DoOpenProject(Fn);
 end;
@@ -399,36 +379,10 @@ begin
   DoOpenProject(ExpandFileNameUTF8(MI.Caption));
 end;
 
-procedure TMainForm.SetupIPC;
-begin
-  {$IFDEF EPI_DEBUG}
-  FEpiIPC := TEpiIPC.Create(ApplicationName, Self);
-  FEpiIPC.OnRequest := @CheckHasOpenFile;
-  {$ENDIF}
-end;
-
-function TMainForm.CheckManagerOpenFile(const FileName: string): boolean;
-begin
-  {$IFDEF EPI_DEBUG}
-    result := FEpiIPC.IsFileOpenMsg(FileName);
-  {$ELSE}
-    result := false;
-  {$ENDIF}
-end;
-
-procedure TMainForm.CheckHasOpenFile(const MsgType: TMessageType;
-  const Msg: string; out Ack: TMessageType);
-begin
-  Ack := epiIPC_Ack_FileNotOpen;
-  if (Assigned(FActiveFrame)) and (FActiveFrame.DocumentFileName = Msg) then
-    Ack := epiIPC_Ack_FileIsOpen;
-end;
-
 constructor TMainForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   FActiveFrame := nil;
-  SetupIPC;
   UpdateMainMenu;
 end;
 
@@ -485,10 +439,6 @@ end;
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   SetCaption;
-  {$IFDEF EPI_DEBUG}
-  AboutAction.Enabled := true;
-  {$ENDIF}
-
   LoadFormPosition(Self, 'MainForm');
 
   UpdateSettings;
@@ -616,7 +566,7 @@ begin
   begin
     S := S + LineEnding +
       'Filename: ' + TProjectFrame(ActiveFrame).DocumentFileName + LineEnding +
-      'XML Version: ' + IntToStr(XMLSettings.Version) + LineEnding +
+      'XML Version: ' + IntToStr(Version) + LineEnding +
       'Field count: ' + IntToStr(DataFiles[0].Fields.Count) + LineEnding +
       'Record count: ' + IntToStr(DataFiles[0].Size);
   end;

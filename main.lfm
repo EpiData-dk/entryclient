@@ -330,7 +330,6 @@ object MainForm: TMainForm
     object AboutAction: TAction
       Category = 'Help'
       Caption = 'About'
-      Enabled = False
       OnExecute = AboutActionExecute
     end
     object CopyProjectInfoAction: TAction
