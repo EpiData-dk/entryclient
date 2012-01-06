@@ -163,8 +163,6 @@ begin
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
-      WriteInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
-      WriteInteger(Sec, 'ValueLabelColour', ValueLabelColour);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -179,6 +177,12 @@ begin
       WriteInteger(sec, 'SectionFontSize', SectionFont.Size);
       WriteInteger(sec, 'SectionFontStyle', Integer(SectionFont.Style));
       WriteInteger(sec, 'SectionFontColour', SectionFont.Color);
+
+      Sec := 'colour';
+      WriteInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
+      WriteInteger(Sec, 'ValueLabelColour', ValueLabelColour);
+      WriteInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
+      WriteInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
     end;
 
     // Read recent files.
@@ -217,8 +221,6 @@ begin
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
-    ValidateErrorColour := ReadInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
-    ValueLabelColour := ReadInteger(Sec, 'ValueLabelColour', ValueLabelColour);
 
     // Fonts
     Sec := 'fonts';
@@ -234,6 +236,13 @@ begin
     SectionFont.Size   := ReadInteger(sec, 'SectionFontSize', SectionFont.Size);
     SectionFont.Style  := TFontStyles(ReadInteger(sec, 'SectionFontStyle', Integer(SectionFont.Style)));
     SectionFont.Color  := ReadInteger(sec, 'SectionFontColour', SectionFont.Color);
+
+    // Color
+    Sec := 'colour';
+    ValidateErrorColour := ReadInteger(Sec, 'ValidateErrorColour', ValidateErrorColour);
+    ValueLabelColour    := ReadInteger(Sec, 'ValueLabelColour', ValueLabelColour);
+    ActiveFieldColour   := ReadInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
+    InactiveFieldColour := ReadInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
 
     // Read recent files.
     Sec := 'recent';
@@ -372,4 +381,4 @@ begin
 end;
 
 end.
-
+
