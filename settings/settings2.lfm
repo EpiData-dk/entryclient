@@ -23,10 +23,10 @@ object Settings2Form: TSettings2Form
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 435
-      Height = 32
-      Top = 7
-      Width = 54
+      Left = 430
+      Height = 26
+      Top = 10
+      Width = 59
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -40,10 +40,10 @@ object Settings2Form: TSettings2Form
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = BitBtn1
-      Left = 346
-      Height = 32
-      Top = 7
-      Width = 79
+      Left = 343
+      Height = 26
+      Top = 10
+      Width = 77
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -60,11 +60,13 @@ object Settings2Form: TSettings2Form
     Top = 0
     Width = 141
     Align = alLeft
-    DefaultItemHeight = 19
+    DefaultItemHeight = 16
+    ReadOnly = True
     ScrollBars = ssAutoBoth
     TabOrder = 1
     OnChange = SettingsViewChange
     OnChanging = SettingsViewChanging
+    Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
   end
   object Splitter1: TSplitter
     Left = 141
