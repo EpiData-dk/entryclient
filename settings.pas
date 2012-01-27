@@ -151,7 +151,7 @@ begin
   Result := false;
 
   try
-    Ini := TIniFile.Create(FileName);
+    Ini := TIniFile.Create(UTF8ToSys(FileName));
     With Ini do
     with EntrySettings do
     begin
@@ -207,7 +207,7 @@ begin
 
   if not FileExistsUTF8(FileName) then exit;
 
-  Ini := TIniFile.Create(FileName);
+  Ini := TIniFile.Create(UTF8ToSys(FileName));
   With Ini do
   with EntrySettings do
   begin
@@ -381,4 +381,4 @@ begin
 end;
 
 end.
-
+
