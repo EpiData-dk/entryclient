@@ -103,7 +103,7 @@ var
 
     ValidateErrorColour: clYellow;
     ValueLabelColour: clBlue;
-    ActiveFieldColour: clHighlight;
+    ActiveFieldColour: TCOlor($FFC26B);
     InactiveFieldColour: clWhite;
 
     FieldFont:             nil;
@@ -122,7 +122,7 @@ var
   function LoadSettingsFromIni(Const FileName: string): boolean;
 
   procedure SaveFormPosition(Const AForm: TForm; Const SectionName: string);
-  procedure LoadFormPosition(Var AForm: TForm; Const SectionName: string);
+  procedure LoadFormPosition(AForm: TForm; Const SectionName: string);
 
   procedure AddToRecent(const AFilename: string);
 
@@ -275,7 +275,7 @@ begin
   end;
 end;
 
-procedure LoadFormPosition(var AForm: TForm; const SectionName: string);
+procedure LoadFormPosition(AForm: TForm; const SectionName: string);
 var
   Ini: TIniFile;
 begin
@@ -372,6 +372,7 @@ begin
     EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
 
   RecentFiles := TStringList.Create;
+  RecentFiles.CaseSensitive := true;
 end;
 
 finalization
