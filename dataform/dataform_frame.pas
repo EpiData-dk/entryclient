@@ -856,6 +856,12 @@ var
   P: TPoint;
 begin
   if not Assigned(Search) then exit;
+
+  case Search.Origin of
+    soBeginning: Idx := 0;
+    soEnd:       Idx := Search.DataFile.Size - 1;
+  end;
+
   idx := SearchFindNext(Search, Idx);
   if idx <> -1 then
     RecNo := idx
