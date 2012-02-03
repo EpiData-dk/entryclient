@@ -364,7 +364,7 @@ begin
 
   UpdateSettings;
 
-  {$IFDEF EPI_RELEASE}
+  {$IFNDEF EPI_DEBUG}
     ProjectPanel.Enabled := false;
     ProjectPanel.Visible := false;
     Splitter1.Enabled    := false;
