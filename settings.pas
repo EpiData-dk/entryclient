@@ -74,18 +74,9 @@ type
   PEntrySettings = ^TEntrySettings;
 
 const
-  {$IFDEF EPI_SHOWREVISION}
-    EntryVersion: TEpiVersionInfo = (
-    {$I epidataentryclient.version.inc}
-    );
-  {$ELSE}
-    EntryVersion: TEpiVersionInfo = (
-      VersionNo: 0;
-      MajorRev:  4;
-      MinorRev:  0;
-      BuildNo:   0;
-    );
-  {$ENDIF}
+  EntryVersion: TEpiVersionInfo = (
+  {$I epidataentryclient.version.inc}
+  );
 
 var
   EntrySettings: TEntrySettings = (
@@ -111,11 +102,7 @@ var
     SectionFont:           nil;
   );
 
-  {$IFDEF EPI_SHOWREVISION}
-    {$I revision.inc}
-  {$ELSE}
-    const RevisionStr = '(DEBUG)';
-  {$ENDIF}
+  {$I epidataentryclient.revision.inc}
 
   function GetEntryVersion: String;
   function SaveSettingToIni(Const FileName: string): boolean;
