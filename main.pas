@@ -296,7 +296,7 @@ begin
   FieldNotesDivider.Visible := Assigned(FActiveFrame);
 
   SearchMenu.Visible := Assigned(FActiveFrame);
-  {$IFDEF EPI_RELEASE}
+  {$IFNDEF EPI_DEBUG}
   MenuItem1.Visible := false;
   {$ENDIF}
 end;
@@ -444,7 +444,7 @@ begin
   UpdateSettings;
   UpdateRecentFiles;
 
-  {$IFDEF EPI_RELEASE}
+  {$IFNDEF EPI_DEBUG}
   if EntrySettings.ShowWelcome then
     ShowMessagePos('EpiData EntryClient:' + LineEnding +
                    'See help menu above for an introduction.' + LineEnding +
@@ -475,7 +475,7 @@ procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose := true;
 
-  {$IFDEF EPI_RELEASE}
+  {$IFNDEF EPI_DEBUG}
   if Assigned(FActiveFrame) then
     FActiveFrame.CloseQuery(CanClose);
   {$ENDIF}
