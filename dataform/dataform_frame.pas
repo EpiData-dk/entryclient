@@ -856,6 +856,12 @@ var
   P: TPoint;
 begin
   if not Assigned(Search) then exit;
+
+  case Search.Origin of
+    soBeginning: Idx := 0;
+    soEnd:       Idx := Search.DataFile.Size - 1;
+  end;
+
   idx := SearchFindNext(Search, Idx);
   if idx <> -1 then
     RecNo := idx
@@ -1267,6 +1273,7 @@ var
   Err: string;
   ErrFieldEdit: TFieldEdit;
   Txt: String;
+  OldText: TCaption;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -1363,7 +1370,10 @@ begin
   if Assigned(Field.ValueLabelWriteField) then
   begin
     NewFieldEdit := FieldEditFromField(Field.ValueLabelWriteField);
+    OldText := NewFieldEdit.Text;
     NewFieldEdit.Text := Field.ValueLabelSet.ValueLabelString[FE.Text];
+    if OldText <> NewFieldEdit.Text then
+      Modified := true;
   end;
 
   // After Entry Script (Calculation)
@@ -1371,6 +1381,7 @@ begin
   begin
     NewFieldEdit := FieldEditFromField(Field.Calculation.ResultField);
     Err := '';
+    OldText := NewFieldEdit.Text;
     case Field.Calculation.CalcType of
       ctTimeDiff:      NewFieldEdit.Text := CalcTimeDiff(FieldEditList, TEpiTimeCalc(Field.Calculation));
       ctCombineDate:   NewFieldEdit.Text := CalcCombineDate(FieldEditList, TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
@@ -1382,6 +1393,8 @@ begin
       FieldValidateError(ErrFieldEdit, Err);
       Exit(fxtError);
     end;
+    if OldText <> NewFieldEdit.Text then
+      Modified := true;
   end;
 
 
