@@ -896,8 +896,10 @@ begin
   with TFieldEdit(FieldEditList[i]) do
   begin
     if (Field.FieldType in AutoFieldTypes) or
-       (Text = '') then continue;
-
+       (Field.RepeatValue) or
+       (Field.HasDefaultValue) or
+       (Text = '')
+       then continue;
 
     SC := TSearchCondition.Create;
     SC.BinOp := boAnd;
