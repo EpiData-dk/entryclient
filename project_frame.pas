@@ -29,6 +29,8 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
+      var Password: string);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
@@ -97,6 +99,15 @@ begin
   EpiDocument.Modified := false;
 end;
 
+procedure TProjectFrame.EpiDocumentPassWord(Sender: TObject; var Login: string;
+  var Password: string);
+begin
+  PassWord :=
+    PasswordBox('Project Password',
+                'Project data is password protected.' + LineEnding +
+                'Please enter password:');
+end;
+
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
   SaveProjectAction.Enabled := Assigned(FEpiDocument);
@@ -146,51 +157,54 @@ begin
 
   DoCloseProject;
 
-  Cursor := crHourGlass;
-  Application.ProcessMessages;
-  MainForm.BeginUpdateForm;
-
-  St := nil;
   try
-    St := TMemoryStream.Create;
-    if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
-      ZipFileToStream(St, Fn)
-    else
-      St.LoadFromFile(UTF8ToSys(Fn));
-    St.Position := 0;
-    FEpiDocument := DoCreateNewDocument;
-    FEpiDocument.LoadFromStream(St);
-    FEpiDocument.OnModified := @EpiDocModified;
-    FDocumentFilename := Fn;
-  except
-    if Assigned(St) then FreeAndNil(St);
-    if Assigned(FEpiDocument) then FreeAndNil(FEpiDocument);
-    if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
-    raise;
+    Cursor := crHourGlass;
+    Application.ProcessMessages;
+    MainForm.BeginUpdateForm;
+
+    St := nil;
+    try
+      St := TMemoryStream.Create;
+      if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
+        ZipFileToStream(St, Fn)
+      else
+        St.LoadFromFile(UTF8ToSys(Fn));
+      St.Position := 0;
+      FEpiDocument := DoCreateNewDocument;
+      FEpiDocument.OnPassword   := @EpiDocumentPassWord;
+      FEpiDocument.LoadFromStream(St);
+      FEpiDocument.OnModified := @EpiDocModified;
+      FDocumentFilename := Fn;
+    except
+      if Assigned(St) then FreeAndNil(St);
+      if Assigned(FEpiDocument) then FreeAndNil(FEpiDocument);
+      if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
+      raise;
+    end;
+    FDocumentFileTimeStamp := FileAgeUTF8(Fn);
+
+    // Create backup process.
+    if EpiDocument.ProjectSettings.BackupInterval > 0 then
+    begin
+      FBackupTimer := TTimer.Create(Self);
+      FBackupTimer.Enabled := false;
+      FBackupTimer.OnTimer := @TimedBackup;                               { Milliseconds * 60 sec/min. }
+      FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
+    end;
+
+    DoNewDataForm(FEpiDocument.DataFiles[0]);
+
+    if Res = mrYes then
+      EpiDocument.Modified := true;
+
+    AddToRecent(DocumentFileName);
+    UpdateMainCaption;
+    SaveProjectAction.Update;
+  finally
+    Cursor := crDefault;
+    Application.ProcessMessages;
+    MainForm.EndUpdateForm;
   end;
-  FDocumentFileTimeStamp := FileAgeUTF8(Fn);
-
-  // Create backup process.
-  if EpiDocument.ProjectSettings.BackupInterval > 0 then
-  begin
-    FBackupTimer := TTimer.Create(Self);
-    FBackupTimer.Enabled := false;
-    FBackupTimer.OnTimer := @TimedBackup;                               { Milliseconds * 60 sec/min. }
-    FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
-  end;
-
-  DoNewDataForm(FEpiDocument.DataFiles[0]);
-
-  Cursor := crDefault;
-  Application.ProcessMessages;
-  MainForm.EndUpdateForm;
-
-  if Res = mrYes then
-    EpiDocument.Modified := true;
-
-  AddToRecent(DocumentFileName);
-  UpdateMainCaption;
-  SaveProjectAction.Update;
 end;
 
 procedure TProjectFrame.AddToRecent(const aFilename: string);

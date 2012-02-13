@@ -129,7 +129,7 @@ implementation
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
-  shortcuts, epistringutils;
+  shortcuts, epistringutils, epiadmin;
 
 { TMainForm }
 
@@ -276,6 +276,15 @@ begin
       begin
         ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
                     'File is corrupt or does not exist.');
+        DoCloseProject;
+      end;
+    on EEpiBadPassword do
+      begin
+        MessageDlg('Error',
+                   'Unable to open the file: ' + AFileName + LineEnding + LineEnding +
+                   'Invalid Password!',
+                   mtError,
+                   [mbOK], 0);
         DoCloseProject;
       end;
   else

@@ -278,7 +278,16 @@ var
   LCharacters: TCharSet;
 begin
   WC := UTF8ToUTF16(UTF8Key)[1];
-  if WC < #32 then
+
+  // Use ESC key to cancel current entry in field.
+  // - on new record, field is set to empty (using updatetext).
+  if WC = WideChar(VK_ESCAPE) then
+  begin
+    UpdateText;
+    exit(true);
+  end;
+
+  if WC < WideChar(VK_SPACE) then
   begin
     InheritHandled := inherited DoUTF8KeyPress(UTF8Key);
     exit(true);
