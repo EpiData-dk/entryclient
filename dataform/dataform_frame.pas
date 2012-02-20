@@ -1276,6 +1276,10 @@ var
   ErrFieldEdit: TFieldEdit;
   Txt: String;
   OldText: TCaption;
+  CheckUnique: Boolean;
+  i: Integer;
+  C: TSearchCondition;
+  S: TSearch;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -1351,6 +1355,37 @@ begin
   // **************************************
   result := fxtOk;
   Field := FE.Field;
+
+  // Key Unique
+  if (DataFile.KeyFields.Count > 0) and
+     (DataFile.KeyFields.FieldExists(Field)) then
+  begin
+    // This field is part of the KeyFields list
+    S := TSearch.Create;
+    S.DataFile := DataFile;
+    S.Direction := sdForward;
+    S.Origin := soBeginning;
+    for i := 0 to DataFile.KeyFields.Count - 1 do
+    begin
+      Txt := FieldEditFromField(DataFile.KeyFields[i]).Text;
+      if Txt <> '' then
+      begin
+        C := TSearchCondition.Create;
+        C.BinOp := boAnd;
+        C.MatchCriteria := mcEq;
+        C.Text := Txt;
+        C.Field := DataFile.KeyFields[i];
+        S.List.Add(C);
+      end;
+    end;
+    if (S.ConditionCount = DataFile.KeyFields.Count) and
+       (SearchFindNext(S, 0) <> -1) then
+    begin
+      FieldValidateError(FE, 'Found existing key!');
+      Exit(fxtError);
+    end;
+    S.Free;
+  end;
 
   // Comparison
   if Assigned(Field.Comparison) then
@@ -1458,7 +1493,6 @@ begin
       Exit(fxtJump);
     end;
   end;
-
 end;
 
 function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
