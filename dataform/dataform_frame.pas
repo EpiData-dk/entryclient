@@ -107,6 +107,8 @@ type
     procedure DoPerformSearch(Search: TSearch; Idx: Integer; Wrap: boolean);
     function  CreateSearchFromFieldEdits: TSearch;
     function  DoSearchForm(Search: TSearch): Word;
+    function  PerformKeyFieldsCheck: boolean;
+    function  DoSearchKeyFields: integer;
   private
     { Notes }
     FNotesForm: TNotesForm;
@@ -700,14 +702,19 @@ begin
       'Save?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
     case Res of
-      mrCancel: Exit;
-      mrYes:    begin
-                  // if a new record is being edited the datafile has NOT been
-                  // expanded at this point.
-                  if not AllFieldsValidate(false) then exit;
-                  CommitFields;
-                end;
-      mrNo:     Modified := false; // do nothing.
+      mrCancel:
+        Exit;
+
+      mrYes:
+        begin
+          // if a new record is being edited the datafile has NOT been
+          // expanded at this point.
+          if not AllFieldsValidate(false) then exit;
+          CommitFields;
+        end;
+
+      mrNo:
+        Modified := false; // do nothing.
     end;
   end;
 
@@ -793,11 +800,6 @@ begin
       mrYes:    CommitFields;
       mrNo:     ; // Do nothing
     end;
-
-{    if MessageDlg('Confirmation', 'Save Record?',
-      mtConfirmation, mbYesNoc, 0, mbYes) = mrNo then exit;
-    // Commit text to data.
-    CommitFields;}
   end;
 
   // **********************************
@@ -968,6 +970,69 @@ begin
   end;
 end;
 
+function TDataFormFrame.PerformKeyFieldsCheck: boolean;
+var
+  Idx: Integer;
+begin
+  Idx := DoSearchKeyFields;
+  if Idx = RecNo then
+    Idx := -1;
+
+
+  if (Idx <> -1) then
+  begin
+    if MessageDlg(
+        'Index Conflict',
+        'Index key already found' + LineEnding +
+          'Goto record: ' + IntToStr(Idx + 1),
+        mtWarning,
+        mbYesNo,
+        0,
+        mbYes
+       ) = mrYes then
+    begin
+      // Trick to make system believe nothing has happened.
+      Modified := false;
+      RecNo := Idx;
+      Idx := -1;
+    end;
+  end;
+
+  result := Idx = -1;
+end;
+
+function TDataFormFrame.DoSearchKeyFields: integer;
+var
+  S: TSearch;
+  i: Integer;
+  C: TSearchCondition;
+  Txt: TCaption;
+begin
+  Result := -1;
+
+  S := TSearch.Create;
+  S.DataFile := DataFile;
+  S.Direction := sdForward;
+  S.Origin := soBeginning;
+  for i := 0 to DataFile.KeyFields.Count - 1 do
+  begin
+    Txt := FieldEditFromField(DataFile.KeyFields[i]).Text;
+    if Txt <> '' then
+    begin
+      C := TSearchCondition.Create;
+      C.BinOp := boAnd;
+      C.MatchCriteria := mcEq;
+      C.Text := Txt;
+      C.Field := DataFile.KeyFields[i];
+      S.List.Add(C);
+    end;
+  end;
+  if (S.ConditionCount = DataFile.KeyFields.Count) then
+    Result := SearchFindNext(S, 0);
+
+  S.Free;
+end;
+
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
 begin
   if not Assigned(FNotesForm) then
@@ -1044,7 +1109,11 @@ begin
     mrYes:    begin
                 // Sanity check
                 // - go through all fields for a validity check.
-                if not AllFieldsValidate(false) then exit;
+                if not AllFieldsValidate(false) then
+                begin
+                  CanClose := false;
+                  exit;
+                end;
                 CommitFields;
               end;
     mrNo:     ; // Do nothing
@@ -1277,9 +1346,6 @@ var
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
-  i: Integer;
-  C: TSearchCondition;
-  S: TSearch;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -1356,35 +1422,13 @@ begin
   result := fxtOk;
   Field := FE.Field;
 
+
   // Key Unique
   if (DataFile.KeyFields.Count > 0) and
      (DataFile.KeyFields.FieldExists(Field)) then
   begin
-    // This field is part of the KeyFields list
-    S := TSearch.Create;
-    S.DataFile := DataFile;
-    S.Direction := sdForward;
-    S.Origin := soBeginning;
-    for i := 0 to DataFile.KeyFields.Count - 1 do
-    begin
-      Txt := FieldEditFromField(DataFile.KeyFields[i]).Text;
-      if Txt <> '' then
-      begin
-        C := TSearchCondition.Create;
-        C.BinOp := boAnd;
-        C.MatchCriteria := mcEq;
-        C.Text := Txt;
-        C.Field := DataFile.KeyFields[i];
-        S.List.Add(C);
-      end;
-    end;
-    if (S.ConditionCount = DataFile.KeyFields.Count) and
-       (SearchFindNext(S, 0) <> -1) then
-    begin
-      FieldValidateError(FE, 'Found existing key!');
+    if not PerformKeyFieldsCheck then
       Exit(fxtError);
-    end;
-    S.Free;
   end;
 
   // Comparison
@@ -1499,12 +1543,15 @@ function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
 var
   i: Integer;
 begin
-  result := false;
-
-  for i := 0 to FieldEditList.Count - 1 do
-    if not FieldValidate(TFieldEdit(FieldEditList[i]), IgnoreMustEnter) then exit;
-
   result := true;
+
+  // Regular check on Syntax Etc.
+  for i := 0 to FieldEditList.Count - 1 do
+    if not FieldValidate(TFieldEdit(FieldEditList[i]), IgnoreMustEnter) then exit(false);
+
+  // Additional check for KeyFields consistency.
+  if DataFile.KeyFields.Count > 0 then
+    result := (DoSearchKeyFields = -1);
 end;
 
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
@@ -1535,7 +1582,9 @@ begin
   end;
 
   if (not IgnoreMustEnter) and
-     (FE.Field.EntryMode = emMustEnter) and
+     ((FE.Field.EntryMode = emMustEnter) or
+      (DataFile.KeyFields.FieldExists(FE.Field))
+     ) and
      (FE.Text = '') then
   begin
     DoError(FE);
