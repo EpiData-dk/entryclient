@@ -320,7 +320,11 @@ var
   S: String;
   T: String;
 begin
-  S := 'EpiData Entry Client (v' + GetEntryVersion + ') test version';
+  S := 'EpiData Entry Client (v' + GetEntryVersion + ')'
+    {$IFDEF EPIDATA_TEST_RELEASE}
+    + 'test version'
+    {$ENDIF}
+    ;
 
   if Assigned(EpiDocument) then
   begin
