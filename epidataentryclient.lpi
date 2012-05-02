@@ -101,6 +101,7 @@
         <Filename Value="main.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main"/>
       </Unit1>
@@ -115,6 +116,7 @@
         <Filename Value="dataform/dataform_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DataFormFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="dataform_frame"/>
       </Unit3>
@@ -157,6 +159,7 @@
         <Filename Value="dataform/notes_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="NotesForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="notes_form"/>
       </Unit10>
@@ -169,6 +172,7 @@
         <Filename Value="settings/settings2.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Settings2Form"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="settings2"/>
       </Unit12>
@@ -181,6 +185,7 @@
         <Filename Value="settings/settings2_paths_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SettingsPathsFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings2_paths_frame"/>
       </Unit14>
@@ -188,6 +193,7 @@
         <Filename Value="settings/settings2_colours_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SettingsColourFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings2_colours_frame"/>
       </Unit15>
@@ -195,6 +201,7 @@
         <Filename Value="settings/settings_general_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SettingsGeneralFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings_general_frame"/>
       </Unit16>

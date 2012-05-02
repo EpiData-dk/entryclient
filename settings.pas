@@ -54,6 +54,7 @@ type
     ShowWelcome:    boolean;
     MultipleInstances: boolean;
     ShowWorkToolbar: boolean;
+    NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
 
     // Paths:
     WorkingDirUTF8: string;
@@ -87,6 +88,7 @@ var
     ShowWelcome:    true;
     MultipleInstances: false;
     ShowWorkToolbar: true;
+    NotesDisplay:   0;
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
@@ -150,6 +152,7 @@ begin
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
       WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
+      WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -208,6 +211,7 @@ begin
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
+    NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
 
     // Fonts
     Sec := 'fonts';

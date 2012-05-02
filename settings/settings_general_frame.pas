@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, EditBtn, MaskEdit,
-  settings2_interface, settings;
+  ExtCtrls, settings2_interface, settings;
 
 type
 
@@ -15,6 +15,7 @@ type
   TSettingsGeneralFrame = class(TFrame, ISettingsFrame)
     AssociateBtn: TButton;
     AssociateLabel: TLabel;
+    NotesGroupBox: TRadioGroup;
     ShowProcessToolBarChkBox: TCheckBox;
     HintTimeOutEdit: TMaskEdit;
     Label1: TLabel;
@@ -132,6 +133,7 @@ begin
     ShowProcessToolBarChkBox.Checked := ShowWorkToolbar;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
+    NotesGroupBox.ItemIndex := NotesDisplay;
   end;
 end;
 
@@ -147,6 +149,7 @@ begin
     MultipleInstances := MultipleInstanceChkBox.Checked;
     RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
     HintTimeOut := StrToInt(HintTimeOutEdit.Text);
+    NotesDisplay := NotesGroupBox.ItemIndex;
   end;
 
   result := true;

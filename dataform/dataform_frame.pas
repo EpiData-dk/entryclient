@@ -112,6 +112,7 @@ type
   private
     { Notes }
     FNotesForm: TNotesForm;
+    FNotesHint: THintWindow;
     procedure ShowNotes(FE: TFieldEdit; ForceShow: boolean = false);
   private
     { Field Enter/Exit Handling }
@@ -1034,13 +1035,39 @@ begin
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
+var
+  R: TRect;
+  P: TPoint;
 begin
-  if not Assigned(FNotesForm) then
-    FNotesForm := TNotesForm.Create(Self);
-  FNotesForm.NotesMemo.Text := FE.Field.Notes.Text;
+  if EntrySettings.NotesDisplay = 0 then
+  // Display as hint:
+  begin
+    if FE.Field.Notes.Text = '' then
+    begin
+      if Assigned(FNotesHint) then FNotesHint.Hide;
+      exit;
+    end;
 
-  if not FNotesForm.Showing and ForceShow then
-    FNotesForm.Show;
+    if not Assigned(FNotesHint) then
+    begin
+      FNotesHint := THintWindow.Create(Self);
+      FNotesHint.AutoHide := true;
+      FNotesHint.HideInterval := 5000;
+    end;
+    R := FNotesHint.CalcHintRect(0, FE.Field.Notes.Text, nil);
+    P := FE.ClientToScreen(Point(0,0));
+    OffsetRect(R, P.X + FE.Width + 2, P.Y);
+    FNotesHint.ActivateHint(R, FE.Field.Notes.Text);
+  end else
+  // Display in window
+  begin
+    if not Assigned(FNotesForm) then
+      FNotesForm := TNotesForm.Create(Self);
+    FNotesForm.NotesMemo.Text := FE.Field.Notes.Text;
+
+    if not FNotesForm.Showing and ForceShow then
+      FNotesForm.Show;
+  end;
 end;
 
 procedure TDataFormFrame.CommitFields;
