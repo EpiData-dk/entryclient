@@ -12,7 +12,7 @@ uses
   UniqueInstanceRaw, notes_form, dataform_field_calculations, settings2, 
   settings2_interface, settings2_paths_frame, settings2_colours_frame,
   settings_general_frame, searchform, search, resultlist_form,
-  settings2_fonts_frame, shortcuts;
+  settings2_fonts_frame, shortcuts, entry_messages;
 
 {$R *.res}
 

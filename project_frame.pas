@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
-  Dialogs, epidocument, epidatafiles, dataform_frame;
+  Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages;
 
 type
 
@@ -52,6 +52,10 @@ type
     procedure DoOpenProject(Const aFilename: string);
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
+  private
+    { messages }
+    // Relaying
+    procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -216,6 +220,12 @@ end;
 procedure TProjectFrame.UpdateShortCuts;
 begin
   SaveProjectAction.ShortCut := P_SaveProject;
+end;
+
+procedure TProjectFrame.LMDataFormGotoRec(var Msg: TLMessage);
+begin
+  if Assigned(FActiveFrame) then
+    Msg.Result := SendMessage(FActiveFrame.Handle, Msg.Msg, Msg.WParam, Msg.LParam);
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);

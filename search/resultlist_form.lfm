@@ -7,7 +7,7 @@ object ResultListForm: TResultListForm
   ClientHeight = 573
   ClientWidth = 765
   OnShortCut = FormShortCut
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.1'
   object ListGrid: TStringGrid
     Left = 0
     Height = 573

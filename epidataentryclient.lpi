@@ -91,7 +91,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -109,6 +109,7 @@
         <Filename Value="project_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ProjectFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="project_frame"/>
       </Unit2>
@@ -209,6 +210,7 @@
         <Filename Value="search/searchform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SearchForm1"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="searchform"/>
       </Unit17>
@@ -221,6 +223,7 @@
         <Filename Value="search/resultlist_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ResultListForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="resultlist_form"/>
       </Unit19>
@@ -240,6 +243,11 @@
         <Filename Value="include/linux/shortcuts.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="entry_messages.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entry_messages"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

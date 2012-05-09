@@ -148,7 +148,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.1'
   object MainFormPageControl: TPageControl
     Left = 0
     Height = 577

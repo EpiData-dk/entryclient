@@ -7,13 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame,
-  LMessages, StdCtrls;
-
-
-const
-  LM_CLOSE_PROJECT = LM_USER + 1;
-  LM_OPEN_PROJECT  = LM_USER + 2;
-  LM_OPEN_RECENT   = LM_USER + 3;
+  LMessages, StdCtrls, entry_messages;
 
 type
   { TMainForm }
@@ -106,9 +100,12 @@ type
     procedure UpdateProcessToolPanel;
     procedure SetCaption;
     procedure OpenRecentMenuItemClick(Sender: TObject);
+  { messages }
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
     procedure LMOpenProject(var Msg: TLMessage); message LM_OPEN_PROJECT;
     procedure LMOpenRecent(var Msg: TLMessage); message LM_OPEN_RECENT;
+    // Relaying...
+    procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -386,6 +383,12 @@ var
 begin
   MI := TMenuItem(Msg.WParam);
   DoOpenProject(ExpandFileNameUTF8(MI.Caption));
+end;
+
+procedure TMainForm.LMDataFormGotoRec(var Msg: TLMessage);
+begin
+  if Assigned(FActiveFrame) then
+    SendMessage(FActiveFrame.Handle, LM_DATAFORM_GOTOREC, Msg.WParam, Msg.LParam);
 end;
 
 constructor TMainForm.Create(TheOwner: TComponent);

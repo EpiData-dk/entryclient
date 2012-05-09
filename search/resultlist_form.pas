@@ -30,12 +30,21 @@ type
     property    SelectedRecordNo: integer read FSelectedRecordNo;
   end; 
 
+
+procedure ShowResultListForm(Const Caption: String;
+  Const DataFile: TEpiDataFile;
+  Const FieldList: TFPList = nil;
+  Const RecordList: TBoundArray = nil);
+
 implementation
 
 {$R *.lfm}
 
 uses
-  fieldedit, LCLType;
+  fieldedit, LCLType, main, LCLIntf, entry_messages;
+
+var
+  FResultListForm: TResultListForm = nil;
 
 { TResultListForm }
 
@@ -47,7 +56,8 @@ begin
   if Index <= 0 then exit;
 
   FSelectedRecordNo := StrToInt(ListGrid.Cells[0, Index]) - 1;
-  ModalResult := mrOk;
+  SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
+//  ModalResult := mrOk;
 end;
 
 procedure TResultListForm.ListGridDblClick(Sender: TObject);
@@ -58,7 +68,9 @@ begin
   if P.Y <= 0 then exit;
 
   FSelectedRecordNo := StrToInt(ListGrid.Cells[0, P.Y]) - 1;
-  ModalResult := mrOk;
+  SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
+
+//  ModalResult := mrOk;
 end;
 
 procedure TResultListForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -112,6 +124,17 @@ begin
       ListGrid.Cells[j + 1, i + 1] := AsString[List[i]];
   end;
   ListGrid.AutoSizeColumns;
+end;
+
+procedure ShowResultListForm(const Caption: String;
+  const DataFile: TEpiDataFile; const FieldList: TFPList;
+  const RecordList: TBoundArray);
+begin
+  if not Assigned(FResultListForm) then
+    FResultListForm := TResultListForm.Create(nil, DataFile, FieldList);
+  FResultListForm.Caption := Caption;
+  FResultListForm.ApplyList(nil, RecordList);
+  FResultListForm.Show;
 end;
 
 end.

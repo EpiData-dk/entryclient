@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
   epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, ComCtrls,
-  fieldedit, notes_form, search;
+  fieldedit, notes_form, search, LMessages, entry_messages;
 
 type
 
@@ -109,6 +109,8 @@ type
     function  DoSearchForm(Search: TSearch): Word;
     function  PerformKeyFieldsCheck: boolean;
     function  DoSearchKeyFields: integer;
+    // Search Messages:
+    procedure LMGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
   private
     { Notes }
     FNotesForm: TNotesForm;
@@ -165,9 +167,8 @@ implementation
 uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epidocument, epivaluelabels, LCLIntf, LMessages,
-  dataform_field_calculations, searchform, resultlist_form,
-  shortcuts;
+  picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
+  searchform, resultlist_form, shortcuts;
 
 
 type
@@ -284,6 +285,8 @@ begin
     ShowHintMsg('No records found', RecordEdit);
     exit;
   end;
+
+//  ShowResultListForm('Result List:');
 
   LF := TResultListForm.Create(Self, DataFile, FieldEditList);
   LF.ApplyList(S, Lst);
@@ -952,19 +955,11 @@ begin
       List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
       if Length(List) = 0 then exit;
 
-      try
-        RF := TResultListForm.Create(Self, DataFile, FieldEditList);
-        RF.ApplyList(SF.Search, List);
-        if RF.ShowModal <> mrOK then exit;
-
-        if RF.SelectedRecordNo <> -1 then
-        begin
-          Modified := false;
-          RecNo := RF.SelectedRecordNo ;
-        end;
-      finally
-        RF.Free;
-      end;
+      ShowResultListForm(
+          'Showing results for: ' + SF.SearchLabel.Caption,
+          DataFile,
+          FieldEditList,
+          List);
     end;
   finally
     SF.Free;
@@ -1032,6 +1027,13 @@ begin
     Result := SearchFindNext(S, 0);
 
   S.Free;
+end;
+
+procedure TDataFormFrame.LMGotoRec(var Msg: TLMessage);
+begin
+  // WParam = RecordNo
+  RecNo := Msg.WParam;
+  FirstFieldAction.Execute;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
