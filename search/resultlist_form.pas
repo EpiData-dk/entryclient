@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, Graphics, Dialogs, Grids,
-  epidatafiles, search, LMessages;
+  epidatafiles, search, LMessages, ComCtrls;
 
 type
 
@@ -14,6 +14,7 @@ type
 
   TResultListForm = class(TForm)
     ListGrid: TStringGrid;
+    StatusBar1: TStatusBar;
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure ListGridDblClick(Sender: TObject);
     procedure ListGridHeaderClick(Sender: TObject; IsColumn: Boolean;
@@ -57,7 +58,6 @@ begin
 
   FSelectedRecordNo := StrToInt(ListGrid.Cells[0, Index]) - 1;
   SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
-//  ModalResult := mrOk;
 end;
 
 procedure TResultListForm.ListGridDblClick(Sender: TObject);
@@ -69,8 +69,6 @@ begin
 
   FSelectedRecordNo := StrToInt(ListGrid.Cells[0, P.Y]) - 1;
   SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
-
-//  ModalResult := mrOk;
 end;
 
 procedure TResultListForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -87,6 +85,7 @@ begin
     Handled := true;
 
     FSelectedRecordNo := StrToInt(ListGrid.Cells[0, ListGrid.Row]) - 1;
+    SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
   end;
 end;
 
@@ -107,6 +106,8 @@ var
   j: Integer;
 begin
   L := Length(List);
+
+  ListGrid.BeginUpdate;
   ListGrid.ColCount := FFieldList.Count + 1;
   ListGrid.RowCount := L + 1;
 
@@ -124,6 +125,9 @@ begin
       ListGrid.Cells[j + 1, i + 1] := AsString[List[i]];
   end;
   ListGrid.AutoSizeColumns;
+  ListGrid.EndUpdate();
+
+  StatusBar1.SimpleText := 'Showing ' + IntToStr(L) + ' records';
 end;
 
 procedure ShowResultListForm(const Caption: String;

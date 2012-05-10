@@ -274,8 +274,6 @@ procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
 var
   S: TSearch;
   Lst: TBoundArray;
-  LF: TResultListForm;
-  H: THintWindow;
 begin
   S := CreateSearchFromFieldEdits;
 
@@ -286,16 +284,11 @@ begin
     exit;
   end;
 
-//  ShowResultListForm('Result List:');
-
-  LF := TResultListForm.Create(Self, DataFile, FieldEditList);
-  LF.ApplyList(S, Lst);
-  if (LF.ShowModal = mrOK) and (LF.SelectedRecordNo <> -1) then
-  begin
-    Modified := false;
-    RecNo := LF.SelectedRecordNo;
-  end;
-  LF.Free;
+  ShowResultListForm(
+    'Result List:',
+    DataFile,
+    FieldEditList,
+    Lst);
 end;
 
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
@@ -920,7 +913,6 @@ end;
 function TDataFormFrame.DoSearchForm(Search: TSearch): Word;
 var
   SF: TSearchForm1;
-  RF: TResultListForm;
   Res: LongInt;
   idx: LongInt;
   List: TBoundArray;

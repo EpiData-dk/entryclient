@@ -1,7 +1,7 @@
 object ResultListForm: TResultListForm
-  Left = 475
+  Left = 790
   Height = 573
-  Top = 255
+  Top = 254
   Width = 765
   Caption = 'ResultListForm'
   ClientHeight = 573
@@ -10,7 +10,7 @@ object ResultListForm: TResultListForm
   LCLVersion = '1.1'
   object ListGrid: TStringGrid
     Left = 0
-    Height = 573
+    Height = 554
     Top = 0
     Width = 765
     Align = alClient
@@ -20,5 +20,12 @@ object ResultListForm: TResultListForm
     TabOrder = 0
     OnDblClick = ListGridDblClick
     OnHeaderClick = ListGridHeaderClick
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 19
+    Top = 554
+    Width = 765
+    Panels = <>
   end
 end
