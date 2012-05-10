@@ -76,7 +76,7 @@ var
       ftBoolean,
       ftInteger,
       ftAutoInc: Result := Field.AsInteger[Idx] = StrToInt(Text);
-      ftFloat:   Result := SameValue(Field.AsFloat[Idx], StrToFloat(Text));
+      ftFloat:   Result := SameValue(Field.AsFloat[Idx], StrToFloat(Text), 0.0);
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
@@ -97,7 +97,7 @@ var
       ftInteger,
       ftAutoInc: Result := Field.AsInteger[Idx] < StrToInt(Text);
       ftFloat:   Result := (Field.AsFloat[Idx] < StrToFloat(Text)) and
-                           (Not SameValue(Field.AsFloat[Idx], StrToFloat(Text)));
+                           (Not SameValue(Field.AsFloat[Idx], StrToFloat(Text), 0.0));
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
