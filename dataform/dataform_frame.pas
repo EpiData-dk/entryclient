@@ -1537,9 +1537,12 @@ begin
                            if EIdx = -1 then EIdx := FieldEditList.Count;
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            if EIdx < FieldEditList.Count then
-                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx])
+                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                           // A "DoNewRecord" is performed if no NewFieldEdit is assigned
+                           // as is the case if SkipNextField is perform on second-last field.
+                           {
                            else
-                             NewRecordAction.Execute;
+                             NewRecordAction.Execute;}
                          end;
         jtToField:       begin
                            NewField := Jump.JumpToField;
