@@ -175,7 +175,7 @@ begin
         St.LoadFromFile(UTF8ToSys(Fn));
       St.Position := 0;
       FEpiDocument := DoCreateNewDocument;
-      FEpiDocument.OnPassword   := @EpiDocumentPassWord;
+      FEpiDocument.OnPassword := @EpiDocumentPassWord;
       FEpiDocument.LoadFromStream(St);
       FEpiDocument.OnModified := @EpiDocModified;
       FDocumentFilename := Fn;
@@ -273,6 +273,10 @@ begin
   // TODO : Adapt to multiple datafiles.
   With MainForm do
   begin
+    // File menu
+    PrintMenuItem.Action       := Frame.PrintDataFormAction;
+    PrintWithDataMenuItem.Action := Frame.PrintDataFormWithDataAction;
+
     // Browse menu
     GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
     // -

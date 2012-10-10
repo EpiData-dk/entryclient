@@ -201,6 +201,15 @@ object MainForm: TMainForm
       object FileMenuDivider1: TMenuItem
         Caption = '-'
       end
+      object PrintMenuItem: TMenuItem
+        Caption = 'Print'
+      end
+      object PrintWithDataMenuItem: TMenuItem
+        Caption = 'PrintWithData'
+      end
+      object FileMenuDivider2: TMenuItem
+        Caption = '-'
+      end
       object ExitMenuItem: TMenuItem
         Action = FileExitAction
       end

@@ -115,6 +115,7 @@ var
 
   procedure AddToRecent(const AFilename: string);
 
+  procedure InitFont(Font: TFont);
 
 var
   RecentFiles: TStringList;
@@ -128,7 +129,12 @@ uses
 
 function GetEntryVersion: String;
 begin
-  result := GetEpiVersionInfo(EntryVersion);
+  result := GetEpiVersionInfo(HINSTANCE);
+end;
+
+function GetIniFile(Const FileName: String): TIniFile;
+begin
+  result := TIniFile.Create(UTF8ToSys(FileName));
 end;
 
 function SaveSettingToIni(Const FileName: string): boolean;
@@ -140,9 +146,8 @@ begin
   Result := false;
 
   try
-    Ini := TIniFile.Create(UTF8ToSys(FileName));
-    With Ini do
-    with EntrySettings do
+    Ini := GetIniFile(FileName);
+    With Ini, EntrySettings do
     begin
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
@@ -191,15 +196,24 @@ var
   Sec: String;
   i: Integer;
   S: String;
+
+  procedure CorrectFont(F: TFont);
+  begin
+    if (F.Name = '') or
+       (LowerCase(F.Name) = 'default') or
+       (F.Size = 0)
+    then
+      InitFont(F);
+  end;
+
 begin
   Result := false;
   EntrySettings.IniFileName := FileName;
 
   if not FileExistsUTF8(FileName) then exit;
 
-  Ini := TIniFile.Create(UTF8ToSys(FileName));
-  With Ini do
-  with EntrySettings do
+  Ini := GetIniFile(FileName);
+  With Ini, EntrySettings do
   begin
 {    // Advanced:
     WorkingDirUTF8:        string;}
@@ -219,14 +233,17 @@ begin
     FieldFont.Size   := ReadInteger(sec, 'FieldFontSize', FieldFont.Size);
     FieldFont.Style  := TFontStyles(ReadInteger(sec, 'FieldFontStyle', Integer(FieldFont.Style)));
     FieldFont.Color  := ReadInteger(sec, 'FieldFontColour', FieldFont.Color);
+    CorrectFont(FieldFont);
     HeadingFont.Name   := ReadString(sec, 'HeadingFontName', HeadingFont.Name);
     HeadingFont.Size   := ReadInteger(sec, 'HeadingFontSize', HeadingFont.Size);
     HeadingFont.Style  := TFontStyles(ReadInteger(sec, 'HeadingFontStyle', Integer(HeadingFont.Style)));
     HeadingFont.Color  := ReadInteger(sec, 'HeadingFontColour', HeadingFont.Color);
+    CorrectFont(HeadingFont);
     SectionFont.Name   := ReadString(sec, 'SectionFontName', SectionFont.Name);
     SectionFont.Size   := ReadInteger(sec, 'SectionFontSize', SectionFont.Size);
     SectionFont.Style  := TFontStyles(ReadInteger(sec, 'SectionFontStyle', Integer(SectionFont.Style)));
     SectionFont.Color  := ReadInteger(sec, 'SectionFontColour', SectionFont.Color);
+    CorrectFont(SectionFont);
 
     // Color
     Sec := 'colour';
@@ -253,7 +270,7 @@ begin
   if EntrySettings.IniFileName = '' then exit;
 
   try
-    Ini := TIniFile.Create(EntrySettings.IniFileName);
+    Ini := GetIniFile(EntrySettings.IniFileName);
     With Ini, AForm do
     begin
       WriteInteger(SectionName, 'Top', Top);
@@ -273,9 +290,8 @@ begin
   if EntrySettings.IniFileName = '' then exit;
 
   try
-    Ini := TIniFile.Create(EntrySettings.IniFileName);
-    With Ini do
-    with AForm do
+    Ini := GetIniFile(EntrySettings.IniFileName);
+    With Ini, AForm do
     begin
       Top     := ReadInteger(SectionName, 'Top', Top);
       Left    := ReadInteger(SectionName, 'Left', Left);
@@ -301,6 +317,7 @@ begin
   SaveSettingToIni(EntrySettings.IniFileName);
 end;
 
+{$I initfont.inc}
 
 { TSettingsForm }
 
@@ -353,6 +370,9 @@ begin
   EntrySettings.FieldFont := TFont.Create;
   EntrySettings.HeadingFont := TFont.Create;
   EntrySettings.SectionFont := TFont.Create;
+  InitFont(EntrySettings.FieldFont);
+  InitFont(EntrySettings.HeadingFont);
+  InitFont(EntrySettings.SectionFont);
 
   EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
   if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then

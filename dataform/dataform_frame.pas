@@ -5,9 +5,9 @@ unit dataform_frame;
 interface
 
 uses
-  Classes, SysUtils, types, FileUtil, Forms, Controls, epidatafiles,
-  epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType, ComCtrls,
-  fieldedit, notes_form, search, LMessages, entry_messages;
+  Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
+  epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
+  ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages;
 
 type
 
@@ -15,10 +15,13 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    PrintDataFormWithDataAction: TAction;
+    PrintDataFormAction: TAction;
     DeleteLabel: TLabel;
     DeletePanel: TPanel;
     Label1: TLabel;
     Panel1: TPanel;
+    PrintDialog1: TPrintDialog;
     ShowFieldNotesAction: TAction;
     FindFastListAction: TAction;
     FindRecordExAction: TAction;
@@ -80,6 +83,8 @@ type
     procedure Panel1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
       );
     procedure PrevRecActionExecute(Sender: TObject);
+    procedure PrintDataFormActionExecute(Sender: TObject);
+    procedure PrintDataFormWithDataActionExecute(Sender: TObject);
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
@@ -96,6 +101,7 @@ type
     procedure SetModified(const AValue: boolean);
     function  DoNewRecord: boolean;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
+    procedure DoPrintDataForm(WithData: boolean);
   private
     { Hint }
     FHintWindow: THintWindow;
@@ -168,7 +174,8 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
-  searchform, resultlist_form, shortcuts;
+  searchform, resultlist_form, shortcuts,
+  Printers, OSPrinters;
 
 
 type
@@ -391,6 +398,16 @@ end;
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
 begin
   RecNo := Min(RecNo - 1, DataFile.Size - 1);
+end;
+
+procedure TDataFormFrame.PrintDataFormActionExecute(Sender: TObject);
+begin
+  DoPrintDataForm(false);
+end;
+
+procedure TDataFormFrame.PrintDataFormWithDataActionExecute(Sender: TObject);
+begin
+  DoPrintDataForm(true);
 end;
 
 procedure TDataFormFrame.RecordEditEditingDone(Sender: TObject);
@@ -845,6 +862,224 @@ begin
       Exit(TFieldEdit(FieldEditList[i]));
 
   result := nil;
+end;
+
+procedure TDataFormFrame.DoPrintDataForm(WithData: boolean);
+var
+  ppix: Integer;
+  ppiy: Integer;
+  ppmmx: Int64;
+  ppmmy: Int64;
+  LeftMarg: Integer;
+  TopMarg: Integer;
+  BotMarg: Integer;
+  pClientHeight: Integer;
+  xscale: Extended;
+  yscale: Extended;
+  CI: TEpiCustomControlItem;
+  ALeft: Integer;
+  ARight: Integer;
+  ATop: Integer;
+  ABot: Integer;
+  i: Integer;
+  S: String;
+  Sz: TSize;
+
+  function RecursiveFindControl(Const EpiCtrl: TEpiCustomControlItem;
+    Const WinControl: TWinControl): TControl;
+  var
+    i: Integer;
+  begin
+    if EpiCtrl is TEpiField then
+      Exit(FieldEditFromField(TEpiField(EpiCtrl)));
+
+    for i := 0 to WinControl.ControlCount - 1 do
+    with WinControl do
+      begin
+        if (EpiCtrl is TEpiHeading) and
+           (Controls[i] is TEntryLabel) and
+           (TEntryLabel(Controls[i]).Text = TEpiHeading(EpiCtrl).Caption.Text)
+        then
+          Exit(Controls[i]);
+
+        if (Controls[i].InheritsFrom(TWinControl)) then
+          Result := RecursiveFindControl(EpiCtrl, TWinControl(Controls[i]));
+
+        if Assigned(Result) then
+          Exit;
+      end;
+
+    Result := nil;
+  end;
+
+
+  procedure SetFont(Const AFont: TFont);
+  begin
+    printer.canvas.Font.PixelsPerInch  := ppix;
+    Printer.Canvas.Font.Name           := AFont.Name;
+    Printer.Canvas.Font.Size           := AFont.Size;
+    Printer.Canvas.Font.Style          := AFont.Style;
+    Printer.Canvas.Font.Color          := AFont.Color;
+    printer.canvas.Font.PixelsPerInch  := ppix;
+  end;
+
+  function ControlItemTop(Const Item: TEpiCustomControlItem): Integer;
+  begin
+    if Item is TEpiSection then
+      Result := Item.Top
+    else
+      Result := DataFormScroolBox.ScreenToClient(RecursiveFindControl(CI, DataFormScroolBox).ClientToScreen(Point(0,0))).Y;
+  end;
+
+  function ControlItemLeft(Const Item: TEpiCustomControlItem): Integer;
+  begin
+    if Item is TEpiSection then
+      Result := Item.Left
+    else
+      Result := Item.Left + TEpiSection(Item.Owner.Owner).Left;
+  end;
+
+begin
+  IF NOT PrintDialog1.Execute THEN Exit;
+  WITH Printer DO
+  BEGIN
+//    FileName := '/tmp/tmp.ps';
+    Title    := 'EpiData Manager - ' + TEpiDocument(DataFile.RootOwner).Study.Title.Text;
+    ppix     := XDPI;                    //pixels pr inch X
+    ppiy     := YDPI;                    //pixels pr inch Y
+    ppmmx    := Round(ppix/25.4);        //pixels pr mm X
+    ppmmy    := Round(ppiy/25.4);        //pixels pr mm Y
+    LeftMarg := 0;                       //Sets left margin to 0 cm
+    TopMarg  := 0;                       //Sets top margin to 0 cm
+    BotMarg  := PageHeight;              //Sets bottom margin to 0 cm
+    pClientHeight := BotMarg - TopMarg;
+
+    xscale := ppix / GetParentForm(Self).PixelsPerInch;
+    yscale := ppiy / GetParentForm(Self).PixelsPerInch;
+
+    BeginDoc;
+
+    i := 0;
+    while i < DataFile.ControlItems.Count - 1 do
+    begin
+      CI := DataFile.ControlItem[i];
+      if CI = DataFile.MainSection then
+      begin
+        inc(i);
+        continue;
+      end;
+
+      ATop := (Round(ControlItemTop(CI) * yscale) - (PageNumber - 1) * pClientHeight) + TopMarg;
+      ALeft := Round(ControlItemLeft(CI) * xscale) + LeftMarg;
+
+      if (CI is TEpiSection) then
+      begin
+        SetFont(EntrySettings.SectionFont);
+        ABot := ATop + Round(TEpiSection(CI).Height * yscale);
+      end;
+      if (CI is TEpiHeading) then
+      begin
+        SetFont(EntrySettings.HeadingFont);
+        ABot := ATop + Canvas.TextHeight(TEpiHeading(CI).Caption.Text);
+      end;
+      if (CI is TEpiField) then
+      begin
+        SetFont(EntrySettings.FieldFont);
+        ABot := ATop + Round(FieldEditFromField(TEpiField(CI)).Height * yscale);  // Canvas.TextHeight(TEpiField(CI).Name);
+      end;
+
+      // Check if we need to create a new page
+      if ATop > BotMarg then
+      begin
+        NewPage;
+        Continue;
+      end;
+
+      if CI is TEpiSection then
+      with TEpiSection(CI) do
+      begin
+        SetFont(EntrySettings.SectionFont);
+        ARight := ALeft + Round(Width * xscale);
+
+        Sz := Size(0,0);
+        if Caption.Text <> '' then
+        begin
+          Sz := Canvas.TextExtent(Caption.Text);
+          Canvas.TextOut(ALeft + Round(10 * xscale), ATop, Caption.Text);
+        end;
+
+        ATop := ATop + Round(Sz.cy * (2 / 3));
+
+        // Draw box
+        Canvas.MoveTo(ALeft + Round(5 * xscale), ATop);
+        Canvas.LineTo(ALeft, ATop);
+        Canvas.LineTo(ALeft, ABot);
+        Canvas.LineTo(ARight, ABot);
+        Canvas.LineTo(ARight, ATop);
+        // .. line to caption text
+        Canvas.LineTo(ALeft + Sz.cx + Round(15 * xscale), Atop);
+      end;
+
+      if CI is TEpiHeading then
+      begin
+        Canvas.TextOut(aLeft, ATop, TEpiHeading(CI).Caption.Text);
+      end;
+
+      if CI is TEpiField then
+      with TEpiField(CI) do
+      begin
+        // Draw box
+        ARight := ALeft + Round(FieldEditFromField(TEpiField(CI)).Width * xscale);
+        ATop := ABot - ((ABot - ATop) div 2);
+
+        Canvas.MoveTo(ALeft, ATop);
+        Canvas.LineTo(ALeft, ABot);
+        Canvas.LineTo(ARight, ABot);
+        Canvas.LineTo(ARight, ATop);
+
+        // DATA!
+        if WithData and (RecNo <> NewRecord) then
+        begin
+          Canvas.TextOut(
+            ALeft + Round(2 * xscale),
+            ABot - Canvas.TextHeight(FieldEditFromField(TEpiField(CI)).Text) - Round(2 * yscale),
+            FieldEditFromField(TEpiField(CI)).Text
+            );
+        end;
+
+        IF trim(Question.Text)<>'' THEN
+        BEGIN
+          aLeft := ALeft - Round(5 * xscale) - Canvas.TextWidth(Question.Text);
+          ATop := ABot - Canvas.TextHeight(Question.Text);
+          Canvas.TextOut(aLeft, ATop, Question.Text);
+        END;
+
+        IF TEpiDocument(DataFile.RootOwner).ProjectSettings.ShowFieldNames then
+        begin
+          ALeft := ALeft - Round(5 * xscale) - Canvas.TextWidth(Name);
+          ATop := ABot - Canvas.TextHeight(Question.Text);
+          Canvas.TextOut(aLeft, ATop, Name);
+        end;
+
+        // VALUELABEL
+        if WithData and
+           (RecNo <> NewRecord) and
+           (Assigned(ValueLabelSet))
+        then
+        begin
+          Canvas.Font.Color := EntrySettings.ValueLabelColour;
+          S := ValueLabelSet.ValueLabelString[FieldEditFromField(TEpiField(CI)).Text];
+          ALeft := ARight + Round(5 * xscale);
+          ATop := ABot - Canvas.TextHeight(S);
+          Canvas.TextOut(ALeft, ATop, S);
+        end;
+      end;
+
+      Inc(i);
+    end;
+
+    EndDoc;
+  END;  //with printer
 end;
 
 procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer;

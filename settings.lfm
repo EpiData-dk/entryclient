@@ -9,7 +9,7 @@ object SettingsForm: TSettingsForm
   ClientWidth = 517
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.1'
   object Panel1: TPanel
     Left = 0
     Height = 42
@@ -24,10 +24,10 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 429
-      Height = 26
-      Top = 8
-      Width = 77
+      Left = 426
+      Height = 34
+      Top = 4
+      Width = 80
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -41,10 +41,10 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = BitBtn1
-      Left = 360
-      Height = 26
-      Top = 8
-      Width = 59
+      Left = 363
+      Height = 32
+      Top = 5
+      Width = 53
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -67,16 +67,16 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 363
-      ClientWidth = 509
+      ClientHeight = 365
+      ClientWidth = 511
       object Label17: TLabel
         AnchorSideLeft.Control = TabSheet1
         AnchorSideTop.Control = WorkingDirEdit
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 13
-        Width = 92
+        Height = 15
+        Top = 15
+        Width = 119
         BorderSpacing.Left = 10
         Caption = 'Default data folder'
         ParentColor = False
@@ -85,12 +85,12 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = TabSheet1
         AnchorSideRight.Side = asrBottom
         Left = 165
-        Height = 21
+        Height = 25
         Top = 10
-        Width = 307
+        Width = 309
         ShowHidden = False
         ButtonWidth = 23
-        NumGlyphs = 0
+        NumGlyphs = 1
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 0
@@ -101,9 +101,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = RecordsToSkipEdit
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 106
-        Width = 175
+        Height = 15
+        Top = 120
+        Width = 229
         BorderSpacing.Left = 10
         Caption = 'Skip number of records (Alt+F7/F8):'
         ParentColor = False
@@ -113,9 +113,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TutorialDirEdit
         AnchorSideRight.Side = asrBottom
-        Left = 381
-        Height = 21
-        Top = 103
+        Left = 383
+        Height = 25
+        Top = 115
         Width = 91
         Anchors = [akTop, akRight]
         BorderSpacing.Top = 10
@@ -130,9 +130,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = HintTimeOutEdit
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 137
-        Width = 160
+        Height = 15
+        Top = 155
+        Width = 213
         BorderSpacing.Left = 10
         Caption = 'Hint timeout on errors (seconds):'
         ParentColor = False
@@ -142,9 +142,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = RecordsToSkipEdit
         AnchorSideRight.Side = asrBottom
-        Left = 381
-        Height = 21
-        Top = 134
+        Left = 383
+        Height = 25
+        Top = 150
         Width = 91
         Anchors = [akTop, akRight]
         BorderSpacing.Top = 10
@@ -159,9 +159,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = HintTimeOutEdit
         AnchorSideTop.Side = asrBottom
         Left = 10
-        Height = 17
-        Top = 165
-        Width = 113
+        Height = 22
+        Top = 185
+        Width = 147
         BorderSpacing.Left = 10
         BorderSpacing.Top = 10
         Caption = 'Show Welcome Box'
@@ -172,9 +172,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = TutorialDirEdit
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 44
-        Width = 77
+        Height = 15
+        Top = 50
+        Width = 96
         BorderSpacing.Left = 10
         Caption = 'Tutorials folder:'
         ParentColor = False
@@ -186,12 +186,12 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Control = WorkingDirEdit
         AnchorSideRight.Side = asrBottom
         Left = 165
-        Height = 21
-        Top = 41
-        Width = 307
+        Height = 25
+        Top = 45
+        Width = 309
         ShowHidden = False
         ButtonWidth = 23
-        NumGlyphs = 0
+        NumGlyphs = 1
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 0
@@ -202,9 +202,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = TutorialURLEdit
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 75
-        Width = 86
+        Height = 15
+        Top = 85
+        Width = 107
         BorderSpacing.Left = 10
         Caption = 'Tutorial web URL:'
         ParentColor = False
@@ -216,9 +216,9 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Control = TutorialDirEdit
         AnchorSideRight.Side = asrBottom
         Left = 165
-        Height = 21
-        Top = 72
-        Width = 307
+        Height = 25
+        Top = 80
+        Width = 309
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         TabOrder = 5
@@ -228,9 +228,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = ShowWelcomeChkBox
         AnchorSideTop.Side = asrBottom
         Left = 10
-        Height = 17
-        Top = 192
-        Width = 175
+        Height = 22
+        Top = 217
+        Width = 235
         BorderSpacing.Left = 10
         BorderSpacing.Top = 10
         Caption = 'Allow multiple program instances'
@@ -241,9 +241,9 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = ValidateErrorColourBtn
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 224
-        Width = 136
+        Height = 15
+        Top = 254
+        Width = 175
         BorderSpacing.Left = 10
         Caption = 'Field colour on invalid entry:'
         ParentColor = False
@@ -255,8 +255,8 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Side = asrBottom
         Left = 383
         Height = 25
-        Top = 219
-        Width = 89
+        Top = 249
+        Width = 91
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderWidth = 2
@@ -270,8 +270,8 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Side = asrBottom
         Left = 383
         Height = 25
-        Top = 254
-        Width = 89
+        Top = 284
+        Width = 91
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderWidth = 2
@@ -283,13 +283,13 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Control = ValueLabelColourBtn
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 14
-        Top = 259
-        Width = 91
+        Height = 15
+        Top = 289
+        Width = 120
         BorderSpacing.Left = 10
         Caption = 'Value Label colour:'
         ParentColor = False
       end
     end
   end
-end
+end

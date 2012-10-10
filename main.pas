@@ -25,6 +25,9 @@ type
     FieldNotesDivider: TMenuItem;
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
+    PrintWithDataMenuItem: TMenuItem;
+    PrintMenuItem: TMenuItem;
+    FileMenuDivider2: TMenuItem;
     ProcessToolPanel: TPanel;
     SearchMenu: TMenuItem;
     OpenProjectAction: TAction;
@@ -295,13 +298,19 @@ end;
 
 procedure TMainForm.UpdateMainMenu;
 begin
-  SaveProjectMenuItem.Visible := Assigned(FActiveFrame);
-  CloseProjectAction.Enabled := Assigned(FActiveFrame);
+  // FILE:
+  SaveProjectMenuItem.Visible   := Assigned(FActiveFrame);
+  CloseProjectAction.Enabled    := Assigned(FActiveFrame);
+  PrintMenuItem.Visible         := Assigned(FActiveFrame);
+  PrintWithDataMenuItem.Visible := Assigned(FActiveFrame);
+  FileMenuDivider2.Visible      := Assigned(FActiveFrame);
 
-  FieldNotesMenuItem.Visible := Assigned(FActiveFrame);
-  FieldNotesDivider.Visible := Assigned(FActiveFrame);
 
-  SearchMenu.Visible := Assigned(FActiveFrame);
+  FieldNotesMenuItem.Visible    := Assigned(FActiveFrame);
+  FieldNotesDivider.Visible     := Assigned(FActiveFrame);
+
+  SearchMenu.Visible            := Assigned(FActiveFrame);
+
   {$IFNDEF EPI_DEBUG}
   MenuItem1.Visible := false;
   {$ENDIF}
