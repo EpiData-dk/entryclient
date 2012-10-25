@@ -11,6 +11,10 @@
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="languages"/>
+    </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
@@ -132,7 +136,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="26">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -184,6 +188,7 @@
         <Filename Value="about.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="about"/>
       </Unit7>
@@ -274,6 +279,7 @@
         <Filename Value="settings/settings2_fonts_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SettingsFontsFrame"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings2_fonts_frame"/>
       </Unit20>
@@ -295,6 +301,11 @@
         <Filename Value="include/linux/initfont.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="entry_rsconsts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entry_rsconsts"/>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

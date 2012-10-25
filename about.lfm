@@ -1,24 +1,24 @@
 object AboutForm: TAboutForm
-  Left = 729
-  Height = 367
-  Top = 411
-  Width = 458
+  Left = 597
+  Height = 465
+  Top = 254
+  Width = 579
   ActiveControl = AboutPageControl
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'About EpiData Entry'
-  ClientHeight = 367
-  ClientWidth = 458
+  ClientHeight = 465
+  ClientWidth = 579
   OnCreate = FormCreate
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.1'
   object ButtonPanel: TPanel
     Left = 0
     Height = 50
-    Top = 317
-    Width = 458
+    Top = 415
+    Width = 579
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 458
+    ClientWidth = 579
     TabOrder = 0
     object CloseButton: TBitBtn
       AnchorSideLeft.Control = ButtonPanel
@@ -27,7 +27,7 @@ object AboutForm: TAboutForm
       AnchorSideTop.Side = asrCenter
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
-      Left = 193
+      Left = 253
       Height = 34
       Top = 8
       Width = 72
@@ -37,23 +37,22 @@ object AboutForm: TAboutForm
       Caption = '&Close'
       Kind = bkClose
       ModalResult = 1
-      NumGlyphs = 0
       TabOrder = 0
     end
   end
   object AboutPageControl: TPageControl
     Left = 0
-    Height = 317
+    Height = 415
     Top = 0
-    Width = 458
+    Width = 579
     ActivePage = VersionPage
     Align = alClient
     TabIndex = 0
     TabOrder = 1
     object VersionPage: TTabSheet
       Caption = 'Version'
-      ClientHeight = 284
-      ClientWidth = 452
+      ClientHeight = 382
+      ClientWidth = 573
       OnResize = VersionPageResize
       object Panel1: TPanel
         Left = 0
@@ -414,51 +413,92 @@ object AboutForm: TAboutForm
           }
         end
         object VersionLabel: TLabel
-          Left = 8
-          Height = 16
-          Top = 138
-          Width = 82
+          AnchorSideLeft.Control = Image1
+          AnchorSideBottom.Control = CoreVersionLabel
+          Left = 6
+          Height = 15
+          Top = 158
+          Width = 81
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          BorderSpacing.Bottom = 5
           Caption = 'VersionLabel'
           ParentColor = False
         end
         object CoreVersionLabel: TLabel
-          Left = 8
-          Height = 16
-          Top = 159
-          Width = 112
+          AnchorSideLeft.Control = Image1
+          AnchorSideBottom.Control = FPCVersionLabel
+          Left = 6
+          Height = 15
+          Top = 178
+          Width = 111
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          BorderSpacing.Bottom = 5
           Caption = 'CoreVersionLabel'
           ParentColor = False
         end
-        object RevisionLabel: TLabel
-          Left = 8
-          Height = 16
-          Top = 180
-          Width = 86
-          Caption = 'RevisionLabel'
+        object EntryRevisionLabel: TLabel
+          AnchorSideLeft.Control = VersionLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Side = asrCenter
+          AnchorSideBottom.Control = VersionLabel
+          AnchorSideBottom.Side = asrBottom
+          Left = 92
+          Height = 15
+          Top = 158
+          Width = 118
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          Caption = 'EntryRevisionLabel'
           ParentColor = False
         end
         object FPCVersionLabel: TLabel
-          Left = 8
-          Height = 16
-          Top = 201
-          Width = 106
+          AnchorSideLeft.Control = Image1
+          AnchorSideBottom.Control = PlatformLabel
+          Left = 6
+          Height = 15
+          Top = 198
+          Width = 105
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          BorderSpacing.Bottom = 5
           Caption = 'FPCVersionLabel'
           ParentColor = False
         end
         object PlatformLabel: TLabel
-          Left = 8
-          Height = 16
-          Top = 222
-          Width = 89
+          AnchorSideLeft.Control = Image1
+          AnchorSideBottom.Side = asrBottom
+          Left = 6
+          Height = 15
+          Top = 218
+          Width = 88
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          BorderSpacing.Bottom = 5
           Caption = 'PlatformLabel'
+          ParentColor = False
+        end
+        object CoreRevisionLabel: TLabel
+          AnchorSideLeft.Control = CoreVersionLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideBottom.Control = CoreVersionLabel
+          AnchorSideBottom.Side = asrBottom
+          Left = 122
+          Height = 15
+          Top = 178
+          Width = 115
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 5
+          Caption = 'CoreRevisionLabel'
           ParentColor = False
         end
       end
     end
     object AboutPage: TTabSheet
       Caption = 'About'
-      ClientHeight = 284
-      ClientWidth = 452
+      ClientHeight = 382
+      ClientWidth = 573
       object Memo1: TMemo
         Left = 0
         Height = 284

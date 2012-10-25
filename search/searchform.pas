@@ -99,7 +99,8 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils;
+  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils,
+  entry_rsconsts;
 
 type
   TSearchConditions = record
@@ -324,8 +325,8 @@ begin
   begin
     Items.BeginUpdate;
     Clear;
-    AddItem('And', TObject(PtrUInt(boAnd)));
-    AddItem('Or', TObject(PtrUInt(boOr)));
+    AddItem(rsAnd, TObject(PtrUInt(boAnd)));
+    AddItem(rsOr, TObject(PtrUInt(boOr)));
     Items.EndUpdate;
   end;
 end;
@@ -361,9 +362,9 @@ begin
     if not (Ft in StringFieldTypes) then AddItem('<',  TObject(PtrUInt(mcLT)));
     if not (Ft in StringFieldTypes) then AddItem('>',  TObject(PtrUInt(mcGT)));
     if not (Ft in StringFieldTypes) then AddItem('=>', TObject(PtrUInt(mcGEq)));
-    if (Ft in StringFieldTypes) then AddItem('Begins',   TObject(PtrUInt(mcBegin)));
-    if (Ft in StringFieldTypes) then AddItem('Contains', TObject(PtrUInt(mcContains)));
-    if (Ft in StringFieldTypes) then AddItem('Ends',     TObject(PtrUInt(mcEnd)));
+    if (Ft in StringFieldTypes) then AddItem(rsBegins,   TObject(PtrUInt(mcBegin)));
+    if (Ft in StringFieldTypes) then AddItem(rsContains, TObject(PtrUInt(mcContains)));
+    if (Ft in StringFieldTypes) then AddItem(rsEnds,     TObject(PtrUInt(mcEnd)));
     Items.EndUpdate;
   end;
 end;
@@ -440,7 +441,11 @@ begin
 
   Ch := UTF8CharacterToUnicode(@UTF8Key[1], I);
   if (not (Field.FieldType in StringFieldTypes)) and
-     (not (Char(Ch) in [VK_0..VK_9, VK_RETURN, Char(VK_BACK)] + ['.',','] + ['-', ':', '.'] + ['/', '-', '\', '.'])) then
+     (not (Char(Ch) in [VK_0..VK_9, VK_RETURN, Char(VK_BACK)] +
+                       ['.',','] +
+                       ['-', ':', '.'] +
+                       ['/', '-', '\', '.']))
+  then
     UTF8Key := '';
   case Field.FieldType of
     ftFloat:   if (Char(Ch) in ['.',',']) then UTF8Key := DecimalSeparator;
@@ -480,7 +485,7 @@ begin
         begin
           if not TryStrToInt64(ValueEdit.Text, I64) then
           begin
-            DoError(Format('Not a valid integer: %s', [ValueEdit.Text]), ValueEdit);
+            DoError(Format(rsNotAValidIntegerS, [ValueEdit.Text]), ValueEdit);
             Exit;
           end;
         end;
@@ -488,7 +493,7 @@ begin
         begin
           if not TryStrToFloat(ValueEdit.Text, F) then
           begin
-            DoError(Format('Not a valid float: %s', [ValueEdit.Text]), ValueEdit);
+            DoError(Format(rsNotAValidFloatS, [ValueEdit.Text]), ValueEdit);
             Exit;
           end;
         end;
@@ -552,8 +557,8 @@ begin
   begin
     if I > 0 then
       case BinOpCmb.ItemIndex of
-        0: S += ' And ';
-        1: S += ' Or ';
+        0: S += ' ' + rsAnd + ' ';
+        1: S += ' ' + rsOr + ' ';
       end;
     S += '(' + FieldListCmb.Text + ' ' + MatchCriteriaCmb.Text + ' ' + ValueEdit.Text + ')';
     if (I > 0) and (I < FSearchConditionList.Count - 1) then

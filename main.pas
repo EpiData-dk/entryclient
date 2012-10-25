@@ -129,7 +129,7 @@ implementation
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
-  shortcuts, epistringutils, epiadmin;
+  shortcuts, epistringutils, epiadmin, entry_rsconsts;
 
 { TMainForm }
 
@@ -227,7 +227,7 @@ begin
   TabSheet := TTabSheet.Create(MainFormPageControl);
   TabSheet.PageControl := MainFormPageControl;
   TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
-  TabSheet.Caption := 'Untitled';
+  TabSheet.Caption := rsUntitled;
 
   FActiveFrame := TProjectFrame.Create(TabSheet);
   FActiveFrame.Name := 'ProjectFrame' + IntToStr(TabNameCount);
@@ -268,29 +268,29 @@ begin
   except
     on E: TEpiCoreException do
       begin
-        ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
+        ShowMessage(rsUnableToOpenFile + AFileName + LineEnding +
                     E.Message);
         DoCloseProject;
       end;
     on E: EFOpenError do
       begin
-        ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
-                    'File is corrupt or does not exist.');
+        ShowMessage(rsUnableToOpenFile + AFileName + LineEnding +
+                    rsFileCorrupt);
         DoCloseProject;
       end;
     on EEpiBadPassword do
       begin
-        MessageDlg('Error',
-                   'Unable to open the file: ' + AFileName + LineEnding + LineEnding +
-                   'Invalid Password!',
+        MessageDlg(rsDlgCaptionError,
+                   rsUnableToOpenFile + AFileName + LineEnding + LineEnding +
+                   rsInvalidPassword,
                    mtError,
                    [mbOK], 0);
         DoCloseProject;
       end;
   else
     begin
-      ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
-                  'An unknown error occured.');
+      ShowMessage(rsUnableToOpenFile + AFileName + LineEnding +
+                  rsOpenFileUnknownError);
       DoCloseProject;
     end;
   end;
@@ -468,8 +468,8 @@ begin
   {$IFNDEF EPI_DEBUG}
   if EntrySettings.ShowWelcome then
     ShowMessagePos('EpiData EntryClient:' + LineEnding +
-                   'See help menu above for an introduction.' + LineEnding +
-                   'Get latest version from http://www.epidata.dk', 15, 15);
+                   rsWelcomeNote1 + LineEnding +
+                   rsWelcomeNote2 + ' http://www.epidata.dk', 50, 50);
   {$ENDIF}
 end;
 
@@ -541,9 +541,9 @@ begin
   if not CheckVersionOnline('epidataentryclient', Stable, Test, Response) then
   begin
     ShowMessage(
-      'ERROR: Could not find version information.' + LineEnding +
-      'Response: ' + Response + LineEnding +
-      'Check internet connection!');
+      rsCheckVersionError1 + LineEnding +
+      rsCheckVersionError2 + Response + LineEnding +
+      rsCheckVersionError3);
     exit;
   end;
 
@@ -558,17 +558,22 @@ begin
   NewTest       := (TestScore   - EntryScore) > 0;
 
   with EntryVersion do
-    S := Format('Current Version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
+    S := Format(rsCurrentVersionDDDD, [VersionNo, MajorRev, MinorRev, BuildNo])
+      + LineEnding;
   with Stable do
     if NewStable then
-      S := S + Format('New public release available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
+      S := S + Format(rsNewPublicReleaseAvailableDDDD, [VersionNo, MajorRev,
+        MinorRev, BuildNo]) + LineEnding
     else
-      S := S + Format('Latest public release: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
+      S := S + Format(rsLatestPublicReleaseDDDD, [VersionNo, MajorRev,
+        MinorRev, BuildNo]) + LineEnding;
    with Test do
      if NewTest then
-      S := S + Format('New test version available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo])
+      S := S + Format(rsNewTestVersionAvailableDDDD, [VersionNo, MajorRev,
+        MinorRev, BuildNo])
     else
-      S := S + Format('Latest test version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]);
+      S := S + Format(rsLatestTestVersionDDDD, [VersionNo, MajorRev, MinorRev,
+        BuildNo]);
   ShowMessage(S);
 end;
 

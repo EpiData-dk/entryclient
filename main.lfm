@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 629
-  Height = 642
-  Top = 294
-  Width = 977
+  Left = 608
+  Height = 510
+  Top = 364
+  Width = 779
   Caption = 'epidataentryclient'
-  ClientHeight = 619
-  ClientWidth = 977
+  ClientHeight = 487
+  ClientWidth = 779
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
     0000400000000100200000000000001000006400000064000000000000000000
@@ -151,9 +151,9 @@ object MainForm: TMainForm
   LCLVersion = '1.1'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 577
+    Height = 445
     Top = 42
-    Width = 977
+    Width = 779
     Align = alClient
     ShowTabs = False
     TabOrder = 0
@@ -162,10 +162,10 @@ object MainForm: TMainForm
     Left = 0
     Height = 42
     Top = 0
-    Width = 977
+    Width = 779
     Align = alTop
     ClientHeight = 42
-    ClientWidth = 977
+    ClientWidth = 779
     TabOrder = 1
     object Button1: TButton
       AnchorSideLeft.Control = ProcessToolPanel

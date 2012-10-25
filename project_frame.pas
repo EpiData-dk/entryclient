@@ -75,7 +75,7 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType, shortcuts;
+  epistringutils, Menus, LCLType, shortcuts, entry_rsconsts;
 
 { TProjectFrame }
 
@@ -84,17 +84,23 @@ begin
   try
     if (FileAgeUTF8(FDocumentFilename) <> FDocumentFileTimeStamp) then
     begin
-      if MessageDlg('WARNING', 'Project file: ' + FDocumentFilename  + ' has been modified by another program since last save.' + LineEnding+
-       'Overwrite modified file?', mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
+      if MessageDlg(rsWarning,
+           Format(rsProjectFileSHasBeenModifiedByAnotherProgramSinceLa + LineEnding +
+                  rsOverwriteModifiedFile, [FDocumentFilename]),
+           mtWarning,
+           mbYesNo,
+           0, mbNo) = mrNo
+      then
+        exit;
     end;
     DoSaveProject(FDocumentFilename);
   except
     on E: EFCreateError do
       begin
-        MessageDlg('Error',
-          'Unable to save project to:' + LineEnding +
+        MessageDlg(rsError,
+          rsUnableToSaveProjectTo + LineEnding +
           FDocumentFilename + LineEnding +
-          'Error message: ' + E.Message,
+          rsErrorMessage + E.Message,
           mtError, [mbOK], 0);
         Exit;
       end;
@@ -107,9 +113,9 @@ procedure TProjectFrame.EpiDocumentPassWord(Sender: TObject; var Login: string;
   var Password: string);
 begin
   PassWord :=
-    PasswordBox('Project Password',
-                'Project data is password protected.' + LineEnding +
-                'Please enter password:');
+    PasswordBox(rsProjectPassword,
+                rsProjectDataIsPasswordProtected + LineEnding +
+                rsPleaseEnterPassword);
 end;
 
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
@@ -135,8 +141,8 @@ begin
   Res := mrNone;
   if FileExistsUTF8(Fn + '.bak') then
   begin
-    Res := MessageDlg('Information',
-             'A timed backup file exists. (loading of this overwrites previous project file)' + LineEnding + LineEnding +
+    Res := MessageDlg(rsInformation,
+             rsATimedBackupFileExistsLoadingOfThisOverwritesPrevi + LineEnding + LineEnding +
              'File: ' +  #9  + #9  + SysToUTF8(ExtractFileName(UTF8ToSys(Fn)))          +
                ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn))) + ')' + LineEnding +
              'Recovery: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(Fn + '.bak'))) +
@@ -146,9 +152,10 @@ begin
     case Res of
       mrYes:    Fn := aFilename + '.bak';
       mrNo:     begin
-                  Res := MessageDlg('Warning',
-                           'Loading ' + SysToUTF8(ExtractFileName(UTF8ToSys(Fn))) + ' will delete recovery file.' + LineEnding +
-                           'Continue?',
+                  Res := MessageDlg(rsWarning,
+                           Format(rsLoadingSWillDeleteRecoveryFile, [SysToUTF8(
+                             ExtractFileName(UTF8ToSys(Fn)))]) + LineEnding +
+                             rsContinue,
                            mtWarning, mbYesNo, 0, mbNo);
                   case Res of
                     mrNo:  Exit;
@@ -426,9 +433,9 @@ begin
 
   if (EpiDocument.Modified) {or (ActiveFrame.Modified)} then
   begin
-    Res := MessageDlg('Warning',
-      'Project data content modified.' + LineEnding +
-      'Save before exit?',
+    Res := MessageDlg(rsWarning,
+      rsProjectDataContentModified + LineEnding +
+      rsSaveBeforeExit,
       mtWarning, mbYesNoCancel, 0, mbCancel);
 
     if Res = mrCancel then

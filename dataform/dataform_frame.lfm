@@ -1,20 +1,20 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 637
+  Height = 608
   Top = 0
-  Width = 1012
-  ClientHeight = 637
-  ClientWidth = 1012
+  Width = 898
+  ClientHeight = 608
+  ClientWidth = 898
   TabOrder = 0
-  DesignLeft = 481
-  DesignTop = 282
+  DesignLeft = 418
+  DesignTop = 272
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 607
+    Height = 578
     Top = 0
-    Width = 842
-    HorzScrollBar.Page = 840
-    VertScrollBar.Page = 605
+    Width = 728
+    HorzScrollBar.Page = 726
+    VertScrollBar.Page = 576
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -25,11 +25,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 607
-    Width = 1012
+    Top = 578
+    Width = 898
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1012
+    ClientWidth = 898
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -229,14 +229,14 @@ object DataFormFrame: TDataFormFrame
       Left = 306
       Height = 24
       Top = 3
-      Width = 484
+      Width = 370
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 484
+      ClientWidth = 370
       Color = clWhite
       Constraints.MinWidth = 80
       ParentColor = False
@@ -260,7 +260,7 @@ object DataFormFrame: TDataFormFrame
     object FieldTypePanel: TPanel
       AnchorSideLeft.Side = asrBottom
       AnchorSideRight.Control = FieldInfoPanel
-      Left = 792
+      Left = 678
       Height = 24
       Top = 3
       Width = 115
@@ -288,7 +288,7 @@ object DataFormFrame: TDataFormFrame
     object FieldInfoPanel: TPanel
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 909
+      Left = 795
       Height = 24
       Top = 3
       Width = 100
@@ -349,12 +349,12 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object Panel1: TPanel
-    Left = 842
-    Height = 607
+    Left = 728
+    Height = 578
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 607
+    ClientHeight = 578
     ClientWidth = 170
     TabOrder = 2
     OnMouseMove = Panel1MouseMove

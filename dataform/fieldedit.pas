@@ -137,7 +137,7 @@ implementation
 uses
   Forms, epidatafilestypes, LCLProc, strutils,
   epidocument, episettings, dataform_frame,
-  epiconvertutils, settings, math;
+  epiconvertutils, settings, math, entry_rsconsts;
 
 { TFieldEdit }
 
@@ -426,15 +426,15 @@ begin
   begin
     if not ((FField.ValueLabelSet.ValueLabelExists[Text]) or
             (DoValidateRange)) then
-      exit(ValidateError('Illegal value (valuelabel/range)'));
+      exit(ValidateError(rsIllegalValueValuelabelRange));
   end else begin
     if Assigned(FField.ValueLabelSet) and
        (not FField.ValueLabelSet.ValueLabelExists[Text]) then
-       exit(ValidateError('Illegal value (valuelabel)'));
+       exit(ValidateError(rsIllegalValueValuelabel));
 
     if Assigned(FField.Ranges) and
        (not DoValidateRange) then
-       exit(ValidateError('Illegal value (range)'));
+       exit(ValidateError(rsIllegalValueRange));
   end;
 end;
 
@@ -487,7 +487,8 @@ begin
   Result := true;
   Val(Text, I, Code);
   if Code <> 0 then
-    Result := ValidateError(Format('Invalid charater "%s" at caret position %d', [Text[code], code]));
+    Result := ValidateError(Format(rsInvalidCharaterSAtCaretPositionD, [Text[
+      code], code]));
   Text := Format(Field.FormatString, [I]);
 end;
 
@@ -545,10 +546,11 @@ begin
   P := Pos(DecimalSeparator, Text);
   if (P > (IntL + 1)) or  // Covers integral part with decimals.
      ((P = 0) and (Length(Text) > (IntL))) then
-    exit(ValidateError(Format('Invalid number. (Format is %d.%d)', [IntL, Field.Decimals])));
+    exit(ValidateError(Format(rsInvalidNumberFormatIsDD, [IntL, Field.Decimals])
+      ));
 
   if not TryStrToFloat(Text, F) then
-    exit(ValidateError('Invalid floating point number.'));
+    exit(ValidateError(rsInvalidFloatingPointNumber));
 
   Text := Format(Field.FormatString, [F]);
 end;

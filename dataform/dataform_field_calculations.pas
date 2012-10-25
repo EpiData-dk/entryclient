@@ -105,6 +105,7 @@ begin
       Result := FormatDateTime(TEpiDateField(ResultField).FormatString, TheDate)
     else begin
       Result := '';
+      // TODO : Be aware of checking for string 'day', etc.... NOT GOOD!
       if pos('day', ErrMsg) > 0 then
         ErrFieldEdit := GetFieldEditFromField(FieldEditList, Day);
       if pos('month', ErrMsg) > 0 then

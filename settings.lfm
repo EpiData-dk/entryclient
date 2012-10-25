@@ -1,30 +1,30 @@
 object SettingsForm: TSettingsForm
   Left = 735
-  Height = 413
+  Height = 399
   Top = 363
-  Width = 517
+  Width = 493
   ActiveControl = WorkingDirEdit
   Caption = 'Settings'
-  ClientHeight = 413
-  ClientWidth = 517
+  ClientHeight = 399
+  ClientWidth = 493
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   LCLVersion = '1.1'
   object Panel1: TPanel
     Left = 0
     Height = 42
-    Top = 371
-    Width = 517
+    Top = 357
+    Width = 493
     Align = alBottom
     ClientHeight = 42
-    ClientWidth = 517
+    ClientWidth = 493
     TabOrder = 0
     object BitBtn1: TBitBtn
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 426
+      Left = 402
       Height = 34
       Top = 4
       Width = 80
@@ -41,7 +41,7 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = BitBtn1
-      Left = 363
+      Left = 339
       Height = 32
       Top = 5
       Width = 53
@@ -57,9 +57,9 @@ object SettingsForm: TSettingsForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 371
+    Height = 357
     Top = 0
-    Width = 517
+    Width = 493
     ActivePage = TabSheet1
     Align = alClient
     ShowTabs = False
@@ -67,8 +67,8 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 365
-      ClientWidth = 511
+      ClientHeight = 351
+      ClientWidth = 487
       object Label17: TLabel
         AnchorSideLeft.Control = TabSheet1
         AnchorSideTop.Control = WorkingDirEdit
@@ -87,7 +87,7 @@ object SettingsForm: TSettingsForm
         Left = 165
         Height = 25
         Top = 10
-        Width = 309
+        Width = 285
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -103,9 +103,9 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 15
         Top = 120
-        Width = 229
+        Width = 153
         BorderSpacing.Left = 10
-        Caption = 'Skip number of records (Alt+F7/F8):'
+        Caption = 'Skip number of records:'
         ParentColor = False
       end
       object RecordsToSkipEdit: TMaskEdit
@@ -113,7 +113,7 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TutorialDirEdit
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 359
         Height = 25
         Top = 115
         Width = 91
@@ -142,7 +142,7 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = RecordsToSkipEdit
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 359
         Height = 25
         Top = 150
         Width = 91
@@ -188,7 +188,7 @@ object SettingsForm: TSettingsForm
         Left = 165
         Height = 25
         Top = 45
-        Width = 309
+        Width = 285
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -218,7 +218,7 @@ object SettingsForm: TSettingsForm
         Left = 165
         Height = 25
         Top = 80
-        Width = 309
+        Width = 285
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         TabOrder = 5
@@ -256,7 +256,7 @@ object SettingsForm: TSettingsForm
         Left = 383
         Height = 25
         Top = 249
-        Width = 91
+        Width = 67
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderWidth = 2
@@ -271,7 +271,7 @@ object SettingsForm: TSettingsForm
         Left = 383
         Height = 25
         Top = 284
-        Width = 91
+        Width = 67
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderWidth = 2

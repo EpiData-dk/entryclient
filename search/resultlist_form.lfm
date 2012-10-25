@@ -1,18 +1,18 @@
 object ResultListForm: TResultListForm
   Left = 790
-  Height = 573
+  Height = 504
   Top = 254
-  Width = 765
+  Width = 640
   Caption = 'ResultListForm'
-  ClientHeight = 573
-  ClientWidth = 765
+  ClientHeight = 504
+  ClientWidth = 640
   OnShortCut = FormShortCut
   LCLVersion = '1.1'
   object ListGrid: TStringGrid
     Left = 0
-    Height = 554
+    Height = 485
     Top = 0
-    Width = 765
+    Width = 640
     Align = alClient
     HeaderHotZones = [gzFixedCols, gzFixedRows]
     HeaderPushZones = [gzFixedCols, gzFixedRows]
@@ -24,8 +24,8 @@ object ResultListForm: TResultListForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 19
-    Top = 554
-    Width = 765
+    Top = 485
+    Width = 640
     Panels = <>
   end
 end

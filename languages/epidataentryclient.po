@@ -1,0 +1,1149 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: dataform_frame.rscomparisonfailed
+msgctxt "dataform_frame.rscomparisonfailed"
+msgid "Comparison failed:"
+msgstr ""
+
+#: dataform_frame.rsconfirmation
+msgctxt "dataform_frame.rsconfirmation"
+msgid "Confirmation"
+msgstr ""
+
+#: dataform_frame.rsdelete
+msgctxt "dataform_frame.rsdelete"
+msgid "Delete"
+msgstr ""
+
+#: dataform_frame.rsempty
+msgctxt "dataform_frame.rsempty"
+msgid "Empty"
+msgstr ""
+
+#: dataform_frame.rsfieldcannotbeempty
+msgctxt "dataform_frame.rsfieldcannotbeempty"
+msgid "Field cannot be empty!"
+msgstr ""
+
+#: dataform_frame.rsgotorecord
+msgctxt "dataform_frame.rsgotorecord"
+msgid "Goto record: "
+msgstr ""
+
+#: dataform_frame.rsindexconflict
+msgctxt "dataform_frame.rsindexconflict"
+msgid "Index Conflict"
+msgstr ""
+
+#: dataform_frame.rsindexkeyalreadyfound
+msgctxt "dataform_frame.rsindexkeyalreadyfound"
+msgid "Index key already found"
+msgstr ""
+
+#: dataform_frame.rsnew
+msgctxt "dataform_frame.rsnew"
+msgid "New"
+msgstr ""
+
+#: dataform_frame.rsnorecordsfound
+msgctxt "dataform_frame.rsnorecordsfound"
+msgid "No records found"
+msgstr ""
+
+#: dataform_frame.rsrecordismodified
+msgctxt "dataform_frame.rsrecordismodified"
+msgid "Record is modified."
+msgstr ""
+
+#: dataform_frame.rssave
+msgctxt "dataform_frame.rssave"
+msgid "Save?"
+msgstr ""
+
+#: dataform_frame.rssavebeforenewrecord
+msgctxt "dataform_frame.rssavebeforenewrecord"
+msgid "Save before new record?"
+msgstr ""
+
+#: dataform_frame.rssaverecordbeforeclos
+msgctxt "dataform_frame.rssaverecordbeforeclos"
+msgid "Save record before close?"
+msgstr ""
+
+#: dataform_frame.rsshowingresultsfor
+msgctxt "dataform_frame.rsshowingresultsfor"
+msgid "Showing results for: "
+msgstr ""
+
+#: dataform_frame.rsundelete
+msgctxt "dataform_frame.rsundelete"
+msgid "UnDelete"
+msgstr ""
+
+#: dataform_frame.rswarning
+msgctxt "dataform_frame.rswarning"
+msgid "Warning"
+msgstr ""
+
+#: dataform_frame.rswrappedsearchreached
+msgctxt "dataform_frame.rswrappedsearchreached"
+msgid "Wrapped search. Reached end of datafile"
+msgstr ""
+
+#: entry_rsconsts.rsand
+msgctxt "entry_rsconsts.rsand"
+msgid "And"
+msgstr ""
+
+#: entry_rsconsts.rsatimedbackupfileexistsloadingofthisoverwritesprevi
+msgid "A timed backup file exists. (loading of this overwrites previous project file)"
+msgstr ""
+
+#: entry_rsconsts.rsbegins
+msgctxt "entry_rsconsts.rsbegins"
+msgid "Begins"
+msgstr ""
+
+#: entry_rsconsts.rscheckversionerror1
+msgctxt "entry_rsconsts.rscheckversionerror1"
+msgid "ERROR: Could not find version information."
+msgstr ""
+
+#: entry_rsconsts.rscheckversionerror2
+msgctxt "entry_rsconsts.rscheckversionerror2"
+msgid "Response: "
+msgstr ""
+
+#: entry_rsconsts.rscheckversionerror3
+msgctxt "entry_rsconsts.rscheckversionerror3"
+msgid "Check internet connection!"
+msgstr ""
+
+#: entry_rsconsts.rscomparisonfailed
+msgctxt "entry_rsconsts.rscomparisonfailed"
+msgid "Comparison failed:"
+msgstr ""
+
+#: entry_rsconsts.rsconfirmation
+msgctxt "entry_rsconsts.rsconfirmation"
+msgid "Confirmation"
+msgstr ""
+
+#: entry_rsconsts.rscontains
+msgctxt "entry_rsconsts.rscontains"
+msgid "Contains"
+msgstr ""
+
+#: entry_rsconsts.rscontinue
+msgid "Continue?"
+msgstr ""
+
+#: entry_rsconsts.rscurrentversiondddd
+msgid "Current Version: %d.%d.%d.%d"
+msgstr ""
+
+#: entry_rsconsts.rsdelete
+msgctxt "entry_rsconsts.rsdelete"
+msgid "Delete"
+msgstr ""
+
+#: entry_rsconsts.rsdlgcaptionerror
+msgctxt "entry_rsconsts.rsdlgcaptionerror"
+msgid "Error"
+msgstr ""
+
+#: entry_rsconsts.rsempty
+msgctxt "entry_rsconsts.rsempty"
+msgid "Empty"
+msgstr ""
+
+#: entry_rsconsts.rsends
+msgctxt "entry_rsconsts.rsends"
+msgid "Ends"
+msgstr ""
+
+#: entry_rsconsts.rserror
+msgctxt "entry_rsconsts.rserror"
+msgid "Error"
+msgstr ""
+
+#: entry_rsconsts.rserrormessage
+msgid "Error message: "
+msgstr ""
+
+#: entry_rsconsts.rsfieldcannotbeempty
+msgctxt "entry_rsconsts.rsfieldcannotbeempty"
+msgid "Field cannot be empty!"
+msgstr ""
+
+#: entry_rsconsts.rsfilecorrupt
+msgctxt "entry_rsconsts.rsfilecorrupt"
+msgid "File is corrupt or does not exist."
+msgstr ""
+
+#: entry_rsconsts.rsgotorecord
+msgctxt "entry_rsconsts.rsgotorecord"
+msgid "Goto record: "
+msgstr ""
+
+#: entry_rsconsts.rsillegalvaluerange
+msgid "Illegal value (range)"
+msgstr ""
+
+#: entry_rsconsts.rsillegalvaluevaluelabel
+msgid "Illegal value (valuelabel)"
+msgstr ""
+
+#: entry_rsconsts.rsillegalvaluevaluelabelrange
+msgid "Illegal value (valuelabel/range)"
+msgstr ""
+
+#: entry_rsconsts.rsindexconflict
+msgctxt "entry_rsconsts.rsindexconflict"
+msgid "Index Conflict"
+msgstr ""
+
+#: entry_rsconsts.rsindexkeyalreadyfound
+msgctxt "entry_rsconsts.rsindexkeyalreadyfound"
+msgid "Index key already found"
+msgstr ""
+
+#: entry_rsconsts.rsinformation
+msgid "Information"
+msgstr ""
+
+#: entry_rsconsts.rsinvalidcharatersatcaretpositiond
+msgid "Invalid charater \"%s\" at caret position %d"
+msgstr ""
+
+#: entry_rsconsts.rsinvalidfloatingpointnumber
+msgid "Invalid floating point number."
+msgstr ""
+
+#: entry_rsconsts.rsinvalidnumberformatisdd
+msgid "Invalid number. (Format is %d.%d)"
+msgstr ""
+
+#: entry_rsconsts.rsinvalidpassword
+msgctxt "entry_rsconsts.rsinvalidpassword"
+msgid "Invalid Password!"
+msgstr ""
+
+#: entry_rsconsts.rslatestpublicreleasedddd
+msgid "Latest public release: %d.%d.%d.%d"
+msgstr ""
+
+#: entry_rsconsts.rslatesttestversiondddd
+msgid "Latest test version: %d.%d.%d.%d"
+msgstr ""
+
+#: entry_rsconsts.rsloadingswilldeleterecoveryfile
+msgid "Loading %s will delete recovery file."
+msgstr ""
+
+#: entry_rsconsts.rsnew
+msgctxt "entry_rsconsts.rsnew"
+msgid "New"
+msgstr ""
+
+#: entry_rsconsts.rsnewpublicreleaseavailabledddd
+msgid "New public release available: %d.%d.%d.%d"
+msgstr ""
+
+#: entry_rsconsts.rsnewtestversionavailabledddd
+msgid "New test version available: %d.%d.%d.%d"
+msgstr ""
+
+#: entry_rsconsts.rsnorecordsfound
+msgctxt "entry_rsconsts.rsnorecordsfound"
+msgid "No records found"
+msgstr ""
+
+#: entry_rsconsts.rsnotavalidfloats
+msgctxt "entry_rsconsts.rsnotavalidfloats"
+msgid "Not a valid float: %s"
+msgstr ""
+
+#: entry_rsconsts.rsnotavalidintegers
+msgctxt "entry_rsconsts.rsnotavalidintegers"
+msgid "Not a valid integer: %s"
+msgstr ""
+
+#: entry_rsconsts.rsopenfileunknownerror
+msgctxt "entry_rsconsts.rsopenfileunknownerror"
+msgid "An unknown error occured."
+msgstr ""
+
+#: entry_rsconsts.rsor
+msgctxt "entry_rsconsts.rsor"
+msgid "Or"
+msgstr ""
+
+#: entry_rsconsts.rsoverwritemodifiedfile
+msgid "Overwrite modified file?"
+msgstr ""
+
+#: entry_rsconsts.rspleaseenterpassword
+msgid "Please enter password:"
+msgstr ""
+
+#: entry_rsconsts.rsprojectdatacontentmodified
+msgid "Project data content modified."
+msgstr ""
+
+#: entry_rsconsts.rsprojectdataispasswordprotected
+msgid "Project data is password protected."
+msgstr ""
+
+#: entry_rsconsts.rsprojectfileshasbeenmodifiedbyanotherprogramsincela
+msgid "Project file: %s has been modified by another program since last save."
+msgstr ""
+
+#: entry_rsconsts.rsprojectpassword
+msgid "Project Password"
+msgstr ""
+
+#: entry_rsconsts.rsrecordismodified
+msgctxt "entry_rsconsts.rsrecordismodified"
+msgid "Record is modified."
+msgstr ""
+
+#: entry_rsconsts.rsrecordno
+msgctxt "entry_rsconsts.rsrecordno"
+msgid "Record No:"
+msgstr ""
+
+#: entry_rsconsts.rssave
+msgctxt "entry_rsconsts.rssave"
+msgid "Save?"
+msgstr ""
+
+#: entry_rsconsts.rssavebeforeexit
+msgid "Save before exit?"
+msgstr ""
+
+#: entry_rsconsts.rssavebeforenewrecord
+msgctxt "entry_rsconsts.rssavebeforenewrecord"
+msgid "Save before new record?"
+msgstr ""
+
+#: entry_rsconsts.rssaverecordbeforeclos
+msgctxt "entry_rsconsts.rssaverecordbeforeclos"
+msgid "Save record before close?"
+msgstr ""
+
+#: entry_rsconsts.rsshowingdrecords
+msgctxt "entry_rsconsts.rsshowingdrecords"
+msgid "Showing %d records"
+msgstr ""
+
+#: entry_rsconsts.rsshowingresultsfor
+msgctxt "entry_rsconsts.rsshowingresultsfor"
+msgid "Showing results for: "
+msgstr ""
+
+#: entry_rsconsts.rsunabletoopenfile
+msgctxt "entry_rsconsts.rsunabletoopenfile"
+msgid "Unable to open the file: "
+msgstr ""
+
+#: entry_rsconsts.rsunabletosaveprojectto
+msgid "Unable to save project to:"
+msgstr ""
+
+#: entry_rsconsts.rsundelete
+msgctxt "entry_rsconsts.rsundelete"
+msgid "UnDelete"
+msgstr ""
+
+#: entry_rsconsts.rsuntitled
+msgctxt "entry_rsconsts.rsuntitled"
+msgid "Untitled"
+msgstr ""
+
+#: entry_rsconsts.rswarning
+msgctxt "entry_rsconsts.rswarning"
+msgid "Warning"
+msgstr ""
+
+#: entry_rsconsts.rswelcomenote1
+msgctxt "entry_rsconsts.rswelcomenote1"
+msgid "See help menu above for an introduction."
+msgstr ""
+
+#: entry_rsconsts.rswelcomenote2
+msgctxt "entry_rsconsts.rswelcomenote2"
+msgid "Get latest version from"
+msgstr ""
+
+#: entry_rsconsts.rswrappedsearchreached
+msgctxt "entry_rsconsts.rswrappedsearchreached"
+msgid "Wrapped search. Reached end of datafile"
+msgstr ""
+
+#: main.rscheckversionerror1
+msgctxt "main.rscheckversionerror1"
+msgid "ERROR: Could not find version information."
+msgstr ""
+
+#: main.rscheckversionerror2
+msgctxt "main.rscheckversionerror2"
+msgid "Response: "
+msgstr ""
+
+#: main.rscheckversionerror3
+msgctxt "main.rscheckversionerror3"
+msgid "Check internet connection!"
+msgstr ""
+
+#: main.rsdlgcaptionerror
+msgctxt "main.rsdlgcaptionerror"
+msgid "Error"
+msgstr ""
+
+#: main.rsfilecorrupt
+msgctxt "main.rsfilecorrupt"
+msgid "File is corrupt or does not exist."
+msgstr ""
+
+#: main.rsinvalidpassword
+msgctxt "main.rsinvalidpassword"
+msgid "Invalid Password!"
+msgstr ""
+
+#: main.rsopenfileunknownerror
+msgctxt "main.rsopenfileunknownerror"
+msgid "An unknown error occured."
+msgstr ""
+
+#: main.rsunabletoopenfile
+msgctxt "main.rsunabletoopenfile"
+msgid "Unable to open the file: "
+msgstr ""
+
+#: main.rsuntitled
+msgctxt "main.rsuntitled"
+msgid "Untitled"
+msgstr ""
+
+#: main.rswelcomenote1
+msgctxt "main.rswelcomenote1"
+msgid "See help menu above for an introduction."
+msgstr ""
+
+#: main.rswelcomenote2
+msgctxt "main.rswelcomenote2"
+msgid "Get latest version from"
+msgstr ""
+
+#: resultlist_form.rsrecordno
+msgctxt "resultlist_form.rsrecordno"
+msgid "Record No:"
+msgstr ""
+
+#: resultlist_form.rsshowingdrecords
+msgctxt "resultlist_form.rsshowingdrecords"
+msgid "Showing %d records"
+msgstr ""
+
+#: searchform.rsand
+msgctxt "searchform.rsand"
+msgid "And"
+msgstr ""
+
+#: searchform.rsbegins
+msgctxt "searchform.rsbegins"
+msgid "Begins"
+msgstr ""
+
+#: searchform.rscontains
+msgctxt "searchform.rscontains"
+msgid "Contains"
+msgstr ""
+
+#: searchform.rsends
+msgctxt "searchform.rsends"
+msgid "Ends"
+msgstr ""
+
+#: searchform.rsnotavalidfloats
+msgctxt "searchform.rsnotavalidfloats"
+msgid "Not a valid float: %s"
+msgstr ""
+
+#: searchform.rsnotavalidintegers
+msgctxt "searchform.rsnotavalidintegers"
+msgid "Not a valid integer: %s"
+msgstr ""
+
+#: searchform.rsor
+msgctxt "searchform.rsor"
+msgid "Or"
+msgstr ""
+
+#: taboutform.aboutpage.caption
+msgctxt "taboutform.aboutpage.caption"
+msgid "About"
+msgstr ""
+
+#: taboutform.caption
+msgid "About EpiData Entry"
+msgstr ""
+
+#: taboutform.closebutton.caption
+msgctxt "taboutform.closebutton.caption"
+msgid "&Close"
+msgstr ""
+
+#: taboutform.corerevisionlabel.caption
+msgid "CoreRevisionLabel"
+msgstr ""
+
+#: taboutform.coreversionlabel.caption
+msgid "CoreVersionLabel"
+msgstr ""
+
+#: taboutform.entryrevisionlabel.caption
+msgid "EntryRevisionLabel"
+msgstr ""
+
+#: taboutform.fpcversionlabel.caption
+msgid "FPCVersionLabel"
+msgstr ""
+
+#: taboutform.platformlabel.caption
+msgid "PlatformLabel"
+msgstr ""
+
+#: taboutform.versionlabel.caption
+msgid "VersionLabel"
+msgstr ""
+
+#: taboutform.versionpage.caption
+msgid "Version"
+msgstr ""
+
+#: tdataformframe.deletelabel.caption
+msgid "DeleteLabel"
+msgstr ""
+
+#: tdataformframe.fieldinfolabel.caption
+msgid "FieldInfoLabel"
+msgstr ""
+
+#: tdataformframe.fieldnamelabel.caption
+msgid "FieldNameLabel"
+msgstr ""
+
+#: tdataformframe.fieldtypelabel.caption
+msgid "FieldTypeLabel"
+msgstr ""
+
+#: tdataformframe.findfastlistaction.caption
+msgid "List Records"
+msgstr ""
+
+#: tdataformframe.findfastlistaction.hint
+msgid "Find list of records matching current entry"
+msgstr ""
+
+#: tdataformframe.findnextaction.caption
+msgid "Find Forward"
+msgstr ""
+
+#: tdataformframe.findprevaction.caption
+msgid "Find Backwards"
+msgstr ""
+
+#: tdataformframe.findrecordaction.caption
+msgid "Find..."
+msgstr ""
+
+#: tdataformframe.findrecordexaction.caption
+msgid "Lookup"
+msgstr ""
+
+#: tdataformframe.findrecordexaction.hint
+msgid "Find record matching current entry"
+msgstr ""
+
+#: tdataformframe.firstfieldaction.caption
+msgid "FirstFieldAction"
+msgstr ""
+
+#: tdataformframe.firstrecaction.caption
+msgctxt "tdataformframe.firstrecaction.caption"
+msgid "First Record"
+msgstr ""
+
+#: tdataformframe.firstrecaction.hint
+msgctxt "TDATAFORMFRAME.FIRSTRECACTION.HINT"
+msgid "First Record"
+msgstr ""
+
+#: tdataformframe.gotorecordaction.caption
+msgid "Goto Record"
+msgstr ""
+
+#: tdataformframe.jumpnextrecaction.caption
+msgid "JumpNextRecAction"
+msgstr ""
+
+#: tdataformframe.jumpprevrecaction.caption
+msgid "Skip to prev records"
+msgstr ""
+
+#: tdataformframe.label1.caption
+msgid "Label1"
+msgstr ""
+
+#: tdataformframe.lastfieldaction.caption
+msgid "LastFieldAction"
+msgstr ""
+
+#: tdataformframe.lastrecaction.caption
+msgctxt "tdataformframe.lastrecaction.caption"
+msgid "Last Record"
+msgstr ""
+
+#: tdataformframe.lastrecaction.hint
+msgctxt "TDATAFORMFRAME.LASTRECACTION.HINT"
+msgid "Last Record"
+msgstr ""
+
+#: tdataformframe.newrecordaction.caption
+msgctxt "tdataformframe.newrecordaction.caption"
+msgid "New Record"
+msgstr ""
+
+#: tdataformframe.newrecordaction.hint
+msgctxt "TDATAFORMFRAME.NEWRECORDACTION.HINT"
+msgid "New Record"
+msgstr ""
+
+#: tdataformframe.nextrecaction.caption
+msgctxt "tdataformframe.nextrecaction.caption"
+msgid "Next Record"
+msgstr ""
+
+#: tdataformframe.nextrecaction.hint
+msgctxt "TDATAFORMFRAME.NEXTRECACTION.HINT"
+msgid "Next Record"
+msgstr ""
+
+#: tdataformframe.pagedownaction.caption
+msgid "PageDownAction"
+msgstr ""
+
+#: tdataformframe.pageupaction.caption
+msgid "PageUpAction"
+msgstr ""
+
+#: tdataformframe.prevrecaction.caption
+msgctxt "tdataformframe.prevrecaction.caption"
+msgid "Previous Record"
+msgstr ""
+
+#: tdataformframe.prevrecaction.hint
+msgctxt "TDATAFORMFRAME.PREVRECACTION.HINT"
+msgid "Previous Record"
+msgstr ""
+
+#: tdataformframe.printdataformaction.caption
+msgctxt "tdataformframe.printdataformaction.caption"
+msgid "Print"
+msgstr ""
+
+#: tdataformframe.printdataformwithdataaction.caption
+msgid "Print (with data)"
+msgstr ""
+
+#: tdataformframe.showfieldnotesaction.caption
+msgid "Show Field Notes"
+msgstr ""
+
+#: tmainform.aboutaction.caption
+msgctxt "TMAINFORM.ABOUTACTION.CAPTION"
+msgid "About"
+msgstr ""
+
+#: tmainform.browsemenu.caption
+msgid "&Browse"
+msgstr ""
+
+#: tmainform.caption
+msgid "epidataentryclient"
+msgstr ""
+
+#: tmainform.checkversionaction.caption
+msgid "Check &Version Online"
+msgstr ""
+
+#: tmainform.checkversionaction.hint
+msgid "Check for new version online (requires internet)"
+msgstr ""
+
+#: tmainform.closeprojectaction.caption
+msgid "Close Project"
+msgstr ""
+
+#: tmainform.copyprojectinfoaction.caption
+msgid "&Copy Version Info"
+msgstr ""
+
+#: tmainform.defaultposaction.caption
+msgid "Default Window Position"
+msgstr ""
+
+#: tmainform.editmenu.caption
+msgid "&Edit"
+msgstr ""
+
+#: tmainform.epidatawebtutorialsmenuitem.caption
+msgid "Tutorials On EpiData Web"
+msgstr ""
+
+#: tmainform.fieldnotesdivider.caption
+msgctxt "TMAINFORM.FIELDNOTESDIVIDER.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.fieldnotesmenuitem.caption
+msgid "FieldNotes"
+msgstr ""
+
+#: tmainform.fileexitaction.caption
+msgid "E&xit"
+msgstr ""
+
+#: tmainform.fileexitaction.hint
+msgid "Exit"
+msgstr ""
+
+#: tmainform.filemenu.caption
+msgid "&File"
+msgstr ""
+
+#: tmainform.filemenudivider1.caption
+msgctxt "tmainform.filemenudivider1.caption"
+msgid "-"
+msgstr ""
+
+#: tmainform.filemenudivider2.caption
+msgctxt "TMAINFORM.FILEMENUDIVIDER2.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.findlistmenuitem.caption
+msgid "New Item40"
+msgstr ""
+
+#: tmainform.findmenuitem.caption
+msgid "New Item35"
+msgstr ""
+
+#: tmainform.findnextmenuitem.caption
+msgid "New Item36"
+msgstr ""
+
+#: tmainform.findprevmenuitem.caption
+msgid "New Item37"
+msgstr ""
+
+#: tmainform.firstrecordmenuitem.caption
+msgid "FirstRec"
+msgstr ""
+
+#: tmainform.gotorecordmenuitem.caption
+msgid "Goto Rec"
+msgstr ""
+
+#: tmainform.helpmenu.caption
+msgid "&Help"
+msgstr ""
+
+#: tmainform.helpmenudivider1.caption
+msgctxt "TMAINFORM.HELPMENUDIVIDER1.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.helpmenudivider2.caption
+msgctxt "TMAINFORM.HELPMENUDIVIDER2.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.helpmenudivider3.caption
+msgctxt "TMAINFORM.HELPMENUDIVIDER3.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.lastrecordmenuitem.caption
+msgid "LastRec"
+msgstr ""
+
+#: tmainform.menuitem1.caption
+msgid "Old Settings"
+msgstr ""
+
+#: tmainform.newprojectaction.caption
+msgid "NewProjectAction"
+msgstr ""
+
+#: tmainform.newrecordmenuitem.caption
+msgid "New Rec"
+msgstr ""
+
+#: tmainform.nextrecordmenuitem.caption
+msgid "NextRec"
+msgstr ""
+
+#: tmainform.openprojectaction.caption
+msgctxt "tmainform.openprojectaction.caption"
+msgid "Open Project"
+msgstr ""
+
+#: tmainform.prevrecordmenuitem.caption
+msgid "PrevRec"
+msgstr ""
+
+#: tmainform.printmenuitem.caption
+msgctxt "TMAINFORM.PRINTMENUITEM.CAPTION"
+msgid "Print"
+msgstr ""
+
+#: tmainform.printwithdatamenuitem.caption
+msgid "PrintWithData"
+msgstr ""
+
+#: tmainform.recentfilessubmenu.caption
+msgid "Open Recent..."
+msgstr ""
+
+#: tmainform.recordmenudivider1.caption
+msgctxt "TMAINFORM.RECORDMENUDIVIDER1.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.recordmenudivider2.caption
+msgctxt "TMAINFORM.RECORDMENUDIVIDER2.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.saveprojectmenuitem.caption
+msgid "Save"
+msgstr ""
+
+#: tmainform.searchmenu.caption
+msgid "Search"
+msgstr ""
+
+#: tmainform.settingsaction.caption
+msgctxt "tmainform.settingsaction.caption"
+msgid "Settings"
+msgstr ""
+
+#: tmainform.showintroaction.caption
+msgid "Short &Introduction"
+msgstr ""
+
+#: tmainform.showshortcutsaction.caption
+msgid "Show &Shortcuts"
+msgstr ""
+
+#: tmainform.tutorialsmenudivider1.caption
+msgctxt "TMAINFORM.TUTORIALSMENUDIVIDER1.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tmainform.tutorialsubmenu.caption
+msgid "Tutorials"
+msgstr ""
+
+#: tmainform.webtutorialsmenuitem.caption
+msgid "Tutorials On Web"
+msgstr ""
+
+#: tnotesform.bitbtn1.caption
+msgctxt "TNOTESFORM.BITBTN1.CAPTION"
+msgid "&Close"
+msgstr ""
+
+#: tnotesform.caption
+msgctxt "TNOTESFORM.CAPTION"
+msgid "Notes"
+msgstr ""
+
+#: tprojectframe.openprojecttoolbutton.caption
+msgctxt "TPROJECTFRAME.OPENPROJECTTOOLBUTTON.CAPTION"
+msgid "Open Project"
+msgstr ""
+
+#: tprojectframe.openprojecttoolbutton.hint
+msgctxt "TPROJECTFRAME.OPENPROJECTTOOLBUTTON.HINT"
+msgid "Open Project"
+msgstr ""
+
+#: tprojectframe.projecttoolbuttomdivider1.caption
+msgid "ProjectToolButtomDivider1"
+msgstr ""
+
+#: tprojectframe.projecttoolbuttomdivider2.caption
+msgid "ProjectToolButtomDivider2"
+msgstr ""
+
+#: tprojectframe.saveprojectaction.caption
+msgctxt "tprojectframe.saveprojectaction.caption"
+msgid "Save Project"
+msgstr ""
+
+#: tprojectframe.saveprojectaction.hint
+msgctxt "TPROJECTFRAME.SAVEPROJECTACTION.HINT"
+msgid "Save Project"
+msgstr ""
+
+#: tprojectframe.toolbar1.caption
+msgid "ToolBar1"
+msgstr ""
+
+#: tprojectframe.toolbutton1.caption
+msgid "ToolButton1"
+msgstr ""
+
+#: tprojectframe.toolbutton2.caption
+msgid "CloseProjectAction"
+msgstr ""
+
+#: tprojectframe.toolbutton3.caption
+msgid "ToolButton3"
+msgstr ""
+
+#: tresultlistform.caption
+msgid "ResultListForm"
+msgstr ""
+
+#: tsearchform1.addsearchaction.caption
+msgid "AddSearchAction"
+msgstr ""
+
+#: tsearchform1.bitbtn3.caption
+msgctxt "tsearchform1.bitbtn3.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tsearchform1.caption
+msgid "SearchForm1"
+msgstr ""
+
+#: tsearchform1.cursearchgrpbox.caption
+msgid "Current Search"
+msgstr ""
+
+#: tsearchform1.directiongrpbox.caption
+msgid "Direction"
+msgstr ""
+
+#: tsearchform1.findbtn.caption
+msgid "&Find"
+msgstr ""
+
+#: tsearchform1.label1.caption
+msgid "Field:"
+msgstr ""
+
+#: tsearchform1.label2.caption
+msgid "Match criteria:"
+msgstr ""
+
+#: tsearchform1.label3.caption
+msgid "Value:"
+msgstr ""
+
+#: tsearchform1.label4.caption
+msgid "Previous searches:"
+msgstr ""
+
+#: tsearchform1.label5.caption
+msgid "Operation:"
+msgstr ""
+
+#: tsearchform1.listbtn.caption
+msgid "&List"
+msgstr ""
+
+#: tsearchform1.origingrpbox.caption
+msgid "Origin:"
+msgstr ""
+
+#: tsearchform1.searchlabel.caption
+msgid "SearchLabel"
+msgstr ""
+
+#: tsettings2form.bitbtn1.caption
+msgctxt "TSETTINGS2FORM.BITBTN1.CAPTION"
+msgid "&OK"
+msgstr ""
+
+#: tsettings2form.bitbtn2.caption
+msgctxt "TSETTINGS2FORM.BITBTN2.CAPTION"
+msgid "Cancel"
+msgstr ""
+
+#: tsettings2form.caption
+msgid "Program Settings"
+msgstr ""
+
+#: tsettingscolourframe.label4.caption
+msgctxt "TSETTINGSCOLOURFRAME.LABEL4.CAPTION"
+msgid "Field colour on invalid entry:"
+msgstr ""
+
+#: tsettingscolourframe.label5.caption
+msgctxt "TSETTINGSCOLOURFRAME.LABEL5.CAPTION"
+msgid "Value Label colour:"
+msgstr ""
+
+#: tsettingscolourframe.label6.caption
+msgid "Active field:"
+msgstr ""
+
+#: tsettingscolourframe.label7.caption
+msgid "Inactive field:"
+msgstr ""
+
+#: tsettingsfontsframe.label10.caption
+msgid "Sections:"
+msgstr ""
+
+#: tsettingsfontsframe.label2.caption
+msgid "Questions / Field Names:"
+msgstr ""
+
+#: tsettingsfontsframe.label9.caption
+msgid "Headings:"
+msgstr ""
+
+#: tsettingsform.bitbtn1.caption
+msgctxt "TSETTINGSFORM.BITBTN1.CAPTION"
+msgid "Cancel"
+msgstr ""
+
+#: tsettingsform.bitbtn2.caption
+msgctxt "tsettingsform.bitbtn2.caption"
+msgid "&OK"
+msgstr ""
+
+#: tsettingsform.caption
+msgctxt "TSETTINGSFORM.CAPTION"
+msgid "Settings"
+msgstr ""
+
+#: tsettingsform.label1.caption
+msgctxt "TSETTINGSFORM.LABEL1.CAPTION"
+msgid "Skip number of records:"
+msgstr ""
+
+#: tsettingsform.label17.caption
+msgctxt "tsettingsform.label17.caption"
+msgid "Default data folder"
+msgstr ""
+
+#: tsettingsform.label18.caption
+msgctxt "tsettingsform.label18.caption"
+msgid "Tutorials folder:"
+msgstr ""
+
+#: tsettingsform.label2.caption
+msgctxt "TSETTINGSFORM.LABEL2.CAPTION"
+msgid "Hint timeout on errors (seconds):"
+msgstr ""
+
+#: tsettingsform.label3.caption
+msgctxt "tsettingsform.label3.caption"
+msgid "Tutorial web URL:"
+msgstr ""
+
+#: tsettingsform.label4.caption
+msgctxt "tsettingsform.label4.caption"
+msgid "Field colour on invalid entry:"
+msgstr ""
+
+#: tsettingsform.label5.caption
+msgctxt "tsettingsform.label5.caption"
+msgid "Value Label colour:"
+msgstr ""
+
+#: tsettingsform.multipleinstancechkbox.caption
+msgctxt "TSETTINGSFORM.MULTIPLEINSTANCECHKBOX.CAPTION"
+msgid "Allow multiple program instances"
+msgstr ""
+
+#: tsettingsform.showwelcomechkbox.caption
+msgctxt "TSETTINGSFORM.SHOWWELCOMECHKBOX.CAPTION"
+msgid "Show Welcome Box"
+msgstr ""
+
+#: tsettingsform.tabsheet1.caption
+msgid "TabSheet1"
+msgstr ""
+
+#: tsettingsgeneralframe.associatebtn.caption
+msgid "Associate"
+msgstr ""
+
+#: tsettingsgeneralframe.associatelabel.caption
+msgid "Associate filetypes (.epx, .epz):"
+msgstr ""
+
+#: tsettingsgeneralframe.label1.caption
+msgctxt "tsettingsgeneralframe.label1.caption"
+msgid "Skip number of records:"
+msgstr ""
+
+#: tsettingsgeneralframe.label2.caption
+msgctxt "tsettingsgeneralframe.label2.caption"
+msgid "Hint timeout on errors (seconds):"
+msgstr ""
+
+#: tsettingsgeneralframe.multipleinstancechkbox.caption
+msgctxt "tsettingsgeneralframe.multipleinstancechkbox.caption"
+msgid "Allow multiple program instances"
+msgstr ""
+
+#: tsettingsgeneralframe.notesgroupbox.caption
+msgctxt "tsettingsgeneralframe.notesgroupbox.caption"
+msgid "Notes"
+msgstr ""
+
+#: tsettingsgeneralframe.showprocesstoolbarchkbox.caption
+msgid "Show Work Toolbar"
+msgstr ""
+
+#: tsettingsgeneralframe.showwelcomechkbox.caption
+msgctxt "tsettingsgeneralframe.showwelcomechkbox.caption"
+msgid "Show Welcome Box"
+msgstr ""
+
+#: tsettingsgeneralframe.unassociatebtn.caption
+msgid "Un-Associate"
+msgstr ""
+
+#: tsettingspathsframe.label17.caption
+msgctxt "TSETTINGSPATHSFRAME.LABEL17.CAPTION"
+msgid "Default data folder"
+msgstr ""
+
+#: tsettingspathsframe.label18.caption
+msgctxt "TSETTINGSPATHSFRAME.LABEL18.CAPTION"
+msgid "Tutorials folder:"
+msgstr ""
+
+#: tsettingspathsframe.label3.caption
+msgctxt "TSETTINGSPATHSFRAME.LABEL3.CAPTION"
+msgid "Tutorial web URL:"
+msgstr ""
+
+#: tvaluelabelspicklistform.caption
+msgid "Value Labels"
+msgstr ""
+

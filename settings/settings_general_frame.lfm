@@ -1,23 +1,23 @@
 object SettingsGeneralFrame: TSettingsGeneralFrame
   Left = 0
-  Height = 414
+  Height = 458
   Top = 0
-  Width = 593
-  ClientHeight = 414
-  ClientWidth = 593
+  Width = 588
+  ClientHeight = 458
+  ClientWidth = 588
   TabOrder = 0
-  DesignLeft = 760
-  DesignTop = 287
+  DesignLeft = 553
+  DesignTop = 310
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = RecordsToSkipEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 34
-    Top = 101
-    Width = 150
+    Height = 15
+    Top = 111
+    Width = 153
     BorderSpacing.Left = 10
-    Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
+    Caption = 'Skip number of records:'
     ParentColor = False
   end
   object RecordsToSkipEdit: TMaskEdit
@@ -28,7 +28,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 256
     Height = 25
     Top = 106
-    Width = 327
+    Width = 322
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -43,9 +43,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = HintTimeOutEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 16
-    Top = 145
-    Width = 214
+    Height = 15
+    Top = 146
+    Width = 213
     BorderSpacing.Left = 10
     Caption = 'Hint timeout on errors (seconds):'
     ParentColor = False
@@ -59,7 +59,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 256
     Height = 25
     Top = 141
-    Width = 327
+    Width = 322
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -112,9 +112,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = AssociateBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 16
-    Top = 181
-    Width = 200
+    Height = 15
+    Top = 182
+    Width = 199
     BorderSpacing.Left = 10
     Caption = 'Associate filetypes (.epx, .epz):'
     ParentColor = False
@@ -122,7 +122,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   object UnAssociateBtn: TButton
     AnchorSideTop.Control = AssociateBtn
     AnchorSideRight.Control = AssociateBtn
-    Left = 402
+    Left = 397
     Height = 27
     Top = 176
     Width = 97
@@ -139,7 +139,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 509
+    Left = 504
     Height = 27
     Top = 176
     Width = 74
@@ -161,7 +161,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 73
     Top = 208
-    Width = 573
+    Width = 568
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     BorderSpacing.Left = 10
@@ -177,7 +177,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 56
-    ClientWidth = 569
+    ClientWidth = 564
     Items.Strings = (
       'Show notes as hint'
       'Show notes in window'

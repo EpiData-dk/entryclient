@@ -3,16 +3,20 @@ program epidataentryclient;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}{$ENDIF}
+  {$IFDEF UNIX}
+    {$IFDEF UseCThreads}
+    cthreads,
+    {$ENDIF}
+  cwstring, clocale,
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
+  DefaultTranslator, // this is for setting the i18n system!
   Forms, printer4lazarus, lnetbase, main, project_frame, dataform_frame,
   fieldedit, entryprocs, settings, about, epidatacore, picklist, sysutils,
   UniqueInstanceRaw, notes_form, dataform_field_calculations, settings2,
   settings2_interface, settings2_paths_frame, settings2_colours_frame,
   settings_general_frame, searchform, search, resultlist_form,
-  settings2_fonts_frame, shortcuts, entry_messages;
+  settings2_fonts_frame, shortcuts, entry_messages, entry_rsconsts;
 
 {$R *.res}
 

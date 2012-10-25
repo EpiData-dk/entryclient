@@ -174,9 +174,8 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
-  searchform, resultlist_form, shortcuts,
+  searchform, resultlist_form, shortcuts, entry_rsconsts,
   Printers, OSPrinters;
-
 
 type
 
@@ -287,7 +286,7 @@ begin
   Lst := SearchFindList(S, 0);
   if Length(Lst) = 0 then
   begin
-    ShowHintMsg('No records found', RecordEdit);
+    ShowHintMsg(rsNoRecordsFound, RecordEdit);
     exit;
   end;
 
@@ -569,10 +568,10 @@ begin
   begin
     if Modified then
       RecordEdit.Text :=
-          Format('New / %d *', [DataFile.Size])
+          Format('%s / %d *', [rsNew, DataFile.Size])
     else
       RecordEdit.Text :=
-        Format('New / %d', [DataFile.Size]);
+        Format('%s / %d', [rsNew, DataFile.Size]);
   end else begin
     if Modified then
       RecordEdit.Text :=
@@ -584,7 +583,7 @@ begin
   UpdateRecActionPanel;
 
   if DataFile.Size = 0 then
-    RecordEdit.Text := 'Empty';
+    RecordEdit.Text := rsEmpty;
 end;
 
 procedure TDataFormFrame.UpdateRecActionPanel;
@@ -596,7 +595,7 @@ begin
   DeleteRecSpeedButton.ShowHint := B;
 
   B := B and FDataFile.Deleted[RecNo];
-  DeleteRecSpeedButton.Hint := BoolToStr(B, 'UnDelete', 'Delete');
+  DeleteRecSpeedButton.Hint := BoolToStr(B, rsUnDelete, rsDelete);
   DeleteLabel.Caption       := BoolToStr(B, 'DEL',      '');
 end;
 
@@ -711,9 +710,9 @@ begin
 
   if (not (AValue = NewRecord)) and Modified then
   begin
-    Res := MessageDlg('Warning',
-      'Record is modified.' + LineEnding +
-      'Save?',
+    Res := MessageDlg(rsWarning,
+      rsRecordIsModified + LineEnding +
+      rsSave,
       mtWarning, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel:
@@ -791,9 +790,9 @@ begin
     // - go through all fields for a validity check.
     if not AllFieldsValidate(false) then exit;
 
-    Res := MessageDlg('Warning',
-             'Current record modified.' + LineEnding +
-             'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
+    Res := MessageDlg(rsWarning,
+             rsRecordIsModified + LineEnding +
+             rsSaveBeforeNewRecord, mtConfirmation, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel: Exit;
       mrYes:    CommitFields;
@@ -806,8 +805,8 @@ begin
     // - go through all fields for a validity check.
     if not AllFieldsValidate(false) then exit;
 
-    Res := MessageDlg('Confirmation',
-             'Save Record?',
+    Res := MessageDlg(rsConfirmation,
+             rsSave,
              mtConfirmation, mbYesNoCancel, 0, mbYes);
     case Res of
       mrCancel: Exit;
@@ -1108,10 +1107,10 @@ begin
     if idx <> -1 then
     begin
       RecNo := idx;
-      ShowHintMsg('Wrapped search. Reached end of datafile', RecordEdit);
+      ShowHintMsg(rsWrappedSearchReached, RecordEdit);
     end;
   end else begin
-    ShowHintMsg('No records found', RecordEdit);
+    ShowHintMsg(rsNoRecordsFound, RecordEdit);
   end;
 end;
 
@@ -1183,7 +1182,7 @@ begin
       if Length(List) = 0 then exit;
 
       ShowResultListForm(
-          'Showing results for: ' + SF.SearchLabel.Caption,
+          rsShowingResultsFor + SF.SearchLabel.Caption,
           DataFile,
           FieldEditList,
           List);
@@ -1205,9 +1204,9 @@ begin
   if (Idx <> -1) then
   begin
     if MessageDlg(
-        'Index Conflict',
-        'Index key already found' + LineEnding +
-          'Goto record: ' + IntToStr(Idx + 1),
+        rsIndexConflict,
+        rsIndexKeyAlreadyFound + LineEnding +
+          rsGotoRecord + IntToStr(Idx + 1),
         mtWarning,
         mbYesNo,
         0,
@@ -1357,8 +1356,8 @@ begin
   CanClose := true;
   if not Modified then exit;
 
-  Res := MessageDlg('Warning',
-           'Save record before close?',
+  Res := MessageDlg(rsWarning,
+           rsSaveRecordBeforeClos,
            mtConfirmation, mbYesNoCancel, 0, mbCancel);
   case Res of
     mrCancel: CanClose := false;
@@ -1694,7 +1693,7 @@ begin
     if not FE.CompareTo(NewFieldEdit.Text, Field.Comparison.CompareType) then
     begin
       Err := Format(
-        'Comparison failed:' + LineEnding +
+        rsComparisonFailed + LineEnding +
         '%s: %s  %s  %s: %s',
         [Field.Name, FE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
          NewFieldEdit.Field.Name, NewFieldEdit.Text]);
@@ -1847,7 +1846,7 @@ begin
      (FE.Text = '') then
   begin
     DoError(FE);
-    FieldValidateError(FE, 'Field cannot be empty!');
+    FieldValidateError(FE, rsFieldCannotBeEmpty);
     Result := false;
   end;
 end;

@@ -42,7 +42,7 @@ implementation
 {$R *.lfm}
 
 uses
-  fieldedit, LCLType, main, LCLIntf, entry_messages;
+  fieldedit, LCLType, main, LCLIntf, entry_messages, entry_rsconsts;
 
 var
   FResultListForm: TResultListForm = nil;
@@ -111,7 +111,7 @@ begin
   ListGrid.ColCount := FFieldList.Count + 1;
   ListGrid.RowCount := L + 1;
 
-  ListGrid.Cells[0,0] := 'Record No:';
+  ListGrid.Cells[0, 0] := rsRecordNo;
   for i := 0 to FFieldList.Count - 1 do
   with TFieldEdit(FFieldList[i]).Field do
     ListGrid.Cells[i+1, 0] := Name;
@@ -127,7 +127,7 @@ begin
   ListGrid.AutoSizeColumns;
   ListGrid.EndUpdate();
 
-  StatusBar1.SimpleText := 'Showing ' + IntToStr(L) + ' records';
+  StatusBar1.SimpleText := Format(rsShowingDRecords, [L]);
 end;
 
 procedure ShowResultListForm(const Caption: String;

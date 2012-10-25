@@ -1,11 +1,11 @@
 object NotesForm: TNotesForm
-  Left = 1100
-  Height = 349
-  Top = 270
-  Width = 337
+  Left = 765
+  Height = 382
+  Top = 265
+  Width = 401
   Caption = 'Notes'
-  ClientHeight = 349
-  ClientWidth = 337
+  ClientHeight = 382
+  ClientWidth = 401
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -14,11 +14,11 @@ object NotesForm: TNotesForm
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 299
-    Width = 337
+    Top = 332
+    Width = 401
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 337
+    ClientWidth = 401
     TabOrder = 0
     object BitBtn1: TBitBtn
       AnchorSideTop.Control = Panel1
@@ -26,7 +26,7 @@ object NotesForm: TNotesForm
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = Panel1
-      Left = 254
+      Left = 318
       Height = 34
       Top = 8
       Width = 72
@@ -40,12 +40,12 @@ object NotesForm: TNotesForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 299
+    Height = 332
     Top = 0
-    Width = 337
+    Width = 401
     Align = alClient
-    ClientHeight = 299
-    ClientWidth = 337
+    ClientHeight = 332
+    ClientWidth = 401
     TabOrder = 1
     object NotesMemo: TMemo
       AnchorSideLeft.Control = Panel2
@@ -55,9 +55,9 @@ object NotesForm: TNotesForm
       AnchorSideBottom.Control = Panel2
       AnchorSideBottom.Side = asrBottom
       Left = 11
-      Height = 277
+      Height = 310
       Top = 11
-      Width = 315
+      Width = 379
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Left = 10
       BorderSpacing.Top = 10

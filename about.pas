@@ -16,15 +16,16 @@ type
   TAboutForm = class(TForm)
     ButtonPanel: TPanel;
     CloseButton: TBitBtn;
+    CoreRevisionLabel: TLabel;
     CoreVersionLabel: TLabel;
     FPCVersionLabel: TLabel;
     Image1: TImage;
+    EntryRevisionLabel: TLabel;
     Memo1: TMemo;
     AboutPageControl: TPageControl;
     AboutPage: TTabSheet;
     Panel1: TPanel;
     PlatformLabel: TLabel;
-    RevisionLabel: TLabel;
     VersionLabel: TLabel;
     VersionPage: TTabSheet;
     procedure FormCreate(Sender: TObject);
@@ -54,7 +55,7 @@ begin
   result := 'Core version: ' + GetCoreVersionInfo;
 end;
 
-function RevisionCaption: string;
+function EntryRevisionCaption: string;
 begin
   result := 'r' + RevisionStr;
 end;
@@ -77,7 +78,7 @@ end;
 function GetProgramInfo: string;
 begin
   Result := 'EpiData Entry Client' + LineEnding +
-            EntryVersionCaption + ' ' + RevisionCaption + LineEnding +
+            EntryVersionCaption + ' ' + EntryRevisionCaption + LineEnding +
             CoreVersionCaption + ' ' + CoreRevisionCaption + LineEnding +
             FPCCaption + LineEnding +
             PlatformCaption;
@@ -89,11 +90,12 @@ procedure TAboutForm.FormCreate(Sender: TObject);
 begin
   AboutPageControl.PageIndex := 0;
 
-  VersionLabel.Caption     := EntryVersionCaption;;
-  CoreVersionLabel.Caption := CoreVersionCaption;
-  RevisionLabel.Caption    := RevisionCaption;
-  FPCVersionLabel.Caption  := FPCCaption;
-  PlatformLabel.Caption    := PlatformCaption;
+  VersionLabel.Caption       := EntryVersionCaption;
+  EntryRevisionLabel.Caption := EntryRevisionCaption;
+  CoreVersionLabel.Caption   := CoreVersionCaption;
+  CoreRevisionLabel.Caption  := CoreRevisionCaption;
+  FPCVersionLabel.Caption    := FPCCaption;
+  PlatformLabel.Caption      := PlatformCaption;
 end;
 
 procedure TAboutForm.VersionPageResize(Sender: TObject);

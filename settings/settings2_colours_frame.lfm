@@ -1,20 +1,20 @@
 object SettingsColourFrame: TSettingsColourFrame
   Left = 0
-  Height = 406
+  Height = 359
   Top = 0
-  Width = 780
-  ClientHeight = 406
-  ClientWidth = 780
+  Width = 687
+  ClientHeight = 359
+  ClientWidth = 687
   TabOrder = 0
-  DesignLeft = 1076
-  DesignTop = 697
+  DesignLeft = 473
+  DesignTop = 305
   object Label4: TLabel
     AnchorSideTop.Control = ValidateErrorColourBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 15
-    Width = 136
+    Width = 175
     BorderSpacing.Left = 10
     Caption = 'Field colour on invalid entry:'
     ParentColor = False
@@ -26,7 +26,7 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 199
     Height = 25
     Top = 10
-    Width = 571
+    Width = 478
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -43,7 +43,7 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 199
     Height = 25
     Top = 45
-    Width = 571
+    Width = 478
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -55,9 +55,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = ValueLabelColourBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 50
-    Width = 91
+    Width = 120
     BorderSpacing.Left = 10
     Caption = 'Value Label colour:'
     ParentColor = False
@@ -67,9 +67,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = ActiveFieldClrBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 85
-    Width = 58
+    Width = 73
     BorderSpacing.Left = 10
     Caption = 'Active field:'
     ParentColor = False
@@ -83,7 +83,7 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 199
     Height = 25
     Top = 80
-    Width = 571
+    Width = 478
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -96,9 +96,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = InActiveFieldClrBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 120
-    Width = 67
+    Width = 83
     BorderSpacing.Left = 10
     Caption = 'Inactive field:'
     ParentColor = False
@@ -112,7 +112,7 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 199
     Height = 25
     Top = 115
-    Width = 571
+    Width = 478
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
