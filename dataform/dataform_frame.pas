@@ -15,6 +15,7 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    CopyToClipBoardAction: TAction;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
     DeleteLabel: TLabel;
@@ -58,6 +59,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure DeleteRecSpeedButtonClick(Sender: TObject);
@@ -93,6 +95,7 @@ type
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
     FRecNo: integer;
+    FLoadingDatafile: boolean;
     procedure SetDataFile(const AValue: TEpiDataFile);
     procedure LoadRecord(RecordNo: Integer);
     procedure UpdateRecordEdit;
@@ -102,6 +105,7 @@ type
     function  DoNewRecord: boolean;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
     procedure DoPrintDataForm(WithData: boolean);
+    procedure DoCopyToClipBoard;
   private
     { Hint }
     FHintWindow: THintWindow;
@@ -175,7 +179,7 @@ uses
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts,
-  Printers, OSPrinters;
+  Printers, OSPrinters, Clipbrd;
 
 
 type
@@ -257,6 +261,11 @@ begin
   with DataFormScroolBox.VertScrollBar do
     Position := Position - WheelDelta;
   Handled := true;
+end;
+
+procedure TDataFormFrame.CopyToClipBoardActionExecute(Sender: TObject);
+begin
+  DoCopyToClipBoard;
 end;
 
 procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);
@@ -511,6 +520,7 @@ var
 begin
   if FDataFile = AValue then exit;
   FDataFile := AValue;
+  FLoadingDatafile := true;
 
   // Create components.
   Name := DataFile.Name;
@@ -551,6 +561,8 @@ begin
   else
     RecNo := (DataFile.Size - 1);
   FirstFieldAction.Execute;
+
+  FLoadingDatafile := false;
 end;
 
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
@@ -696,6 +708,7 @@ begin
   FindNextAction.ShortCut := D_SearchRepeatForward;
   FindPrevAction.ShortCut := D_SearchRepeatBackward;
   FindFastListAction.ShortCut := D_SearchRecordList;
+  CopyToClipBoardAction.ShortCut := D_CopyRecordToClipBoard;
 end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);
@@ -1080,6 +1093,35 @@ begin
 
     EndDoc;
   END;  //with printer
+end;
+
+
+{$I dataform_getfunctions.inc}
+
+procedure TDataFormFrame.DoCopyToClipBoard;
+var
+  i: integer;
+  Functions: TGetFunctions;
+  S: String;
+  l: Integer;
+  j: Integer;
+begin
+  Functions := DecodeFormat(EntrySettings.CopyToClipBoardFormat);
+  l := Length(Functions);
+
+  S := '';
+  for i := 0 to DataFile.Fields.Count -1 do
+  begin
+    for j := 0 to l - 1 do
+    with Functions[j] do
+    case FuncType of
+      gftIndexedString:
+        S += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
+      gftFieldEdit:
+        S += TGetFEFunction(FuncPtr)(FieldEditFromField(DataFile.Field[i]));
+    end;
+  end;
+  Clipboard.AsText := S;
 end;
 
 procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer;
@@ -1581,11 +1623,17 @@ begin
   // Top-of-screen?
 
 
+  // TORSTEN Okt. 2012:
+  // Due to the flow of event, it is nessesary to check if a Project
+  // is being opened - else a bug occurs where the Picklist form is
+  // shown before the Dataform is loaded.
   // Force Show Picklist.
   if (FE.Text = '') and
      (Assigned(Field.ValueLabelSet)) and
-     (Field.ForcePickList) then
-    PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
+     (Field.ForcePickList)
+  then
+    if not FLoadingDatafile then
+      PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
 function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out

@@ -485,6 +485,11 @@ object DataFormFrame: TDataFormFrame
       Caption = 'Print (with data)'
       OnExecute = PrintDataFormWithDataActionExecute
     end
+    object CopyToClipBoardAction: TAction
+      Category = 'File'
+      Caption = 'Copy Record To Clipboard'
+      OnExecute = CopyToClipBoardActionExecute
+    end
   end
   object PrintDialog1: TPrintDialog
     left = 211

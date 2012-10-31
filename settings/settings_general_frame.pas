@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, EditBtn, MaskEdit,
-  ExtCtrls, settings2_interface, settings;
+  ExtCtrls, Buttons, settings2_interface, settings;
 
 type
 
@@ -15,6 +15,9 @@ type
   TSettingsGeneralFrame = class(TFrame, ISettingsFrame)
     AssociateBtn: TButton;
     AssociateLabel: TLabel;
+    FormatHlpBtn: TBitBtn;
+    ClipBoardFormatCombo: TComboBox;
+    Label3: TLabel;
     NotesGroupBox: TRadioGroup;
     ShowProcessToolBarChkBox: TCheckBox;
     HintTimeOutEdit: TMaskEdit;
@@ -25,6 +28,7 @@ type
     ShowWelcomeChkBox: TCheckBox;
     UnAssociateBtn: TButton;
     procedure AssociateBtnClick(Sender: TObject);
+    procedure FormatHlpBtnClick(Sender: TObject);
     procedure UnAssociateBtnClick(Sender: TObject);
   private
     { private declarations }
@@ -41,7 +45,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings2, shortcuts
+  settings2, shortcuts, LCLIntf
   {$IFDEF WINDOWS}
   ,registry
   {$ENDIF};
@@ -86,6 +90,11 @@ begin
 {$ELSE}
 begin
 {$ENDIF}
+end;
+
+procedure TSettingsGeneralFrame.FormatHlpBtnClick(Sender: TObject);
+begin
+  OpenURL('http://epidata.info/dokuwiki/doku.php?id=documentation:clipboardformat');
 end;
 
 procedure TSettingsGeneralFrame.UnAssociateBtnClick(Sender: TObject);
@@ -134,6 +143,7 @@ begin
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     NotesGroupBox.ItemIndex := NotesDisplay;
+    ClipBoardFormatCombo.Text := CopyToClipBoardFormat;
   end;
 end;
 
@@ -150,6 +160,7 @@ begin
     RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
     HintTimeOut := StrToInt(HintTimeOutEdit.Text);
     NotesDisplay := NotesGroupBox.ItemIndex;
+    CopyToClipBoardFormat := ClipBoardFormatCombo.Text;
   end;
 
   result := true;

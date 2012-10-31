@@ -34,4 +34,5 @@ begin
   D_SearchRepeatForward := KeyToShortCut(VK_G, [ssMeta]);
   D_SearchRepeatBackward := KeyToShortCut(VK_G, [ssMeta, ssShift]);
   D_SearchRecordList := KeyToShortCut(VK_L, [ssMeta]);
+  D_CopyRecordToClipBoard := KeyToShortCut(VK_C, [ssMeta, ssShift]);
 end;

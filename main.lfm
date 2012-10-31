@@ -222,6 +222,9 @@ object MainForm: TMainForm
       object DefaultPosMenuItem: TMenuItem
         Action = DefaultPosAction
       end
+      object CopyRecToClpMenuItem: TMenuItem
+        Caption = 'RecordToClipBoard'
+      end
       object MenuItem1: TMenuItem
         Caption = 'Old Settings'
         OnClick = MenuItem1Click

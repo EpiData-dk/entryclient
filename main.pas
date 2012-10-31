@@ -25,6 +25,7 @@ type
     FieldNotesDivider: TMenuItem;
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
+    CopyRecToClpMenuItem: TMenuItem;
     PrintWithDataMenuItem: TMenuItem;
     PrintMenuItem: TMenuItem;
     FileMenuDivider2: TMenuItem;
@@ -304,6 +305,9 @@ begin
   PrintMenuItem.Visible         := Assigned(FActiveFrame);
   PrintWithDataMenuItem.Visible := Assigned(FActiveFrame);
   FileMenuDivider2.Visible      := Assigned(FActiveFrame);
+
+  // EDIT:
+  CopyRecToClpMenuItem.Visible := Assigned(FActiveFrame);
 
 
   FieldNotesMenuItem.Visible    := Assigned(FActiveFrame);

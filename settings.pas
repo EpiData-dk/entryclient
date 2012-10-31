@@ -55,6 +55,7 @@ type
     MultipleInstances: boolean;
     ShowWorkToolbar: boolean;
     NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
+    CopyToClipBoardFormat: string;
 
     // Paths:
     WorkingDirUTF8: string;
@@ -89,6 +90,7 @@ var
     MultipleInstances: false;
     ShowWorkToolbar: true;
     NotesDisplay:   0;
+    CopyToClipBoardFormat: '%f,%d,%v';
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
@@ -158,6 +160,7 @@ begin
       WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
       WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
+      WriteString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -226,6 +229,7 @@ begin
     ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
     NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
+    CopyToClipBoardFormat := ReadString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
 
     // Fonts
     Sec := 'fonts';

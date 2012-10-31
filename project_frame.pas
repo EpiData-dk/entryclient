@@ -277,6 +277,9 @@ begin
     PrintMenuItem.Action       := Frame.PrintDataFormAction;
     PrintWithDataMenuItem.Action := Frame.PrintDataFormWithDataAction;
 
+    // Edit menu
+    CopyRecToClpMenuItem.Action := Frame.CopyToClipBoardAction;
+
     // Browse menu
     GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
     // -

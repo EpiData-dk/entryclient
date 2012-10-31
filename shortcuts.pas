@@ -41,7 +41,8 @@ var
   D_SearchRecordFilled,
   D_SearchRepeatForward,
   D_SearchRepeatBackward,
-  D_SearchRecordList:
+  D_SearchRecordList,
+  D_CopyRecordToClipBoard:
     TShortCut;
 
 

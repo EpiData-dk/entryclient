@@ -5,7 +5,9 @@ program epidataentryclient;
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
+  cwstring, clocale,
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, printer4lazarus, lnetbase, main, project_frame, dataform_frame,
   fieldedit, entryprocs, settings, about, epidatacore, picklist, sysutils,
