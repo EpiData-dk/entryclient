@@ -1,4 +1,4 @@
 {%MainUnit ../../shortcuts.pas}
 
-// Use same shortcuts as for Linux.
-{$I ../linux/shortcuts.inc}
+// Use same shortcuts as for Win32.
+{$I ../win32/shortcuts.inc}

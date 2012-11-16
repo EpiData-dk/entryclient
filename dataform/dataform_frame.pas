@@ -245,13 +245,12 @@ var
   I: LongInt;
   FE: TFieldEdit;
 begin
-  I := NextUsableFieldIndex(-1, false);
+   I := NextUsableFieldIndex(-1, false);
   if i = -1 then exit;
 
   FE := TFieldEdit(FieldEditList[i]);
   FieldEnterFlow(FE);
   FE.SetFocus;
-  Application.ProcessMessages;
 end;
 
 procedure TDataFormFrame.DataFormScroolBoxMouseWheel(Sender: TObject;
@@ -560,9 +559,9 @@ begin
     NewRecordActionExecute(nil)
   else
     RecNo := (DataFile.Size - 1);
-  FirstFieldAction.Execute;
 
   FLoadingDatafile := false;
+  RecordEdit.SetFocus;
 end;
 
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);

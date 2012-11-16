@@ -250,7 +250,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 15
         Top = 4
-        Width = 101
+        Width = 102
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
@@ -280,7 +280,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 15
         Top = 5
-        Width = 90
+        Width = 91
         Caption = 'FieldTypeLabel'
         ParentColor = False
       end
@@ -307,7 +307,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 15
         Top = 5
-        Width = 85
+        Width = 86
         Caption = 'FieldInfoLabel'
         ParentColor = False
       end

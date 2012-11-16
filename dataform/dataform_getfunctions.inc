@@ -34,8 +34,17 @@ end;
 function GetV(Const FE: TFieldEdit): string;
 begin
   Result := '';
-  if Assigned(FE.Field.ValueLabelSet) then
+  if Assigned(FE.Field.ValueLabelSet) and
+     (FE.Text <> '')
+  then
     result := FE.Field.ValueLabelSet.ValueLabel[FE.Text].TheLabel.Text;
+end;
+
+function GetL(Const FE: TFieldEdit): string;
+begin
+  Result := GetV(FE);
+  if Result = '' then
+    Result := GetD(FE);
 end;
 
 function GetN(Const FE: TFieldEdit): string;
@@ -110,6 +119,7 @@ begin
       'Q': AddFunction(Result, gftFieldEdit, PtrUInt(@GetQ), 0);
       'D': AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
       'V': AddFunction(Result, gftFieldEdit, PtrUInt(@GetV), 0);
+      'L': AddFunction(Result, gftFieldEdit, PtrUInt(@GetL), 0);
       'N': AddFunction(Result, gftFieldEdit, PtrUInt(@GetN), 0);
       'T': AddFunction(Result, gftFieldEdit, PtrUInt(@GetT), 0);
     else

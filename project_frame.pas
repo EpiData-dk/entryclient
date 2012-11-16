@@ -205,9 +205,14 @@ begin
     UpdateMainCaption;
     SaveProjectAction.Update;
   finally
+    MainForm.EndUpdateForm;
     Screen.Cursor := crDefault;
     Application.ProcessMessages;
-    MainForm.EndUpdateForm;
+
+    // Put the "Activate first field" here, because prior to EndUpdateForm controls
+    // have no handle, and hence cannot be focused correctly.
+    if Assigned(FActiveFrame) then
+      FActiveFrame.FirstFieldAction.Execute;
   end;
 end;
 

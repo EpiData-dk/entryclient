@@ -61,7 +61,7 @@ function SearchFindList(Const Search: TSearch; CurIndex: integer): TBoundArray;
 implementation
 
 uses
-  Math, LCLProc, epidatafilestypes;
+  Math, LCLProc, epidatafilestypes, entryprocs;
 
 function SearchFindNext(const Search: TSearch; const Index: integer): integer;
 var
@@ -73,7 +73,8 @@ var
   function Eq(Const Field: TEpiField; Const Text: string; Const Idx: integer): boolean;
   begin
     case Field.FieldType of
-      ftBoolean,
+      ftBoolean: Result := ((Field.AsBoolean[Idx] = 0) and (Text[1] in BooleanNoChars)) or
+                           ((Field.AsBoolean[Idx] = 1) and (Text[1] in BooleanYesChars));
       ftInteger,
       ftAutoInc: Result := Field.AsInteger[Idx] = StrToInt(Text);
       ftFloat:   Result := SameValue(Field.AsFloat[Idx], StrToFloat(Text), 0.0);
