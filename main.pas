@@ -168,7 +168,7 @@ end;
 
 procedure TMainForm.ShowShortCutsActionExecute(Sender: TObject);
 begin
-  OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:program_keys');
+  OpenURL('http://epidata.info/dokuwiki/doku.php?id=documentation:keyboard_shortcuts');
 end;
 
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
