@@ -1350,8 +1350,10 @@ begin
   begin
     // Check for AutoInc/Today fields.
     if (Field is TEpiCustomAutoField) and
-       (TEpiCustomAutoField(Field).AutoMode = umUpdated) then
-    with Field do
+       ((TEpiCustomAutoField(Field).AutoMode = umUpdated) or
+        ((TEpiCustomAutoField(Field).AutoMode = umFirstSave) and (RecNo = NewRecord))
+       )
+    then with Field do
     begin
       case FieldType of
         ftDMYAuto: Text := FormatDateTime('DD/MM/YYYY', Date);
