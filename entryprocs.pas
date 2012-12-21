@@ -31,16 +31,26 @@ uses
 procedure LoadIniFile;
 const
   IniName = 'epidataentry.ini';
+var
+  Fn: String;
+  S: String;
 begin
+  Fn := GetAppConfigFileUTF8(false, true, true);
+
   // TODO : Settings can be loaded from commandline?
-  if LoadSettingsFromIni(GetAppConfigFileUTF8(false)) then exit;
+  if LoadSettingsFromIni(Fn) then exit;
 
-  // Todo - this is not optimal on Non-windows OS's. Do some checks for writeability first.
-  if LoadSettingsFromIni(ExtractFilePath(Application.ExeName) + IniName) then exit;
+  // TODO : This is not optimal on Non-windows OS'Fn. Do some checks for writeability first.
+  S := ExtractFilePath(Application.ExeName) + IniName;
+  if (not FileIsReadOnlyUTF8(S)) and
+     LoadSettingsFromIni(S)
+  then
+    Exit;
 
-  if not DirectoryExistsUTF8(ExtractFilePath(GetAppConfigFileUTF8(false))) then
-    ForceDirectoriesUTF8(ExtractFilePath(GetAppConfigFileUTF8(false)));
-  EntrySettings.IniFileName := GetAppConfigFileUTF8(false);
+  EntrySettings.IniFileName := Fn;
+
+  FN := ExpandFileNameUTF8(GetAppConfigDirUTF8(False) + '..' + PathDelim + 'epidatarecentfiles.ini');
+  LoadRecentFilesIni(Fn);
 end;
 
 function GetRandomComponentName: string;

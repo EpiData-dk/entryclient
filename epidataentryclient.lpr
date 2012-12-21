@@ -24,9 +24,15 @@ begin
   result := 'epidataentryclient';
 end;
 
+function EpiDataVendorName: string;
+begin
+  result := 'epidata';
+end;
+
 begin
   Application.Title := 'EpiData EntryClient';
   OnGetApplicationName := @EpiDataApplicationName;
+  OnGetVendorName := @EpiDataVendorName;
 
   LoadIniFile;
   if (not EntrySettings.MultipleInstances) and
