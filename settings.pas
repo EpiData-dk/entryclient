@@ -90,7 +90,7 @@ var
     MultipleInstances: false;
     ShowWorkToolbar: true;
     NotesDisplay:   0;
-    CopyToClipBoardFormat: '%f,%d,%v';
+    CopyToClipBoardFormat: '%f,%d,%v\n';
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
