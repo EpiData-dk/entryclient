@@ -37,15 +37,14 @@ var
 begin
   Fn := GetAppConfigFileUTF8(false, true, true);
 
-  // TODO : Settings can be loaded from commandline?
-  if LoadSettingsFromIni(Fn) then exit;
-
-  // TODO : This is not optimal on Non-windows OS'Fn. Do some checks for writeability first.
-  S := ExtractFilePath(Application.ExeName) + IniName;
-  if (not FileIsReadOnlyUTF8(S)) and
-     LoadSettingsFromIni(S)
+  if not LoadSettingsFromIni(Fn)
   then
-    Exit;
+    begin
+      // TODO : This is not optimal on Non-windows OS'Fn. Do some checks for writeability first.
+      S := ExtractFilePath(Application.ExeName) + IniName;
+      if (not FileIsReadOnlyUTF8(S)) then
+         LoadSettingsFromIni(S)
+    end;
 
   EntrySettings.IniFileName := Fn;
 
