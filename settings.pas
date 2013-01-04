@@ -90,7 +90,7 @@ var
     MultipleInstances: false;
     ShowWorkToolbar: true;
     NotesDisplay:   0;
-    CopyToClipBoardFormat: '%f,%d,%v';
+    CopyToClipBoardFormat: '%f,%d,%v\n';
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
@@ -189,10 +189,6 @@ begin
       WriteInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
     end;
 
-    // Read recent files.
-    for i := 0 to RecentFiles.Count - 1 do
-      Ini.WriteString('recent', 'file'+inttostr(i), RecentFiles[i]);
-
     Result := true;
   finally
     Ini.Free;
@@ -262,15 +258,9 @@ begin
     ActiveFieldColour   := ReadInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
     InactiveFieldColour := ReadInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
 
-    // Read recent files.
-    Sec := 'recent';
-    for i := 0 to 9 do
-    begin
-      S := Ini.ReadString(sec, 'file'+inttostr(i), '');
-      if S > '' then
-        RecentFiles.Add(S);
-    end;
+
   end;
+  Result := true;
 end;
 
 function SaveRecentFilesToIni(const FileName: string): boolean;

@@ -322,7 +322,11 @@ begin
   InheritHandled := false;
   LCharacters := Characters;
   if (not (LCharacters = [])) and
-     (not (WC in LCharacters)) then exit(true);
+     (not (WC in LCharacters)) then
+  begin
+    InheritHandled := inherited DoUTF8KeyPress(UTF8Key);
+    exit(true);
+  end;
 
   // Sign operators are only allowed at pos 0.
   if UseSigns and
@@ -881,4 +885,5 @@ begin
 end;
 
 end.
+
 
