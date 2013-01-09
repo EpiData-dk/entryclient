@@ -51,7 +51,7 @@ uses
   math, LCLProc, LCLType, settings;
 
 { TValueLabelsPickListForm }
-
+                                ,
 procedure TValueLabelsPickListForm.FormShow(Sender: TObject);
 var
   W: LongInt;
@@ -68,7 +68,7 @@ begin
     W := Max(W, 6 + ValueListBox.Canvas.TextWidth(ValueLabelSet[i].ValueAsString) + 6);
     LabelsListBox.Items.AddObject(ValueLabelSet[i].TheLabel.Text, ValueLabelSet[i]);
   end;
-  ValueListBox.Width := W;
+  ValueListBox.ScrollWidth := W;
 
   Panel1.Height := {$IFNDEF MSWINDOWS}26{$ELSE}24{$ENDIF};
 
@@ -110,7 +110,6 @@ var
   SenderList: TListBox absolute Sender;
 begin
   ModalResult := mrOK;
-  Close;
 end;
 
 procedure TValueLabelsPickListForm.LabelsListBoxKeyDown(Sender: TObject;

@@ -4,13 +4,13 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   Top = 370
   Width = 248
   ActiveControl = Edit1
-  BorderStyle = bsToolWindow
+  BorderStyle = bsSizeToolWin
   Caption = 'Value Labels'
   ClientHeight = 229
   ClientWidth = 248
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.1'
   object Panel1: TPanel
     Left = 0
     Height = 32
@@ -69,5 +69,6 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     Height = 197
     Top = 32
     Width = 5
+    AutoSnap = False
   end
 end
