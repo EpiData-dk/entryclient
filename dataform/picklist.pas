@@ -110,7 +110,6 @@ var
   SenderList: TListBox absolute Sender;
 begin
   ModalResult := mrOK;
-  Close;
 end;
 
 procedure TValueLabelsPickListForm.LabelsListBoxKeyDown(Sender: TObject;
