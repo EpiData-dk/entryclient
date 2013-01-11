@@ -51,7 +51,7 @@ uses
   math, LCLProc, LCLType, settings;
 
 { TValueLabelsPickListForm }
-                                ,
+
 procedure TValueLabelsPickListForm.FormShow(Sender: TObject);
 var
   W: LongInt;
