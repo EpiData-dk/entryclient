@@ -510,6 +510,8 @@ begin
   OwnVal := StrToInt(Text);
   CmpVal := StrToInt(AText);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;
@@ -565,16 +567,18 @@ end;
 function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
-  OwnVal, CmpVal: EpiFloat;
+  OwnVal, CmpVal: Extended;
 begin
   if (Text = '') or (AText = '') then exit(false);
 
   OwnVal := StrToFloat(Text);
   CmpVal := StrToFloat(AText);
   case ct of
+    fcEq:  result := SameValue(OwnVal, CmpVal, 0.0);
+    fcNEq: result := not SameValue(OwnVal, CmpVal, 0.0);
     fcLT:  result := OwnVal < CmpVal;
-    fcLEq: result := (OwnVal < CmpVal) or SameValue(OwnVal, CmpVal);
-    fcGEq: result := (OwnVal > CmpVal) or SameValue(OwnVal, CmpVal);
+    fcLEq: result := (OwnVal < CmpVal) or SameValue(OwnVal, CmpVal, 0.0);
+    fcGEq: result := (OwnVal > CmpVal) or SameValue(OwnVal, CmpVal, 0.0);
     fcGT:  result := OwnVal > CmpVal;
   end;
 end;
@@ -703,6 +707,8 @@ begin
   OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
   CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;
@@ -810,6 +816,8 @@ begin
   OwnVal := EpiStrToTime(Text, DateSeparator, S);
   CmpVal := EpiStrToTime(AText, DateSeparator, S);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;
