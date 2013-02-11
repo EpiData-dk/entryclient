@@ -1717,6 +1717,9 @@ var
                            end;
                          end;
       end;
+
+      // This forces and update of the FieldEdits labels -> hence updates ValueLabel too.
+      UpdateSettings;
     end;
   end;
 
