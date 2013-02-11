@@ -1859,7 +1859,12 @@ begin
 
   // Additional check for KeyFields consistency.
   if DataFile.KeyFields.Count > 0 then
-    result := (DoSearchKeyFields = -1);
+  begin
+    i := DoSearchKeyFields;
+    // if i = -1 then keys do not exists,
+    // if i = RecNo then current records is found in the search, which is ok
+    result := (i = -1) or (i = RecNo);
+  end;
 end;
 
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
