@@ -289,6 +289,8 @@ procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
 var
   S: TSearch;
   Lst: TBoundArray;
+  FieldList: TEpiFields;
+  i: Integer;
 begin
   S := CreateSearchFromFieldEdits;
 
@@ -299,10 +301,14 @@ begin
     exit;
   end;
 
+  FieldList := TEpiFields.Create(nil);
+  for i := 0 to FieldEditList.Count - 1 do
+    FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+
   ShowResultListForm(
     'Result List:',
     DataFile,
-    FieldEditList,
+    FieldList,
     Lst);
 end;
 
@@ -1194,6 +1200,7 @@ var
   List: TBoundArray;
   L: TStringList;
   i: Integer;
+  FieldList: TEpiFields;
 begin
   try
     SF := TSearchForm1.Create(Self, DataFile);
@@ -1219,6 +1226,10 @@ begin
     end;
     if res = mrList then
     begin
+      FieldList := TEpiFields.Create(nil);
+      for i := 0 to FieldEditList.Count - 1 do
+        FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+
       FRecentSearch := nil;
       List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
       if Length(List) = 0 then exit;
@@ -1226,7 +1237,7 @@ begin
       ShowResultListForm(
           'Showing results for: ' + SF.SearchLabel.Caption,
           DataFile,
-          FieldEditList,
+          FieldList,
           List);
     end;
   finally
@@ -1298,10 +1309,22 @@ begin
 end;
 
 procedure TDataFormFrame.LMGotoRec(var Msg: TLMessage);
+var
+  F: TEpiField;
+  FE: TFieldEdit;
 begin
   // WParam = RecordNo
+  // LParam = Field (or nil)
   RecNo := Msg.WParam;
   FirstFieldAction.Execute;
+
+  F := TEpiField(Msg.LParam);
+  if Assigned(F) then
+  begin
+    FE := FieldEditFromField(F);
+    if FE.CanFocus then
+      FE.SetFocus;
+  end;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);

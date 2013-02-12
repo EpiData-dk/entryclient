@@ -1,31 +1,8 @@
 object ResultListForm: TResultListForm
-  Left = 790
-  Height = 573
-  Top = 254
-  Width = 765
+  Left = 607
+  Height = 296
+  Top = 360
+  Width = 684
   Caption = 'ResultListForm'
-  ClientHeight = 573
-  ClientWidth = 765
-  OnShortCut = FormShortCut
   LCLVersion = '1.1'
-  object ListGrid: TStringGrid
-    Left = 0
-    Height = 554
-    Top = 0
-    Width = 765
-    Align = alClient
-    HeaderHotZones = [gzFixedCols, gzFixedRows]
-    HeaderPushZones = [gzFixedCols, gzFixedRows]
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goColMoving, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook]
-    TabOrder = 0
-    OnDblClick = ListGridDblClick
-    OnHeaderClick = ListGridHeaderClick
-  end
-  object StatusBar1: TStatusBar
-    Left = 0
-    Height = 19
-    Top = 554
-    Width = 765
-    Panels = <>
-  end
 end

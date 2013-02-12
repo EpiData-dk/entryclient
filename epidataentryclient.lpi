@@ -154,24 +154,27 @@
         <LaunchingApplication PathPlusParams="/usr/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="5">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="Printer4Lazarus"/>
+        <PackageName Value="epidatacore_visuals"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="Printer4Lazarus"/>
       </Item2>
       <Item3>
-        <PackageName Value="epidatacore"/>
-        <MinVersion Minor="5" Valid="True"/>
+        <PackageName Value="LCLBase"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item3>
       <Item4>
-        <PackageName Value="lnetbase"/>
+        <PackageName Value="epidatacore"/>
+        <MinVersion Minor="5" Valid="True"/>
       </Item4>
       <Item5>
-        <PackageName Value="LCL"/>
+        <PackageName Value="lnetbase"/>
       </Item5>
+      <Item6>
+        <PackageName Value="LCL"/>
+      </Item6>
     </RequiredPackages>
     <Units Count="26">
       <Unit0>
