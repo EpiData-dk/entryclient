@@ -26,6 +26,8 @@ type
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
+    MenuItem2: TMenuItem;
+    BrowseAllMenuItem: TMenuItem;
     PrintWithDataMenuItem: TMenuItem;
     PrintMenuItem: TMenuItem;
     FileMenuDivider2: TMenuItem;

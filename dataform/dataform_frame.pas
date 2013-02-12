@@ -15,6 +15,7 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
@@ -59,6 +60,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
@@ -265,6 +267,15 @@ end;
 procedure TDataFormFrame.CopyToClipBoardActionExecute(Sender: TObject);
 begin
   DoCopyToClipBoard;
+end;
+
+procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
+begin
+  ShowResultListForm(
+    'All Data',
+    DataFile,
+    DataFile.Fields
+  );
 end;
 
 procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);

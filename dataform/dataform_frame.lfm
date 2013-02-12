@@ -443,28 +443,28 @@ object DataFormFrame: TDataFormFrame
       OnExecute = GotoRecordActionExecute
     end
     object FindRecordAction: TAction
-      Category = 'Search'
+      Category = 'Browse'
       Caption = 'Find...'
       OnExecute = FindRecordActionExecute
     end
     object FindNextAction: TAction
-      Category = 'Search'
+      Category = 'Browse'
       Caption = 'Find Forward'
       OnExecute = FindNextActionExecute
     end
     object FindPrevAction: TAction
-      Category = 'Search'
+      Category = 'Browse'
       Caption = 'Find Backwards'
       OnExecute = FindPrevActionExecute
     end
     object FindRecordExAction: TAction
-      Category = 'Search'
+      Category = 'Browse'
       Caption = 'Lookup'
       Hint = 'Find record matching current entry'
       OnExecute = FindRecordExActionExecute
     end
     object FindFastListAction: TAction
-      Category = 'Search'
+      Category = 'Browse'
       Caption = 'List Records'
       Hint = 'Find list of records matching current entry'
       OnExecute = FindFastListActionExecute
@@ -489,6 +489,11 @@ object DataFormFrame: TDataFormFrame
       Category = 'File'
       Caption = 'Copy Record To Clipboard'
       OnExecute = CopyToClipBoardActionExecute
+    end
+    object BrowseAllAction: TAction
+      Category = 'Browse'
+      Caption = 'All Data'
+      OnExecute = BrowseAllActionExecute
     end
   end
   object PrintDialog1: TPrintDialog

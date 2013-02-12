@@ -244,6 +244,12 @@ object MainForm: TMainForm
       object FindListMenuItem: TMenuItem
         Caption = 'New Item40'
       end
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
+      object BrowseAllMenuItem: TMenuItem
+        Caption = 'BrowseAll'
+      end
     end
     object BrowseMenu: TMenuItem
       Caption = '&Goto'

@@ -285,7 +285,7 @@ begin
     // Edit menu
     CopyRecToClpMenuItem.Action := Frame.CopyToClipBoardAction;
 
-    // Browse menu
+    // Goto menu
     GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
     // -
     FirstRecordMenuItem.Action := Frame.FirstRecAction;
@@ -296,11 +296,12 @@ begin
     NewRecordMenuItem.Action   := Frame.NewRecordAction;
     BrowseMenu.Visible := true;
 
-    // Search Menu
+    // Browse Menu
     FindMenuItem.Action        := Frame.FindRecordAction;
     FindNextMenuItem.Action    := Frame.FindNextAction;
     FindPrevMenuItem.Action    := Frame.FindPrevAction;
     FindListMenuItem.Action    := Frame.FindFastListAction;
+    BrowseAllMenuItem.Action   := Frame.BrowseAllAction;
 
     // Help menu.
     FieldNotesMenuItem.Action  := Frame.ShowFieldNotesAction;
