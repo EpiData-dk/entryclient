@@ -408,6 +408,8 @@ end;
 function TFieldEdit.ValidateEntry: boolean;
 var
   S: string;
+  LowS: String;
+  HighS: String;
 begin
   result := true;
 //  if not Modified then exit;
@@ -429,16 +431,26 @@ begin
   if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
   begin
     if not ((FField.ValueLabelSet.ValueLabelExists[Text]) or
-            (DoValidateRange)) then
-      exit(ValidateError('Illegal value (valuelabel/range)'));
+            (DoValidateRange))
+    then
+    begin
+      LowS := FField.Ranges[0].AsString[true];
+      HighS := FField.Ranges[0].AsString[false];
+      exit(ValidateError('Illegal value (valuelabel/range: ' + LowS + ' - ' + HighS + ' )'));
+    end;
   end else begin
     if Assigned(FField.ValueLabelSet) and
        (not FField.ValueLabelSet.ValueLabelExists[Text]) then
        exit(ValidateError('Illegal value (valuelabel)'));
 
     if Assigned(FField.Ranges) and
-       (not DoValidateRange) then
-       exit(ValidateError('Illegal value (range)'));
+       (not DoValidateRange)
+    then
+    begin
+      LowS := FField.Ranges[0].AsString[true];
+      HighS := FField.Ranges[0].AsString[false];
+      exit(ValidateError('Illegal value (range: ' + LowS + ' - ' + HighS + ' )'));
+    end;
   end;
 end;
 
