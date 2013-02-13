@@ -1499,6 +1499,7 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   NextFieldEdit: TFieldEdit;
   Res: TFieldExitFlowType;
+  CRecNo: Integer;
 
 
   function NextFieldOnKeyDown: TFieldEdit;
@@ -1582,7 +1583,21 @@ begin
 
     if not Assigned(NextFieldEdit) then
     begin
-      if not DoNewRecord then exit;
+      // NextFieldEdit = nil => either do a new record (if this is a new record or last record)
+      //                        or increment record no...
+      if (RecNo = NewRecord) or
+         (RecNo = (FDataFile.Size - 1))
+      then
+      begin
+        if not DoNewRecord then exit;
+      end else
+      begin
+        CRecNo := RecNo;
+        RecNo := RecNo + 1;
+        // if the recno was not changed a validation failed, hence do not
+        // shift focus field, etc...
+        if CRecNo = RecNo then exit;
+      end;
       NextFieldEdit := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
     end;
     FieldEnterFlow(NextFieldEdit);
