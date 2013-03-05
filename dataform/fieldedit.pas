@@ -92,6 +92,9 @@ type
   protected
     procedure   SetField(const AValue: TEpiField); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  public
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+       override;
   end;
 
   { TDateEdit }
@@ -388,7 +391,11 @@ end;
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  ParentFont := false;
   ControlStyle := ControlStyle - [csSetCaption];
+
+  Font.Assign(EntrySettings.FieldFont);
+
   FQuestionLabel := TLabel.Create(Self);
   FQuestionLabel.Font := EntrySettings.FieldFont;
   FNameLabel := TLabel.Create(Self);
@@ -471,6 +478,8 @@ end;
 
 procedure TFieldEdit.UpdateSettings;
 begin
+  Font.Assign(EntrySettings.FieldFont);
+
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
   if (Field.ShowValueLabel) and
      (Assigned(Field.ValueLabelSet)) and
@@ -675,6 +684,31 @@ var
 begin
   if PreUTF8KeyPress(UTF8Key, N, Result) then exit;
   Result := inherited DoUTF8KeyPress(UTF8Key);
+end;
+
+function TStringEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  OwnVal: String;
+  CmpVal: String;
+  StrCmp: Integer;
+begin
+  OwnVal := Text;
+  CmpVal := AText;
+
+  if Field.FieldType = ftUpperString then
+    StrCmp := AnsiCompareText(OwnVal, CmpVal)
+  else
+    StrCmp := AnsiCompareStr(OwnVal, CmpVal);
+
+  case ct of
+    fcEq:  result := StrCmp = 0;
+    fcNEq: result := StrCmp <> 0;
+    fcLT:  result := StrCmp < 0;
+    fcLEq: result := StrCmp <= 0;
+    fcGEq: result := StrCmp >= 0;
+    fcGT:  result := StrCmp > 0;
+  end;
 end;
 
 { TDateEdit }

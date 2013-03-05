@@ -49,7 +49,7 @@ type
     procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
     procedure TimedBackup(Sender: TObject);
-    procedure DoOpenProject(Const aFilename: string);
+    function DoOpenProject(Const aFilename: string): boolean;
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
   private
@@ -61,7 +61,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor  Destroy; override;
     procedure   CloseQuery(var CanClose: boolean);
-    procedure   OpenProject(Const aFilename: string);
+    function   OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
     procedure   RestoreDefaultPos;
     property    EpiDocument: TEpiDocument read FEpiDocument;
@@ -75,7 +75,8 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType, shortcuts;
+  epistringutils, Menus, LCLType, shortcuts,
+  RegExpr;
 
 { TProjectFrame }
 
@@ -124,15 +125,51 @@ begin
   A.Commit;
 end;
 
-procedure TProjectFrame.DoOpenProject(const aFilename: string);
+function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
 var
   Res: LongInt;
   Fn: String;
   St: TMemoryStream;
   T: TDateTime;
+  R : TRegExpr;
+  B: Boolean;
+  S: RegExprString;
+  S2: String;
 begin
+  Result := false;
+
   Fn := aFilename;
   Res := mrNone;
+
+
+  R := TRegExpr.Create;
+  R.Expression := '([0-9]{4}.[0-9]{2}.[0-9]{2}\.)';
+  B := R.Exec(Fn);
+  S := R.Replace(Fn, '', false);
+  S2 := ChangeFileExt(S, BoolToStr(ExtractFileExt(S) = '.epz', '.epx', '.epz'));
+  if B and
+     (FileExistsUTF8(S) or FileExistsUTF8(S2))
+  then
+  begin
+    if FileExistsUTF8(S2) then
+      S := S2;
+
+    Res := MessageDlg('Information',
+             'This file seem to be an automated backup file (on closing the program):' + LineEnding + LineEnding +
+             'File: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(Fn)))          +
+               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn))) + ')' + LineEnding +
+             'Original: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(S))) +
+               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(S))) + ')' + LineEnding +  LineEnding +
+             'Load the original instead?',
+             mtInformation, mbYesNoCancel, 0, mbYes);
+    case Res of
+      mrYes:    Fn := S;
+      mrCancel: Exit;
+    end;
+  end;
+  R.Free;
+
+
   if FileExistsUTF8(Fn + '.bak') then
   begin
     Res := MessageDlg('Information',
@@ -144,7 +181,7 @@ begin
              'Load the backup instead?',
              mtInformation, mbYesNoCancel, 0, mbYes);
     case Res of
-      mrYes:    Fn := aFilename + '.bak';
+      mrYes:    Fn := Fn + '.bak';
       mrNo:     begin
                   Res := MessageDlg('Warning',
                            'Loading ' + SysToUTF8(ExtractFileName(UTF8ToSys(Fn))) + ' will delete recovery file.' + LineEnding +
@@ -178,14 +215,17 @@ begin
       FEpiDocument.OnPassword := @EpiDocumentPassWord;
       FEpiDocument.LoadFromStream(St);
       FEpiDocument.OnModified := @EpiDocModified;
-      FDocumentFilename := Fn;
+      if ExtractFileExt(Fn) = '.bak' then
+        FDocumentFilename := ChangeFileExt(Fn, '')
+      else
+        FDocumentFilename := Fn;
     except
       if Assigned(St) then FreeAndNil(St);
       if Assigned(FEpiDocument) then FreeAndNil(FEpiDocument);
       if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
       raise;
     end;
-    FDocumentFileTimeStamp := FileAgeUTF8(Fn);
+    FDocumentFileTimeStamp := FileAgeUTF8(FDocumentFilename);
 
     // Create backup process.
     if EpiDocument.ProjectSettings.BackupInterval > 0 then
@@ -204,6 +244,7 @@ begin
     AddToRecent(DocumentFileName);
     UpdateMainCaption;
     SaveProjectAction.Update;
+    Result := true;
   finally
     MainForm.EndUpdateForm;
     Screen.Cursor := crDefault;
@@ -448,9 +489,9 @@ begin
   end;
 end;
 
-procedure TProjectFrame.OpenProject(const aFilename: string);
+function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
-  DoOpenProject(aFilename);
+  result := DoOpenProject(aFilename);
 end;
 
 procedure TProjectFrame.UpdateSettings;

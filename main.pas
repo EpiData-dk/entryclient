@@ -267,7 +267,8 @@ procedure TMainForm.DoOpenProject(const AFileName: string);
 begin
   DoNewProject;
   try
-    FActiveFrame.OpenProject(AFileName);
+    if not FActiveFrame.OpenProject(AFileName) then
+      DoCloseProject;
   except
     on E: TEpiCoreException do
       begin
