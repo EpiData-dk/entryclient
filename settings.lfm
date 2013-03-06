@@ -67,7 +67,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 365
+      ClientHeight = 338
       ClientWidth = 511
       object Label17: TLabel
         AnchorSideLeft.Control = TabSheet1
@@ -204,7 +204,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 15
         Top = 85
-        Width = 107
+        Width = 108
         BorderSpacing.Left = 10
         Caption = 'Tutorial web URL:'
         ParentColor = False
@@ -243,7 +243,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 15
         Top = 254
-        Width = 175
+        Width = 176
         BorderSpacing.Left = 10
         Caption = 'Field colour on invalid entry:'
         ParentColor = False

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, epistringutils, entryprocs, LMessages;
+  LCLType, epistringutils, entryprocs, LMessages, control_types;
 
 type
 
@@ -15,7 +15,7 @@ type
 
   { TFieldEdit }
 
-  TFieldEdit = class(TEdit)
+  TFieldEdit = class(TEdit, IEntryControl)
   private
     FField: TEpiField;
     FJumpToNext: boolean;
@@ -92,6 +92,9 @@ type
   protected
     procedure   SetField(const AValue: TEpiField); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+  public
+    function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
+       override;
   end;
 
   { TDateEdit }
@@ -388,7 +391,11 @@ end;
 constructor TFieldEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  ParentFont := false;
   ControlStyle := ControlStyle - [csSetCaption];
+
+  Font.Assign(EntrySettings.FieldFont);
+
   FQuestionLabel := TLabel.Create(Self);
   FQuestionLabel.Font := EntrySettings.FieldFont;
   FNameLabel := TLabel.Create(Self);
@@ -408,6 +415,8 @@ end;
 function TFieldEdit.ValidateEntry: boolean;
 var
   S: string;
+  LowS: String;
+  HighS: String;
 begin
   result := true;
 //  if not Modified then exit;
@@ -429,16 +438,26 @@ begin
   if Assigned(FField.ValueLabelSet) and Assigned(FField.Ranges) then
   begin
     if not ((FField.ValueLabelSet.ValueLabelExists[Text]) or
-            (DoValidateRange)) then
-      exit(ValidateError('Illegal value (valuelabel/range)'));
+            (DoValidateRange))
+    then
+    begin
+      LowS := FField.Ranges[0].AsString[true];
+      HighS := FField.Ranges[0].AsString[false];
+      exit(ValidateError('Illegal value (valuelabel/range: ' + LowS + ' - ' + HighS + ' )'));
+    end;
   end else begin
     if Assigned(FField.ValueLabelSet) and
        (not FField.ValueLabelSet.ValueLabelExists[Text]) then
        exit(ValidateError('Illegal value (valuelabel)'));
 
     if Assigned(FField.Ranges) and
-       (not DoValidateRange) then
-       exit(ValidateError('Illegal value (range)'));
+       (not DoValidateRange)
+    then
+    begin
+      LowS := FField.Ranges[0].AsString[true];
+      HighS := FField.Ranges[0].AsString[false];
+      exit(ValidateError('Illegal value (range: ' + LowS + ' - ' + HighS + ' )'));
+    end;
   end;
 end;
 
@@ -459,6 +478,8 @@ end;
 
 procedure TFieldEdit.UpdateSettings;
 begin
+  Font.Assign(EntrySettings.FieldFont);
+
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
   if (Field.ShowValueLabel) and
      (Assigned(Field.ValueLabelSet)) and
@@ -510,6 +531,8 @@ begin
   OwnVal := StrToInt(Text);
   CmpVal := StrToInt(AText);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;
@@ -565,16 +588,18 @@ end;
 function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
-  OwnVal, CmpVal: EpiFloat;
+  OwnVal, CmpVal: Extended;
 begin
   if (Text = '') or (AText = '') then exit(false);
 
   OwnVal := StrToFloat(Text);
   CmpVal := StrToFloat(AText);
   case ct of
+    fcEq:  result := SameValue(OwnVal, CmpVal, 0.0);
+    fcNEq: result := not SameValue(OwnVal, CmpVal, 0.0);
     fcLT:  result := OwnVal < CmpVal;
-    fcLEq: result := (OwnVal < CmpVal) or SameValue(OwnVal, CmpVal);
-    fcGEq: result := (OwnVal > CmpVal) or SameValue(OwnVal, CmpVal);
+    fcLEq: result := (OwnVal < CmpVal) or SameValue(OwnVal, CmpVal, 0.0);
+    fcGEq: result := (OwnVal > CmpVal) or SameValue(OwnVal, CmpVal, 0.0);
     fcGT:  result := OwnVal > CmpVal;
   end;
 end;
@@ -661,6 +686,31 @@ begin
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
+function TStringEdit.CompareTo(const AText: string; ct: TEpiComparisonType
+  ): boolean;
+var
+  OwnVal: String;
+  CmpVal: String;
+  StrCmp: Integer;
+begin
+  OwnVal := Text;
+  CmpVal := AText;
+
+  if Field.FieldType = ftUpperString then
+    StrCmp := AnsiCompareText(OwnVal, CmpVal)
+  else
+    StrCmp := AnsiCompareStr(OwnVal, CmpVal);
+
+  case ct of
+    fcEq:  result := StrCmp = 0;
+    fcNEq: result := StrCmp <> 0;
+    fcLT:  result := StrCmp < 0;
+    fcLEq: result := StrCmp <= 0;
+    fcGEq: result := StrCmp >= 0;
+    fcGT:  result := StrCmp > 0;
+  end;
+end;
+
 { TDateEdit }
 
 function TDateEdit.DoValidateSyntax: boolean;
@@ -703,6 +753,8 @@ begin
   OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
   CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;
@@ -810,6 +862,8 @@ begin
   OwnVal := EpiStrToTime(Text, DateSeparator, S);
   CmpVal := EpiStrToTime(AText, DateSeparator, S);
   case ct of
+    fcEq:  result := OwnVal = CmpVal;
+    fcNEq: result := OwnVal <> CmpVal;
     fcLT:  result := OwnVal < CmpVal;
     fcLEq: result := OwnVal <= CmpVal;
     fcGEq: result := OwnVal >= CmpVal;

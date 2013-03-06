@@ -15,6 +15,7 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
 
   TDataFormFrame = class(TFrame)
+    BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
@@ -59,6 +60,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
@@ -103,6 +105,7 @@ type
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
     function  DoNewRecord: boolean;
+    function  ControlFromEpiControl(EpiControl: TEpiCustomItem): TControl;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
     procedure DoPrintDataForm(WithData: boolean);
     procedure DoCopyToClipBoard;
@@ -178,26 +181,12 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
-  searchform, resultlist_form, shortcuts,
-  Printers, OSPrinters, Clipbrd;
+  searchform, resultlist_form, shortcuts, control_types,
+  Printers, OSPrinters, Clipbrd,
+  entrylabel, entrysection;
 
-
-type
-
-  { TEntryLabel }
-
-  TEntryLabel = class(TLabel)
-  public
-    procedure Paint; override;
-  end;
-
-  { TEntrySection }
-
-  TEntrySection = class(TGroupBox)
-  protected
-    procedure WMPaint(var Msg: TLMPaint); message LM_PAINT;
-  end;
-
+const
+  DataFormCustomDataKey = 'DataFormCustomDataKey';
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -215,22 +204,6 @@ begin
 
   With LocalCtrl do
     result := Parent.Top + (ControlOrigin.x - Parent.ControlOrigin.x);
-end;
-
-{ TEntryLabel }
-
-procedure TEntryLabel.Paint;
-begin
-  Font.Assign(EntrySettings.HeadingFont);
-  inherited Paint;
-end;
-
-{ TEntrySection }
-
-procedure TEntrySection.WMPaint(var Msg: TLMPaint);
-begin
-  Font.Assign(EntrySettings.SectionFont);
-  inherited WMPaint(Msg);
 end;
 
 { TDataFormFrame }
@@ -267,6 +240,15 @@ begin
   DoCopyToClipBoard;
 end;
 
+procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
+begin
+  ShowResultListForm(
+    'All Data',
+    DataFile,
+    DataFile.Fields
+  );
+end;
+
 procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);
 begin
   if RecNo = NewRecord then exit;
@@ -289,6 +271,8 @@ procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
 var
   S: TSearch;
   Lst: TBoundArray;
+  FieldList: TEpiFields;
+  i: Integer;
 begin
   S := CreateSearchFromFieldEdits;
 
@@ -299,10 +283,14 @@ begin
     exit;
   end;
 
+  FieldList := TEpiFields.Create(nil);
+  for i := 0 to FieldEditList.Count - 1 do
+    FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+
   ShowResultListForm(
     'Result List:',
     DataFile,
-    FieldEditList,
+    FieldList,
     Lst);
 end;
 
@@ -615,15 +603,8 @@ function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
   result := TEntrySection.Create(DataFormScroolBox);
-  with EpiControl do
-  begin
-    Result.Top := Top;
-    Result.Left := Left;
-    Result.Width := TEpiSection(EpiControl).Width;
-    Result.Height := TEpiSection(EpiControl).Height;
-    Result.Caption := TEpiSection(EpiControl).Caption.Text;
-    Result.Font    := EntrySettings.SectionFont;
-  end;
+  EpiControl.AddCustomData(DataFormCustomDataKey, Result);
+  TEntrySection(Result).Section := TEpiSection(EpiControl);
   Result.Parent := DataFormScroolBox;
 end;
 
@@ -672,14 +653,8 @@ function TDataFormFrame.NewHeadingControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
   Result := TEntryLabel.Create(AParent);
-
-  With TEpiHeading(EpiControl) do
-  begin
-    Result.Top := Top;
-    Result.Left := Left;
-    Result.Caption := Caption.Text;
-    Result.Font := EntrySettings.HeadingFont;
-  end;
+  EpiControl.AddCustomData(DataFormCustomDataKey, Result);
+  TEntryLabel(Result).Heading := TEpiHeading(EpiControl);
   Result.Parent := AParent;
 end;
 
@@ -865,15 +840,15 @@ begin
   Result := true;
 end;
 
-function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
-var
-  i: Integer;
+function TDataFormFrame.ControlFromEpiControl(EpiControl: TEpiCustomItem
+  ): TControl;
 begin
-  for i := 0 to FieldEditList.Count - 1 do
-    if TFieldEdit(FieldEditList[i]).Field = Field then
-      Exit(TFieldEdit(FieldEditList[i]));
+  result := TControl(EpiControl.FindCustomData(DataFormCustomDataKey));
+end;
 
-  result := nil;
+function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
+begin
+  result := TFieldEdit(ControlFromEpiControl(Field));
 end;
 
 procedure TDataFormFrame.DoPrintDataForm(WithData: boolean);
@@ -910,7 +885,7 @@ var
       begin
         if (EpiCtrl is TEpiHeading) and
            (Controls[i] is TEntryLabel) and
-           (TEntryLabel(Controls[i]).Text = TEpiHeading(EpiCtrl).Caption.Text)
+           (TEntryLabel(Controls[i]).Caption = TEpiHeading(EpiCtrl).Caption.Text)
         then
           Exit(Controls[i]);
 
@@ -991,7 +966,7 @@ begin
       end;
       if (CI is TEpiHeading) then
       begin
-        SetFont(EntrySettings.HeadingFont);
+        SetFont(ControlFromEpiControl(CI).Font);
         ABot := ATop + Canvas.TextHeight(TEpiHeading(CI).Caption.Text);
       end;
       if (CI is TEpiField) then
@@ -1194,6 +1169,7 @@ var
   List: TBoundArray;
   L: TStringList;
   i: Integer;
+  FieldList: TEpiFields;
 begin
   try
     SF := TSearchForm1.Create(Self, DataFile);
@@ -1219,6 +1195,10 @@ begin
     end;
     if res = mrList then
     begin
+      FieldList := TEpiFields.Create(nil);
+      for i := 0 to FieldEditList.Count - 1 do
+        FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+
       FRecentSearch := nil;
       List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
       if Length(List) = 0 then exit;
@@ -1226,7 +1206,7 @@ begin
       ShowResultListForm(
           'Showing results for: ' + SF.SearchLabel.Caption,
           DataFile,
-          FieldEditList,
+          FieldList,
           List);
     end;
   finally
@@ -1298,10 +1278,22 @@ begin
 end;
 
 procedure TDataFormFrame.LMGotoRec(var Msg: TLMessage);
+var
+  F: TEpiField;
+  FE: TFieldEdit;
 begin
   // WParam = RecordNo
+  // LParam = Field (or nil)
   RecNo := Msg.WParam;
   FirstFieldAction.Execute;
+
+  F := TEpiField(Msg.LParam);
+  if Assigned(F) then
+  begin
+    FE := FieldEditFromField(F);
+    if FE.CanFocus then
+      FE.SetFocus;
+  end;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
@@ -1378,13 +1370,10 @@ var
 begin
   UpdateShortCuts;
 
-  for i := 0 to FieldEditList.Count - 1 do
-    with TFieldEdit(FieldEditList[i]) do
-      UpdateSettings;
-  if MainForm.ActiveControl is TFieldEdit then
-    TFieldEdit(MainForm.ActiveControl).Color := EntrySettings.ActiveFieldColour;
-
-  Invalidate;
+  if Assigned(DataFile) then
+    for i := 0 to DataFile.ControlItems.Count - 1 do
+      if Supports(ControlFromEpiControl(DataFile.ControlItems[i]), IEntryControl) then
+        (ControlFromEpiControl(DataFile.ControlItems[i]) as IEntryControl).UpdateSettings;
 end;
 
 procedure TDataFormFrame.RestoreDefaultPos;
@@ -1465,6 +1454,7 @@ var
   FieldEdit: TFieldEdit absolute Sender;
   NextFieldEdit: TFieldEdit;
   Res: TFieldExitFlowType;
+  CRecNo: Integer;
 
 
   function NextFieldOnKeyDown: TFieldEdit;
@@ -1548,7 +1538,21 @@ begin
 
     if not Assigned(NextFieldEdit) then
     begin
-      if not DoNewRecord then exit;
+      // NextFieldEdit = nil => either do a new record (if this is a new record or last record)
+      //                        or increment record no...
+      if (RecNo = NewRecord) or
+         (RecNo = (FDataFile.Size - 1))
+      then
+      begin
+        if not DoNewRecord then exit;
+      end else
+      begin
+        CRecNo := RecNo;
+        RecNo := RecNo + 1;
+        // if the recno was not changed a validation failed, hence do not
+        // shift focus field, etc...
+        if CRecNo = RecNo then exit;
+      end;
       NextFieldEdit := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
     end;
     FieldEnterFlow(NextFieldEdit);
@@ -1717,6 +1721,9 @@ var
                            end;
                          end;
       end;
+
+      // This forces and update of the FieldEdits labels -> hence updates ValueLabel too.
+      UpdateSettings;
     end;
   end;
 
@@ -1859,7 +1866,12 @@ begin
 
   // Additional check for KeyFields consistency.
   if DataFile.KeyFields.Count > 0 then
-    result := (DoSearchKeyFields = -1);
+  begin
+    i := DoSearchKeyFields;
+    // if i = -1 then keys do not exists,
+    // if i = RecNo then current records is found in the search, which is ok
+    result := (i = -1) or (i = RecNo);
+  end;
 end;
 
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean

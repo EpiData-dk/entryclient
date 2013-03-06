@@ -93,17 +93,27 @@ var
   M: String;
   Y: String;
   TheDate: EpiDate;
+  Mis: EpiString;
 begin
+  Mis := TEpiStringField.DefaultMissing;
+
   ErrFieldEdit := nil;
   with Calculation do
   begin
     D := GetFieldEditFromField(FieldEditList, Day).Text;
+    if D = '' then D := Mis;
     M := GetFieldEditFromField(FieldEditList, Month).Text;
+    if M = '' then M := Mis;
     Y := GetFieldEditFromField(FieldEditList, Year).Text;
+    if Y = '' then Y := Mis;
 
     if EpiStrToDate(D+'-'+M+'-'+Y, '-', ftDMYDate, TheDate, ErrMsg) then
       Result := FormatDateTime(TEpiDateField(ResultField).FormatString, TheDate)
-    else begin
+    else if ErrMsg = Mis then
+    begin
+      Result := Mis;
+      ErrMsg := '';
+    end else begin
       Result := '';
       if pos('day', ErrMsg) > 0 then
         ErrFieldEdit := GetFieldEditFromField(FieldEditList, Day);

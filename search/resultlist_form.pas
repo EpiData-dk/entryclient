@@ -5,139 +5,70 @@ unit resultlist_form;
 interface
 
 uses
-  Classes, SysUtils, types, FileUtil, Forms, Controls, Graphics, Dialogs, Grids,
-  epidatafiles, search, LMessages, ComCtrls;
-
-type
-
-  { TResultListForm }
-
-  TResultListForm = class(TForm)
-    ListGrid: TStringGrid;
-    StatusBar1: TStatusBar;
-    procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
-    procedure ListGridDblClick(Sender: TObject);
-    procedure ListGridHeaderClick(Sender: TObject; IsColumn: Boolean;
-      Index: Integer);
-  private
-    { private declarations }
-    FDataFile: TEpiDataFile;
-    FFieldList: TFpList;
-    FSelectedRecordNo: integer;
-  public
-    { public declarations }
-    constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile; Const FieldList: TFPList);
-    procedure   ApplyList(Const Search: TSearch; Const List: TBoundArray);
-    property    SelectedRecordNo: integer read FSelectedRecordNo;
-  end; 
-
+  Classes, SysUtils, epidatafiles;
 
 procedure ShowResultListForm(Const Caption: String;
   Const DataFile: TEpiDataFile;
-  Const FieldList: TFPList = nil;
+  Const FieldList: TEpiFields;
   Const RecordList: TBoundArray = nil);
 
 implementation
 
-{$R *.lfm}
-
 uses
-  fieldedit, LCLType, main, LCLIntf, entry_messages;
+  Forms, Controls, LCLType, main, LCLIntf, entry_messages,
+  epiv_dataset_viewer_frame;
+
+type
+  { TResultListForm }
+
+  TResultListForm = class(TForm)
+  private
+    { private declarations }
+    FViewerFrame: TCustomFrame;
+    procedure SelectRecord(Sender: TObject; RecordNo: Integer;
+      const Field: TEpiField);
+  public
+    { public declarations }
+    constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile);
+  end;
 
 var
   FResultListForm: TResultListForm = nil;
+  FDisplayFields: TEpiFields = nil;
 
 { TResultListForm }
 
-procedure TResultListForm.ListGridHeaderClick(Sender: TObject;
-  IsColumn: Boolean; Index: Integer);
+procedure TResultListForm.SelectRecord(Sender: TObject; RecordNo: Integer;
+  const Field: TEpiField);
 begin
-  // So far - no search
-  if IsColumn then exit;
-  if Index <= 0 then exit;
-
-  FSelectedRecordNo := StrToInt(ListGrid.Cells[0, Index]) - 1;
-  SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
-end;
-
-procedure TResultListForm.ListGridDblClick(Sender: TObject);
-var
-  P: TPoint;
-begin
-  P := ListGrid.MouseToCell(ListGrid.ScreenToClient(Mouse.CursorPos));
-  if P.Y <= 0 then exit;
-
-  FSelectedRecordNo := StrToInt(ListGrid.Cells[0, P.Y]) - 1;
-  SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
-end;
-
-procedure TResultListForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
-begin
-  if Msg.CharCode = VK_ESCAPE then
-  begin
-    ModalResult := mrCancel;
-    Handled := true;
-  end;
-
-  if Msg.CharCode = VK_RETURN then
-  begin
-    ModalResult := mrOk;
-    Handled := true;
-
-    FSelectedRecordNo := StrToInt(ListGrid.Cells[0, ListGrid.Row]) - 1;
-    SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(FSelectedRecordNo), 0);
-  end;
+  SendMessage(MainForm.Handle, LM_DATAFORM_GOTOREC, WPARAM(RecordNo), LPARAM(Field));
 end;
 
 constructor TResultListForm.Create(TheOwner: TComponent;
-  const DataFile: TEpiDataFile; const FieldList: TFPList);
+  const DataFile: TEpiDataFile);
 begin
-  inherited Create(TheOwner);
-  FDataFile := DataFile;
-  FFieldList := FieldList;
-  FSelectedRecordNo := -1;
-end;
-
-procedure TResultListForm.ApplyList(const Search: TSearch;
-  const List: TBoundArray);
-var
-  L: Integer;
-  i: Integer;
-  j: Integer;
-begin
-  L := Length(List);
-
-  ListGrid.BeginUpdate;
-  ListGrid.ColCount := FFieldList.Count + 1;
-  ListGrid.RowCount := L + 1;
-
-  ListGrid.Cells[0,0] := 'Record No:';
-  for i := 0 to FFieldList.Count - 1 do
-  with TFieldEdit(FFieldList[i]).Field do
-    ListGrid.Cells[i+1, 0] := Name;
-
-  for i := 0 to L - 1 do
+  inherited CreateNew(TheOwner);
+  FViewerFrame := TDatasetViewerFrame.Create(self, DataFile);
+  with TDatasetViewerFrame(FViewerFrame) do
   begin
-    ListGrid.Cells[0, i + 1] := IntToStr(List[i] + 1);
-
-    for j := 0 to FFieldList.Count - 1 do
-    with TFieldEdit(FFieldList[j]).Field do
-      ListGrid.Cells[j + 1, i + 1] := AsString[List[i]];
+    Align := alClient;
+    OnSelectRecord := @SelectRecord;
+    Parent := Self;
   end;
-  ListGrid.AutoSizeColumns;
-  ListGrid.EndUpdate();
-
-  StatusBar1.SimpleText := 'Showing ' + IntToStr(L) + ' records';
 end;
 
 procedure ShowResultListForm(const Caption: String;
-  const DataFile: TEpiDataFile; const FieldList: TFPList;
+  const DataFile: TEpiDataFile; const FieldList: TEpiFields;
   const RecordList: TBoundArray);
 begin
   if not Assigned(FResultListForm) then
-    FResultListForm := TResultListForm.Create(nil, DataFile, FieldList);
+    FResultListForm := TResultListForm.Create(nil, DataFile);
+  with TDatasetViewerFrame(FResultListForm.FViewerFrame) do
+  begin
+    DisplayFields := FieldList;
+    ShowRecords(RecordList);
+  end;
   FResultListForm.Caption := Caption;
-  FResultListForm.ApplyList(nil, RecordList);
   FResultListForm.Show;
 end;
 

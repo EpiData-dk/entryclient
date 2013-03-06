@@ -174,7 +174,7 @@ object MainForm: TMainForm
       Left = 11
       Height = 27
       Top = 8
-      Width = 94
+      Width = 93
       Action = OpenProjectAction
       AutoSize = True
       BorderSpacing.Left = 10
@@ -231,7 +231,7 @@ object MainForm: TMainForm
       end
     end
     object SearchMenu: TMenuItem
-      Caption = 'Search'
+      Caption = '&Browse Data'
       object FindMenuItem: TMenuItem
         Caption = 'New Item35'
       end
@@ -244,9 +244,15 @@ object MainForm: TMainForm
       object FindListMenuItem: TMenuItem
         Caption = 'New Item40'
       end
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
+      object BrowseAllMenuItem: TMenuItem
+        Caption = 'BrowseAll'
+      end
     end
     object BrowseMenu: TMenuItem
-      Caption = '&Browse'
+      Caption = '&Goto'
       Visible = False
       object GotoRecordMenuItem: TMenuItem
         Caption = 'Goto Rec'
