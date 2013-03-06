@@ -176,7 +176,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="26">
+    <Units Count="29">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -344,6 +344,21 @@
         <Filename Value="dataform/dataform_getfunctions.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
+      <Unit26>
+        <Filename Value="dataform/entrylabel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entrylabel"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="dataform/control_types.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="control_types"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="dataform/entrysection.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entrysection"/>
+      </Unit28>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

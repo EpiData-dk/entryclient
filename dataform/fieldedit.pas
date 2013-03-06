@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, epistringutils, entryprocs, LMessages;
+  LCLType, epistringutils, entryprocs, LMessages, control_types;
 
 type
 
@@ -15,7 +15,7 @@ type
 
   { TFieldEdit }
 
-  TFieldEdit = class(TEdit)
+  TFieldEdit = class(TEdit, IEntryControl)
   private
     FField: TEpiField;
     FJumpToNext: boolean;

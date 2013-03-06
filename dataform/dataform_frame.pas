@@ -105,6 +105,7 @@ type
     procedure SetRecNo(AValue: integer);
     procedure SetModified(const AValue: boolean);
     function  DoNewRecord: boolean;
+    function  ControlFromEpiControl(EpiControl: TEpiCustomItem): TControl;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
     procedure DoPrintDataForm(WithData: boolean);
     procedure DoCopyToClipBoard;
@@ -180,26 +181,12 @@ uses
   epidatafilestypes, LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
-  searchform, resultlist_form, shortcuts,
-  Printers, OSPrinters, Clipbrd;
+  searchform, resultlist_form, shortcuts, control_types,
+  Printers, OSPrinters, Clipbrd,
+  entrylabel, entrysection;
 
-
-type
-
-  { TEntryLabel }
-
-  TEntryLabel = class(TLabel)
-  public
-    procedure Paint; override;
-  end;
-
-  { TEntrySection }
-
-  TEntrySection = class(TGroupBox)
-  protected
-    procedure WMPaint(var Msg: TLMPaint); message LM_PAINT;
-  end;
-
+const
+  DataFormCustomDataKey = 'DataFormCustomDataKey';
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -217,22 +204,6 @@ begin
 
   With LocalCtrl do
     result := Parent.Top + (ControlOrigin.x - Parent.ControlOrigin.x);
-end;
-
-{ TEntryLabel }
-
-procedure TEntryLabel.Paint;
-begin
-  Font.Assign(EntrySettings.HeadingFont);
-  inherited Paint;
-end;
-
-{ TEntrySection }
-
-procedure TEntrySection.WMPaint(var Msg: TLMPaint);
-begin
-  Font.Assign(EntrySettings.SectionFont);
-  inherited WMPaint(Msg);
 end;
 
 { TDataFormFrame }
@@ -632,15 +603,8 @@ function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
   result := TEntrySection.Create(DataFormScroolBox);
-  with EpiControl do
-  begin
-    Result.Top := Top;
-    Result.Left := Left;
-    Result.Width := TEpiSection(EpiControl).Width;
-    Result.Height := TEpiSection(EpiControl).Height;
-    Result.Caption := TEpiSection(EpiControl).Caption.Text;
-    Result.Font    := EntrySettings.SectionFont;
-  end;
+  EpiControl.AddCustomData(DataFormCustomDataKey, Result);
+  TEntrySection(Result).Section := TEpiSection(EpiControl);
   Result.Parent := DataFormScroolBox;
 end;
 
@@ -689,14 +653,8 @@ function TDataFormFrame.NewHeadingControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
 begin
   Result := TEntryLabel.Create(AParent);
-
-  With TEpiHeading(EpiControl) do
-  begin
-    Result.Top := Top;
-    Result.Left := Left;
-    Result.Caption := Caption.Text;
-    Result.Font := EntrySettings.HeadingFont;
-  end;
+  EpiControl.AddCustomData(DataFormCustomDataKey, Result);
+  TEntryLabel(Result).Heading := TEpiHeading(EpiControl);
   Result.Parent := AParent;
 end;
 
@@ -882,15 +840,15 @@ begin
   Result := true;
 end;
 
-function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
-var
-  i: Integer;
+function TDataFormFrame.ControlFromEpiControl(EpiControl: TEpiCustomItem
+  ): TControl;
 begin
-  for i := 0 to FieldEditList.Count - 1 do
-    if TFieldEdit(FieldEditList[i]).Field = Field then
-      Exit(TFieldEdit(FieldEditList[i]));
+  result := TControl(EpiControl.FindCustomData(DataFormCustomDataKey));
+end;
 
-  result := nil;
+function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
+begin
+  result := TFieldEdit(ControlFromEpiControl(Field));
 end;
 
 procedure TDataFormFrame.DoPrintDataForm(WithData: boolean);
@@ -927,7 +885,7 @@ var
       begin
         if (EpiCtrl is TEpiHeading) and
            (Controls[i] is TEntryLabel) and
-           (TEntryLabel(Controls[i]).Text = TEpiHeading(EpiCtrl).Caption.Text)
+           (TEntryLabel(Controls[i]).Caption = TEpiHeading(EpiCtrl).Caption.Text)
         then
           Exit(Controls[i]);
 
@@ -1008,7 +966,7 @@ begin
       end;
       if (CI is TEpiHeading) then
       begin
-        SetFont(EntrySettings.HeadingFont);
+        SetFont(ControlFromEpiControl(CI).Font);
         ABot := ATop + Canvas.TextHeight(TEpiHeading(CI).Caption.Text);
       end;
       if (CI is TEpiField) then
@@ -1412,13 +1370,10 @@ var
 begin
   UpdateShortCuts;
 
-  for i := 0 to FieldEditList.Count - 1 do
-    with TFieldEdit(FieldEditList[i]) do
-      UpdateSettings;
-  if MainForm.ActiveControl is TFieldEdit then
-    TFieldEdit(MainForm.ActiveControl).Color := EntrySettings.ActiveFieldColour;
-
-  Invalidate;
+  if Assigned(DataFile) then
+    for i := 0 to DataFile.ControlItems.Count - 1 do
+      if Supports(ControlFromEpiControl(DataFile.ControlItems[i]), IEntryControl) then
+        (ControlFromEpiControl(DataFile.ControlItems[i]) as IEntryControl).UpdateSettings;
 end;
 
 procedure TDataFormFrame.RestoreDefaultPos;
