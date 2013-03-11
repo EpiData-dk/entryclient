@@ -342,7 +342,7 @@ object MainForm: TMainForm
     end
     object SettingsAction: TAction
       Category = 'Edit'
-      Caption = 'Settings'
+      Caption = 'Preferences'
       OnExecute = SettingsActionExecute
     end
     object AboutAction: TAction
