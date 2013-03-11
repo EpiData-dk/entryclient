@@ -634,6 +634,7 @@ begin
   if TEpiField(EpiControl).EntryMode = emNoEnter then
     Result.Enabled := false;
 
+  EpiControl.AddCustomData(DataFormCustomDataKey, result);
   Result.Parent := AParent;
 
   with TFieldEdit(Result) do
