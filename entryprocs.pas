@@ -35,7 +35,13 @@ var
   Fn: String;
   S: String;
 begin
-  Fn := GetAppConfigFileUTF8(false, true, true);
+  Fn := GetAppConfigFileUTF8(false,
+    {$IFDEF windows}
+    false
+    {$ELSE}
+    true
+    {$ENDIF}
+    , true);
 
   if not LoadSettingsFromIni(Fn)
   then
