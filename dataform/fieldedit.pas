@@ -483,10 +483,13 @@ begin
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
   if (Field.ShowValueLabel) and
      (Assigned(Field.ValueLabelSet)) and
-     (Text <> '') then
+     (Text <> '') and
+     (Text <> TEpiStringField.DefaultMissing)
+  then
     FValueLabelLabel.Caption := Field.ValueLabelSet.ValueLabelString[Text]
   else
     FValueLabelLabel.Caption := '';
+
   if Focused then
     Color := EntrySettings.ActiveFieldColour
   else

@@ -478,14 +478,25 @@ begin
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
-      'Save before exit?',
+      'Save project to disk before exit?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
 
-    if Res = mrCancel then
-      CanClose := false;
+    if Res = mrNo then
+    begin
+      Res := MessageDlg('Warning',
+        'Project content is NOT saved to disk.' + LineEnding +
+        'If you choose No again you will loose all data since last save!' + LineEnding +
+        LineEnding +
+        'Save project to disk before exit?',
+        mtWarning, mbYesNoCancel, 0, mbCancel);
+    end;
 
-    if Res = mrYes then
-      SaveProjectAction.Execute;
+    case Res of
+      mrCancel:
+        CanClose := false;
+      mrYes:
+        SaveProjectAction.Execute;
+    end;
   end;
 end;
 
