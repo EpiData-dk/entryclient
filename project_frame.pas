@@ -478,14 +478,14 @@ begin
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
-      'Save project to disk before exit?',
+      'Store project permanently on disk before exit?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
 
     if Res = mrNo then
     begin
       Res := MessageDlg('Warning',
         'Project content is NOT saved to disk.' + LineEnding +
-        'If you choose No again you will loose all data since last save!' + LineEnding +
+        'Choose YES to permanently store data on disk!' + LineEnding +
         LineEnding +
         'Save project to disk before exit?',
         mtWarning, mbYesNoCancel, 0, mbCancel);
