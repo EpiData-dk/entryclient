@@ -67,8 +67,9 @@ begin
   begin
     DisplayFields := FieldList;
     ShowRecords(RecordList);
+    ListGridHeaderClick(Nil, True, 0);
   end;
-  FResultListForm.Caption := Caption;
+  FResultListForm.Caption := Caption + ' (' + IntToStr(Length(RecordList)) + ')';
   FResultListForm.Show;
 end;
 

@@ -1,7 +1,7 @@
 object ValueLabelsPickListForm: TValueLabelsPickListForm
-  Left = 758
+  Left = 994
   Height = 229
-  Top = 370
+  Top = 528
   Width = 248
   ActiveControl = Edit1
   BorderStyle = bsSizeToolWin
@@ -45,6 +45,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     OnDblClick = LabelsListBoxDblClick
     OnKeyDown = LabelsListBoxKeyDown
     OnSelectionChange = LabelsListBoxSelectionChange
+    OnUTF8KeyPress = UTF8KeyPress
     ScrollWidth = 164
     TabOrder = 2
     TopIndex = -1
@@ -60,6 +61,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
     OnDblClick = LabelsListBoxDblClick
     OnKeyDown = LabelsListBoxKeyDown
     OnSelectionChange = LabelsListBoxSelectionChange
+    OnUTF8KeyPress = UTF8KeyPress
     ScrollWidth = 71
     TabOrder = 1
     TopIndex = -1

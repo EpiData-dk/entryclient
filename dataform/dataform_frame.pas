@@ -700,8 +700,8 @@ begin
   if (not (AValue = NewRecord)) and Modified then
   begin
     Res := MessageDlg('Warning',
-      'Record is modified.' + LineEnding +
-      'Save?',
+      'Current record is modified.' + LineEnding +
+      'Save record?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel:
@@ -788,6 +788,7 @@ begin
       mrNo:     ; // Do nothing
     end;
   end;
+
   if (RecNo = NewRecord) then
   begin
     // Sanity check

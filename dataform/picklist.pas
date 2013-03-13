@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, epidatafiles, epivaluelabels;
+  StdCtrls, epidatafiles, epivaluelabels, LCLType;
 
 type
 
@@ -25,6 +25,7 @@ type
     procedure LabelsListBoxKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure LabelsListBoxSelectionChange(Sender: TObject; User: boolean);
+    procedure UTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
   private
     { private declarations }
     FUpdatingListBox: boolean;
@@ -48,7 +49,7 @@ implementation
 {$R *.lfm}
 
 uses
-  math, LCLProc, LCLType, settings;
+  math, LCLProc, settings;
 
 { TValueLabelsPickListForm }
 
@@ -141,7 +142,14 @@ begin
 
   if (Sender <> Edit1) then
   begin
-     if (Key = VK_RETURN) and (Shift = []) then ModalResult := mrOK;
+    if (Key = VK_RETURN) and (Shift = []) then
+      ModalResult := mrOK;
+    if (Key = VK_BACK) and (Shift = []) then
+    begin
+      S := Edit1.Text;
+      Edit1.Text := UTF8Copy(S, 1, UTF8Length(S) - 1);
+      Key := VK_UNKNOWN;
+    end;
   end;
 end;
 
@@ -160,13 +168,35 @@ begin
   FUpdatingListBox := false;
 end;
 
+procedure TValueLabelsPickListForm.UTF8KeyPress(Sender: TObject;
+  var UTF8Key: TUTF8Char);
+var
+  S: string;
+  Idx: integer;
+begin
+  S := String(UTF8Key);
+
+  If Word(UTF8Key[1]) in [VK_BACK] then
+  begin
+    exit;
+  end;
+
+  if not LocateListBoxIndex(TListBox(SEnder), S, Idx) then
+  begin
+    Edit1.Text := Edit1.Text + S;
+  end else begin
+    TListBox(Sender).ItemIndex := Idx;
+  end;
+  UTF8Key := '';
+end;
+
 constructor TValueLabelsPickListForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
 end;
 
 function TValueLabelsPickListForm.LocateListBoxIndex(AListBox: TListBox;
-  const S: string; Out Idx: integer): boolean;
+  const S: string; out Idx: integer): boolean;
 var
   I: Integer;
 begin
