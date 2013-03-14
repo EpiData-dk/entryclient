@@ -1,20 +1,20 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 637
+  Height = 730
   Top = 0
-  Width = 1012
-  ClientHeight = 637
-  ClientWidth = 1012
+  Width = 1202
+  ClientHeight = 730
+  ClientWidth = 1202
   TabOrder = 0
-  DesignLeft = 481
-  DesignTop = 282
+  DesignLeft = 600
+  DesignTop = 271
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 607
+    Height = 700
     Top = 0
-    Width = 842
-    HorzScrollBar.Page = 840
-    VertScrollBar.Page = 605
+    Width = 1032
+    HorzScrollBar.Page = 1030
+    VertScrollBar.Page = 698
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -25,11 +25,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 607
-    Width = 1012
+    Top = 700
+    Width = 1202
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1012
+    ClientWidth = 1202
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -225,18 +225,19 @@ object DataFormFrame: TDataFormFrame
     object FieldNamePanel: TPanel
       AnchorSideLeft.Control = DeletePanel
       AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = NavigationPanel
+      AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FieldTypePanel
       Left = 306
       Height = 24
       Top = 3
-      Width = 484
+      Width = 183
       Alignment = taLeftJustify
-      Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 484
+      ClientWidth = 183
       Color = clWhite
       Constraints.MinWidth = 80
       ParentColor = False
@@ -259,18 +260,20 @@ object DataFormFrame: TDataFormFrame
     end
     object FieldTypePanel: TPanel
       AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = NavigationPanel
+      AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FieldInfoPanel
-      Left = 792
+      Left = 953
       Height = 24
       Top = 3
-      Width = 115
+      Width = 131
       Alignment = taLeftJustify
       Anchors = [akTop, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 115
+      ClientWidth = 131
       Color = clWhite
       ParentColor = False
       TabOrder = 3
@@ -286,18 +289,20 @@ object DataFormFrame: TDataFormFrame
       end
     end
     object FieldInfoPanel: TPanel
+      AnchorSideTop.Control = NavigationPanel
+      AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 909
+      Left = 1086
       Height = 24
       Top = 3
-      Width = 100
+      Width = 113
       Alignment = taLeftJustify
       Anchors = [akTop, akRight]
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 100
+      ClientWidth = 113
       Color = clWhite
       ParentColor = False
       TabOrder = 4
@@ -347,14 +352,86 @@ object DataFormFrame: TDataFormFrame
         Transparent = False
       end
     end
+    object LengthPanel: TPanel
+      AnchorSideLeft.Control = FieldNamePanel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = NavigationPanel
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = FieldTypePanel
+      Left = 491
+      Height = 24
+      Top = 3
+      Width = 143
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
+      BevelOuter = bvLowered
+      ClientHeight = 24
+      ClientWidth = 143
+      Color = clWhite
+      Constraints.MinWidth = 80
+      ParentColor = False
+      TabOrder = 6
+      object FieldLengthLabel: TLabel
+        AnchorSideLeft.Control = LengthPanel
+        AnchorSideTop.Control = LengthPanel
+        AnchorSideTop.Side = asrCenter
+        AnchorSideBottom.Control = LengthPanel
+        AnchorSideBottom.Side = asrCenter
+        Left = 6
+        Height = 15
+        Top = 4
+        Width = 106
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Left = 5
+        Caption = 'FieldLengthLabel'
+        ParentColor = False
+      end
+    end
+    object RangePanel: TPanel
+      AnchorSideLeft.Control = LengthPanel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = NavigationPanel
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = FieldTypePanel
+      Left = 636
+      Height = 24
+      Top = 3
+      Width = 143
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
+      BevelOuter = bvLowered
+      ClientHeight = 24
+      ClientWidth = 143
+      Color = clWhite
+      Constraints.MinWidth = 80
+      ParentColor = False
+      TabOrder = 7
+      object FieldRangeLabel: TLabel
+        AnchorSideLeft.Control = RangePanel
+        AnchorSideTop.Control = RangePanel
+        AnchorSideTop.Side = asrCenter
+        AnchorSideBottom.Control = RangePanel
+        AnchorSideBottom.Side = asrCenter
+        Left = 6
+        Height = 15
+        Top = 4
+        Width = 102
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Left = 5
+        Caption = 'FieldRangeLabel'
+        ParentColor = False
+      end
+    end
   end
   object Panel1: TPanel
-    Left = 842
-    Height = 607
+    Left = 1032
+    Height = 700
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 607
+    ClientHeight = 700
     ClientWidth = 170
     TabOrder = 2
     OnMouseMove = Panel1MouseMove

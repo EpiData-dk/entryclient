@@ -176,7 +176,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="29">
+    <Units Count="30">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -359,6 +359,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="entrysection"/>
       </Unit28>
+      <Unit29>
+        <Filename Value="entry_globals.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="entry_globals"/>
+      </Unit29>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

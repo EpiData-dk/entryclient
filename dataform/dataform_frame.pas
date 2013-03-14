@@ -17,6 +17,10 @@ type
   TDataFormFrame = class(TFrame)
     BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
+    FieldLengthLabel: TLabel;
+    FieldRangeLabel: TLabel;
+    LengthPanel: TPanel;
+    RangePanel: TPanel;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
     DeleteLabel: TLabel;
@@ -131,6 +135,10 @@ type
     procedure ShowNotes(FE: TFieldEdit; ForceShow: boolean = false);
   private
     { Field Enter/Exit Handling }
+    // - Delayed key down handling.
+    function  KeyDownData(Sender: TObject; Const Key: Word; Const Shift: TShiftState): PtrInt;
+    procedure ASyncKeyDown(Data: PtrInt);
+    procedure DoKeyFieldDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     function  NextUsableFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -183,10 +191,15 @@ uses
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
-  entrylabel, entrysection;
+  entrylabel, entrysection, entry_globals;
 
-const
-  DataFormCustomDataKey = 'DataFormCustomDataKey';
+type
+  TKeyDownData = record
+    Sender: TObject;
+    Key: Word;
+    Shift: TShiftState;
+  end;
+  PKeyDownData = ^TKeyDownData;
 
 function FieldEditTop(LocalCtrl: TControl): integer;
 begin
@@ -1334,6 +1347,18 @@ begin
   end;
 end;
 
+function TDataFormFrame.KeyDownData(Sender: TObject; const Key: Word;
+  const Shift: TShiftState): PtrInt;
+var
+  Kdd: PKeyDownData;
+begin
+  Kdd := New(PKeyDownData);
+  Kdd^.Sender := Sender;
+  Kdd^.Key := Key;
+  Kdd^.Shift := Shift;
+  Result := PtrInt(Kdd);
+end;
+
 procedure TDataFormFrame.CommitFields;
 var
   i: Integer;
@@ -1450,7 +1475,14 @@ begin
   end;
 end;
 
-procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
+procedure TDataFormFrame.ASyncKeyDown(Data: PtrInt);
+begin
+  with PKeyDownData(Data)^ do
+    DoKeyFieldDown(Sender, Key, Shift);
+  Dispose(PKeyDownData(Data));
+end;
+
+procedure TDataFormFrame.DoKeyFieldDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   FieldEdit: TFieldEdit absolute Sender;
@@ -1489,8 +1521,6 @@ var
   end;
 
 begin
-  ShowHintMsg('', nil);
-
   // Jumps backward though fields.
   if ((Key = VK_UP) and (Shift = [])) or
      ((Key = VK_TAB) and (Shift = [ssShift]))
@@ -1579,6 +1609,16 @@ begin
   end;
 end;
 
+procedure TDataFormFrame.FieldKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  ShowHintMsg('', nil);
+
+  // Moved all vode to DoKeyFieldDown - then only real key presses activates
+  // the ShowHint method.
+  DoKeyFieldDown(Sender, Key, Shift);
+end;
+
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute sender;
@@ -1608,7 +1648,10 @@ procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
 begin
-  FieldEdit.Color := EntrySettings.InactiveFieldColour;
+  if FieldEdit.Field.EntryMode = emMustEnter then
+    FieldEdit.Color := EntrySettings.MustEnterFieldColour
+  else
+    FieldEdit.Color := EntrySettings.InactiveFieldColour;
   FieldValidate(FieldEdit);
 end;
 
@@ -1778,10 +1821,14 @@ begin
     Err := '';
     OldText := NewFieldEdit.Text;
     case Field.Calculation.CalcType of
-      ctTimeDiff:      NewFieldEdit.Text := CalcTimeDiff(FieldEditList, TEpiTimeCalc(Field.Calculation));
-      ctCombineDate:   NewFieldEdit.Text := CalcCombineDate(FieldEditList, TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
-      ctCombineString: NewFieldEdit.Text := CalcCombineString(FieldEditList, TEpiCombineStringCalc(Field.Calculation));
+      ctTimeDiff:      Txt := CalcTimeDiff(TEpiTimeCalc(Field.Calculation));
+      ctCombineDate:   Txt := CalcCombineDate(TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
+      ctCombineString: Txt := CalcCombineString(TEpiCombineStringCalc(Field.Calculation));
     end;
+    if (Txt <> TEpiStringField.DefaultMissing)
+    then
+      NewFieldEdit.Text := Txt;
+
     if Err <> '' then
     begin
       ErrFieldEdit.SetFocus;
@@ -1888,6 +1935,11 @@ function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
     Beep;
   end;
 
+  procedure NotifyFieldEditKeyDown;
+  begin
+    Application.QueueAsyncCall(@ASyncKeyDown, KeyDownData(FE, VK_F9, []));
+  end;
+
 begin
   FE.JumpToNext := false;
   FE.SelLength := 0;
@@ -1897,7 +1949,7 @@ begin
   begin
     DoError(FE);
     if Assigned(FE.Field.ValueLabelSet) then
-      PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
+      NotifyFieldEditKeyDown;
     Exit;
   end else begin
     ShowHintMsg('', nil);
@@ -1911,6 +1963,8 @@ begin
   begin
     DoError(FE);
     FieldValidateError(FE, 'Field cannot be empty!');
+    if Assigned(FE.Field.ValueLabelSet) then
+      NotifyFieldEditKeyDown;
     Result := false;
   end;
 end;
@@ -1933,6 +1987,15 @@ begin
       FieldInfoLabel.Caption := 'Label: +/F9'
     else
       FieldInfoLabel.Caption := '';
+
+    FieldLengthLabel.Caption :=
+      'Length: ' + IntToStr(Length) +
+      BoolToStr(FieldType in FloatFieldTypes, '.' + IntToStr(Decimals), '');
+
+    if Assigned(Ranges) then
+      FieldRangeLabel.Caption := Ranges[0].AsString[true] + '-' + Ranges[0].AsString[false]
+    else
+      FieldRangeLabel.Caption := '';
   end;
 end;
 

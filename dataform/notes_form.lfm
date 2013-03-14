@@ -63,6 +63,7 @@ object NotesForm: TNotesForm
       BorderSpacing.Top = 10
       BorderSpacing.Right = 10
       BorderSpacing.Bottom = 10
+      ReadOnly = True
       TabOrder = 0
     end
   end

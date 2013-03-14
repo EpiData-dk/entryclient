@@ -13,10 +13,12 @@ type
   { TSettingsColourFrame }
 
   TSettingsColourFrame = class(TFrame, ISettingsFrame)
+    MustEnterFieldClrBtn: TColorButton;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
     ValidateErrorColourBtn: TColorButton;
     ValueLabelColourBtn: TColorButton;
     ActiveFieldClrBtn: TColorButton;
@@ -47,6 +49,7 @@ begin
     ValueLabelColourBtn.ButtonColor := ValueLabelColour;
     ActiveFieldClrBtn.ButtonColor := ActiveFieldColour;
     InActiveFieldClrBtn.ButtonColor := InactiveFieldColour;
+    MustEnterFieldClrBtn.ButtonColor := MustEnterFieldColour;
   end;
 end;
 
@@ -58,6 +61,7 @@ begin
     ValueLabelColour := ValueLabelColourBtn.ButtonColor;
     ActiveFieldColour := ActiveFieldClrBtn.ButtonColor;
     InactiveFieldColour := InActiveFieldClrBtn.ButtonColor;
+    MustEnterFieldColour := MustEnterFieldClrBtn.ButtonColor;
   end;
   result := true;
 end;

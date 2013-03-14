@@ -67,6 +67,7 @@ type
     ValueLabelColour: TColor;
     ActiveFieldColour: TColor;
     InactiveFieldColour: TColor;
+    MustEnterFieldColour: TColor;
 
     // Fonts
     FieldFont:             TFont;
@@ -104,6 +105,7 @@ var
     ValueLabelColour: clBlue;
     ActiveFieldColour: TCOlor($FFC26B);
     InactiveFieldColour: clWhite;
+    MustEnterFieldColour: clRed;
 
     FieldFont:             nil;
     SectionFont:           nil;
@@ -212,6 +214,7 @@ begin
       WriteInteger(Sec, 'ValueLabelColour', ValueLabelColour);
       WriteInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
       WriteInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
+      WriteInteger(Sec, 'MustEnterFieldColour', MustEnterFieldColour);
     end;
 
     Result := true;
@@ -302,8 +305,7 @@ begin
     ValueLabelColour    := ReadInteger(Sec, 'ValueLabelColour', ValueLabelColour);
     ActiveFieldColour   := ReadInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
     InactiveFieldColour := ReadInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
-
-
+    MustEnterFieldColour := ReadInteger(Sec, 'MustEnterFieldColour', MustEnterFieldColour);
   end;
   Result := true;
 end;
