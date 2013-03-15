@@ -477,14 +477,15 @@ begin
   InitFont(EntrySettings.FieldFont);
   InitFont(EntrySettings.SectionFont);
   InitFont(EntrySettings.HeadingFont1);
-  EntrySettings.HeadingFont1.Size := Trunc(EntrySettings.HeadingFont1.Size * 2);
+  EntrySettings.HeadingFont1.Size := Trunc(EntrySettings.HeadingFont1.Size * 2.0);
   InitFont(EntrySettings.HeadingFont2);
   EntrySettings.HeadingFont2.Size := Trunc(EntrySettings.HeadingFont2.Size * 1.5);
   InitFont(EntrySettings.HeadingFont3);
   EntrySettings.HeadingFont3.Size := Trunc(EntrySettings.HeadingFont3.Size * 1.2);
   InitFont(EntrySettings.HeadingFont4);
-  EntrySettings.HeadingFont4.Size := Trunc(EntrySettings.HeadingFont4.Size * 1.1);
+  EntrySettings.HeadingFont4.Size := Trunc(EntrySettings.HeadingFont4.Size * 1.0);
   InitFont(EntrySettings.HeadingFont5);
+  EntrySettings.HeadingFont5.Size := Trunc(EntrySettings.HeadingFont5.Size * 0.8);
 
   EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
   if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then

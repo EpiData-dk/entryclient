@@ -28,11 +28,12 @@ type
     CopyRecToClpMenuItem: TMenuItem;
     MenuItem2: TMenuItem;
     BrowseAllMenuItem: TMenuItem;
+    OpenProjectPopupMenu: TPopupMenu;
     PrintWithDataMenuItem: TMenuItem;
     PrintMenuItem: TMenuItem;
     FileMenuDivider2: TMenuItem;
     ProcessToolPanel: TPanel;
-    SearchMenu: TMenuItem;
+    BrowseMenu: TMenuItem;
     OpenProjectAction: TAction;
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
@@ -62,7 +63,7 @@ type
     RecordMenuDivider1: TMenuItem;
     PrevRecordMenuItem: TMenuItem;
     NextRecordMenuItem: TMenuItem;
-    BrowseMenu: TMenuItem;
+    GotoMenu: TMenuItem;
     GotoRecordMenuItem: TMenuItem;
     NewRecordMenuItem: TMenuItem;
     NewProjectAction: TAction;
@@ -312,15 +313,15 @@ begin
   // EDIT:
   CopyRecToClpMenuItem.Visible := Assigned(FActiveFrame);
 
+  // BROWSE:
+  BrowseMenu.Visible            := Assigned(FActiveFrame);
 
+  // GOTO:
+  GotoMenu.Visible              := Assigned(FActiveFrame);
+
+  // HELP
   FieldNotesMenuItem.Visible    := Assigned(FActiveFrame);
   FieldNotesDivider.Visible     := Assigned(FActiveFrame);
-
-  SearchMenu.Visible            := Assigned(FActiveFrame);
-
-  {$IFNDEF EPI_DEBUG}
-  MenuItem1.Visible := false;
-  {$ENDIF}
 end;
 
 procedure TMainForm.UpdateShortCuts;
@@ -425,6 +426,8 @@ begin
 
   RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
   RecentFilesSubMenu.Clear;
+  OpenProjectPopupMenu.Items.Clear;
+
   for i := 0 to RecentFiles.Count - 1 do
   begin
     Mi := TMenuItem.Create(RecentFilesSubMenu);
@@ -434,6 +437,24 @@ begin
     if i < 9 then
       Mi.ShortCut := ShortCut(VK_1 + i, Shift);
     RecentFilesSubMenu.Add(Mi);
+
+
+    // Popup menu
+    Mi := TMenuItem.Create(OpenProjectPopupMenu);
+    Mi.Name := 'recent' + inttostr(i);
+    Mi.Caption := RecentFiles[i];
+    Mi.OnClick := @OpenRecentMenuItemClick;
+    if i < 9 then
+      Mi.ShortCut := KeyToShortCut(VK_1 + i, Shift);
+    OpenProjectPopupMenu.Items.Add(Mi);
+  end;
+  if OpenProjectPopupMenu.Items.Count = 0 then
+  begin
+    Mi := TMenuItem.Create(OpenProjectPopupMenu);
+    Mi.Name := 'recent' + inttostr(i);
+    Mi.Caption := '(no recent files)';
+    Mi.Enabled := false;
+    OpenProjectPopupMenu.Items.Add(Mi);
   end;
 end;
 

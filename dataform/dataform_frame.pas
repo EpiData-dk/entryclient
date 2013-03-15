@@ -19,8 +19,8 @@ type
     CopyToClipBoardAction: TAction;
     FieldLengthLabel: TLabel;
     FieldRangeLabel: TLabel;
-    LengthPanel: TPanel;
-    RangePanel: TPanel;
+    FieldLengthPanel: TPanel;
+    FieldRangePanel: TPanel;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
     DeleteLabel: TLabel;
@@ -1940,15 +1940,20 @@ function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
     Application.QueueAsyncCall(@ASyncKeyDown, KeyDownData(FE, VK_F9, []));
   end;
 
+var
+  F: TEpiField;
 begin
   FE.JumpToNext := false;
   FE.SelLength := 0;
+  F := FE.Field;
 
   Result := FE.ValidateEntry;
   if not Result then
   begin
     DoError(FE);
-    if Assigned(FE.Field.ValueLabelSet) then
+    if Assigned(F.ValueLabelSet) and
+       (not Assigned(F.Ranges))
+    then
       NotifyFieldEditKeyDown;
     Exit;
   end else begin
@@ -1956,14 +1961,16 @@ begin
   end;
 
   if (not IgnoreMustEnter) and
-     ((FE.Field.EntryMode = emMustEnter) or
-      (DataFile.KeyFields.FieldExists(FE.Field))
+     ((F.EntryMode = emMustEnter) or
+      (DataFile.KeyFields.FieldExists(F))
      ) and
      (FE.Text = '') then
   begin
     DoError(FE);
     FieldValidateError(FE, 'Field cannot be empty!');
-    if Assigned(FE.Field.ValueLabelSet) then
+    if Assigned(F.ValueLabelSet) and
+       (not Assigned(F.Ranges))
+    then
       NotifyFieldEditKeyDown;
     Result := false;
   end;
@@ -1978,6 +1985,8 @@ begin
 end;
 
 procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);
+var
+  S: String;
 begin
   with Field do
   begin
@@ -1988,9 +1997,12 @@ begin
     else
       FieldInfoLabel.Caption := '';
 
-    FieldLengthLabel.Caption :=
-      'Length: ' + IntToStr(Length) +
-      BoolToStr(FieldType in FloatFieldTypes, '.' + IntToStr(Decimals), '');
+    S := 'Length: ';
+    if FieldType in FloatFieldTypes then
+      S += IntToStr(Length - Decimals - 1) + '.' + IntToStr(Decimals)
+    else
+      S += IntToStr(Length);
+    FieldLengthLabel.Caption := S;
 
     if Assigned(Ranges) then
       FieldRangeLabel.Caption := Ranges[0].AsString[true] + '-' + Ranges[0].AsString[false]
