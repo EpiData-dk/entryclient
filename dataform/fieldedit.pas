@@ -492,6 +492,8 @@ begin
 
   if Focused then
     Color := EntrySettings.ActiveFieldColour
+  else if Field.EntryMode = emMustEnter then
+    Color := EntrySettings.MustEnterFieldColour
   else
     Color := EntrySettings.InactiveFieldColour;
 

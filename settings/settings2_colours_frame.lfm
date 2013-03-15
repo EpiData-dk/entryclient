@@ -6,15 +6,15 @@ object SettingsColourFrame: TSettingsColourFrame
   ClientHeight = 406
   ClientWidth = 780
   TabOrder = 0
-  DesignLeft = 1076
-  DesignTop = 697
+  DesignLeft = 796
+  DesignTop = 351
   object Label4: TLabel
     AnchorSideTop.Control = ValidateErrorColourBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 15
-    Width = 136
+    Width = 176
     BorderSpacing.Left = 10
     Caption = 'Field colour on invalid entry:'
     ParentColor = False
@@ -55,9 +55,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = ValueLabelColourBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 50
-    Width = 91
+    Width = 120
     BorderSpacing.Left = 10
     Caption = 'Value Label colour:'
     ParentColor = False
@@ -67,9 +67,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = ActiveFieldClrBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 85
-    Width = 58
+    Width = 73
     BorderSpacing.Left = 10
     Caption = 'Active field:'
     ParentColor = False
@@ -96,9 +96,9 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Control = InActiveFieldClrBtn
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 14
+    Height = 15
     Top = 120
-    Width = 67
+    Width = 83
     BorderSpacing.Left = 10
     Caption = 'Inactive field:'
     ParentColor = False
@@ -112,6 +112,35 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 199
     Height = 25
     Top = 115
+    Width = 571
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object Label8: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = MustEnterFieldClrBtn
+    AnchorSideTop.Side = asrCenter
+    Left = 10
+    Height = 15
+    Top = 155
+    Width = 100
+    BorderSpacing.Left = 10
+    Caption = 'Must-Enter field'
+    ParentColor = False
+  end
+  object MustEnterFieldClrBtn: TColorButton
+    AnchorSideLeft.Control = ValidateErrorColourBtn
+    AnchorSideTop.Control = InActiveFieldClrBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 199
+    Height = 25
+    Top = 150
     Width = 571
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10

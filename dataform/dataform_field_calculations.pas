@@ -7,27 +7,21 @@ interface
 uses
   Classes, SysUtils, fieldedit, epidatafiles;
 
-function CalcTimeDiff(Const FieldEditList: TFpList; Calculation: TEpiTimeCalc): string;
-function CalcCombineDate(Const FieldEditList: TFpList; Calculation: TEpiCombineDateCalc; Out ErrMsg: string; Out ErrFieldEdit: TFieldEdit): string;
-function CalcCombineString(Const FieldEditList: TFpList; Calculation: TEpiCombineStringCalc): string;
+function CalcTimeDiff(Calculation: TEpiTimeCalc): string;
+function CalcCombineDate(Calculation: TEpiCombineDateCalc; Out ErrMsg: string; Out ErrFieldEdit: TFieldEdit): string;
+function CalcCombineString(Calculation: TEpiCombineStringCalc): string;
 
 implementation
 
 uses
-  dateutils, epidatafilestypes, epiconvertutils, math;
+  dateutils, epidatafilestypes, epiconvertutils, math, entry_globals;
 
-function GetFieldEditFromField(Const List: TFpList; Const Field: TEpiField): TFieldEdit;
-var
-  i: Integer;
+function GetFieldEditFromField(Const Field: TEpiField): TFieldEdit;
 begin
-  for i := 0 to List.Count - 1 do
-    if TFieldEdit(List[i]).Field = Field then
-      Exit(TFieldEdit(List[i]));
-  Result := nil;
+  result := TFieldEdit(Field.FindCustomData(DataFormCustomDataKey));
 end;
 
-function CalcTimeDiff(const FieldEditList: TFpList; Calculation: TEpiTimeCalc
-  ): string;
+function CalcTimeDiff(Calculation: TEpiTimeCalc): string;
 var
   S, E: EpiDateTime;
 
@@ -36,7 +30,7 @@ var
     Backup: String;
     Txt: String;
   begin
-    Txt := GetFieldEditFromField(FieldEditList, Field).Text;
+    Txt := GetFieldEditFromField(Field).Text;
     if Txt = '' then Exit(0);
 
     Backup := DefaultFormatSettings.ShortDateFormat;
@@ -50,7 +44,7 @@ var
     Backup: String;
     Txt: String;
   begin
-    Txt := GetFieldEditFromField(FieldEditList, Field).Text;
+    Txt := GetFieldEditFromField(Field).Text;
     if Txt = '' then Exit(0);
 
     Backup := DefaultFormatSettings.ShortTimeFormat;
@@ -86,26 +80,43 @@ begin
   end;
 end;
 
-function CalcCombineDate(const FieldEditList: TFpList;
-  Calculation: TEpiCombineDateCalc; out ErrMsg: string; Out ErrFieldEdit: TFieldEdit): string;
+function CalcCombineDate(Calculation: TEpiCombineDateCalc; out ErrMsg: string;
+  Out ErrFieldEdit: TFieldEdit): string;
 var
   D: String;
   M: String;
   Y: String;
   TheDate: EpiDate;
   Mis: EpiString;
+
+  function GetValueFromField(F: TEpiField): String;
+  var
+    FE: TFieldEdit;
+  begin
+    FE := GetFieldEditFromField(F);
+
+    if (FE.Text = '') or
+       (FE.Text = TEpiStringField.DefaultMissing)
+    then
+      Exit(Mis);
+
+    if Assigned(F.ValueLabelSet) and
+       F.ValueLabelSet.IsMissingValue[FE.Text]
+    then
+      Exit(Mis);
+
+    Result := FE.Text;
+  end;
+
 begin
   Mis := TEpiStringField.DefaultMissing;
 
   ErrFieldEdit := nil;
   with Calculation do
   begin
-    D := GetFieldEditFromField(FieldEditList, Day).Text;
-    if D = '' then D := Mis;
-    M := GetFieldEditFromField(FieldEditList, Month).Text;
-    if M = '' then M := Mis;
-    Y := GetFieldEditFromField(FieldEditList, Year).Text;
-    if Y = '' then Y := Mis;
+    D := GetValueFromField(Day);
+    M := GetValueFromField(Month);
+    Y := GetValueFromField(Year);
 
     if EpiStrToDate(D+'-'+M+'-'+Y, '-', ftDMYDate, TheDate, ErrMsg) then
       Result := FormatDateTime(TEpiDateField(ResultField).FormatString, TheDate)
@@ -116,29 +127,28 @@ begin
     end else begin
       Result := '';
       if pos('day', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(FieldEditList, Day);
+        ErrFieldEdit := GetFieldEditFromField(Day);
       if pos('month', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(FieldEditList, Month);
+        ErrFieldEdit := GetFieldEditFromField(Month);
       if pos('year', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(FieldEditList, Year);
+        ErrFieldEdit := GetFieldEditFromField(Year);
     end;
   end;
 end;
 
-function CalcCombineString(const FieldEditList: TFpList;
-  Calculation: TEpiCombineStringCalc): string;
+function CalcCombineString(Calculation: TEpiCombineStringCalc): string;
 begin
   with Calculation do
   begin
     result := '';
     if Assigned(Field1) then
-      Result += GetFieldEditFromField(FieldEditList, Field1).Text;
+      Result += GetFieldEditFromField(Field1).Text;
     Result += Delim1;
     if Assigned(Field2) then
-      Result += GetFieldEditFromField(FieldEditList, Field2).Text;
+      Result += GetFieldEditFromField(Field2).Text;
     Result += Delim2;
     if Assigned(Field3) then
-      Result += GetFieldEditFromField(FieldEditList, Field3).Text;
+      Result += GetFieldEditFromField(Field3).Text;
   end;
 end;
 

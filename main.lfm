@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 629
+  Left = 800
   Height = 642
-  Top = 294
+  Top = 241
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 619
@@ -178,6 +178,7 @@ object MainForm: TMainForm
       Action = OpenProjectAction
       AutoSize = True
       BorderSpacing.Left = 10
+      PopupMenu = OpenProjectPopupMenu
       TabOrder = 0
     end
   end
@@ -230,7 +231,7 @@ object MainForm: TMainForm
         OnClick = MenuItem1Click
       end
     end
-    object SearchMenu: TMenuItem
+    object BrowseMenu: TMenuItem
       Caption = '&Browse Data'
       object FindMenuItem: TMenuItem
         Caption = 'New Item35'
@@ -251,9 +252,8 @@ object MainForm: TMainForm
         Caption = 'BrowseAll'
       end
     end
-    object BrowseMenu: TMenuItem
+    object GotoMenu: TMenuItem
       Caption = '&Goto'
-      Visible = False
       object GotoRecordMenuItem: TMenuItem
         Caption = 'Goto Rec'
       end
@@ -386,5 +386,9 @@ object MainForm: TMainForm
       Caption = 'Default Window Position'
       OnExecute = DefaultPosActionExecute
     end
+  end
+  object OpenProjectPopupMenu: TPopupMenu
+    left = 88
+    top = 64
   end
 end

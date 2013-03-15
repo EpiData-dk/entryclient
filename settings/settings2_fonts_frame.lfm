@@ -1,19 +1,19 @@
 object SettingsFontsFrame: TSettingsFontsFrame
   Left = 0
-  Height = 584
+  Height = 421
   Top = 0
-  Width = 612
-  ClientHeight = 584
-  ClientWidth = 612
+  Width = 759
+  ClientHeight = 421
+  ClientWidth = 759
   TabOrder = 0
-  DesignLeft = 564
-  DesignTop = 355
+  DesignLeft = 319
+  DesignTop = 433
   object FieldFontEditBtn: TEditButton
     AnchorSideRight.Side = asrBottom
     Left = 182
     Height = 25
     Top = 8
-    Width = 362
+    Width = 509
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     ButtonWidth = 23
@@ -45,7 +45,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Left = 182
     Height = 25
     Top = 43
-    Width = 362
+    Width = 509
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     ButtonWidth = 23
@@ -76,7 +76,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = FieldFontEditBtn
     AnchorSideBottom.Side = asrBottom
-    Left = 572
+    Left = 719
     Height = 25
     Top = 8
     Width = 30
@@ -97,7 +97,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = SectionFontEditBtn
     AnchorSideBottom.Side = asrBottom
-    Left = 572
+    Left = 719
     Height = 25
     Top = 43
     Width = 30
@@ -119,24 +119,27 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Left = 10
     Height = 202
     Top = 78
-    Width = 592
+    Width = 739
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
-    Caption = 'GroupBox1'
+    Caption = 'Heading fonts:'
     ClientHeight = 185
-    ClientWidth = 588
+    ClientWidth = 735
     TabOrder = 2
     object HeadingFontEditBtn1: TEditButton
+      AnchorSideLeft.Control = Label9
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = GroupBox1
-      AnchorSideRight.Side = asrBottom
-      Left = 164
+      AnchorSideRight.Control = HeadingColourBtn1
+      Left = 104
       Height = 25
       Top = 10
-      Width = 362
-      Anchors = [akTop]
+      Width = 566
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
       CharCase = ecNormal
@@ -152,12 +155,12 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = HeadingFontEditBtn1
       AnchorSideBottom.Side = asrBottom
-      Left = 548
+      Left = 695
       Height = 25
       Top = 10
       Width = 30
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Left = 28
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 25
       BorderSpacing.Right = 10
       BorderWidth = 2
       ButtonColorSize = 20
@@ -180,17 +183,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       ParentColor = False
     end
     object HeadingColourBtn2: TColorButton
-      AnchorSideLeft.Control = HeadingColourBtn1
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn2
       AnchorSideRight.Control = GroupBox1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = HeadingFontEditBtn2
       AnchorSideBottom.Side = asrBottom
-      Left = 548
+      Left = 695
       Height = 25
       Top = 45
       Width = 30
-      Anchors = [akTop, akLeft, akRight, akBottom]
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 25
       BorderSpacing.Right = 10
       BorderWidth = 2
       ButtonColorSize = 20
@@ -199,14 +203,17 @@ object SettingsFontsFrame: TSettingsFontsFrame
       OnColorChanged = FieldColourBtnColorChanged
     end
     object HeadingFontEditBtn2: TEditButton
+      AnchorSideLeft.Control = Label9
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn1
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
-      Left = 164
+      AnchorSideRight.Control = HeadingColourBtn2
+      Left = 104
       Height = 25
       Top = 45
-      Width = 362
-      Anchors = [akTop]
+      Width = 566
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
       CharCase = ecNormal
@@ -244,14 +251,17 @@ object SettingsFontsFrame: TSettingsFontsFrame
       ParentColor = False
     end
     object HeadingFontEditBtn3: TEditButton
+      AnchorSideLeft.Control = Label9
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn2
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
-      Left = 164
+      AnchorSideRight.Control = HeadingColourBtn3
+      Left = 104
       Height = 25
       Top = 80
-      Width = 362
-      Anchors = [akTop]
+      Width = 566
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
       CharCase = ecNormal
@@ -261,17 +271,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       TabOrder = 2
     end
     object HeadingColourBtn3: TColorButton
-      AnchorSideLeft.Control = HeadingColourBtn1
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn3
       AnchorSideRight.Control = GroupBox1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = HeadingFontEditBtn3
       AnchorSideBottom.Side = asrBottom
-      Left = 548
+      Left = 695
       Height = 25
       Top = 80
       Width = 30
-      Anchors = [akTop, akLeft, akRight, akBottom]
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 25
       BorderSpacing.Right = 10
       BorderWidth = 2
       ButtonColorSize = 20
@@ -294,14 +305,17 @@ object SettingsFontsFrame: TSettingsFontsFrame
       ParentColor = False
     end
     object HeadingFontEditBtn4: TEditButton
+      AnchorSideLeft.Control = Label9
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn3
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
-      Left = 164
+      AnchorSideRight.Control = HeadingColourBtn4
+      Left = 104
       Height = 25
       Top = 115
-      Width = 362
-      Anchors = [akTop]
+      Width = 566
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
       CharCase = ecNormal
@@ -311,17 +325,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       TabOrder = 3
     end
     object HeadingColourBtn4: TColorButton
-      AnchorSideLeft.Control = HeadingColourBtn1
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn4
       AnchorSideRight.Control = GroupBox1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = HeadingFontEditBtn4
       AnchorSideBottom.Side = asrBottom
-      Left = 548
+      Left = 695
       Height = 25
       Top = 115
       Width = 30
-      Anchors = [akTop, akLeft, akRight, akBottom]
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 25
       BorderSpacing.Right = 10
       BorderWidth = 2
       ButtonColorSize = 20
@@ -344,15 +359,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       ParentColor = False
     end
     object HeadingFontEditBtn5: TEditButton
+      AnchorSideLeft.Control = Label9
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn4
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
+      AnchorSideRight.Control = HeadingColourBtn5
       AnchorSideBottom.Control = GroupBox1
-      Left = 164
+      Left = 104
       Height = 25
       Top = 150
-      Width = 362
-      Anchors = [akTop]
+      Width = 566
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       BorderSpacing.Bottom = 10
       ButtonWidth = 23
@@ -363,17 +381,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       TabOrder = 4
     end
     object HeadingColourBtn5: TColorButton
-      AnchorSideLeft.Control = HeadingColourBtn1
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = HeadingFontEditBtn5
       AnchorSideRight.Control = GroupBox1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = HeadingFontEditBtn5
       AnchorSideBottom.Side = asrBottom
-      Left = 548
+      Left = 695
       Height = 25
       Top = 150
       Width = 30
-      Anchors = [akTop, akLeft, akRight, akBottom]
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 25
       BorderSpacing.Right = 10
       BorderWidth = 2
       ButtonColorSize = 20
@@ -387,8 +406,8 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Height = 336
     MinFontSize = 0
     MaxFontSize = 0
-    left = 416
-    top = 168
+    left = 336
+    top = 336
   end
   object ColorDialog1: TColorDialog
     Color = clBlack
@@ -414,7 +433,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       'ColorS=F0FBFF'
       'ColorT=A4A0A0'
     )
-    left = 512
-    top = 168
+    left = 464
+    top = 320
   end
 end
