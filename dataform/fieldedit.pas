@@ -497,8 +497,9 @@ begin
   else
     Color := EntrySettings.InactiveFieldColour;
 
-  FQuestionLabel.Font := EntrySettings.FieldFont;
-  FNameLabel.Font := EntrySettings.FieldFont;
+  FQuestionLabel.Font.Assign(EntrySettings.FieldFont);
+  FNameLabel.Font.Assign(EntrySettings.FieldFont);
+  Application.ProcessMessages;
 end;
 
 function TFieldEdit.CompareTo(const AText: string; ct: TEpiComparisonType
