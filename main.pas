@@ -18,7 +18,6 @@ type
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
-    MenuItem1: TMenuItem;
     FindMenuItem: TMenuItem;
     FindNextMenuItem: TMenuItem;
     FindPrevMenuItem: TMenuItem;

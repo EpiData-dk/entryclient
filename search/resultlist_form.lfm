@@ -1,8 +1,0 @@
-object ResultListForm: TResultListForm
-  Left = 607
-  Height = 296
-  Top = 360
-  Width = 684
-  Caption = 'ResultListForm'
-  LCLVersion = '1.1'
-end
