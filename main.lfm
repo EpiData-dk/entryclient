@@ -226,10 +226,6 @@ object MainForm: TMainForm
       object CopyRecToClpMenuItem: TMenuItem
         Caption = 'RecordToClipBoard'
       end
-      object MenuItem1: TMenuItem
-        Caption = 'Old Settings'
-        OnClick = MenuItem1Click
-      end
     end
     object BrowseMenu: TMenuItem
       Caption = '&Browse Data'

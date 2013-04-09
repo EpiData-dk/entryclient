@@ -16,7 +16,7 @@ implementation
 
 uses
   Forms, Controls, LCLType, main, LCLIntf, entry_messages,
-  epiv_dataset_viewer_frame;
+  epiv_dataset_viewer_frame, settings;
 
 type
   { TResultListForm }
@@ -25,6 +25,8 @@ type
   private
     { private declarations }
     FViewerFrame: TCustomFrame;
+    procedure CloseQueryResultListForm(Sender: TObject; var CanClose: boolean);
+    procedure ShowResultListForm(Sender: TObject);
     procedure SelectRecord(Sender: TObject; RecordNo: Integer;
       const Field: TEpiField);
   public
@@ -38,6 +40,18 @@ var
 
 { TResultListForm }
 
+procedure TResultListForm.CloseQueryResultListForm(Sender: TObject;
+  var CanClose: boolean);
+begin
+  if CanClose then
+    SaveFormPosition(Self, 'ResultListForm');
+end;
+
+procedure TResultListForm.ShowResultListForm(Sender: TObject);
+begin
+  LoadFormPosition(Self, 'ResultListForm');
+end;
+
 procedure TResultListForm.SelectRecord(Sender: TObject; RecordNo: Integer;
   const Field: TEpiField);
 begin
@@ -48,6 +62,9 @@ constructor TResultListForm.Create(TheOwner: TComponent;
   const DataFile: TEpiDataFile);
 begin
   inherited CreateNew(TheOwner);
+  OnShow := @ShowResultListForm;
+  OnCloseQuery := @CloseQueryResultListForm;
+
   FViewerFrame := TDatasetViewerFrame.Create(self, DataFile);
   with TDatasetViewerFrame(FViewerFrame) do
   begin
