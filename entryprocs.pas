@@ -26,7 +26,8 @@ function GetRandomComponentName: string;
 implementation
 
 uses
-  lclproc, strutils, epidatafiles, FileUtil, settings, forms;
+  lclproc, strutils, epidatafiles, FileUtil, settings, forms,
+  LCLVersion;
 
 procedure LoadIniFile;
 const
@@ -41,7 +42,10 @@ begin
     {$ELSE}
     true
     {$ENDIF}
-    , true);
+    {$IF ((lcl_major = 1) and (lcl_minor >= 1))}
+    , true
+    {$ENDIF}
+    );
 
   if not LoadSettingsFromIni(Fn)
   then
