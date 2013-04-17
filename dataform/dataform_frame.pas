@@ -1345,7 +1345,7 @@ begin
     if not Assigned(FNotesHint) then
     begin
       FNotesHint := THintWindow.Create(Self);
-      FNotesHint.Font.Name := 'Monospace';
+      FNotesHint.Font.Name := 'FreeMono';
       FNotesHint.AutoHide := true;
       FNotesHint.HideInterval := 5000;
     end;

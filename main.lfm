@@ -167,7 +167,7 @@ object MainForm: TMainForm
     ClientHeight = 42
     ClientWidth = 977
     TabOrder = 1
-    object Button1: TButton
+    object OpenProjectBtn: TButton
       AnchorSideLeft.Control = ProcessToolPanel
       AnchorSideTop.Control = ProcessToolPanel
       AnchorSideTop.Side = asrCenter
@@ -175,9 +175,10 @@ object MainForm: TMainForm
       Height = 27
       Top = 8
       Width = 93
-      Action = OpenProjectAction
       AutoSize = True
       BorderSpacing.Left = 10
+      Caption = 'Open Project'
+      OnClick = OpenProjectBtnClick
       PopupMenu = OpenProjectPopupMenu
       TabOrder = 0
     end
@@ -386,5 +387,11 @@ object MainForm: TMainForm
   object OpenProjectPopupMenu: TPopupMenu
     left = 88
     top = 64
+    object OpenProjectPopupMenuItem: TMenuItem
+      Action = OpenProjectAction
+    end
+    object RecentFilesPopupSubMenu: TMenuItem
+      Caption = 'Open Recent...'
+    end
   end
 end
