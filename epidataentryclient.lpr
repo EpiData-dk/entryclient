@@ -15,7 +15,7 @@ uses
   settings2_interface, settings2_paths_frame, settings2_colours_frame,
   settings_general_frame, searchform, search, resultlist_form,
   settings2_fonts_frame, shortcuts, entry_messages, entrylabel, control_types,
-  entrysection, entry_globals;
+  entrysection, entry_globals, notes_report;
 
 {$R *.res}
 

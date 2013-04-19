@@ -191,7 +191,8 @@ uses
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
-  entrylabel, entrysection, entry_globals;
+  entrylabel, entrysection, entry_globals,
+  notes_report, epireport_generator_txt;
 
 type
   TKeyDownData = record
@@ -1315,11 +1316,27 @@ procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
 var
   R: TRect;
   P: TPoint;
+  NoteText: String;
+  Rep: TNotesReport;
 begin
+  NoteText := FE.Field.Notes.Text;
+  if (NoteText = '') and
+//     Assigned(FE.Field.ValueLabelSet) and
+     (not FE.Field.ForcePickList) {and}
+//     (FE.Field.ShowValueLabelNotes)
+  then
+  begin
+    Rep := TNotesReport.Create(TEpiReportTXTGenerator);
+    Rep.Field := FE.Field;
+    Rep.RunReport;
+    NoteText := Trim(Rep.ReportText);
+    Rep.Free;
+  end;
+
   if EntrySettings.NotesDisplay = 0 then
   // Display as hint:
   begin
-    if FE.Field.Notes.Text = '' then
+    if NoteText = '' then
     begin
       if Assigned(FNotesHint) then FNotesHint.Hide;
       exit;
@@ -1328,19 +1345,20 @@ begin
     if not Assigned(FNotesHint) then
     begin
       FNotesHint := THintWindow.Create(Self);
+      FNotesHint.Font.Name := 'FreeMono';
       FNotesHint.AutoHide := true;
       FNotesHint.HideInterval := 5000;
     end;
-    R := FNotesHint.CalcHintRect(0, FE.Field.Notes.Text, nil);
+    R := FNotesHint.CalcHintRect(0, NoteText, nil);
     P := FE.ClientToScreen(Point(0,0));
     OffsetRect(R, P.X + FE.Width + 2, P.Y);
-    FNotesHint.ActivateHint(R, FE.Field.Notes.Text);
+    FNotesHint.ActivateHint(R, NoteText);
   end else
   // Display in window
   begin
     if not Assigned(FNotesForm) then
       FNotesForm := TNotesForm.Create(Self);
-    FNotesForm.NotesMemo.Text := FE.Field.Notes.Text;
+    FNotesForm.NotesMemo.Text := NoteText;
 
     if not FNotesForm.Showing and ForceShow then
       FNotesForm.Show;
@@ -2016,6 +2034,9 @@ var
   VLForm: TValueLabelsPickListForm;
   P: TPoint;
 begin
+  if Assigned(FHintWindow) then FHintWindow.Hide;
+  if Assigned(FNotesForm) then FNotesForm.Hide;
+
   VLForm := TValueLabelsPickListForm.Create(Self, AFieldEdit.Field);
   VLForm.SetInitialValue(AFieldEdit.Text);
   P := AFieldEdit.Parent.ClientToScreen(Point(AFieldEdit.Left + AFieldEdit.Width + 2, AFieldEdit.Top));

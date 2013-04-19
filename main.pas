@@ -14,7 +14,7 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
-    Button1: TButton;
+    OpenProjectBtn: TButton;
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
@@ -25,6 +25,8 @@ type
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
+    RecentFilesPopupSubMenu: TMenuItem;
+    OpenProjectPopupMenuItem: TMenuItem;
     MenuItem2: TMenuItem;
     BrowseAllMenuItem: TMenuItem;
     OpenProjectPopupMenu: TPopupMenu;
@@ -87,6 +89,7 @@ type
     procedure MenuItem1Click(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
+    procedure OpenProjectBtnClick(Sender: TObject);
     procedure SettingsActionExecute(Sender: TObject);
     procedure ShowIntroActionExecute(Sender: TObject);
     procedure ShowShortCutsActionExecute(Sender: TObject);
@@ -144,6 +147,11 @@ end;
 procedure TMainForm.OpenProjectActionExecute(Sender: TObject);
 begin
   PostMessage(Self.Handle, LM_OPEN_PROJECT, 0, 0);
+end;
+
+procedure TMainForm.OpenProjectBtnClick(Sender: TObject);
+begin
+  OpenProjectPopupMenu.PopUp;
 end;
 
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
@@ -425,7 +433,8 @@ begin
 
   RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
   RecentFilesSubMenu.Clear;
-  OpenProjectPopupMenu.Items.Clear;
+  RecentFilesPopupSubMenu.Visible := RecentFilesSubMenu.Visible;
+  RecentFilesPopupSubMenu.Clear;
 
   for i := 0 to RecentFiles.Count - 1 do
   begin
@@ -437,23 +446,14 @@ begin
       Mi.ShortCut := ShortCut(VK_1 + i, Shift);
     RecentFilesSubMenu.Add(Mi);
 
-
     // Popup menu
-    Mi := TMenuItem.Create(OpenProjectPopupMenu);
+    Mi := TMenuItem.Create(RecentFilesPopupSubMenu);
     Mi.Name := 'recent' + inttostr(i);
     Mi.Caption := RecentFiles[i];
     Mi.OnClick := @OpenRecentMenuItemClick;
     if i < 9 then
       Mi.ShortCut := KeyToShortCut(VK_1 + i, Shift);
-    OpenProjectPopupMenu.Items.Add(Mi);
-  end;
-  if OpenProjectPopupMenu.Items.Count = 0 then
-  begin
-    Mi := TMenuItem.Create(OpenProjectPopupMenu);
-    Mi.Name := 'recent' + inttostr(i);
-    Mi.Caption := '(no recent files)';
-    Mi.Enabled := false;
-    OpenProjectPopupMenu.Items.Add(Mi);
+    RecentFilesPopupSubMenu.Add(Mi);
   end;
 end;
 
