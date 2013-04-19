@@ -69,7 +69,7 @@ begin
   if Assigned(Field.Ranges) then
     S := 'Range: ' + Field.Ranges.RangesToText;
 
-  if I > 0 then
+  if Assigned(Field.ValueLabelSet) then
     DoTableFooter(S)
   else
     DoLineText(S);
