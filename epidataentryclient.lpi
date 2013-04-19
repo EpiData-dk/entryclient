@@ -182,7 +182,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -370,6 +370,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="entry_globals"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="dataform/notes_report.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="notes_report"/>
+      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

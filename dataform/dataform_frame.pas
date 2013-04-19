@@ -192,7 +192,7 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
-  epireport_report_valuelabelsetlist, epireport_generator_txt;
+  notes_report, epireport_generator_txt;
 
 type
   TKeyDownData = record
@@ -1317,19 +1317,19 @@ var
   R: TRect;
   P: TPoint;
   NoteText: String;
-  Rep: TEpiReportValueLabelSetList;
+  Rep: TNotesReport;
 begin
   NoteText := FE.Field.Notes.Text;
   if (NoteText = '') and
-     Assigned(FE.Field.ValueLabelSet) and
-     (not FE.Field.ForcePickList) and
-     (FE.Field.ShowValueLabelNotes)
+//     Assigned(FE.Field.ValueLabelSet) and
+     (not FE.Field.ForcePickList) {and}
+//     (FE.Field.ShowValueLabelNotes)
   then
   begin
-    Rep := TEpiReportValueLabelSetList.Create(TEpiReportTXTGenerator);
-    Rep.ValueLabelSet := FE.Field.ValueLabelSet;
+    Rep := TNotesReport.Create(TEpiReportTXTGenerator);
+    Rep.Field := FE.Field;
     Rep.RunReport;
-    NoteText := Rep.ReportText;
+    NoteText := Trim(Rep.ReportText);
     Rep.Free;
   end;
 
