@@ -30,7 +30,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Left = 10
     Height = 15
     Top = 18
-    Width = 159
+    Width = 158
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 10
     Caption = 'Questions / Field Names:'
@@ -170,14 +170,12 @@ object SettingsFontsFrame: TSettingsFontsFrame
     end
     object Label9: TLabel
       AnchorSideLeft.Control = GroupBox1
+      AnchorSideTop.Control = HeadingFontEditBtn1
       AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = HeadingFontEditBtn1
-      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 15
-      Top = 20
+      Top = 15
       Width = 69
-      Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 10
       Caption = 'Heading 1:'
       ParentColor = False
@@ -224,28 +222,24 @@ object SettingsFontsFrame: TSettingsFontsFrame
     end
     object Label11: TLabel
       AnchorSideLeft.Control = GroupBox1
+      AnchorSideTop.Control = HeadingFontEditBtn2
       AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = HeadingFontEditBtn2
-      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 15
-      Top = 55
+      Top = 50
       Width = 69
-      Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 10
       Caption = 'Heading 2:'
       ParentColor = False
     end
     object Label12: TLabel
       AnchorSideLeft.Control = GroupBox1
+      AnchorSideTop.Control = HeadingFontEditBtn3
       AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = HeadingFontEditBtn3
-      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 15
-      Top = 90
+      Top = 85
       Width = 69
-      Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 10
       Caption = 'Heading 3:'
       ParentColor = False
@@ -292,14 +286,12 @@ object SettingsFontsFrame: TSettingsFontsFrame
     end
     object Label13: TLabel
       AnchorSideLeft.Control = GroupBox1
+      AnchorSideTop.Control = HeadingFontEditBtn4
       AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = HeadingFontEditBtn4
-      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 15
-      Top = 125
+      Top = 120
       Width = 69
-      Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 10
       Caption = 'Heading 4:'
       ParentColor = False
@@ -346,14 +338,12 @@ object SettingsFontsFrame: TSettingsFontsFrame
     end
     object Label14: TLabel
       AnchorSideLeft.Control = GroupBox1
+      AnchorSideTop.Control = HeadingFontEditBtn5
       AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = HeadingFontEditBtn5
-      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 15
-      Top = 160
+      Top = 155
       Width = 69
-      Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 10
       Caption = 'Heading 5:'
       ParentColor = False

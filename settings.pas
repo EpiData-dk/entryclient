@@ -69,6 +69,11 @@ type
     InactiveFieldColour: TColor;
     MustEnterFieldColour: TColor;
 
+    // Hint window (notes/valuelabels/ranges)
+    NotesUseSystem:        Boolean;
+    NotesHintBgColor:      TColor;
+    NotesHintFont:         TFont;
+
     // Fonts
     FieldFont:             TFont;
     SectionFont:           TFont;
@@ -106,6 +111,11 @@ var
     ActiveFieldColour: TCOlor($FFC26B);
     InactiveFieldColour: clWhite;
     MustEnterFieldColour: clRed;
+
+    // Color:
+    NotesUseSystem:        true;
+    NotesHintBgColor:      clInfoBk;
+    NotesHintFont:         nil;
 
     FieldFont:             nil;
     SectionFont:           nil;
@@ -215,6 +225,14 @@ begin
       WriteInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
       WriteInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
       WriteInteger(Sec, 'MustEnterFieldColour', MustEnterFieldColour);
+
+      Sec := 'noteshint';
+      WriteBool(Sec, 'NotesUseSystem', NotesUseSystem);
+      WriteInteger(Sec, 'NotesHintBgColor', NotesHintBgColor);
+      WriteString(Sec, 'NotesHintFont', NotesHintFont.Name);
+      WriteInteger(sec, 'NotesHintFontSize', NotesHintFont.Size);
+      WriteInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style));
+      WriteInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
     end;
 
     Result := true;
@@ -306,6 +324,14 @@ begin
     ActiveFieldColour   := ReadInteger(Sec, 'ActiveFieldColour', ActiveFieldColour);
     InactiveFieldColour := ReadInteger(Sec, 'InactiveFieldColour', InactiveFieldColour);
     MustEnterFieldColour := ReadInteger(Sec, 'MustEnterFieldColour', MustEnterFieldColour);
+
+    Sec := 'noteshint';
+    NotesUseSystem      := ReadBool(Sec, 'NotesUseSystem', NotesUseSystem);
+    NotesHintBgColor    := ReadInteger(Sec, 'NotesHintBgColor', NotesHintBgColor);
+    NotesHintFont.Name  := ReadString(Sec, 'NotesHintFont', NotesHintFont.Name);
+    NotesHintFont.Size  := ReadInteger(sec, 'NotesHintFontSize', NotesHintFont.Size);
+    NotesHintFont.Style := TFontStyles(ReadInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style)));
+    NotesHintFont.Color := ReadInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
   end;
   Result := true;
 end;
@@ -467,6 +493,9 @@ end;
 initialization
 
 begin
+  EntrySettings.NotesHintFont := TFont.Create;
+  InitFont(EntrySettings.NotesHintFont);
+
   EntrySettings.FieldFont := TFont.Create;
   EntrySettings.SectionFont := TFont.Create;
   EntrySettings.HeadingFont1 := TFont.Create;
