@@ -35,7 +35,8 @@ function GetV(Const FE: TFieldEdit): string;
 begin
   Result := '';
   if Assigned(FE.Field.ValueLabelSet) and
-     (FE.Text <> '')
+     (FE.Text <> '') and
+     (FE.Field.ValueLabelSet.ValueLabelExists[FE.Text])
   then
     result := FE.Field.ValueLabelSet.ValueLabel[FE.Text].TheLabel.Text;
 end;

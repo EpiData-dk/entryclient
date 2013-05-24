@@ -166,6 +166,7 @@ type
     procedure SetCursor(Value: TCursor); override;
   private
     procedure UpdateShortCuts;
+    procedure UpdateNotesHints;
   public
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
@@ -698,6 +699,20 @@ begin
   FindPrevAction.ShortCut := D_SearchRepeatBackward;
   FindFastListAction.ShortCut := D_SearchRecordList;
   CopyToClipBoardAction.ShortCut := D_CopyRecordToClipBoard;
+end;
+
+procedure TDataFormFrame.UpdateNotesHints;
+begin
+  if not Assigned(FNotesHint) then exit;
+
+  if EntrySettings.NotesUseSystem then
+  begin
+    FNotesHint.Font.SetDefault;
+    FNotesHint.Color := clInfoBk;
+  end else begin
+    FNotesHint.Font.Assign(EntrySettings.HeadingFont5);
+    FNotesHint.Color := EntrySettings.NotesHintBgColor;
+  end;
 end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);
@@ -1318,6 +1333,7 @@ var
   P: TPoint;
   NoteText: String;
   Rep: TNotesReport;
+  Lines: TStringList;
 begin
   NoteText := FE.Field.Notes.Text;
   if (NoteText = '') and
@@ -1326,11 +1342,25 @@ begin
 //     (FE.Field.ShowValueLabelNotes)
   then
   begin
+    Lines := TStringList.Create;
+    Lines.StrictDelimiter := true;
+    Lines.Delimiter := #1;
+
     Rep := TNotesReport.Create(TEpiReportTXTGenerator);
     Rep.Field := FE.Field;
     Rep.RunReport;
-    NoteText := Trim(Rep.ReportText);
+    Lines.DelimitedText := StringReplace(Trim(Rep.ReportText), LineEnding, #1, [rfReplaceAll]);
     Rep.Free;
+
+    if Lines.Count > 0 then
+    begin
+      if Lines[0][1] = '-' then
+        Lines.Delete(0);
+      if Lines[Lines.Count - 1][1] = '-' then
+        Lines.Delete(Lines.Count - 1);
+      NoteText := Trim(StringReplace(Lines.DelimitedText, #1, LineEnding, [rfReplaceAll]));
+    end;
+    Lines.Free;
   end;
 
   if EntrySettings.NotesDisplay = 0 then
@@ -1345,7 +1375,11 @@ begin
     if not Assigned(FNotesHint) then
     begin
       FNotesHint := THintWindow.Create(Self);
-      FNotesHint.Font.Name := 'FreeMono';
+      if (not EntrySettings.NotesUseSystem) then
+      begin
+        FNotesHint.Font.Assign(EntrySettings.HeadingFont5);
+        FNotesHint.Color := EntrySettings.NotesHintBgColor;
+      end;
       FNotesHint.AutoHide := true;
       FNotesHint.HideInterval := 5000;
     end;
@@ -1414,6 +1448,7 @@ var
   i: Integer;
 begin
   UpdateShortCuts;
+  UpdateNotesHints;
 
   if Assigned(DataFile) then
     for i := 0 to DataFile.ControlItems.Count - 1 do

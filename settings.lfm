@@ -204,7 +204,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 15
         Top = 85
-        Width = 108
+        Width = 107
         BorderSpacing.Left = 10
         Caption = 'Tutorial web URL:'
         ParentColor = False
@@ -243,7 +243,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 15
         Top = 254
-        Width = 176
+        Width = 175
         BorderSpacing.Left = 10
         Caption = 'Field colour on invalid entry:'
         ParentColor = False
