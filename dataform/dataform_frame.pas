@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages,
-  epi_script_AST;
+  epi_script_executor;
 
 type
 
@@ -104,7 +104,13 @@ type
       BeforeEntryFieldScriptKey = 'BeforeEntryFieldScriptKey';
       AfterEntryFieldScriptKey = 'AfterEntryFieldScriptKey';
     procedure InitializeScripts;
-    function  InitScript(Lines: TStrings): TAbstractSyntaxTreeBase;
+    function  InitScript(Lines: TStrings): TEpiScriptExecutor;
+    procedure ScriptSetFieldValue(Const Sender: TObject;
+      Const F: TEpiField; Const Value: Variant);
+    function ScriptGetFieldValue(Const Sender: TObject;
+      Const F: TEpiField): Variant;
+    procedure ScriptError(const Msg: string; const LineNo,
+        ColNo: integer; const TextFound: string);
   private
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
@@ -201,10 +207,7 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
-  notes_report, epireport_generator_txt,
-  {script}
-  epi_script_executor, epi_script_parser;
-
+  notes_report, epireport_generator_txt;
 type
   TKeyDownData = record
     Sender: TObject;
@@ -484,20 +487,32 @@ begin
   end;
 end;
 
-function TDataFormFrame.InitScript(Lines: TStrings): TAbstractSyntaxTreeBase;
-var
-  Executor: TEpiScriptExecutor;
-  Parser: TEpiScriptParser;
-  Stm: TStatementList;
+function TDataFormFrame.InitScript(Lines: TStrings): TEpiScriptExecutor;
 begin
-  Executor := TEpiScriptExecutor.Create;
-  Executor.DataFile := FDataFile;
-  Parser := TEpiScriptParser.Create(Executor);
-  Parser.Parse(Lines, Stm);
-  Parser.Free;
-  Executor.Free;
+  Result := TEpiScriptExecutor.Create;
+  Result.DataFile := FDataFile;
+  Result.OnError := @ScriptError;
+  Result.OnSetFieldValue := @ScriptSetFieldValue;
+  Result.OnGetFieldValue := @ScriptGetFieldValue;
+  Result.ParseScript(Lines);
+end;
 
-  Result := Stm;
+procedure TDataFormFrame.ScriptSetFieldValue(const Sender: TObject;
+  const F: TEpiField; const Value: Variant);
+begin
+  FieldEditFromField(F).Text := Value;
+end;
+
+function TDataFormFrame.ScriptGetFieldValue(const Sender: TObject;
+  const F: TEpiField): Variant;
+begin
+  Result := FieldEditFromField(F).Text;
+end;
+
+procedure TDataFormFrame.ScriptError(const Msg: string; const LineNo,
+  ColNo: integer; const TextFound: string);
+begin
+  //
 end;
 
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
@@ -598,6 +613,7 @@ begin
   DataFile.EndUpdate;
 
   // Load scripts.
+  InitializeScripts;
 
 
   // Correct tab order of fields.
@@ -1759,6 +1775,7 @@ end;
 procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
 var
   Field: TEpiField;
+  BFScript: TEpiScriptExecutor;
 begin
   // *************************************
   // **    EpiData Flow Control (Pre)   **
@@ -1770,6 +1787,10 @@ begin
   Field := FE.Field;
   // Before field script:
   // TODO : Before field script
+
+  BFScript := TEpiScriptExecutor(Field.FindCustomData(BeforeEntryFieldScriptKey));
+  if Assigned(BFScript) then
+    BFScript.ExecuteScript();
 
   // Top-of-screen?
 
@@ -1801,6 +1822,7 @@ var
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
+  AFScript: TEpiScriptExecutor;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -1940,6 +1962,9 @@ begin
       Modified := true;
   end;
 
+  AFScript := TEpiScriptExecutor(Field.FindCustomData(AfterEntryFieldScriptKey));
+  if Assigned(AFScript) then
+    AFScript.ExecuteScript();
 
   // Jumps
   NewFieldEdit := nil;
