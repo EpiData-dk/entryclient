@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
-  ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages;
+  ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages,
+  epi_script_AST;
 
 type
 
@@ -97,6 +98,13 @@ type
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure ShowFieldNotesActionUpdate(Sender: TObject);
+  private
+    { Scripts }
+    const
+      BeforeEntryFieldScriptKey = 'BeforeEntryFieldScriptKey';
+      AfterEntryFieldScriptKey = 'AfterEntryFieldScriptKey';
+    procedure InitializeScripts;
+    function  InitScript(Lines: TStrings): TAbstractSyntaxTreeBase;
   private
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
@@ -193,7 +201,9 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
-  notes_report, epireport_generator_txt;
+  notes_report, epireport_generator_txt,
+  {script}
+  epi_script_executor, epi_script_parser;
 
 type
   TKeyDownData = record
@@ -455,6 +465,41 @@ begin
     (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');
 end;
 
+procedure TDataFormFrame.InitializeScripts;
+var
+  F: TEpiField;
+  i: Integer;
+begin
+  if not Assigned(FDataFile) then exit;
+
+  for i := 0 to FDataFile.Fields.Count - 1 do
+  begin
+    F := FDataFile.Fields[i];
+
+    if F.BeforeEntryScript.Count > 0 then
+      F.AddCustomData(BeforeEntryFieldScriptKey, InitScript(F.BeforeEntryScript));
+
+    if F.AfterEntryScript.Count > 0 then
+      F.AddCustomData(AfterEntryFieldScriptKey, InitScript(F.AfterEntryScript));
+  end;
+end;
+
+function TDataFormFrame.InitScript(Lines: TStrings): TAbstractSyntaxTreeBase;
+var
+  Executor: TEpiScriptExecutor;
+  Parser: TEpiScriptParser;
+  Stm: TStatementList;
+begin
+  Executor := TEpiScriptExecutor.Create;
+  Executor.DataFile := FDataFile;
+  Parser := TEpiScriptParser.Create(Executor);
+  Parser.Parse(Lines, Stm);
+  Parser.Free;
+  Executor.Free;
+
+  Result := Stm;
+end;
+
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
 var
   idx: LongInt;
@@ -551,6 +596,9 @@ begin
     end;
   end;
   DataFile.EndUpdate;
+
+  // Load scripts.
+
 
   // Correct tab order of fields.
   FFieldEditList.Sort(@FieldSort);
