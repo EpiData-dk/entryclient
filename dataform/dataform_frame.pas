@@ -172,8 +172,8 @@ type
   private
     { Flow control/Validation}
     function  PerformJump(F: TEpiField; Jump: TEpiJump; Idx: Integer): TFieldEdit;
-    procedure FieldEnterFlow(FE: TFieldEdit);
-    function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+    function  FieldEnterFlow(FE: TFieldEdit): TFieldEdit;
+    function  FieldExitFlow(FE: TFieldEdit; var NewFieldEdit: TFieldEdit): TFieldExitFlowType;
     function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
@@ -1649,10 +1649,11 @@ end;
 procedure TDataFormFrame.DoKeyFieldDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
-  FieldEdit: TFieldEdit absolute Sender;
-  NextFieldEdit: TFieldEdit;
   Res: TFieldExitFlowType;
   CRecNo: Integer;
+  CurrentFieldEdit: TFieldEdit;
+  NextFieldEdit: TFieldEdit;
+  OrgNextFE: TFieldEdit;
 
 
   function NextFieldOnKeyDown: TFieldEdit;
@@ -1660,7 +1661,7 @@ var
     Idx: LongInt;
   begin
     Result := nil;
-    Idx := NextUsableFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    Idx := NextUsableFieldIndex(FieldEditList.IndexOf(CurrentFieldEdit), false);
     if Idx = -1 then
     begin
       if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
@@ -1679,60 +1680,15 @@ var
     Idx: LongInt;
   begin
     Result := nil;
-    Idx := PrevNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    Idx := PrevNonAutoFieldIndex(FieldEditList.IndexOf(CurrentFieldEdit), false);
     if Idx = -1 then exit;
     Result := TFieldEdit(FieldEditList[Idx]);
   end;
 
-begin
-  // Jumps backward though fields.
-  if ((Key = VK_UP) and (Shift = [])) or
-     ((Key = VK_TAB) and (Shift = [ssShift]))
-  then
-  Begin
-    if not FieldValidate(FieldEdit) then exit;
-
-    NextFieldEdit := PrevFieldOnKeyDown;
-    if Assigned(NextFieldEdit) then
-      NextFieldEdit.SetFocus;
-    Key := VK_UNKNOWN;
-  end;
-
-  // Leave field or see pick-list.
-  if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
-              VK_ADD, VK_F9, VK_OEM_PLUS])
-  then begin
-    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
-       (not Assigned(FieldEdit.Field.ValueLabelSet)) then exit;
-
-    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
-       (Assigned(FieldEdit.Field.ValueLabelSet)) and
-       (not ShowValueLabelPickList(FieldEdit)) then
-    begin
-      Key := VK_UNKNOWN;
-      exit;
-    end;
-
-    if not FieldValidate(FieldEdit, false) then
-    begin
-      Key := VK_UNKNOWN;
-      exit;
-    end;
-
-    // Field is validated - check for Valuelabels and update FieldEdit.
-    FieldEdit.UpdateSettings;
-
-    Res := FieldExitFlow(FieldEdit, NextFieldEdit);
-    case Res of
-      fxtOk:    NextFieldEdit := NextFieldOnKeyDown;
-      fxtError: begin
-                  Key := VK_UNKNOWN;
-                  Exit;
-                end;
-      fxtJump:  ; // Do nothing - NextFieldEdit is set.
-    end;
-
-    if not Assigned(NextFieldEdit) then
+  function CheckNewRecord(FE: TFieldEdit): TFieldEdit;
+  begin
+    Result := FE;
+    if not Assigned(Result) then
     begin
       // NextFieldEdit = nil => either do a new record (if this is a new record or last record)
       //                        or increment record no...
@@ -1749,9 +1705,73 @@ begin
         // shift focus field, etc...
         if CRecNo = RecNo then exit;
       end;
-      NextFieldEdit := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
+      Result := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
     end;
-    FieldEnterFlow(NextFieldEdit);
+  end;
+
+begin
+  CurrentFieldEdit := TFieldEdit(Sender);
+
+  // Jumps backward though fields.
+  if ((Key = VK_UP) and (Shift = [])) or
+     ((Key = VK_TAB) and (Shift = [ssShift]))
+  then
+  Begin
+    if not FieldValidate(CurrentFieldEdit) then exit;
+
+    NextFieldEdit := PrevFieldOnKeyDown;
+    if Assigned(NextFieldEdit) then
+      NextFieldEdit.SetFocus;
+    Key := VK_UNKNOWN;
+    Exit;
+  end;
+
+  // Leave field or see pick-list.
+  if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
+              VK_ADD, VK_F9, VK_OEM_PLUS])
+  then begin
+    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
+       (not Assigned(CurrentFieldEdit.Field.ValueLabelSet)) then exit;
+
+    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
+       (Assigned(CurrentFieldEdit.Field.ValueLabelSet)) and
+       (not ShowValueLabelPickList(CurrentFieldEdit)) then
+    begin
+      Key := VK_UNKNOWN;
+      exit;
+    end;
+
+    if not FieldValidate(CurrentFieldEdit, false) then
+    begin
+      Key := VK_UNKNOWN;
+      exit;
+    end;
+
+    // Field is validated - check for Valuelabels and update FieldEdit.
+    CurrentFieldEdit.UpdateSettings;
+    NextFieldEdit := nil;
+    repeat
+      // Is a series of scripts causes a chain-jumps, then
+      // perform them here
+      Res := FieldExitFlow(CurrentFieldEdit, NextFieldEdit);
+      case Res of
+        fxtOk:
+          if not Assigned(NextFieldEdit) then
+            NextFieldEdit := NextFieldOnKeyDown;
+        fxtError:
+          begin
+            Key := VK_UNKNOWN;
+            Exit;
+          end;
+        fxtJump:
+          ;
+      end;
+      CurrentFieldEdit := CheckNewRecord(NextFieldEdit);
+
+      NextFieldEdit := FieldEnterFlow(CurrentFieldEdit);
+      NextFieldEdit := CheckNewRecord(NextFieldEdit);
+    until (NextFieldEdit = CurrentFieldEdit);
+
     NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
@@ -1819,10 +1839,10 @@ begin
   FieldValidate(FieldEdit);
 end;
 
-procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
+function TDataFormFrame.FieldEnterFlow(FE: TFieldEdit): TFieldEdit;
 var
   Field: TEpiField;
-  BFScript: TEpiScriptExecutor;
+  BFScript: TDataFormScriptExecutor;
 begin
   // *************************************
   // **    EpiData Flow Control (Pre)   **
@@ -1830,15 +1850,21 @@ begin
   // Should all these things happen each time, or only first time
   //   field is entered.
 
-
+  Result := FE;
   Field := FE.Field;
   // Before field script:
   // TODO : Before field script
 
-  BFScript := TEpiScriptExecutor(Field.FindCustomData(BeforeEntryFieldScriptKey));
+  BFScript := TDataFormScriptExecutor(Field.FindCustomData(BeforeEntryFieldScriptKey));
   if Assigned(BFScript) then
+  begin
     BFScript.ExecuteScript();
-
+    if Assigned(BFScript.GotoJump) then
+    begin
+      Result := PerformJump(Field, BFScript.GotoJump, FieldEditList.IndexOf(FE));
+      Exit;
+    end;
+  end;
   // Top-of-screen?
 
 
@@ -1855,8 +1881,8 @@ begin
       PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
-function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
-  NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+function TDataFormFrame.FieldExitFlow(FE: TFieldEdit;
+  var NewFieldEdit: TFieldEdit): TFieldExitFlowType;
 var
   Field: TEpiField;
   Idx: LongInt;
@@ -1870,6 +1896,7 @@ var
   CheckUnique: Boolean;
   AFScript: TDataFormScriptExecutor;
   AJump: TEpiJump;
+  TmpFieldEdit: TFieldEdit;
 
 begin
   // **************************************
@@ -1890,14 +1917,14 @@ begin
   // Comparison
   if Assigned(Field.Comparison) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.Comparison.CompareField);
-    if not FE.CompareTo(NewFieldEdit.Text, Field.Comparison.CompareType) then
+    TmpFieldEdit := FieldEditFromField(Field.Comparison.CompareField);
+    if not FE.CompareTo(TmpFieldEdit.Text, Field.Comparison.CompareType) then
     begin
       Err := Format(
         'Comparison failed:' + LineEnding +
         '%s: %s  %s  %s: %s',
         [Field.Name, FE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
-         NewFieldEdit.Field.Name, NewFieldEdit.Text]);
+         TmpFieldEdit.Field.Name, TmpFieldEdit.Text]);
       FieldValidateError(FE, Err);
       Exit(fxtError);
     end;
@@ -1906,19 +1933,19 @@ begin
   // Type Comment
   if Assigned(Field.ValueLabelWriteField) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.ValueLabelWriteField);
-    OldText := NewFieldEdit.Text;
-    NewFieldEdit.Text := Field.ValueLabelSet.ValueLabelString[FE.Text];
-    if OldText <> NewFieldEdit.Text then
+    TmpFieldEdit := FieldEditFromField(Field.ValueLabelWriteField);
+    OldText := TmpFieldEdit.Text;
+    TmpFieldEdit.Text := Field.ValueLabelSet.ValueLabelString[FE.Text];
+    if OldText <> TmpFieldEdit.Text then
       Modified := true;
   end;
 
-  // After Entry Script (Calculation)
+  // After Entry Calculation
   if Assigned(Field.Calculation) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.Calculation.ResultField);
+    TmpFieldEdit := FieldEditFromField(Field.Calculation.ResultField);
     Err := '';
-    OldText := NewFieldEdit.Text;
+    OldText := TmpFieldEdit.Text;
     case Field.Calculation.CalcType of
       ctTimeDiff:      Txt := CalcTimeDiff(TEpiTimeCalc(Field.Calculation));
       ctCombineDate:   Txt := CalcCombineDate(TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
@@ -1926,7 +1953,7 @@ begin
     end;
     if (Txt <> TEpiStringField.DefaultMissing)
     then
-      NewFieldEdit.Text := Txt;
+      TmpFieldEdit.Text := Txt;
 
     if Err <> '' then
     begin
@@ -1934,7 +1961,7 @@ begin
       FieldValidateError(ErrFieldEdit, Err);
       Exit(fxtError);
     end;
-    if OldText <> NewFieldEdit.Text then
+    if OldText <> TmpFieldEdit.Text then
       Modified := true;
   end;
 
@@ -1953,7 +1980,6 @@ begin
   end;
 
   // Jumps
-  NewFieldEdit := nil;
   Idx := FieldEditList.IndexOf(FE);
   if Assigned(AJump) then
   begin
@@ -2186,6 +2212,15 @@ begin
                      end;
     jtToField:       begin
                        NewField := Jump.JumpToField;
+                       Result := FieldEditFromField(NewField);
+
+                       EIdx := FieldEditList.IndexOf(Result) - 1;
+                       EIdx := NextUsableFieldIndex(EIdx, false);
+                       DoPerformJump(Min(Idx, EIdx), Max(Idx,EIdx), Jump.ResetType);
+                       Result := TFieldEdit(FieldEditList[EIdx]);
+
+{
+
                        EIdx := Idx + 1;
                        while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
                              (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
@@ -2195,7 +2230,7 @@ begin
                        if Eidx >= FieldEditList.Count then exit;
 
                        DoPerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                       Result := TFieldEdit(FieldEditList[EIdx]);
+                       Result := TFieldEdit(FieldEditList[EIdx]);     }
                      end;
   end;
 end;
