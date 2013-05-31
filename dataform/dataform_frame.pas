@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages,
-  epi_script_executor;
+  epi_script_executor, epi_script_AST;
 
 type
 
@@ -98,19 +98,28 @@ type
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure ShowFieldNotesActionUpdate(Sender: TObject);
+
+  { Scripts }
   private
-    { Scripts }
     const
       BeforeEntryFieldScriptKey = 'BeforeEntryFieldScriptKey';
       AfterEntryFieldScriptKey = 'AfterEntryFieldScriptKey';
     procedure InitializeScripts;
-    function  InitScript(Lines: TStrings): TEpiScriptExecutor;
+    function  InitScript(Lines: TStrings; Field: TEpiField): TEpiScriptExecutor;
     procedure ScriptSetFieldValue(Const Sender: TObject;
       Const F: TEpiField; Const Value: Variant);
     function ScriptGetFieldValue(Const Sender: TObject;
       Const F: TEpiField): Variant;
     procedure ScriptError(const Msg: string; const LineNo,
         ColNo: integer; const TextFound: string);
+  public
+    // Executor hooks.
+    procedure ProcessGoto(Field: TEpiField; AGoto: TGoto; Out Jump: TEpiJump);
+    procedure SetFieldValue(const Sender: TObject; const F: TEpiField;
+       const Value: Variant);
+    function GetFieldValue(const Sender: TObject; const F: TEpiField
+       ): Variant;
+
   private
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
@@ -161,7 +170,8 @@ type
     procedure FieldExit(Sender: TObject);
     procedure UpdateFieldPanel(Field: TEpiField);
   private
-    { Flow control/Validation/Script handling}
+    { Flow control/Validation}
+    function  PerformJump(F: TEpiField; Jump: TEpiJump; Idx: Integer): TFieldEdit;
     procedure FieldEnterFlow(FE: TFieldEdit);
     function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
     function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
@@ -207,7 +217,9 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
-  notes_report, epireport_generator_txt;
+  notes_report, epireport_generator_txt,
+  dataform_script_executor, epi_parser_types;
+
 type
   TKeyDownData = record
     Sender: TObject;
@@ -480,20 +492,19 @@ begin
     F := FDataFile.Fields[i];
 
     if F.BeforeEntryScript.Count > 0 then
-      F.AddCustomData(BeforeEntryFieldScriptKey, InitScript(F.BeforeEntryScript));
+      F.AddCustomData(BeforeEntryFieldScriptKey, InitScript(F.BeforeEntryScript, F));
 
     if F.AfterEntryScript.Count > 0 then
-      F.AddCustomData(AfterEntryFieldScriptKey, InitScript(F.AfterEntryScript));
+      F.AddCustomData(AfterEntryFieldScriptKey, InitScript(F.AfterEntryScript, F));
   end;
 end;
 
-function TDataFormFrame.InitScript(Lines: TStrings): TEpiScriptExecutor;
+function TDataFormFrame.InitScript(Lines: TStrings; Field: TEpiField
+  ): TEpiScriptExecutor;
 begin
-  Result := TEpiScriptExecutor.Create;
+  Result := TDataFormScriptExecutor.Create(Self, Field);
   Result.DataFile := FDataFile;
   Result.OnError := @ScriptError;
-  Result.OnSetFieldValue := @ScriptSetFieldValue;
-  Result.OnGetFieldValue := @ScriptGetFieldValue;
   Result.ParseScript(Lines);
 end;
 
@@ -513,6 +524,42 @@ procedure TDataFormFrame.ScriptError(const Msg: string; const LineNo,
   ColNo: integer; const TextFound: string);
 begin
   //
+end;
+
+procedure TDataFormFrame.ProcessGoto(Field: TEpiField; AGoto: TGoto; out
+  Jump: TEpiJump);
+var
+  GotoField: TEpiField;
+  FE: TFieldEdit;
+begin
+  GotoField := nil;
+  if Assigned(AGoto.Variable) then
+    GotoField := TFieldVariable(AGoto.Variable).Field;
+
+  Jump := TEpiJump.Create;
+  case AGoto.Option of
+    goClear:   Jump.ResetType := jrSystemMissing;
+    goMissing: Jump.ResetType := jrMaxMissing;
+    goNoOpt:   Jump.ResetType := jrLeaveAsIs;
+  end;
+  if Assigned(GotoField) then
+  begin
+    Jump.JumpType := jtToField;
+    Jump.JumpToField := GotoField;
+  end else
+    Jump.JumpType := jtSaveRecord;
+end;
+
+procedure TDataFormFrame.SetFieldValue(const Sender: TObject;
+  const F: TEpiField; const Value: Variant);
+begin
+  FieldEditFromField(F).Text := Value;
+end;
+
+function TDataFormFrame.GetFieldValue(const Sender: TObject; const F: TEpiField
+  ): Variant;
+begin
+  Result := FieldEditFromField(F).Text;
 end;
 
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
@@ -1812,7 +1859,6 @@ function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
   NewFieldEdit: TFieldEdit): TFieldExitFlowType;
 var
   Field: TEpiField;
-  Jump: TEpiJump;
   Idx: LongInt;
   Section: TEpiSection;
   EIdx: LongInt;
@@ -1822,78 +1868,8 @@ var
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
-  AFScript: TEpiScriptExecutor;
-
-  procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
-  var
-    i: LongInt;
-    Cnt: Integer;
-    j: Integer;
-    CachedVLS: TEpiValueLabelSet;
-    CachedVL: TEpiCustomValueLabel;
-  begin
-    if ResetType = jrLeaveAsIs then exit;
-
-    CachedVLS := nil;
-    for i := StartIdx to EndIdx do
-    with TFieldEdit(FieldEditList[i]) do
-    begin
-      if Field.FieldType in AutoFieldTypes then continue;
-
-      case ResetType of
-        jrSystemMissing: Text := '.';
-        jrMaxMissing:    with Field do
-                         begin
-                           if not Assigned(ValueLabelSet) then continue;
-
-                           // A little cacheing make it faster, works well if
-                           // lots of fields use the same VLSet.
-                           if CachedVLS = ValueLabelSet then
-                             Text := CachedVL.ValueAsString
-                           else begin
-                             for j := ValueLabelSet.Count - 1 downto 0 do
-                             with ValueLabelSet[j] do
-                             begin
-                               if IsMissingValue then
-                               begin
-                                 CachedVLS := ValueLabelSet;
-                                 CachedVL := ValueLabelSet[j];
-                                 Text := ValueAsString;
-                                 Break;
-                               end;
-                             end;
-                           end;
-                         end;
-        jr2ndMissing:    with Field do
-                         begin
-                           if not Assigned(ValueLabelSet) then continue;
-
-                           // A little cacheing make it faster, works well if
-                           // lots of fields use the same VLSet.
-                           if CachedVLS = ValueLabelSet then
-                             Text := CachedVL.ValueAsString
-                           else begin
-                             Cnt := 0;
-                             for j := ValueLabelSet.Count - 1 downto 0 do
-                             with ValueLabelSet[j] do
-                             begin
-                               if IsMissingValue then inc(Cnt);
-                               if (Cnt = 2) then
-                               begin
-                                 CachedVLS := ValueLabelSet;
-                                 CachedVL := ValueLabelSet[j];
-                                 Text := ValueAsString;
-                                 Break;
-                               end;
-                             end;
-                           end;
-                         end;
-      end;
-
-      // This forces and update of the FieldEdits labels -> hence updates ValueLabel too.
-      UpdateSettings;
-    end;
-  end;
+  AFScript: TDataFormScriptExecutor;
+  AJump: TEpiJump;
 
 begin
   // **************************************
@@ -1962,70 +1938,27 @@ begin
       Modified := true;
   end;
 
-  AFScript := TEpiScriptExecutor(Field.FindCustomData(AfterEntryFieldScriptKey));
+  AJump := nil;
+  AFScript := TDataFormScriptExecutor(Field.FindCustomData(AfterEntryFieldScriptKey));
   if Assigned(AFScript) then
+  begin
     AFScript.ExecuteScript();
+    AJump := AFScript.GotoJump;
+  end else
+  if Assigned(Field.Jumps) then
+  begin
+    Txt := FE.Text;
+    if Txt = '' then Txt := '.';
+    AJump := Field.Jumps.JumpFromValue[Txt];
+  end;
 
   // Jumps
   NewFieldEdit := nil;
-  if Assigned(Field.Jumps) then
+  Idx := FieldEditList.IndexOf(FE);
+  if Assigned(AJump) then
   begin
-    Idx := FieldEditList.IndexOf(FE);
-    Txt := FE.Text;
-    if Txt = '' then Txt := '.';
-    Jump := Field.Jumps.JumpFromValue[Txt];
-    if Assigned(Jump) then
-    begin
-      case Jump.JumpType of
-        jtSaveRecord:    begin
-                           PerformJump(Idx + 1, FieldEditList.Count - 1, Jump.ResetType);
-                         end;
-        jtExitSection:   begin
-                           Section := Field.Section;
-                           if Section = DataFile.MainSection then
-                           begin
-                             EIdx := FieldEditList.Count;
-                             PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           end else begin
-                             EIdx := Idx + 1;
-                             while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
-                                   (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
-                               EIdx := NextUsableFieldIndex(EIdx, false);
-                             if EIdx = -1 then EIdx := FieldEditList.Count;
-                             PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                             // Making this check also forces a "new record" event since NewFieldEdit = nil;
-                             if EIdx < FieldEditList.Count then
-                               NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
-                           end;
-                         end;
-        jtSkipNextField: begin
-                           EIdx := NextUsableFieldIndex(Idx + 1, false);
-                           if EIdx = -1 then EIdx := FieldEditList.Count;
-                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           if EIdx < FieldEditList.Count then
-                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
-                           // A "DoNewRecord" is performed if no NewFieldEdit is assigned
-                           // as is the case if SkipNextField is perform on second-last field.
-                           {
-                           else
-                             NewRecordAction.Execute;}
-                         end;
-        jtToField:       begin
-                           NewField := Jump.JumpToField;
-                           EIdx := Idx + 1;
-                           while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
-                                 (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
-                             EIdx := NextUsableFieldIndex(EIdx, false);
-
-                           if EIdx = -1 then EIdx := FieldEditList.Count;
-                           if Eidx >= FieldEditList.Count then exit;
-
-                           PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
-                         end;
-      end;
-      Exit(fxtJump);
-    end;
+    NewFieldEdit := PerformJump(Field, AJump, Idx);
+    Exit(fxtJump);
   end;
 end;
 
@@ -2134,6 +2067,136 @@ begin
       FieldRangeLabel.Caption := Ranges[0].AsString[true] + '-' + Ranges[0].AsString[false]
     else
       FieldRangeLabel.Caption := '';
+  end;
+end;
+
+function TDataFormFrame.PerformJump(F: TEpiField; Jump: TEpiJump; Idx: Integer
+  ): TFieldEdit;
+
+  procedure DoPerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
+  var
+    i: LongInt;
+    Cnt: Integer;
+    j: Integer;
+    CachedVLS: TEpiValueLabelSet;
+    CachedVL: TEpiCustomValueLabel;
+  begin
+    if ResetType = jrLeaveAsIs then exit;
+
+    CachedVLS := nil;
+    for i := StartIdx to EndIdx do
+    with TFieldEdit(FieldEditList[i]) do
+    begin
+      if Field.FieldType in AutoFieldTypes then continue;
+
+      case ResetType of
+        jrSystemMissing: Text := '.';
+        jrMaxMissing:    with Field do
+                         begin
+                           if not Assigned(ValueLabelSet) then continue;
+
+                           // A little cacheing make it faster, works well if
+                           // lots of fields use the same VLSet.
+                           if CachedVLS = ValueLabelSet then
+                             Text := CachedVL.ValueAsString
+                           else begin
+                             for j := ValueLabelSet.Count - 1 downto 0 do
+                             with ValueLabelSet[j] do
+                             begin
+                               if IsMissingValue then
+                               begin
+                                 CachedVLS := ValueLabelSet;
+                                 CachedVL := ValueLabelSet[j];
+                                 Text := ValueAsString;
+                                 Break;
+                               end;
+                             end;
+                           end;
+                         end;
+        jr2ndMissing:    with Field do
+                         begin
+                           if not Assigned(ValueLabelSet) then continue;
+
+                           // A little cacheing make it faster, works well if
+                           // lots of fields use the same VLSet.
+                           if CachedVLS = ValueLabelSet then
+                             Text := CachedVL.ValueAsString
+                           else begin
+                             Cnt := 0;
+                             for j := ValueLabelSet.Count - 1 downto 0 do
+                             with ValueLabelSet[j] do
+                             begin
+                               if IsMissingValue then inc(Cnt);
+                               if (Cnt = 2) then
+                               begin
+                                 CachedVLS := ValueLabelSet;
+                                 CachedVL := ValueLabelSet[j];
+                                 Text := ValueAsString;
+                                 Break;
+                               end;
+                             end;
+                           end;
+                         end;
+      end;
+
+      // This forces and update of the FieldEdits labels -> hence updates ValueLabel too.
+      UpdateSettings;
+    end;
+  end;
+
+var
+  Section: TEpiSection;
+  EIdx: Integer;
+  NewField: TEpiField;
+begin
+  Result := nil;
+  case Jump.JumpType of
+    jtSaveRecord:    begin
+                       DoPerformJump(Idx + 1, FieldEditList.Count - 1, Jump.ResetType);
+                     end;
+    jtExitSection:   begin
+                       Section := F.Section;
+                       if Section = DataFile.MainSection then
+                       begin
+                         EIdx := FieldEditList.Count;
+                         DoPerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                       end else begin
+                         EIdx := Idx + 1;
+                         while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
+                               (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
+                           EIdx := NextUsableFieldIndex(EIdx, false);
+                         if EIdx = -1 then EIdx := FieldEditList.Count;
+                         DoPerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                         // Making this check also forces a "new record" event since Result = nil;
+                         if EIdx < FieldEditList.Count then
+                           Result := TFieldEdit(FieldEditList[EIdx]);
+                       end;
+                     end;
+    jtSkipNextField: begin
+                       EIdx := NextUsableFieldIndex(Idx + 1, false);
+                       if EIdx = -1 then EIdx := FieldEditList.Count;
+                       DoPerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                       if EIdx < FieldEditList.Count then
+                         Result := TFieldEdit(FieldEditList[EIdx]);
+                       // A "DoNewRecord" is performed if no Result is assigned
+                       // as is the case if SkipNextField is perform on second-last F.
+                       {
+                       else
+                         NewRecordAction.Execute;}
+                     end;
+    jtToField:       begin
+                       NewField := Jump.JumpToField;
+                       EIdx := Idx + 1;
+                       while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
+                             (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
+                         EIdx := NextUsableFieldIndex(EIdx, false);
+
+                       if EIdx = -1 then EIdx := FieldEditList.Count;
+                       if Eidx >= FieldEditList.Count then exit;
+
+                       DoPerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
+                       Result := TFieldEdit(FieldEditList[EIdx]);
+                     end;
   end;
 end;
 
