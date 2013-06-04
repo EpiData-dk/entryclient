@@ -73,7 +73,10 @@ begin
 
   Panel1.Height := {$IFNDEF MSWINDOWS}26{$ELSE}24{$ENDIF};
 
-  Edit1.Text := FInitialValue;
+  if FInitialValue <> '' then
+    Edit1.Text := FInitialValue
+  else
+    Edit1.Text := ValueListBox.Items[0];
 end;
 
 procedure TValueLabelsPickListForm.Edit1Change(Sender: TObject);
