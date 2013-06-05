@@ -1767,12 +1767,16 @@ begin
           ;
       end;
       CurrentFieldEdit := CheckNewRecord(NextFieldEdit);
+      // If CurrentFieldEdit = nil at this point, then user has canceled
+      // "save record" in above method call. Hence break out and do not more.
+      if not Assigned(CurrentFieldEdit) then break;
 
       NextFieldEdit := FieldEnterFlow(CurrentFieldEdit);
       NextFieldEdit := CheckNewRecord(NextFieldEdit);
     until (NextFieldEdit = CurrentFieldEdit);
 
-    NextFieldEdit.SetFocus;
+    if Assigned(NextFieldEdit) then
+      NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
 end;
