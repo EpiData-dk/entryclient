@@ -43,6 +43,8 @@ type
     function    ValidateError(const ErrorMsg: string): boolean;
     function    DoValidateSyntax: boolean; virtual;
     function    DoValidateRange: boolean; virtual;
+    function    GetValue: Variant; virtual; abstract;
+    procedure   SetValue(AValue: Variant); virtual; abstract;
   public
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
@@ -54,6 +56,7 @@ type
     property    RecNo: integer read FRecNo write SetRecNo;
     property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
     property    OnValidateError: TFieldValidateErrorProc read FOnValidateError write FOnValidateError;
+    property    Value: Variant read GetValue write SetValue;
   end;
 
   { TIntegerEdit }
@@ -65,6 +68,8 @@ type
     function    UseSigns: boolean; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
        override;
@@ -82,6 +87,8 @@ type
     procedure   UpdateText; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
        override;
@@ -92,6 +99,8 @@ type
   protected
     procedure   SetField(const AValue: TEpiField); override;
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
        override;
@@ -107,6 +116,8 @@ type
     function    SeparatorCount: integer; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
       override;
@@ -122,6 +133,8 @@ type
     function    SeparatorCount: integer; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
        override;
@@ -133,6 +146,8 @@ type
   protected
     function    DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
     function    Characters: TCharSet; override;
+    function    GetValue: Variant; override;
+    procedure   SetValue(AValue: Variant); override;
   end;
 
 implementation
@@ -527,6 +542,22 @@ begin
   Result := Field.Ranges.InRange(StrToInt64(Text));
 end;
 
+function TIntegerEdit.GetValue: Variant;
+begin
+  if Text = '' then
+    Result := TEpiIntField.DefaultMissing
+  else
+    Result := StrToInt64(Text);
+end;
+
+procedure TIntegerEdit.SetValue(AValue: Variant);
+begin
+  if TEpiIntField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := IntToStr(AValue);
+end;
+
 function TIntegerEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
@@ -589,6 +620,22 @@ end;
 function TFloatEdit.DoValidateRange: boolean;
 begin
   Result := Field.Ranges.InRange(StrToFloat(Text));
+end;
+
+function TFloatEdit.GetValue: Variant;
+begin
+  if Text = '' then
+    Result := TEpiFloatField.DefaultMissing
+  else
+    Result := StrToFloat(Text);
+end;
+
+procedure TFloatEdit.SetValue(AValue: Variant);
+begin
+  if TEpiFloatField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := Format(TEpiFloatField(Field).FormatString, [Field.AsFloat[RecNo]]);
 end;
 
 function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
@@ -692,6 +739,22 @@ begin
   Result := inherited DoUTF8KeyPress(UTF8Key);
 end;
 
+function TStringEdit.GetValue: Variant;
+begin
+  if Text = '' then
+    Result := TEpiStringField.DefaultMissing
+  else
+    Result := Text;
+end;
+
+procedure TStringEdit.SetValue(AValue: Variant);
+begin
+  if TEpiStringField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := Value;
+end;
+
 function TStringEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
@@ -737,7 +800,7 @@ begin
     Exit(ValidateError(S));
 
   TheDate := Trunc(EncodeDate(Y,M,D));
-  Text := FormatDateTime(TEpiDateField(FField).FormatString, TheDate);
+  Text := FormatDateTime(Field.FormatString, TheDate);
 end;
 
 function TDateEdit.DoValidateRange: boolean;
@@ -745,6 +808,24 @@ var
   S: string;
 begin
   Result := Field.Ranges.InRange(EpiStrToDate(Text, DateSeparator, Field.FieldType, S));
+end;
+
+function TDateEdit.GetValue: Variant;
+var
+  Msg: String;
+begin
+  if Text = '' then
+    Result := TEpiDateField.DefaultMissing
+  else
+    Result := EpiStrToDate(Text, DefaultFormatSettings.DateSeparator, Field.FieldType, Msg);
+end;
+
+procedure TDateEdit.SetValue(AValue: Variant);
+begin
+  if TEpiDateField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := FormatDateTime(Field.FormatString, AValue);
 end;
 
 function TDateEdit.CompareTo(const AText: string; ct: TEpiComparisonType
@@ -857,6 +938,24 @@ begin
   Result := Field.Ranges.InRange(EpiStrToTime(Text, TimeSeparator, S));
 end;
 
+function TTimeEdit.GetValue: Variant;
+var
+  Msg: String;
+begin
+  if Text = '' then
+    Result := TEpiDateTimeField.DefaultMissing
+  else
+    Result := EpiStrToTime(Text, DefaultFormatSettings.TimeSeparator, Msg);
+end;
+
+procedure TTimeEdit.SetValue(AValue: Variant);
+begin
+  if TEpiDateTimeField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := FormatDateTime(Field.FormatString, AValue);
+end;
+
 function TTimeEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
@@ -942,6 +1041,22 @@ end;
 function TBoolEdit.Characters: TCharSet;
 begin
   Result := BooleanChars;
+end;
+
+function TBoolEdit.GetValue: Variant;
+begin
+  if Text = '' then
+    Result := TEpiBoolField.DefaultMissing
+  else
+    Result := (Text[1] in BooleanYesChars);
+end;
+
+procedure TBoolEdit.SetValue(AValue: Variant);
+begin
+  if TEpiBoolField.CheckMissing(AValue) then
+    Text := ''
+  else
+    Text := BoolToStr(AValue, 'Y', 'N');
 end;
 
 end.

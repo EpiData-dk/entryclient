@@ -106,12 +106,8 @@ type
       AfterEntryFieldScriptKey = 'AfterEntryFieldScriptKey';
     procedure InitializeScripts;
     function  InitScript(Lines: TStrings; Field: TEpiField): TEpiScriptExecutor;
-    procedure ScriptSetFieldValue(Const Sender: TObject;
-      Const F: TEpiField; Const Value: Variant);
-    function ScriptGetFieldValue(Const Sender: TObject;
-      Const F: TEpiField): Variant;
-    procedure ScriptError(const Msg: string; const LineNo,
-        ColNo: integer; const TextFound: string);
+    procedure ScriptError(Const OwnerField: TEpiField; const Msg: string;
+        const ColNo, LineNo: integer; const TextFound: string);
   public
     // Executor hooks.
     procedure ProcessGoto(Field: TEpiField; AGoto: TGoto; Out Jump: TEpiJump);
@@ -218,7 +214,7 @@ uses
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
   notes_report, epireport_generator_txt,
-  dataform_script_executor, epi_parser_types;
+  dataform_script_executor, epi_parser_types, variants;
 
 type
   TKeyDownData = record
@@ -504,26 +500,17 @@ function TDataFormFrame.InitScript(Lines: TStrings; Field: TEpiField
 begin
   Result := TDataFormScriptExecutor.Create(Self, Field);
   Result.DataFile := FDataFile;
-  Result.OnError := @ScriptError;
+  TDataFormScriptExecutor(Result).OnError := @ScriptError;
   Result.ParseScript(Lines);
 end;
 
-procedure TDataFormFrame.ScriptSetFieldValue(const Sender: TObject;
-  const F: TEpiField; const Value: Variant);
+procedure TDataFormFrame.ScriptError(const OwnerField: TEpiField;
+  const Msg: string; const ColNo, LineNo: integer; const TextFound: string);
+var
+  S: String;
 begin
-  FieldEditFromField(F).Text := Value;
-end;
-
-function TDataFormFrame.ScriptGetFieldValue(const Sender: TObject;
-  const F: TEpiField): Variant;
-begin
-  Result := FieldEditFromField(F).Text;
-end;
-
-procedure TDataFormFrame.ScriptError(const Msg: string; const LineNo,
-  ColNo: integer; const TextFound: string);
-begin
-  //
+  S := 'Failed to execute script: ' + Msg;
+  ShowHintMsg(S, ControlFromEpiControl(OwnerField));
 end;
 
 procedure TDataFormFrame.ProcessGoto(Field: TEpiField; AGoto: TGoto; out
@@ -553,13 +540,13 @@ end;
 procedure TDataFormFrame.SetFieldValue(const Sender: TObject;
   const F: TEpiField; const Value: Variant);
 begin
-  FieldEditFromField(F).Text := Value;
+  FieldEditFromField(F).Value := Value;
 end;
 
 function TDataFormFrame.GetFieldValue(const Sender: TObject; const F: TEpiField
   ): Variant;
 begin
-  Result := FieldEditFromField(F).Text;
+  Result := FieldEditFromField(F).Value;
 end;
 
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
@@ -1862,7 +1849,9 @@ begin
   BFScript := TDataFormScriptExecutor(Field.FindCustomData(BeforeEntryFieldScriptKey));
   if Assigned(BFScript) then
   begin
-    BFScript.ExecuteScript();
+    if not BFScript.ExecuteScript() then
+      Exit;
+
     if Assigned(BFScript.GotoJump) then
     begin
       Result := PerformJump(Field, BFScript.GotoJump, FieldEditList.IndexOf(FE));
@@ -1973,7 +1962,8 @@ begin
   AFScript := TDataFormScriptExecutor(Field.FindCustomData(AfterEntryFieldScriptKey));
   if Assigned(AFScript) then
   begin
-    AFScript.ExecuteScript();
+    if not AFScript.ExecuteScript() then
+      Exit(fxtError);
     AJump := AFScript.GotoJump;
   end else
   if Assigned(Field.Jumps) then
