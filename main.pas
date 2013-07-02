@@ -135,7 +135,7 @@ implementation
 uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
-  shortcuts, epistringutils, epiadmin;
+  shortcuts, epistringutils, epiadmin, entryprocs;
 
 { TMainForm }
 
@@ -531,17 +531,23 @@ begin
   if CanClose {and ManagerSettings.SaveWindowPositions} then
     SaveFormPosition(Self, 'MainForm');
 
-  SaveSettingToIni(EntrySettings.IniFileName);
+  SaveSettingToIni(GetIniFileName);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 var
   Fn: String;
+  i: Integer;
 begin
-  if Paramcount < 1 then exit;
-  Fn := ParamStrUTF8(1);
-  if FileExistsUTF8(Fn) then
-    PostMessage(Self.Handle, LM_OPEN_PROJECT, WPARAM(TString.Create(Fn)), 0);
+  if Assigned(StartupFiles) then
+  begin
+    for i := 0 to StartupFiles.Count - 1 do
+    begin
+      Fn := StartupFiles[i];
+      if FileExistsUTF8(Fn) then
+        PostMessage(Self.Handle, LM_OPEN_PROJECT, WPARAM(TString.Create(Fn)), 0);
+    end;
+  end;
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);
