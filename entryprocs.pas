@@ -20,53 +20,180 @@ const
 type
   TCharArray = array of char;
 
-procedure LoadIniFile;
+
+procedure LoadIniFiles;
+procedure ParseCommandLineOpts;
+function GetIniFileName: string;
+function GetRecentIniFileName: string;
 function GetRandomComponentName: string;
 
 implementation
 
 uses
   lclproc, strutils, epidatafiles, FileUtil, settings, forms,
-  LCLVersion;
+  LCLVersion, Dialogs;
 
-procedure LoadIniFile;
-const
-  IniName = 'epidataentry.ini';
 var
-  Fn: String;
-  S: String;
+  IniFileName: string = '';
+  RecentIniFileName: string = '';
+
+procedure LoadIniFiles;
 begin
-  Fn := GetAppConfigFileUTF8(false,
-    {$IFDEF windows}
-    false
-    {$ELSE}
-    true
-    {$ENDIF}
-    {$IF ((lcl_major = 1) and (lcl_minor >= 1))}
-    , true
-    {$ENDIF}
-    );
+  LoadSettingsFromIni(GetIniFileName);
+  LoadRecentFilesIni(GetRecentIniFileName);
+end;
 
-  {$IF ((lcl_major = 1) and (lcl_minor < 1))}
-  S := ExtractFilePath(Fn);
-  if not DirectoryExistsUTF8(S) then
-    if not ForceDirectoriesUTF8(S) then
-      Exit;
-  {$ENDIF}
+procedure ParseCommandLineOpts;
+const
+  RecentFileIni =      '--recentfile';
+  RecentFileIniShort = '-r';
+  IniFile =            '--inifile';
+  IniFileShort =       '-i';
+  ShowHelp =           '--help';
+  ShowHelpShort =      '-h';
+  ShowVersion =        '--version';
+  ShowVersionShort =   '-v';
 
-  if not LoadSettingsFromIni(Fn)
-  then
+  function ParseLine(Const Param, Option: string; var Value: string): boolean;
+  begin
+    Result := false;
+    if LeftStr(Param, Length(Option)) = Option then
     begin
-      // TODO : This is not optimal on Non-windows OS'Fn. Do some checks for writeability first.
-      S := ExtractFilePath(Application.ExeName) + IniName;
-      if (not FileIsReadOnlyUTF8(S)) then
-         LoadSettingsFromIni(S)
+      Result := true;
+      Value := Copy(Param, Length(Option) + 2, Length(Param));
+    end;
+  end;
+
+  procedure DoOutputText(Const AText: string);
+  begin
+    if TextRec(Output).Mode = fmClosed then
+      MessageDlg('Information:', AText, mtInformation, [mbOk], 0)
+    else
+      WriteLn(UTF8ToConsole(AText));
+  end;
+
+  procedure DoShowHelp;
+  var
+    HText: TStringList;
+  begin
+    HText := TStringList.Create;
+
+    HText.Add('Usage:');
+    HText.Add(ApplicationName + ' [OPTIONS] [FILE]');
+    HText.Add('');
+    HText.Add('Options:');
+    HText.Add('-h or --help             Show this help and exit.');
+    HText.Add('-v or --version          Show version info and exit.');
+    HText.Add('');
+    HText.Add('-i= or --inifile=...     Location of the configuration file storing user preferences.');
+    HText.Add('                         If no location is specified, the default configuration file is used.');
+    HText.Add('');
+    HText.Add('-r= or --recentfile=...  Location of the configuration file storing a list of recently used files.');
+    HText.Add('                         This file can be shared with EpiData Manager.');
+    HText.Add('                         If no location is specified, the default configuration file is used.');
+    HText.Add('');
+    HText.Add('FILE                     If a project file is specified (either .epx or .epz), then this file is');
+    HText.Add('                         is opened at startup.');
+    DoOutputText(HText.Text);
+    HText.Free;
+  end;
+
+  procedure DoShowVersion;
+  begin
+    DoOutputText(GetEntryVersion);
+  end;
+
+var
+  i: Integer;
+  S, P: string;
+begin
+  for i := 1 to Paramcount do
+  begin
+    P := ParamStrUTF8(i);
+
+    if ParseLine(P, RecentFileIni, RecentIniFileName) or
+       ParseLine(P, RecentFileIniShort, RecentIniFileName)
+    then
+    begin
+      RecentIniFileName := ExpandFileNameUTF8(RecentIniFileName);
+      Continue;
     end;
 
-  EntrySettings.IniFileName := Fn;
+    if ParseLine(P, IniFile, IniFileName) or
+       ParseLine(P, IniFileShort, IniFileName)
+    then
+    begin
+      IniFileName := ExpandFileNameUTF8(IniFileName);
+      Continue;
+    end;
 
-  FN := ExpandFileNameUTF8(GetAppConfigDirUTF8(False) + '..' + PathDelim + 'epidatarecentfiles.ini');
-  LoadRecentFilesIni(Fn);
+    if ParseLine(P, ShowHelp, S) or
+       ParseLine(P, ShowHelpShort, S)
+    then
+    begin
+      DoShowHelp;
+      halt(0);
+    end;
+
+    if ParseLine(P, ShowVersion, S) or
+       ParseLine(P, ShowVersionShort, S)
+    then
+    begin
+      DoShowVersion;
+      Halt(0);
+    end;
+
+    if not (P[1] = '-') then
+    begin
+      if not Assigned(StartupFiles) then
+        StartupFiles := TStringList.Create;
+      StartupFiles.Add(P);
+    end else begin
+      DoOutputText('Unrecognized option: ' + P);
+      Halt(0);
+    end;
+  end;
+end;
+
+function GetIniFileName: string;
+begin
+  // IniFileName has been set during ParCommandLineOpts if
+  // it was part of the startup.
+  // else set the default path! (only first time required).
+  if IniFileName = '' then
+  begin
+    IniFileName := GetAppConfigFileUTF8(false,
+      {$IFDEF windows}
+      false
+      {$ELSE}
+      true
+      {$ENDIF}
+      {$IF ((lcl_major = 1) and (lcl_minor >= 1))}
+      , true
+      {$ENDIF}
+      );
+
+    {$IF ((lcl_major = 1) and (lcl_minor < 1))}
+    S := ExtractFilePath(Fn);
+    if not DirectoryExistsUTF8(S) then
+      if not ForceDirectoriesUTF8(S) then
+        Exit;
+    {$ENDIF}
+  end;
+
+  Result := IniFileName;
+end;
+
+function GetRecentIniFileName: string;
+begin
+  // IniFileName has been set during ParCommandLineOpts if
+  // it was part of the startup.
+  // else set the default path! (only first time required).
+
+  if RecentIniFileName = '' then
+    RecentIniFileName := ExpandFileNameUTF8(GetAppConfigDirUTF8(False) + '..' + PathDelim + 'epidatarecentfiles.ini');
+
+  Result := RecentIniFileName;
 end;
 
 function GetRandomComponentName: string;
@@ -80,6 +207,9 @@ begin
   CreateGUID(GUID);
   Result := '_' + StringsReplace(GUIDToString(GUID), ['{','}','-'], ['','',''], [rfReplaceAll]);
 end;
+
+finalization
+  if Assigned(StartupFiles) then StartupFiles.Free;
 
 end.
 

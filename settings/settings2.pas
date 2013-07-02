@@ -40,7 +40,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings2_interface, settings;
+  settings2_interface, settings, entryprocs;
 
 var
   Frames: TStringList = nil;
@@ -100,7 +100,7 @@ begin
   CanClose := false;
   if not (FActiveFrame as ISettingsFrame).ApplySettings then exit;
 
-  SaveSettingToIni(EntrySettings.IniFileName);
+  SaveSettingToIni(GetIniFileName);
 //  if ManagerSettings.SaveWindowPositions then
     SaveFormPosition(Self, 'SettingsForm');
   CanClose := true;

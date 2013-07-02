@@ -45,9 +45,6 @@ type
 
 
   TEntrySettings = record
-    // Non-user changeable
-    IniFileName:    string;
-
     // General:
     RecordsToSkip:  Integer;
     HintTimeOut:    Integer;
@@ -92,8 +89,6 @@ const
 
 var
   EntrySettings: TEntrySettings = (
-    IniFileName:    '';
-
     RecordsToSkip:  25;
     HintTimeOut:    15;
     ShowWelcome:    true;
@@ -144,13 +139,17 @@ var
 
 var
   RecentFiles: TStringList;
+  // Startup files are a list of files that the program should
+  // open. This list is gathered during parsing commandline options.
+  // Maintained from "entryprocs.pas"
+  StartupFiles: TStringList = nil;
 
 implementation
 
 {$R *.lfm}
 
 uses
-  LCLProc, IniFiles;
+  LCLProc, IniFiles, entryprocs;
 
 const
   RecentIniFileName: string = '';
@@ -259,7 +258,6 @@ var
 
 begin
   Result := false;
-  EntrySettings.IniFileName := FileName;
 
   if not FileExistsUTF8(FileName) then exit;
 
@@ -344,14 +342,8 @@ var
 begin
   Result := false;
 
-  Fn := FileName;
-  if (RecentIniFileName <> '') and
-     (FileName = '')
-  then
-    Fn := RecentIniFileName;
-
   try
-    Ini := GetIniFile(Fn);
+    Ini := GetIniFile(FileName);
 
     for i := 0 to RecentFiles.Count - 1 do
       Ini.WriteString('Files', 'file'+inttostr(i), RecentFiles[i]);
@@ -368,10 +360,6 @@ var
   S: String;
 begin
   Result := false;
-
-  // trick - store filename in const :)
-  // and use in save recent.
-  if RecentIniFileName = '' then RecentIniFileName := FileName;
 
   try
     Ini := GetIniFile(FileName);
@@ -392,10 +380,8 @@ procedure SaveFormPosition(const AForm: TForm; const SectionName: string);
 var
   Ini: TIniFile;
 begin
-  if EntrySettings.IniFileName = '' then exit;
-
   try
-    Ini := GetIniFile(EntrySettings.IniFileName);
+    Ini := GetIniFile(GetIniFileName);
     With Ini, AForm do
     begin
       WriteInteger(SectionName, 'Top', Top);
@@ -412,10 +398,8 @@ procedure LoadFormPosition(AForm: TForm; const SectionName: string);
 var
   Ini: TIniFile;
 begin
-  if EntrySettings.IniFileName = '' then exit;
-
   try
-    Ini := GetIniFile(EntrySettings.IniFileName);
+    Ini := GetIniFile(GetIniFileName);
     With Ini, AForm do
     begin
       Top     := ReadInteger(SectionName, 'Top', Top);
@@ -470,7 +454,7 @@ begin
   EntrySettings.ValidateErrorColour := ValidateErrorColourBtn.ButtonColor;
   EntrySettings.ValueLabelColour := ValueLabelColourBtn.ButtonColor;
 
-  SaveSettingToIni(EntrySettings.IniFileName);
+  SaveSettingToIni(GetIniFileName);
   CanClose := true;
 end;
 
