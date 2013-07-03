@@ -31,14 +31,24 @@ begin
 end;
 
 begin
+  if (not EntrySettings.MultipleInstances) and
+     InstanceRunning(EpiDataApplicationName) then exit;
+
   Application.Title := 'EpiData EntryClient';
   OnGetApplicationName := @EpiDataApplicationName;
   OnGetVendorName := @EpiDataVendorName;
 
-  LoadIniFile;
-  if (not EntrySettings.MultipleInstances) and
-     InstanceRunning(EpiDataApplicationName) then exit;
+  // Initialize the application (and widgetset), we may
+  // need it during commandline options (windows doesn't have
+  // a console, so help/versioninfo is displayed in a window).
   Application.Initialize;
+
+  // Parse commandline options!
+  ParseCommandLineOpts;
+
+  // Load ini before anything else - it contains start-up info.
+  LoadIniFiles;
+
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.
