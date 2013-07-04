@@ -424,7 +424,7 @@ begin
   if RecentFiles.Count > 10 then
     RecentFiles.Delete(10);
 
-  SaveRecentFilesToIni('');
+  SaveRecentFilesToIni(GetRecentIniFileName);
 end;
 
 {$I initfont.inc}
