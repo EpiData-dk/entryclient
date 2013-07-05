@@ -158,6 +158,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/scripting.cfg -r=~/.config/epidata/scripting.recentfiles"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">
