@@ -156,6 +156,8 @@ begin
 end;
 
 function GetIniFileName: string;
+var
+  S: string;
 begin
   // IniFileName has been set during ParCommandLineOpts if
   // it was part of the startup.
@@ -174,7 +176,7 @@ begin
       );
 
     {$IF ((lcl_major = 1) and (lcl_minor < 1))}
-    S := ExtractFilePath(Fn);
+    S := ExtractFilePath(IniFileName);
     if not DirectoryExistsUTF8(S) then
       if not ForceDirectoriesUTF8(S) then
         Exit;
