@@ -635,7 +635,7 @@ begin
   if TEpiFloatField.CheckMissing(AValue) then
     Text := ''
   else
-    Text := Format(TEpiFloatField(Field).FormatString, [Field.AsFloat[RecNo]]);
+    Text := Format(TEpiFloatField(Field).FormatString, [AValue]);
 end;
 
 function TFloatEdit.CompareTo(const AText: string; ct: TEpiComparisonType
@@ -752,7 +752,7 @@ begin
   if TEpiStringField.CheckMissing(AValue) then
     Text := ''
   else
-    Text := Value;
+    Text := AValue;
 end;
 
 function TStringEdit.CompareTo(const AText: string; ct: TEpiComparisonType
