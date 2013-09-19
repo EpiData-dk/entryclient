@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
-  Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages;
+  Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
+  documentfile_ext;
 
 type
 
@@ -37,22 +38,20 @@ type
   private
     { private declarations }
     FActiveFrame: TDataFormFrame;
-    FEpiDocument: TEpiDocument;
-    FDocumentFilename: string;
-    FDocumentFileTimeStamp: longint;
+    FDocumentFile: TEntryDocumentFile;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
     procedure DoSaveProject(Const aFilename: string);
     procedure DoNewDataForm(DataFile: TEpiDataFile);
-    function  DoCreateNewDocument: TEpiDocument;
     procedure DoCloseProject;
     procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
     procedure TimedBackup(Sender: TObject);
-    function DoOpenProject(Const aFilename: string): boolean;
+    function  DoOpenProject(Const aFilename: string): boolean;
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
   private
+    function GetEpiDocument: TEpiDocument;
     { messages }
     // Relaying
     procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
@@ -64,10 +63,10 @@ type
     function   OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
     procedure   RestoreDefaultPos;
-    property    EpiDocument: TEpiDocument read FEpiDocument;
+    property    DocumentFile: TEntryDocumentFile read FDocumentFile;
+    property    EpiDocument: TEpiDocument read GetEpiDocument;
     property    ActiveFrame: TDataFormFrame read FActiveFrame;
-    property    DocumentFileName: string read FDocumentFilename;
-  end; 
+  end;
 
 implementation
 
@@ -83,23 +82,17 @@ uses
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
   try
-    if (FileAgeUTF8(FDocumentFilename) <> FDocumentFileTimeStamp) then
-    begin
-      if MessageDlg('WARNING', 'Project file: ' + FDocumentFilename  + ' has been modified by another program since last save.' + LineEnding+
-       'Overwrite modified file?', mtWarning, mbYesNo, 0, mbNo) = mrNo then exit;
-    end;
-    DoSaveProject(FDocumentFilename);
+    DoSaveProject(DocumentFile.FileName);
   except
-    on E: EFCreateError do
+    on E: Exception do
       begin
         MessageDlg('Error',
           'Unable to save project to:' + LineEnding +
-          FDocumentFilename + LineEnding +
+          DocumentFile.FileName + LineEnding +
           'Error message: ' + E.Message,
           mtError, [mbOK], 0);
         Exit;
       end;
-
   end;
   EpiDocument.Modified := false;
 end;
@@ -115,7 +108,7 @@ end;
 
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
-  SaveProjectAction.Enabled := Assigned(FEpiDocument);
+  SaveProjectAction.Enabled := Assigned(DocumentFile);
 end;
 
 procedure TProjectFrame.ToolButton1Click(Sender: TObject);
@@ -126,106 +119,34 @@ begin
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
-var
-  Res: LongInt;
-  Fn: String;
-  St: TMemoryStream;
-  T: TDateTime;
-  R : TRegExpr;
-  B: Boolean;
-  S: RegExprString;
-  S2: String;
 begin
   Result := false;
-
-  Fn := aFilename;
-  Res := mrNone;
-
-
-  R := TRegExpr.Create;
-  R.Expression := '([0-9]{4}.[0-9]{2}.[0-9]{2}\.)';
-  B := R.Exec(Fn);
-  S := R.Replace(Fn, '', false);
-  S2 := ChangeFileExt(S, BoolToStr(ExtractFileExt(S) = '.epz', '.epx', '.epz'));
-  if B and
-     (FileExistsUTF8(S) or FileExistsUTF8(S2))
-  then
-  begin
-    if FileExistsUTF8(S2) then
-      S := S2;
-
-    Res := MessageDlg('Information',
-             'This file seem to be an automated backup file (on closing the program):' + LineEnding + LineEnding +
-             'File: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(Fn)))          +
-               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn))) + ')' + LineEnding +
-             'Original: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(S))) +
-               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(S))) + ')' + LineEnding +  LineEnding +
-             'Load the original instead?',
-             mtInformation, mbYesNoCancel, 0, mbYes);
-    case Res of
-      mrYes:    Fn := S;
-      mrCancel: Exit;
+  try
+    FDocumentFile := TEntryDocumentFile.Create;
+    if not FDocumentFile.OpenFile(AFileName) then
+    begin
+      FreeAndNil(FDocumentFile);
+      Exit;
     end;
+  except
+    FreeAndNil(FDocumentFile);
+    // If ever this happens then it is because something not right happened
+    // during OpenFile(...) and we need to notify the user.
+    raise;
   end;
-  R.Free;
-
-
-  if FileExistsUTF8(Fn + '.bak') then
-  begin
-    Res := MessageDlg('Information',
-             'A timed backup file exists. (loading of this overwrites previous project file)' + LineEnding + LineEnding +
-             'File: ' +  #9  + #9  + SysToUTF8(ExtractFileName(UTF8ToSys(Fn)))          +
-               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn))) + ')' + LineEnding +
-             'Recovery: ' + #9 + SysToUTF8(ExtractFileName(UTF8ToSys(Fn + '.bak'))) +
-               ' (' + FormatDateTime('YYYY/MM/DD HH:NN:SS', FileDateToDateTime(FileAgeUTF8(Fn + '.bak'))) + ')' + LineEnding +  LineEnding +
-             'Load the backup instead?',
-             mtInformation, mbYesNoCancel, 0, mbYes);
-    case Res of
-      mrYes:    Fn := Fn + '.bak';
-      mrNo:     begin
-                  Res := MessageDlg('Warning',
-                           'Loading ' + SysToUTF8(ExtractFileName(UTF8ToSys(Fn))) + ' will delete recovery file.' + LineEnding +
-                           'Continue?',
-                           mtWarning, mbYesNo, 0, mbNo);
-                  case Res of
-                    mrNo:  Exit;
-                    mrYes: Res := mrNo;  // Res used later to check for modification state.
-                  end;
-                end;
-      mrCancel: Exit;
-    end;
-  end;
-
-  DoCloseProject;
 
   try
     Screen.Cursor := crHourGlass;
     Application.ProcessMessages;
     MainForm.BeginUpdateForm;
 
-    St := nil;
     try
-      St := TMemoryStream.Create;
-      if ExtractFileExt(UTF8ToSys(Fn)) = '.epz' then
-        ZipFileToStream(St, Fn)
-      else
-        St.LoadFromFile(UTF8ToSys(Fn));
-      St.Position := 0;
-      FEpiDocument := DoCreateNewDocument;
-      FEpiDocument.OnPassword := @EpiDocumentPassWord;
-      FEpiDocument.LoadFromStream(St);
-      FEpiDocument.OnModified := @EpiDocModified;
-      if ExtractFileExt(Fn) = '.bak' then
-        FDocumentFilename := ChangeFileExt(Fn, '')
-      else
-        FDocumentFilename := Fn;
+      EpiDocument.OnModified := @EpiDocModified;
     except
-      if Assigned(St) then FreeAndNil(St);
-      if Assigned(FEpiDocument) then FreeAndNil(FEpiDocument);
+      if Assigned(FDocumentFile) then FreeAndNil(FDocumentFile);
       if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
       raise;
     end;
-    FDocumentFileTimeStamp := FileAgeUTF8(FDocumentFilename);
 
     // Create backup process.
     if EpiDocument.ProjectSettings.BackupInterval > 0 then
@@ -236,12 +157,11 @@ begin
       FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
     end;
 
-    DoNewDataForm(FEpiDocument.DataFiles[0]);
+    DoNewDataForm(EpiDocument.DataFiles[0]);
 
-    if Res = mrYes then
-      EpiDocument.Modified := true;
+    EpiDocument.Modified := false;
 
-    AddToRecent(DocumentFileName);
+    AddToRecent(DocumentFile.FileName);
     UpdateMainCaption;
     SaveProjectAction.Update;
     Result := true;
@@ -268,6 +188,13 @@ begin
   SaveProjectAction.ShortCut := P_SaveProject;
 end;
 
+function TProjectFrame.GetEpiDocument: TEpiDocument;
+begin
+  result := nil;
+  if Assigned(DocumentFile) then
+    result := DocumentFile.Document;
+end;
+
 procedure TProjectFrame.LMDataFormGotoRec(var Msg: TLMessage);
 begin
   if Assigned(FActiveFrame) then
@@ -275,32 +202,15 @@ begin
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
-var
-  Fs: TFileStream;
-  Ms: TMemoryStream;
 begin
   ActiveFrame.Cursor := crHourGlass;
   Application.ProcessMessages;
-  Fs := nil;
-  Ms := nil;
   try
-    Ms := TMemoryStream.Create;
-//    EpiDocument.Study.ModifiedDate := Now;
-    EpiDocument.SaveToStream(Ms);
-    Ms.Position := 0;
-
-    if ExtractFileExt(UTF8ToSys(aFilename)) = '.epz' then
-      StreamToZipFile(Ms, aFilename)
-    else begin
-      Fs := TFileStream.Create(UTF8ToSys(aFilename), fmCreate);
-      Fs.CopyFrom(Ms, Ms.Size);
-    end;
-    FDocumentFileTimeStamp := FileAgeUTF8(aFilename);
+    DocumentFile.SaveFile(aFilename);
+    AddToRecent(aFilename);
   finally
     ActiveFrame.Cursor := crDefault;
     Application.ProcessMessages;
-    if Assigned(Ms) then FreeAndNil(Ms);
-    if Assigned(Fs) then FreeAndNil(Fs);
   end;
 end;
 
@@ -350,36 +260,24 @@ begin
   end;
 end;
 
-function TProjectFrame.DoCreateNewDocument: TEpiDocument;
-begin
-  Result := TEpiDocument.Create('en');
-end;
-
 procedure TProjectFrame.DoCloseProject;
-var
-  S: String;
-  Y, M, D: word;
 begin
-  if not Assigned(FEpiDocument) then exit;
+  if not Assigned(DocumentFile) then exit;
 
   if FAllowForEndBackup and
-     FEpiDocument.ProjectSettings.BackupOnShutdown then
+     EpiDocument.ProjectSettings.BackupOnShutdown then
   begin
-    S := ExtractFileNameWithoutExt(DocumentFileName);
-    DecodeDate(Now, Y, M, D);
     try
-      DoSaveProject(S + '.' + Format('%d-%.2d-%.2d', [Y,M,D]) + '.epz');
+      DocumentFile.SaveEndBackupFile;
     except
       // TODO : Warn about not saving backup file?
     end;
   end;
 
   // TODO : Delete ALL dataforms!
-  FreeAndNil(FEpiDocument);
+  FreeAndNil(FDocumentFile);
   FreeAndNil(FActiveFrame);
   FreeAndNil(FBackupTimer);
-  if FileExistsUTF8(FDocumentFilename + '.bak') then
-    DeleteFileUTF8(FDocumentFilename + '.bak');
   DataFilesTreeView.Items.Clear;
 end;
 
@@ -406,7 +304,7 @@ begin
 
   if Assigned(EpiDocument) then
   begin
-    S := S + ' - ' + ExtractFileName(FDocumentFilename);
+    S := S + ' - ' + ExtractFileName(DocumentFile.FileName);
     if EpiDocument.Modified then
       S := S + '*';
 
@@ -426,7 +324,7 @@ begin
   try
     FBackupTimer.Enabled := false;
     try
-      DoSaveProject(DocumentFileName + '.bak');
+      FDocumentFile.SaveBackupFile;
     except
       // TODO : Warn about not saving timed backup file.
       exit;
@@ -440,7 +338,7 @@ end;
 constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  FEpiDocument := nil;
+  FDocumentFile := nil;
   FActiveFrame := nil;
   FAllowForEndBackup := false;;
 

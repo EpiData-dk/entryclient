@@ -15,7 +15,7 @@ uses
   settings2_interface, settings2_paths_frame, settings2_colours_frame,
   settings_general_frame, searchform, search, resultlist_form,
   settings2_fonts_frame, shortcuts, entry_messages, entrylabel, control_types,
-  entrysection, entry_globals, notes_report;
+  entrysection, entry_globals, notes_report, documentfile_ext;
 
 {$R *.res}
 
@@ -31,9 +31,6 @@ begin
 end;
 
 begin
-  if (not EntrySettings.MultipleInstances) and
-     InstanceRunning(EpiDataApplicationName) then exit;
-
   Application.Title := 'EpiData EntryClient';
   OnGetApplicationName := @EpiDataApplicationName;
   OnGetVendorName := @EpiDataVendorName;
@@ -48,6 +45,9 @@ begin
 
   // Load ini before anything else - it contains start-up info.
   LoadIniFiles;
+
+  if (not EntrySettings.MultipleInstances) and
+     InstanceRunning(EpiDataApplicationName) then exit;
 
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;

@@ -5,7 +5,8 @@ unit entryprocs;
 interface
 
 uses
-  Classes, SysUtils, LCLType, epidatafilestypes, epistringutils;
+  Classes, SysUtils, LCLType, epidatafilestypes, epistringutils,
+  epiopenfile;
 
 const
   IntegerChars:    TCharSet=['0'..'9','-','+'];
