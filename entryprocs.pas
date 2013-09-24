@@ -151,7 +151,7 @@ begin
       StartupFiles.Add(P);
     end else begin
       DoOutputText('Unrecognized option: ' + P);
-      Halt(0);
+//      Halt(0);
     end;
   end;
 end;
