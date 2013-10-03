@@ -471,13 +471,6 @@ begin
 
   UpdateSettings;
   UpdateRecentFiles;
-
-  {$IFNDEF EPI_DEBUG}
-  if EntrySettings.ShowWelcome then
-    ShowMessagePos('EpiData EntryClient:' + LineEnding +
-                   'See help menu above for an introduction.' + LineEnding +
-                   'Get latest version from http://www.epidata.dk', 15, 15);
-  {$ENDIF}
 end;
 
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);

@@ -23,7 +23,6 @@ type
     TutorialURLEdit: TEdit;
     Label18: TLabel;
     Label3: TLabel;
-    ShowWelcomeChkBox: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
     RecordsToSkipEdit: TMaskEdit;
@@ -48,7 +47,6 @@ type
     // General:
     RecordsToSkip:  Integer;
     HintTimeOut:    Integer;
-    ShowWelcome:    boolean;
     MultipleInstances: boolean;
     ShowWorkToolbar: boolean;
     NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
@@ -91,7 +89,6 @@ var
   EntrySettings: TEntrySettings = (
     RecordsToSkip:  25;
     HintTimeOut:    15;
-    ShowWelcome:    true;
     MultipleInstances: false;
     ShowWorkToolbar: true;
     NotesDisplay:   0;
@@ -182,7 +179,6 @@ begin
       WriteString(Sec, 'TutorialURL', TutorialURLUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
-      WriteBool(Sec, 'ShowWelcome', ShowWelcome);
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
       WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
       WriteString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
@@ -272,7 +268,6 @@ begin
     TutorialURLUTF8  := ReadString(Sec, 'TutorialURL', TutorialURLUTF8);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
-    ShowWelcome      := ReadBool(Sec, 'ShowWelcome', ShowWelcome);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
     NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
     CopyToClipBoardFormat := ReadString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
@@ -449,7 +444,6 @@ begin
   EntrySettings.TutorialURLUTF8 := TutorialURLEdit.Text;
   EntrySettings.RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);
   EntrySettings.HintTimeOut := StrToInt(HintTimeOutEdit.Text);
-  EntrySettings.ShowWelcome := ShowWelcomeChkBox.Checked;
   EntrySettings.MultipleInstances := MultipleInstanceChkBox.Checked;
   EntrySettings.ValidateErrorColour := ValidateErrorColourBtn.ButtonColor;
   EntrySettings.ValueLabelColour := ValueLabelColourBtn.ButtonColor;
@@ -467,7 +461,6 @@ begin
     TutorialURLEdit.Text := TutorialURLUTF8;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
-    ShowWelcomeChkBox.Checked := ShowWelcome;
     MultipleInstanceChkBox.Checked := MultipleInstances;
     ValidateErrorColourBtn.ButtonColor := ValidateErrorColour;
     ValueLabelColourBtn.ButtonColor := ValueLabelColour;
