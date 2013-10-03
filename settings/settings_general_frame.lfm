@@ -14,7 +14,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 33
-    Top = 102
+    Top = 70
     Width = 149
     BorderSpacing.Left = 10
     Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
@@ -27,14 +27,14 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 25
-    Top = 106
+    Top = 74
     Width = 275
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
     CharCase = ecNormal
     MaxLength = 3
-    TabOrder = 3
+    TabOrder = 2
     EditMask = '999;0;_'
     SpaceChar = '_'
   end
@@ -44,7 +44,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 146
+    Top = 114
     Width = 213
     BorderSpacing.Left = 10
     Caption = 'Hint timeout on errors (seconds):'
@@ -58,28 +58,16 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 25
-    Top = 141
+    Top = 109
     Width = 275
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
     CharCase = ecNormal
     MaxLength = 3
-    TabOrder = 4
+    TabOrder = 3
     EditMask = '999;0;_'
     SpaceChar = '_'
-  end
-  object ShowWelcomeChkBox: TCheckBox
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    Left = 10
-    Height = 22
-    Top = 10
-    Width = 147
-    BorderSpacing.Left = 10
-    BorderSpacing.Top = 10
-    Caption = 'Show Welcome Box'
-    TabOrder = 0
   end
   object MultipleInstanceChkBox: TCheckBox
     AnchorSideLeft.Control = Owner
@@ -87,25 +75,24 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrBottom
     Left = 10
     Height = 22
-    Top = 74
+    Top = 42
     Width = 235
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Allow multiple program instances'
-    TabOrder = 2
+    TabOrder = 1
   end
   object ShowProcessToolBarChkBox: TCheckBox
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ShowWelcomeChkBox
-    AnchorSideTop.Side = asrBottom
+    AnchorSideTop.Control = Owner
     Left = 10
     Height = 22
-    Top = 42
+    Top = 10
     Width = 141
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Show Work Toolbar'
-    TabOrder = 1
+    TabOrder = 0
   end
   object AssociateLabel: TLabel
     AnchorSideLeft.Control = Owner
@@ -113,7 +100,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 182
+    Top = 150
     Width = 199
     BorderSpacing.Left = 10
     Caption = 'Associate filetypes (.epx, .epz):'
@@ -124,14 +111,14 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = AssociateBtn
     Left = 350
     Height = 27
-    Top = 176
+    Top = 144
     Width = 97
     Anchors = [akTop, akRight]
     AutoSize = True
     BorderSpacing.Right = 10
     Caption = 'Un-Associate'
     OnClick = UnAssociateBtnClick
-    TabOrder = 5
+    TabOrder = 4
   end
   object AssociateBtn: TButton
     AnchorSideLeft.Side = asrBottom
@@ -141,7 +128,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 457
     Height = 27
-    Top = 176
+    Top = 144
     Width = 74
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -150,7 +137,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     BorderSpacing.Right = 10
     Caption = 'Associate'
     OnClick = AssociateBtnClick
-    TabOrder = 6
+    TabOrder = 5
   end
   object NotesGroupBox: TRadioGroup
     AnchorSideLeft.Control = Owner
@@ -160,7 +147,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 10
     Height = 73
-    Top = 208
+    Top = 176
     Width = 521
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
@@ -182,7 +169,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       'Show notes as hint'
       'Show notes in window'
     )
-    TabOrder = 7
+    TabOrder = 6
   end
   object ClipBoardFormatCombo: TComboBox
     AnchorSideLeft.Control = RecordsToSkipEdit
@@ -191,7 +178,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = FormatHlpBtn
     Left = 256
     Height = 27
-    Top = 291
+    Top = 259
     Width = 241
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -202,15 +189,14 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       '%f:%d,'
       '%q (%f)\t%d\n'
     )
-    TabOrder = 8
+    TabOrder = 7
   end
   object Label3: TLabel
-    AnchorSideLeft.Control = ShowWelcomeChkBox
     AnchorSideTop.Control = ClipBoardFormatCombo
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 297
+    Top = 265
     Width = 164
     Caption = 'Copy-to-clipboard format:'
     ParentColor = False
@@ -222,7 +208,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 502
     Height = 28
-    Top = 290
+    Top = 258
     Width = 29
     Anchors = [akTop, akRight]
     BorderSpacing.Right = 10
@@ -303,6 +289,6 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
     OnClick = FormatHlpBtnClick
-    TabOrder = 9
+    TabOrder = 8
   end
 end

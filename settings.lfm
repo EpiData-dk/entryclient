@@ -9,7 +9,7 @@ object SettingsForm: TSettingsForm
   ClientWidth = 517
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '1.1'
+  LCLVersion = '1.3'
   object Panel1: TPanel
     Left = 0
     Height = 42
@@ -24,10 +24,10 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 426
+      Left = 425
       Height = 34
       Top = 4
-      Width = 80
+      Width = 81
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -41,10 +41,10 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = BitBtn1
-      Left = 363
+      Left = 361
       Height = 32
       Top = 5
-      Width = 53
+      Width = 54
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -67,7 +67,7 @@ object SettingsForm: TSettingsForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 338
+      ClientHeight = 365
       ClientWidth = 511
       object Label17: TLabel
         AnchorSideLeft.Control = TabSheet1
@@ -154,19 +154,6 @@ object SettingsForm: TSettingsForm
         EditMask = '999;0;_'
         SpaceChar = '_'
       end
-      object ShowWelcomeChkBox: TCheckBox
-        AnchorSideLeft.Control = TabSheet1
-        AnchorSideTop.Control = HintTimeOutEdit
-        AnchorSideTop.Side = asrBottom
-        Left = 10
-        Height = 22
-        Top = 185
-        Width = 147
-        BorderSpacing.Left = 10
-        BorderSpacing.Top = 10
-        Caption = 'Show Welcome Box'
-        TabOrder = 3
-      end
       object Label18: TLabel
         AnchorSideLeft.Control = TabSheet1
         AnchorSideTop.Control = TutorialDirEdit
@@ -195,7 +182,7 @@ object SettingsForm: TSettingsForm
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 0
-        TabOrder = 4
+        TabOrder = 3
       end
       object Label3: TLabel
         AnchorSideLeft.Control = TabSheet1
@@ -221,20 +208,20 @@ object SettingsForm: TSettingsForm
         Width = 309
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
-        TabOrder = 5
+        TabOrder = 4
       end
       object MultipleInstanceChkBox: TCheckBox
         AnchorSideLeft.Control = TabSheet1
-        AnchorSideTop.Control = ShowWelcomeChkBox
+        AnchorSideTop.Control = HintTimeOutEdit
         AnchorSideTop.Side = asrBottom
         Left = 10
         Height = 22
-        Top = 217
+        Top = 185
         Width = 235
         BorderSpacing.Left = 10
         BorderSpacing.Top = 10
         Caption = 'Allow multiple program instances'
-        TabOrder = 6
+        TabOrder = 5
       end
       object Label4: TLabel
         AnchorSideLeft.Control = TabSheet1
@@ -242,7 +229,7 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrCenter
         Left = 10
         Height = 15
-        Top = 254
+        Top = 222
         Width = 175
         BorderSpacing.Left = 10
         Caption = 'Field colour on invalid entry:'
@@ -255,7 +242,7 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Side = asrBottom
         Left = 383
         Height = 25
-        Top = 249
+        Top = 217
         Width = 91
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
@@ -270,7 +257,7 @@ object SettingsForm: TSettingsForm
         AnchorSideRight.Side = asrBottom
         Left = 383
         Height = 25
-        Top = 284
+        Top = 252
         Width = 91
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
@@ -284,7 +271,7 @@ object SettingsForm: TSettingsForm
         AnchorSideTop.Side = asrCenter
         Left = 10
         Height = 15
-        Top = 289
+        Top = 257
         Width = 120
         BorderSpacing.Left = 10
         Caption = 'Value Label colour:'

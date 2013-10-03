@@ -39,7 +39,6 @@ type
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
     RecentFilesSubMenu: TMenuItem;
-    TutorialsMenuDivider1: TMenuItem;
     WebTutorialsMenuItem: TMenuItem;
     TutorialSubMenu: TMenuItem;
     HelpMenuDivider3: TMenuItem;
@@ -169,16 +168,34 @@ procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
 var
   Fn: String;
 begin
-  Fn := UTF8Encode(ExtractFilePath(Application.ExeName) + '/epidataentryclientintro.pdf');
+  Fn := EntrySettings.TutorialDirUTF8 + '/epidataentryclientintro.pdf';
   if FileExistsUTF8(Fn) then
     OpenURL(Fn)
   else
+  begin
+    ShowMessage(
+      'Introduction document was not found in tutorial folder:' + LineEnding +
+      EntrySettings.TutorialDirUTF8
+    );
     OpenURL('http://epidata.dk/php/downloadc.php?file=epidataentryclientintro.pdf');
+  end;
 end;
 
 procedure TMainForm.ShowShortCutsActionExecute(Sender: TObject);
+var
+  Fn: String;
 begin
-  OpenURL('http://epidata.info/dokuwiki/doku.php?id=documentation:keyboard_shortcuts');
+  Fn := EntrySettings.TutorialDirUTF8 + '/epidataentryclientshortcuts.pdf';
+  if FileExistsUTF8(Fn) then
+    OpenURL(Fn)
+  else
+  begin
+    ShowMessage(
+      'Introduction document was not found in tutorial folder:' + LineEnding +
+      EntrySettings.TutorialDirUTF8
+    );
+    OpenURL('http://epidata.info/dokuwiki/doku.php?id=documentation:keyboard_shortcuts');
+  end;
 end;
 
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
@@ -200,11 +217,6 @@ begin
   // First delete all previous tutorials.. (could be a change in tutorial dir).
   for i := TutorialSubMenu.Count - 1 downto 0 do
   begin
-    if (TutorialSubMenu[i] = TutorialsMenuDivider1) or
-       (TutorialSubMenu[i] = WebTutorialsMenuItem) or
-       (TutorialSubMenu[i] = EpiDataWebTutorialsMenuItem)
-       then continue;
-
     MenuItem := TutorialSubMenu[i];
     TutorialSubMenu.Delete(i);
     MenuItem.Free;
@@ -212,9 +224,8 @@ begin
 
   // Find all .pdf files in the directory set by TutorialsDirUTF8
   FileList := FindAllFiles(EntrySettings.TutorialDirUTF8, '*.pdf', false);
-  TutorialsMenuDivider1.Visible := FileList.Count > 0;
 
-  if FileList.Count = 0 then Exit;
+  TutorialSubMenu.Enabled := (FileList.Count > 0);
 
   for i := 0 to FileList.Count - 1 do
   begin
@@ -223,8 +234,7 @@ begin
     MenuItem.Caption := ExtractFileNameOnly(FileList[i]);
     MenuItem.OnClick := @OpenTutorialMenuItemClick;
 
-    With TutorialSubMenu do
-      Insert(IndexOf(TutorialsMenuDivider1), MenuItem);
+    TutorialSubMenu.Add(MenuItem);
   end;
 end;
 
@@ -491,18 +501,11 @@ begin
 
   UpdateSettings;
   UpdateRecentFiles;
-
-  {$IFNDEF EPI_DEBUG}
-  if EntrySettings.ShowWelcome then
-    ShowMessagePos('EpiData EntryClient:' + LineEnding +
-                   'See help menu above for an introduction.' + LineEnding +
-                   'Get latest version from http://www.epidata.dk', 15, 15);
-  {$ENDIF}
 end;
 
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
 begin
-  OpenURL('http://www.epidata.org/dokuwiki/doku.php/documentation:tutorials');
+  OpenURL('http://www.epidata.info/dokuwiki/doku.php?id=documentation:start');
 end;
 
 procedure TMainForm.MenuItem1Click(Sender: TObject);
