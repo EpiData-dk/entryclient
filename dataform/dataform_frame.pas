@@ -1186,7 +1186,11 @@ begin
     SC.BinOp := boAnd;
     SC.Field := Field;
     SC.Text := Text;
-    SC.MatchCriteria := mcEq;
+    SC.CaseSensitive := false;
+    if Field.FieldType in StringFieldTypes then
+      SC.MatchCriteria := mcContains
+    else
+      SC.MatchCriteria := mcEq;
     Result.List.Add(SC);
   end;
   FRecentSearch := Result;
