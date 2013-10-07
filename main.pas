@@ -85,6 +85,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
+    procedure MainActionListUpdate(AAction: TBasicAction; var Handled: Boolean);
     procedure MenuItem1Click(Sender: TObject);
     procedure NewProjectActionExecute(Sender: TObject);
     procedure OpenProjectActionExecute(Sender: TObject);
@@ -486,6 +487,15 @@ end;
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
 begin
   OpenURL('http://www.epidata.info/dokuwiki/doku.php?id=documentation:start');
+end;
+
+procedure TMainForm.MainActionListUpdate(AAction: TBasicAction;
+  var Handled: Boolean);
+begin
+  if Screen.ActiveCustomForm <> MainForm then
+    MainActionList.State := asSuspended
+  else
+    MainActionList.State := asNormal;
 end;
 
 procedure TMainForm.MenuItem1Click(Sender: TObject);

@@ -322,6 +322,7 @@ object MainForm: TMainForm
     end
   end
   object MainActionList: TActionList
+    OnUpdate = MainActionListUpdate
     left = 328
     top = 256
     object FileExitAction: TFileExit
