@@ -32,8 +32,8 @@
             <Filename Value="epidataentryclient"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS)"/>
-            <OtherUnitFiles Value="dataform;settings;search"/>
+            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -75,8 +75,8 @@
             <Filename Value="epidataentryclient"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS)"/>
-            <OtherUnitFiles Value="dataform;settings;search"/>
+            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -114,8 +114,8 @@
             <Filename Value="epidataentryclient"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS)"/>
-            <OtherUnitFiles Value="dataform;settings;search"/>
+            <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -183,7 +183,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="32">
+    <Units Count="33">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -381,6 +381,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="dataform_script_executor"/>
       </Unit31>
+      <Unit32>
+        <Filename Value="utils/documentfile_ext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="documentfile_ext"/>
+      </Unit32>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -390,7 +395,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-      <OtherUnitFiles Value="dataform;settings;search"/>
+      <OtherUnitFiles Value="dataform;settings;search;utils"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

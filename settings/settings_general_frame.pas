@@ -25,7 +25,6 @@ type
     Label2: TLabel;
     MultipleInstanceChkBox: TCheckBox;
     RecordsToSkipEdit: TMaskEdit;
-    ShowWelcomeChkBox: TCheckBox;
     UnAssociateBtn: TButton;
     procedure AssociateBtnClick(Sender: TObject);
     procedure FormatHlpBtnClick(Sender: TObject);
@@ -137,7 +136,6 @@ begin
   FData := Data;
   with FData^ do
   begin
-    ShowWelcomeChkBox.Checked := ShowWelcome;
     MultipleInstanceChkBox.Checked := MultipleInstances;
     ShowProcessToolBarChkBox.Checked := ShowWorkToolbar;
     RecordsToSkipEdit.Text := IntToStr(RecordsToSkip);
@@ -154,7 +152,6 @@ begin
 
   with FData^ do
   begin
-    ShowWelcome := ShowWelcomeChkBox.Checked;
     ShowWorkToolbar := ShowProcessToolBarChkBox.Checked;
     MultipleInstances := MultipleInstanceChkBox.Checked;
     RecordsToSkip := StrToInt(RecordsToSkipEdit.Text);

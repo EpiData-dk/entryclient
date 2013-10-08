@@ -5,7 +5,8 @@ unit entryprocs;
 interface
 
 uses
-  Classes, SysUtils, LCLType, epidatafilestypes, epistringutils;
+  Classes, SysUtils, LCLType, epidatafilestypes, epistringutils,
+  epiopenfile;
 
 const
   IntegerChars:    TCharSet=['0'..'9','-','+'];
@@ -150,7 +151,7 @@ begin
       StartupFiles.Add(P);
     end else begin
       DoOutputText('Unrecognized option: ' + P);
-      Halt(0);
+//      Halt(0);
     end;
   end;
 end;

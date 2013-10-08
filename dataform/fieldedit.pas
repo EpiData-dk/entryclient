@@ -165,6 +165,7 @@ var
   Cv: TCanvas;
   SideBuf: integer;
   Settings: TEpiProjectSettings;
+  TmpFont: TFont;
 begin
   if FField = AValue then exit;
   FField := AValue;
@@ -185,7 +186,7 @@ begin
   if Field.FieldType in StringFieldTypes then
     S := 'W'
   else
-    S := '4';
+    S := '8';
 
   if not Settings.ShowFieldBorders then
     BorderStyle := bsNone;
@@ -194,8 +195,15 @@ begin
     bsSingle: SideBuf := {$IFDEF MSWINDOWS} 7 {$ELSE} 6 {$ENDIF};
   end;
 
+  // Man - this is a dirty way to handle font and the odd way they are
+  // used in LCL... :(
+  TmpFont := TFont.Create;
+  TmpFont.Assign(Cv.Font);
+  Cv.Font.Assign(Self.Font);
   //         Side buffer (pixel from controls left side to first character.
   Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * FField.Length;
+  Cv.Font.Assign(TmpFont);
+  TmpFont.Free;
 
   with FQuestionLabel do
     Caption := Field.Question.Text;

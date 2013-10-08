@@ -148,7 +148,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.1'
+  LCLVersion = '1.3'
   object MainFormPageControl: TPageControl
     Left = 0
     Height = 577
@@ -279,18 +279,15 @@ object MainForm: TMainForm
     object HelpMenu: TMenuItem
       Caption = '&Help'
       object TutorialSubMenu: TMenuItem
-        Caption = 'Tutorials'
-        object TutorialsMenuDivider1: TMenuItem
-          Caption = '-'
-        end
-        object EpiDataWebTutorialsMenuItem: TMenuItem
-          Caption = 'Tutorials On EpiData Web'
-          OnClick = EpiDataWebTutorialsMenuItemClick
-        end
-        object WebTutorialsMenuItem: TMenuItem
-          Caption = 'Tutorials On Web'
-          OnClick = WebTutorialsMenuItemClick
-        end
+        Caption = 'Tutorials (Local)'
+      end
+      object EpiDataWebTutorialsMenuItem: TMenuItem
+        Caption = 'Tutorials (EpiData Wiki)'
+        OnClick = EpiDataWebTutorialsMenuItemClick
+      end
+      object WebTutorialsMenuItem: TMenuItem
+        Caption = 'Tutorials On Web'
+        OnClick = WebTutorialsMenuItemClick
       end
       object HelpMenuDivider3: TMenuItem
         Caption = '-'
@@ -325,6 +322,7 @@ object MainForm: TMainForm
     end
   end
   object MainActionList: TActionList
+    OnUpdate = MainActionListUpdate
     left = 328
     top = 256
     object FileExitAction: TFileExit
