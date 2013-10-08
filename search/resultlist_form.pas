@@ -48,7 +48,7 @@ begin
      {$IFDEF MSWINDOWS}
      ((Key = VK_F4)  and (Shift = [ssAlt]))
      {$ENDIF}
-     {$IFDEF UNIX}
+     {$IFDEF LINUX}
      ((Key = VK_W)  and (Shift = [ssCtrl]))
      {$ENDIF}
      {$IFDEF DARWIN}
