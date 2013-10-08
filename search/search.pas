@@ -17,17 +17,21 @@ type
   TSearchCondition = class
   private
     FBinOp: TSearchBinOp;
+    FCaseSensitive: Boolean;
     FField: TEpiField;
     FMatchCriteria: TMatchCriteria;
     FText: string;
     procedure SetBinOp(const AValue: TSearchBinOp);
+    procedure SetCaseSensitive(AValue: Boolean);
     procedure SetField(const AValue: TEpiField);
     procedure SetMatchCriteria(const AValue: TMatchCriteria);
     procedure SetText(const AValue: string);
   public
+    constructor Create;
     property BinOp: TSearchBinOp read FBinOp write SetBinOp;
     property Field: TEpiField read FField write SetField;
     property MatchCriteria: TMatchCriteria read FMatchCriteria write SetMatchCriteria;
+    property CaseSensitive: Boolean read FCaseSensitive write SetCaseSensitive;
     property Text: string read FText write SetText;
   end;
 
@@ -61,7 +65,7 @@ function SearchFindList(Const Search: TSearch; CurIndex: integer): TBoundArray;
 implementation
 
 uses
-  Math, LCLProc, epidatafilestypes, entryprocs;
+  Math, LazUTF8, epidatafilestypes, entryprocs;
 
 function SearchFindNext(const Search: TSearch; const Index: integer): integer;
 var
@@ -69,46 +73,58 @@ var
   SC: TSearchCondition;
   TmpRes: Boolean;
   i: Integer;
+  S1: String;
+  S2: String;
 
-  function Eq(Const Field: TEpiField; Const Text: string; Const Idx: integer): boolean;
+//  function Eq(Const Field: TEpiField; Const Text: string; Const Idx: integer): boolean;
+  function Eq(Const SC: TSearchCondition; Const Idx: integer): boolean;
   begin
-    case Field.FieldType of
-      ftBoolean: Result := ((Field.AsBoolean[Idx] = 0) and (Text[1] in BooleanNoChars)) or
-                           ((Field.AsBoolean[Idx] = 1) and (Text[1] in BooleanYesChars));
+    case SC.Field.FieldType of
+      ftBoolean: Result := ((SC.Field.AsBoolean[Idx] = 0) and (SC.Text[1] in BooleanNoChars)) or
+                           ((SC.Field.AsBoolean[Idx] = 1) and (SC.Text[1] in BooleanYesChars));
       ftInteger,
-      ftAutoInc: Result := Field.AsInteger[Idx] = StrToInt(Text);
-      ftFloat:   Result := SameValue(Field.AsFloat[Idx], StrToFloat(Text), 0.0);
+      ftAutoInc: Result := SC.Field.AsInteger[Idx] = StrToInt(SC.Text);
+      ftFloat:   Result := SameValue(SC.Field.AsFloat[Idx], StrToFloat(SC.Text), 0.0);
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
       ftDMYAuto,
       ftMDYAuto,
-      ftYMDAuto: Result := Field.AsDate[Idx] = StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
+      ftYMDAuto: Result := SC.Field.AsDate[Idx] = StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DateSeparator);
       ftTime,
-      ftTimeAuto:  Result := Field.AsTime[Idx] = StrToTime(Text);
+      ftTimeAuto:  Result := SC.Field.AsTime[Idx] = StrToTime(SC.Text);
       ftString,
-      ftUpperString: Result := Field.AsString[Idx] = Text;
+      ftUpperString:
+        if SC.CaseSensitive then
+          Result := UTF8CompareStr(SC.Field.AsString[Idx], SC.Text) = 0
+        else
+          Result := UTF8CompareText(SC.Field.AsString[Idx], SC.Text) = 0
     end;
   end;
 
-  function LT(Const Field: TEpiField; Const Text: string; Const Idx: integer): boolean;
+//  function LT(Const Field: TEpiField; Const Text: string; Const Idx: integer): boolean;
+  function LT(Const SC: TSearchCondition; Const Idx: integer): boolean;
   begin
-    case Field.FieldType of
+    case SC.Field.FieldType of
       ftBoolean,
       ftInteger,
-      ftAutoInc: Result := Field.AsInteger[Idx] < StrToInt(Text);
-      ftFloat:   Result := (Field.AsFloat[Idx] < StrToFloat(Text)) and
-                           (Not SameValue(Field.AsFloat[Idx], StrToFloat(Text), 0.0));
+      ftAutoInc: Result := SC.Field.AsInteger[Idx] < StrToInt(SC.Text);
+      ftFloat:   Result := (SC.Field.AsFloat[Idx] < StrToFloat(SC.Text)) and
+                           (Not SameValue(SC.Field.AsFloat[Idx], StrToFloat(SC.Text), 0.0));
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
       ftDMYAuto,
       ftMDYAuto,
-      ftYMDAuto: Result := Field.AsDate[Idx] < StrToDate(Text, TEpiDateField(Field).FormatString, DateSeparator);
+      ftYMDAuto: Result := SC.Field.AsDate[Idx] < StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DateSeparator);
       ftTime,
-      ftTimeAuto:  Result := Field.AsTime[Idx] < StrToTime(Text);
+      ftTimeAuto:  Result := SC.Field.AsTime[Idx] < StrToTime(SC.Text);
       ftString,
-      ftUpperString: Result := AnsiCompareStr(Field.AsString[Idx], Text) < 0;
+      ftUpperString:
+        if SC.CaseSensitive then
+          Result := UTF8CompareStr(SC.Field.AsString[Idx], SC.Text) < 0
+        else
+          Result := UTF8CompareText(SC.Field.AsString[Idx], SC.Text) = 0
     end;
   end;
 
@@ -123,39 +139,46 @@ begin
     if Result >= Search.DataFile.Size then exit(-1);
 
     For i := 0 to Search.ConditionCount - 1 do
-    with Search.SearchCondiction[i] do
     begin
-      case MatchCriteria of
-        mcEq:  TmpRes := Eq(Field, Text, Result);
-        mcNEq: TmpRes := not (Eq(Field, Text, Result));
-        mcLEq: TmpRes := LT(Field, Text, Result) or EQ(Field, Text, Result);
-        mcLT:  TmpRes := LT(Field, Text, Result);
-        mcGT:  TmpRes := not (LT(Field, Text, Result) or Eq(Field, Text, Result));
-        mcGEq: TmpRes := not (LT(Field, Text, Result));
-        mcBegin:
-          begin
-            case Field.FieldType of
-              ftString,
-              ftUpperString: TmpRes := UTF8Pos(Text, Field.AsString[Result]) = 1;
-            end;
-          end;
-        mcEnd:
-          begin
-            case Field.FieldType of
-              ftString,
-              ftUpperString: TmpRes := UTF8Pos(Text, Field.AsString[Result]) = UTF8Length(Field.AsString[Result]) - UTF8Length(Text);
-            end;
-          end;
+      SC := Search.SearchCondiction[i];
+      case SC.MatchCriteria of
+        mcEq:  TmpRes := Eq(SC, Result);
+        mcNEq: TmpRes := not (Eq(SC, Result));
+        mcLEq: TmpRes := LT(SC, Result) or EQ(SC, Result);
+        mcLT:  TmpRes := LT(SC, Result);
+        mcGT:  TmpRes := not (LT(SC, Result) or Eq(SC, Result));
+        mcGEq: TmpRes := not (LT(SC, Result));
+
+        mcBegin,
+        mcEnd,
         mcContains:
           begin
-            case Field.FieldType of
-              ftString,
-              ftUpperString: TmpRes := UTF8Pos(Text, Field.AsString[Result]) >= 1;
+            If not (SC.Field.FieldType in StringFieldTypes) then
+            begin
+              TmpRes := False;
+              Continue;
+            end;
+
+            S1 := SC.Text;
+            S2 := SC.Field.AsString[Result];
+            if not SC.CaseSensitive then
+            begin
+              S1 := UTF8LowerCase(S1);
+              S2 := UTF8LowerCase(S2);
+            end;
+
+            Case SC.MatchCriteria of
+              mcBegin:
+                TmpRes := UTF8Pos(S1, S2) = 1;
+              mcEnd:
+                TmpRes := UTF8Pos(S1, S2) = UTF8Length(S2) - UTF8Length(S1);
+              mcContains:
+                TmpRes := UTF8Pos(S1, S2) >= 1;
             end;
           end;
       end; // Case MatchCriteria of;
 
-      case BinOp of
+      case SC.BinOp of
         boAnd: Match := Match and TmpRes;
         boOr:  Match := Match or TmpRes;
       end;
@@ -211,6 +234,12 @@ begin
   FBinOp := AValue;
 end;
 
+procedure TSearchCondition.SetCaseSensitive(AValue: Boolean);
+begin
+  if FCaseSensitive = AValue then Exit;
+  FCaseSensitive := AValue;
+end;
+
 procedure TSearchCondition.SetMatchCriteria(const AValue: TMatchCriteria);
 begin
   if FMatchCriteria = AValue then exit;
@@ -221,6 +250,15 @@ procedure TSearchCondition.SetText(const AValue: string);
 begin
   if FText = AValue then exit;
   FText := AValue;
+end;
+
+constructor TSearchCondition.Create;
+begin
+  FBinOp          := boAnd;
+  FCaseSensitive  := true;
+  FField          := nil;
+  FMatchCriteria  := mcEq;
+  FText           := '';
 end;
 
 { TSearch }

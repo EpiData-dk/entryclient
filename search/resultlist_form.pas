@@ -25,6 +25,7 @@ type
   private
     { private declarations }
     FViewerFrame: TCustomFrame;
+    procedure KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure CloseQueryResultListForm(Sender: TObject; var CanClose: boolean);
     procedure ShowResultListForm(Sender: TObject);
     procedure SelectRecord(Sender: TObject; RecordNo: Integer;
@@ -39,6 +40,26 @@ var
   FDisplayFields: TEpiFields = nil;
 
 { TResultListForm }
+
+procedure TResultListForm.KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if ((Key = VK_ESCAPE) and (Shift = [])) or
+     {$IFDEF MSWINDOWS}
+     ((Key = VK_F4)  and (Shift = [ssAlt]))
+     {$ENDIF}
+     {$IFDEF UNIX}
+     ((Key = VK_W)  and (Shift = [ssCtrl]))
+     {$ENDIF}
+     {$IFDEF DARWIN}
+     ((Key = VK_W)  and (Shift = [ssMeta]))
+     {$ENDIF}
+  then
+  begin
+    Key := VK_UNKNOWN;
+    Self.Close;
+  end;
+end;
 
 procedure TResultListForm.CloseQueryResultListForm(Sender: TObject;
   var CanClose: boolean);
@@ -64,6 +85,8 @@ begin
   inherited CreateNew(TheOwner);
   OnShow := @ShowResultListForm;
   OnCloseQuery := @CloseQueryResultListForm;
+  OnKeyDown := @KeyDown;
+  KeyPreview := true;
 
   FViewerFrame := TDatasetViewerFrame.Create(self, DataFile);
   with TDatasetViewerFrame(FViewerFrame) do
