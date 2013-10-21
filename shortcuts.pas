@@ -26,6 +26,7 @@ var
     TShortCut;
 
   // Dataform
+  D_BrowseData,
   D_FieldNotes,
   D_MoveFirstRec,
   D_MoveSkipPrevRec,

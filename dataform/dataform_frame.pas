@@ -682,6 +682,7 @@ end;
 procedure TDataFormFrame.UpdateShortCuts;
 begin
   // Dataform
+  BrowseAllAction.ShortCut := D_BrowseData;
   ShowFieldNotesAction.ShortCut := D_FieldNotes;
   FirstRecAction.ShortCut := D_MoveFirstRec;
   JumpPrevRecAction.ShortCut := D_MoveSkipPrevRec;
