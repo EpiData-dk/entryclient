@@ -289,33 +289,13 @@ begin
     if not FActiveFrame.OpenProject(AFileName) then
       DoCloseProject;
   except
-    on E: TEpiCoreException do
+    on E: Exception do
       begin
         ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
+                    'An unknown error occured:' + LineEnding +
                     E.Message);
         DoCloseProject;
       end;
-    on E: EFOpenError do
-      begin
-        ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
-                    'File is corrupt or does not exist.');
-        DoCloseProject;
-      end;
-    on EEpiBadPassword do
-      begin
-        MessageDlg('Error',
-                   'Unable to open the file: ' + AFileName + LineEnding + LineEnding +
-                   'Invalid Password!',
-                   mtError,
-                   [mbOK], 0);
-        DoCloseProject;
-      end;
-  else
-    begin
-      ShowMessage('Unable to open the file: ' + AFileName + LineEnding +
-                  'An unknown error occured.');
-      DoCloseProject;
-    end;
   end;
 end;
 
@@ -632,7 +612,7 @@ begin
   with TProjectFrame(ActiveFrame).EpiDocument do
   begin
     S := S + LineEnding +
-      'Filename: ' + TProjectFrame(ActiveFrame).DocumentFileName + LineEnding +
+      'Filename: ' + TProjectFrame(ActiveFrame).DocumentFile.FileName + LineEnding +
       'XML Version: ' + IntToStr(Version) + LineEnding +
       'Field count: ' + IntToStr(DataFiles[0].Fields.Count) + LineEnding +
       'Record count: ' + IntToStr(DataFiles[0].Size);

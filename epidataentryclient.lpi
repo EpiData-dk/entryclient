@@ -145,7 +145,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="32">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -338,6 +338,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="notes_report"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="utils/documentfile_ext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="documentfile_ext"/>
+      </Unit31>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -347,7 +352,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-      <OtherUnitFiles Value="dataform;settings;search"/>
+      <OtherUnitFiles Value="dataform;settings;search;utils"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
