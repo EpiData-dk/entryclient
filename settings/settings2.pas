@@ -88,8 +88,7 @@ procedure TSettings2Form.FormShow(Sender: TObject);
 begin
   FActiveFrame := TFrame(SettingsView.Items[0].Data);
   SettingsView.Selected := SettingsView.Items[0];
-//  if ManagerSettings.SaveWindowPositions then
-    LoadFormPosition(Self, 'SettingsForm');
+  LoadFormPosition(Self, 'SettingsForm');
 
   TFrame(SettingsView.Items[0].Data).Show;
   SettingsView.SetFocus;
@@ -101,8 +100,7 @@ begin
   if not (FActiveFrame as ISettingsFrame).ApplySettings then exit;
 
   SaveSettingToIni(GetIniFileName);
-//  if ManagerSettings.SaveWindowPositions then
-    SaveFormPosition(Self, 'SettingsForm');
+  SaveFormPosition(Self, 'SettingsForm');
   CanClose := true;
 end;
 

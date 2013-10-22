@@ -1,24 +1,26 @@
 object AboutForm: TAboutForm
   Left = 597
-  Height = 465
+  Height = 365
   Top = 254
-  Width = 579
+  Width = 448
   ActiveControl = AboutPageControl
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'About EpiData Entry'
-  ClientHeight = 465
-  ClientWidth = 579
+  ClientHeight = 365
+  ClientWidth = 448
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '1.1'
+  OnShow = FormShow
+  LCLVersion = '1.3'
   object ButtonPanel: TPanel
     Left = 0
     Height = 50
-    Top = 415
-    Width = 579
+    Top = 315
+    Width = 448
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 579
+    ClientWidth = 448
     TabOrder = 0
     object CloseButton: TBitBtn
       AnchorSideLeft.Control = ButtonPanel
@@ -27,10 +29,10 @@ object AboutForm: TAboutForm
       AnchorSideTop.Side = asrCenter
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
-      Left = 253
+      Left = 188
       Height = 34
       Top = 8
-      Width = 72
+      Width = 73
       AutoSize = True
       BorderSpacing.Around = 6
       Cancel = True
@@ -42,17 +44,17 @@ object AboutForm: TAboutForm
   end
   object AboutPageControl: TPageControl
     Left = 0
-    Height = 415
+    Height = 315
     Top = 0
-    Width = 579
+    Width = 448
     ActivePage = VersionPage
     Align = alClient
     TabIndex = 0
     TabOrder = 1
     object VersionPage: TTabSheet
       Caption = 'Version'
-      ClientHeight = 382
-      ClientWidth = 573
+      ClientHeight = 282
+      ClientWidth = 442
       OnResize = VersionPageResize
       object Panel1: TPanel
         Left = 0
@@ -497,8 +499,8 @@ object AboutForm: TAboutForm
     end
     object AboutPage: TTabSheet
       Caption = 'About'
-      ClientHeight = 382
-      ClientWidth = 573
+      ClientHeight = 282
+      ClientWidth = 442
       object Memo1: TMemo
         Left = 0
         Height = 284

@@ -171,12 +171,13 @@ type
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
     procedure UpdateSettings;
-    procedure RestoreDefaultPos;
     procedure CloseQuery(var CanClose: boolean);
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  RecNo: integer read FRecNo write SetRecNo;
     property  Modified: boolean read FModified write SetModified;
     property  FieldEditList: TFpList read FFieldEditList;
+  public
+    class procedure RestoreDefaultPos(F: TDataFormFrame);
   end;
 
 const
@@ -1461,10 +1462,17 @@ begin
         (ControlFromEpiControl(DataFile.ControlItems[i]) as IEntryControl).UpdateSettings;
 end;
 
-procedure TDataFormFrame.RestoreDefaultPos;
+class procedure TDataFormFrame.RestoreDefaultPos(F: TDataFormFrame);
 begin
-  if Assigned(FNotesForm) then
-    FNotesForm.RestoreDefaultPos;
+  if Assigned(F) then
+    TNotesForm.RestoreDefaultPos(F.FNotesForm)
+  else
+    TNotesForm.RestoreDefaultPos();
+
+  TSearchForm1.RestoreDefaultPos;
+  TValueLabelsPickListForm.RestoreDefaultPos;
+
+  ResultListFormDefaultPosition();
 end;
 
 procedure TDataFormFrame.CloseQuery(var CanClose: boolean);

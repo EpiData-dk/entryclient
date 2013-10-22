@@ -24,7 +24,7 @@ type
     { private declarations }
   public
     { public declarations }
-    procedure RestoreDefaultPos;
+    class procedure RestoreDefaultPos(F: TForm = nil);
   end;
 
 implementation
@@ -38,7 +38,6 @@ uses
 
 procedure TNotesForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
-//  if ManagerSettings.SaveWindowPositions then
   SaveFormPosition(Self, 'NotesForm');
 end;
 
@@ -52,19 +51,31 @@ end;
 
 procedure TNotesForm.FormShow(Sender: TObject);
 begin
-//  if ManagerSettings.SaveWindowPositions then
   LoadFormPosition(Self, 'NotesForm');
 end;
 
-procedure TNotesForm.RestoreDefaultPos;
+class procedure TNotesForm.RestoreDefaultPos(F: TForm);
+var
+  CreatedF: Boolean;
 begin
-  BeginFormUpdate;
-  Width := 340;
-  Height := 350;
-  Top := MainForm.Top;
-  Left := MainForm.Left + MainForm.Width + 10;
-  EndFormUpdate;
-  SaveFormPosition(Self, 'NotesForm');
+  CreatedF := false;
+  if not Assigned(F) then
+  begin
+    F := TForm.Create(nil);
+    CreatedF := true;
+  end;
+
+  with F do
+  begin
+    LockRealizeBounds;
+    Width := 340;
+    Height := 350;
+    Top := MainForm.Top;
+    Left := MainForm.Left + MainForm.Width + 10;
+    UnlockRealizeBounds;
+  end;
+  SaveFormPosition(F, 'NotesForm');
+  if CreatedF then F.Free;
 end;
 
 { TNotesForm }

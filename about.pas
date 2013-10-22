@@ -28,12 +28,15 @@ type
     PlatformLabel: TLabel;
     VersionLabel: TLabel;
     VersionPage: TTabSheet;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure VersionPageResize(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
+    class procedure RestoreDefaultPos;
   end; 
 
 function GetProgramInfo: string;
@@ -98,10 +101,33 @@ begin
   PlatformLabel.Caption      := PlatformCaption;
 end;
 
+procedure TAboutForm.FormShow(Sender: TObject);
+begin
+  LoadFormPosition(Self, Self.ClassName);
+end;
+
+procedure TAboutForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  SaveFormPosition(Self, Self.ClassName);
+end;
+
 procedure TAboutForm.VersionPageResize(Sender: TObject);
 begin
   Panel1.Left := (VersionPage.Width div 2) - (Panel1.Width div 2);
   Panel1.Top  := (VersionPage.Height div 2) - (Panel1.Height div 2);
+end;
+
+class procedure TAboutForm.RestoreDefaultPos;
+var
+  Aform: TForm;
+begin
+  Aform := TForm.Create(nil);
+  Aform.Width := 450;
+  Aform.Height := 365;
+  Aform.top := (Screen.Monitors[0].Height - Aform.Height) div 2;
+  Aform.Left := (Screen.Monitors[0].Width - Aform.Width) div 2;
+  SaveFormPosition(Aform, TAboutForm.ClassName);
+  AForm.free;
 end;
 
 end.

@@ -459,10 +459,8 @@ begin
   SaveFormPosition(Self, 'MainForm');
 
   TSettings2Form.RestoreDefaultPos;
-  TSearchForm1.RestoreDefaultPos;
-
-  if Assigned(FActiveFrame) then
-    FActiveFrame.RestoreDefaultPos;
+  TAboutForm.RestoreDefaultPos;
+  TProjectFrame.RestoreDefaultPos(FActiveFrame);
 end;
 
 procedure TMainForm.BeginUpdateForm;
