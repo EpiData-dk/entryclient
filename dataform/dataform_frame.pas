@@ -701,8 +701,8 @@ begin
   FindPrevAction.ShortCut := D_SearchRepeatBackward;
   FindFastListAction.ShortCut := D_SearchRecordList;
   CopyToClipBoardAction.ShortCut := D_CopyRecordToClipBoard;
-  PrintDataFormAction.ShortCut := ;
-  PrintDataFormWithDataAction.ShortCut := ;
+  PrintDataFormAction.ShortCut   := D_PrintForm;
+  PrintDataFormWithDataAction.ShortCut := D_PrintFormWithData;
 end;
 
 procedure TDataFormFrame.UpdateNotesHints;
