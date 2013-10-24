@@ -19,6 +19,7 @@ type
     Panel2: TPanel;
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -32,7 +33,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings, main;
+  settings, main, LCLType;
 
 { TNotesForm }
 
@@ -47,6 +48,16 @@ var
 begin
   B:=true;
   FormCloseQuery(nil, B);
+end;
+
+procedure TNotesForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_ESCAPE) and (Shift = []) then
+  begin
+    Key := VK_UNKNOWN;
+    Close;
+  end;
 end;
 
 procedure TNotesForm.FormShow(Sender: TObject);
