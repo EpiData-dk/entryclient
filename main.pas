@@ -81,6 +81,7 @@ type
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure DefaultPosActionExecute(Sender: TObject);
+    procedure FileMenuClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -151,6 +152,7 @@ end;
 
 procedure TMainForm.OpenProjectBtnClick(Sender: TObject);
 begin
+  UpdateRecentFiles;
   OpenProjectPopupMenu.PopUp;
 end;
 
@@ -422,6 +424,7 @@ var
 begin
   ShortCutToKey(M_OpenRecent, K, Shift);
 
+  LoadRecentFilesIni(GetRecentIniFileName);
   RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
   RecentFilesSubMenu.Clear;
   RecentFilesPopupSubMenu.Visible := RecentFilesSubMenu.Visible;
@@ -616,11 +619,17 @@ begin
       'Record count: ' + IntToStr(DataFiles[0].Size);
   end;
   Clipboard.AsText := S;
+  ShowMessage('Version info copied to clipboard!');
 end;
 
 procedure TMainForm.DefaultPosActionExecute(Sender: TObject);
 begin
   ResoreDefaultPos;
+end;
+
+procedure TMainForm.FileMenuClick(Sender: TObject);
+begin
+  UpdateRecentFiles;
 end;
 
 end.
