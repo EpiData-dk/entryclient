@@ -188,6 +188,7 @@ object MainForm: TMainForm
     top = 176
     object FileMenu: TMenuItem
       Caption = '&File'
+      OnClick = FileMenuClick
       object OpenProjectMenuItem: TMenuItem
         Action = OpenProjectAction
       end

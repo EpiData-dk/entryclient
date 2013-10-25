@@ -12,6 +12,8 @@ procedure ShowResultListForm(Const Caption: String;
   Const FieldList: TEpiFields;
   Const RecordList: TBoundArray = nil);
 
+procedure ResultListFormDefaultPosition();
+
 implementation
 
 uses
@@ -87,6 +89,7 @@ begin
   OnCloseQuery := @CloseQueryResultListForm;
   OnKeyDown := @KeyDown;
   KeyPreview := true;
+  Position := poDesktopCenter;
 
   FViewerFrame := TDatasetViewerFrame.Create(self, DataFile);
   with TDatasetViewerFrame(FViewerFrame) do
@@ -111,6 +114,30 @@ begin
   end;
   FResultListForm.Caption := Caption + ' (' + IntToStr(Length(RecordList)) + ')';
   FResultListForm.Show;
+end;
+
+procedure ResultListFormDefaultPosition();
+var
+  F: TForm;
+begin
+  if Assigned(FResultListForm) then
+    F := FResultListForm
+  else
+    F := TForm.Create(nil);
+
+  with F do
+  begin
+    LockRealizeBounds;
+    Width := 600;
+    Height := 400;
+    Top := (Monitor.Height div 2) - (Height div 2);
+    Left := (Monitor.Width div 2) - (Width div 2);
+    UnlockRealizeBounds;
+    SaveFormPosition(F, 'ResultListForm');
+  end;
+
+  if F <> FResultListForm then
+    F.Free;
 end;
 
 end.

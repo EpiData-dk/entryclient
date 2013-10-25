@@ -18,6 +18,7 @@ begin
   P_SaveProject := KeyToShortCut(VK_S, [ssCtrl]);
 
   // Dataform
+  D_BrowseData           := KeyToShortCut(VK_D, [ssCtrl]);
   D_FieldNotes := KeyToShortCut(VK_F12, []);
   D_MoveFirstRec := KeyToShortCut(VK_HOME, [ssCtrl]);
   D_MoveSkipPrevRec := KeyToShortCut(VK_LEFT, [ssCtrl]);
@@ -35,4 +36,6 @@ begin
   D_SearchRepeatBackward := KeyToShortCut(VK_F3, [ssShift]);
   D_SearchRecordList := KeyToShortCut(VK_L, [ssCtrl]);
   D_CopyRecordToClipBoard := KeyToShortCut(VK_C, [ssCtrl, ssShift]);
+  D_PrintForm             := KeyToShortCut(VK_P, [ssCtrl, ssShift]);
+  D_PrintFormWithData     := KeyToShortCut(VK_P, [ssCtrl]);
 end;

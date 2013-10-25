@@ -450,7 +450,7 @@ object DataFormFrame: TDataFormFrame
   end
   object ActionList1: TActionList
     left = 432
-    top = 184
+    top = 183
     object FirstRecAction: TAction
       Category = 'Record'
       Caption = 'First Record'

@@ -6,11 +6,13 @@ object NotesForm: TNotesForm
   Caption = 'Notes'
   ClientHeight = 349
   ClientWidth = 337
+  KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '1.1'
+  LCLVersion = '1.3'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -26,10 +28,10 @@ object NotesForm: TNotesForm
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = Panel1
-      Left = 254
+      Left = 253
       Height = 34
       Top = 8
-      Width = 72
+      Width = 73
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10

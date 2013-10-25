@@ -19,12 +19,13 @@ type
     Panel2: TPanel;
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
-    procedure RestoreDefaultPos;
+    class procedure RestoreDefaultPos(F: TForm = nil);
   end;
 
 implementation
@@ -32,13 +33,12 @@ implementation
 {$R *.lfm}
 
 uses
-  settings, main;
+  settings, main, LCLType;
 
 { TNotesForm }
 
 procedure TNotesForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
-//  if ManagerSettings.SaveWindowPositions then
   SaveFormPosition(Self, 'NotesForm');
 end;
 
@@ -50,21 +50,43 @@ begin
   FormCloseQuery(nil, B);
 end;
 
+procedure TNotesForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_ESCAPE) and (Shift = []) then
+  begin
+    Key := VK_UNKNOWN;
+    Close;
+  end;
+end;
+
 procedure TNotesForm.FormShow(Sender: TObject);
 begin
-//  if ManagerSettings.SaveWindowPositions then
   LoadFormPosition(Self, 'NotesForm');
 end;
 
-procedure TNotesForm.RestoreDefaultPos;
+class procedure TNotesForm.RestoreDefaultPos(F: TForm);
+var
+  CreatedF: Boolean;
 begin
-  BeginFormUpdate;
-  Width := 340;
-  Height := 350;
-  Top := MainForm.Top;
-  Left := MainForm.Left + MainForm.Width + 10;
-  EndFormUpdate;
-  SaveFormPosition(Self, 'NotesForm');
+  CreatedF := false;
+  if not Assigned(F) then
+  begin
+    F := TForm.Create(nil);
+    CreatedF := true;
+  end;
+
+  with F do
+  begin
+    LockRealizeBounds;
+    Width := 340;
+    Height := 350;
+    Top := MainForm.Top;
+    Left := MainForm.Left + MainForm.Width + 10;
+    UnlockRealizeBounds;
+  end;
+  SaveFormPosition(F, 'NotesForm');
+  if CreatedF then F.Free;
 end;
 
 { TNotesForm }

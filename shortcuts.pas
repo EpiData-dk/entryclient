@@ -26,6 +26,7 @@ var
     TShortCut;
 
   // Dataform
+  D_BrowseData,
   D_FieldNotes,
   D_MoveFirstRec,
   D_MoveSkipPrevRec,
@@ -42,7 +43,9 @@ var
   D_SearchRepeatForward,
   D_SearchRepeatBackward,
   D_SearchRecordList,
-  D_CopyRecordToClipBoard:
+  D_CopyRecordToClipBoard,
+  D_PrintForm,
+  D_PrintFormWithData:
     TShortCut;
 
 

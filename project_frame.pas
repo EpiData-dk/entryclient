@@ -62,10 +62,12 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     function   OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
-    procedure   RestoreDefaultPos;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
     property    ActiveFrame: TDataFormFrame read FActiveFrame;
+  public
+    { Default position }
+    class procedure RestoreDefaultPos(F: TProjectFrame);
   end;
 
 implementation
@@ -411,10 +413,12 @@ begin
     ActiveFrame.UpdateSettings;
 end;
 
-procedure TProjectFrame.RestoreDefaultPos;
+class procedure TProjectFrame.RestoreDefaultPos(F: TProjectFrame);
 begin
-  if Assigned(FActiveFrame) then
-    FActiveFrame.RestoreDefaultPos;
+  if Assigned(F) then
+    TDataFormFrame.RestoreDefaultPos(F.FActiveFrame)
+  else
+    TDataFormFrame.RestoreDefaultPos(nil);
 end;
 
 end.
