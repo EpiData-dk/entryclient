@@ -629,7 +629,7 @@ end;
 
 procedure TMainForm.FileMenuClick(Sender: TObject);
 begin
-  UpdateRecentFiles;
+//  UpdateRecentFiles;
 end;
 
 end.
