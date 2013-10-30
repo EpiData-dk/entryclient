@@ -25,7 +25,7 @@ type
     FValueLabelLabel: TLabel;
     FRecNo: integer;
     procedure   SetRecNo(const AValue: integer);
-    procedure   FieldChange(Sender: TObject; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
+    procedure   FieldChange(Const Sender, Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
   protected
     WC:         WideChar;
     Caret:      Integer;
@@ -245,10 +245,13 @@ begin
   UpdateSettings;
 end;
 
-procedure TFieldEdit.FieldChange(Sender: TObject; EventGroup: TEpiEventGroup;
-  EventType: Word; Data: Pointer);
+procedure TFieldEdit.FieldChange(const Sender, Initiator: TEpiCustomBase;
+  EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
 begin
-  if (EventGroup = eegFields) and (EventType = Word(efceData)) then
+  if (Initiator = Field) and
+     (EventGroup = eegFields) and
+     (EventType = Word(efceData))
+  then
   begin
     UpdateText;
   end;
