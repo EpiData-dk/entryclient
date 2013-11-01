@@ -33,8 +33,10 @@ begin
   if FileName = '' then exit;
 
   DecodeDate(Now, Y, M, D);
-  S := ExtractFileNameWithoutExt(FileName) + '.' +
-       Format('%d-%.2d-%.2d', [Y,M,D]) + '.epz';
+  S := ExtractFileNameWithoutExt(FileName) +       // FileName
+       '_' + Format('%d-%.2d-%.2d', [Y,M,D]) +     // _<date>
+       '_' + IntToStr(Document.CycleNo) +          // _<cycle>
+       '.epz';                                     // eg: test_2013-24-10_2.epz
   DoSaveFile(S);
 end;
 
