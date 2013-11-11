@@ -51,6 +51,7 @@ type
     ShowWorkToolbar: boolean;
     NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
     CopyToClipBoardFormat: string;
+    ValueLabelsAsNotes: boolean;
 
     // Paths:
     WorkingDirUTF8: string;
@@ -93,6 +94,7 @@ var
     ShowWorkToolbar: true;
     NotesDisplay:   0;
     CopyToClipBoardFormat: '%f\t%q\t%d\t%v\n';
+    ValueLabelsAsNotes: true;
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
@@ -182,6 +184,7 @@ begin
       WriteBool(Sec, 'MultipleInstances', MultipleInstances);
       WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
       WriteString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
+      WriteBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -271,6 +274,7 @@ begin
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
     NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
     CopyToClipBoardFormat := ReadString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
+    ValueLabelsAsNotes := ReadBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
 
     // Fonts
     Sec := 'fonts';

@@ -1346,8 +1346,8 @@ begin
   NoteText := FE.Field.Notes.Text;
   if (NoteText = '') and
 //     Assigned(FE.Field.ValueLabelSet) and
-     (not FE.Field.ForcePickList) {and}
-//     (FE.Field.ShowValueLabelNotes)
+     (not FE.Field.ForcePickList) and
+     (EntrySettings.ValueLabelsAsNotes)
   then
   begin
     Lines := TStringList.Create;

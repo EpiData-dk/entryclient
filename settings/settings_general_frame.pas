@@ -15,6 +15,7 @@ type
   TSettingsGeneralFrame = class(TFrame, ISettingsFrame)
     AssociateBtn: TButton;
     AssociateLabel: TLabel;
+    ShowValuelabelsAsNoteChkBox: TCheckBox;
     FormatHlpBtn: TBitBtn;
     ClipBoardFormatCombo: TComboBox;
     Label3: TLabel;
@@ -142,6 +143,7 @@ begin
     HintTimeOutEdit.Text := IntToStr(HintTimeOut);
     NotesGroupBox.ItemIndex := NotesDisplay;
     ClipBoardFormatCombo.Text := CopyToClipBoardFormat;
+    ShowValuelabelsAsNoteChkBox.Checked := ValueLabelsAsNotes;
   end;
 end;
 
@@ -158,6 +160,7 @@ begin
     HintTimeOut := StrToInt(HintTimeOutEdit.Text);
     NotesDisplay := NotesGroupBox.ItemIndex;
     CopyToClipBoardFormat := ClipBoardFormatCombo.Text;
+    ValueLabelsAsNotes := ShowValuelabelsAsNoteChkBox.Checked;
   end;
 
   result := true;
