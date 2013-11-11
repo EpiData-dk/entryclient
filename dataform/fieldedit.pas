@@ -107,6 +107,8 @@ type
     function    SeparatorCount: integer; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    procedure KeyDownBeforeInterface(var Key: Word; Shift: TShiftState);
+      override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
       override;
@@ -122,6 +124,8 @@ type
     function    SeparatorCount: integer; override;
     function    DoValidateSyntax: boolean; override;
     function    DoValidateRange: boolean; override;
+    procedure KeyDownBeforeInterface(var Key: Word; Shift: TShiftState);
+      override;
   public
     function CompareTo(const AText: string; ct: TEpiComparisonType): boolean;
        override;
@@ -755,6 +759,19 @@ begin
   Result := Field.Ranges.InRange(EpiStrToDate(Text, DateSeparator, Field.FieldType, S));
 end;
 
+procedure TDateEdit.KeyDownBeforeInterface(var Key: Word; Shift: TShiftState);
+begin
+  if (Key in [VK_ADD, VK_OEM_PLUS]) and
+     (Shift = [])
+  then
+  begin
+    Text := FormatDateTime(Field.FormatString(), Now);
+    Key := VK_RETURN;
+  end;
+
+  inherited KeyDownBeforeInterface(Key, Shift);
+end;
+
 function TDateEdit.CompareTo(const AText: string; ct: TEpiComparisonType
   ): boolean;
 var
@@ -863,6 +880,19 @@ var
   S: string;
 begin
   Result := Field.Ranges.InRange(EpiStrToTime(Text, TimeSeparator, S));
+end;
+
+procedure TTimeEdit.KeyDownBeforeInterface(var Key: Word; Shift: TShiftState);
+begin
+  if (Key in [VK_ADD, VK_OEM_PLUS]) and
+     (Shift = [])
+  then
+  begin
+    Text := FormatDateTime('HH:NN:SS', Now);
+    Key := VK_RETURN;
+  end;
+
+  inherited KeyDownBeforeInterface(Key, Shift);
 end;
 
 function TTimeEdit.CompareTo(const AText: string; ct: TEpiComparisonType
