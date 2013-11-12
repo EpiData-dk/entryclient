@@ -6,8 +6,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   ClientHeight = 409
   ClientWidth = 541
   TabOrder = 0
-  DesignLeft = 470
-  DesignTop = 330
+  DesignLeft = 931
+  DesignTop = 282
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = RecordsToSkipEdit
@@ -146,7 +146,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 73
+    Height = 96
     Top = 176
     Width = 521
     Anchors = [akTop, akLeft, akRight]
@@ -163,13 +163,24 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 56
+    ClientHeight = 79
     ClientWidth = 517
     Items.Strings = (
       'Show notes as hint'
       'Show notes in window'
     )
     TabOrder = 6
+    object ShowValuelabelsAsNoteChkBox: TCheckBox
+      Left = 6
+      Height = 22
+      Hint = 'The extra information is:'#10' - Valuelabels'#10' - Range'
+      Top = 51
+      Width = 505
+      Caption = 'Show extra field info in note'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
   end
   object ClipBoardFormatCombo: TComboBox
     AnchorSideLeft.Control = RecordsToSkipEdit
@@ -178,7 +189,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Control = FormatHlpBtn
     Left = 256
     Height = 27
-    Top = 259
+    Top = 282
     Width = 241
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -196,7 +207,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 265
+    Top = 288
     Width = 164
     Caption = 'Copy-to-clipboard format:'
     ParentColor = False
@@ -208,7 +219,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 502
     Height = 28
-    Top = 258
+    Top = 281
     Width = 29
     Anchors = [akTop, akRight]
     BorderSpacing.Right = 10

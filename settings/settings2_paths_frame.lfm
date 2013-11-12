@@ -1,13 +1,13 @@
 object SettingsPathsFrame: TSettingsPathsFrame
   Left = 0
-  Height = 227
+  Height = 289
   Top = 0
-  Width = 863
-  ClientHeight = 227
-  ClientWidth = 863
+  Width = 482
+  ClientHeight = 289
+  ClientWidth = 482
   TabOrder = 0
-  DesignLeft = 462
-  DesignTop = 392
+  DesignLeft = 832
+  DesignTop = 571
   object Label17: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -28,7 +28,7 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Left = 10
     Height = 25
     Top = 27
-    Width = 822
+    Width = 441
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -60,7 +60,7 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Left = 10
     Height = 25
     Top = 79
-    Width = 822
+    Width = 441
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -92,10 +92,56 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Left = 10
     Height = 25
     Top = 131
-    Width = 822
+    Width = 441
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10
     BorderSpacing.Top = 2
     TabOrder = 2
+  end
+  object Label1: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = TutorialURLEdit
+    AnchorSideTop.Side = asrBottom
+    Left = 10
+    Height = 15
+    Top = 166
+    Width = 91
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Backup folder:'
+    ParentColor = False
+  end
+  object BackupFolderEdit: TDirectoryEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = WorkingDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 25
+    Top = 183
+    Width = 441
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 2
+    MaxLength = 0
+    TabOrder = 3
+  end
+  object PerProjectChkBox: TCheckBox
+    AnchorSideLeft.Control = Label1
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrCenter
+    Left = 126
+    Height = 22
+    Hint = 'Create a sub-folder for each project'
+    Top = 162
+    Width = 156
+    BorderSpacing.Left = 25
+    Caption = 'Per project subfolder'
+    TabOrder = 4
   end
 end
