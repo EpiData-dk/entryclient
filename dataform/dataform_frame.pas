@@ -1346,8 +1346,8 @@ begin
   NoteText := FE.Field.Notes.Text;
   if (NoteText = '') and
 //     Assigned(FE.Field.ValueLabelSet) and
-     (not FE.Field.ForcePickList) {and}
-//     (FE.Field.ShowValueLabelNotes)
+     (not FE.Field.ForcePickList) and
+     (EntrySettings.ValueLabelsAsNotes)
   then
   begin
     Lines := TStringList.Create;
@@ -2060,10 +2060,17 @@ begin
   begin
     FieldNameLabel.Caption := Name;
     FieldTypeLabel.Caption := EpiTypeNames[FieldType];
+    FieldInfoLabel.Caption := '';
+
+    // The three following if's should automatically be mutally exclusive... (date/time fields cannot have a valuelabel).
+    if FieldType in DateFieldTypes then
+      FieldInfoLabel.Caption := 'Current date: +';
+
+    if FieldType in TimeFieldTypes then
+      FieldInfoLabel.Caption := 'Current time: +';
+
     if Assigned(ValueLabelSet) then
-      FieldInfoLabel.Caption := 'Label: +/F9'
-    else
-      FieldInfoLabel.Caption := '';
+      FieldInfoLabel.Caption := 'Label: +/F9';
 
     S := 'Length: ';
     if FieldType in FloatFieldTypes then

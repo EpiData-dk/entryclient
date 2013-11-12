@@ -96,6 +96,8 @@ end;
 
 procedure TSettings2Form.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
+  if ModalResult = mrCancel then exit;
+
   CanClose := false;
   if not (FActiveFrame as ISettingsFrame).ApplySettings then exit;
 
