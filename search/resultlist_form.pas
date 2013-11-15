@@ -7,7 +7,9 @@ interface
 uses
   Classes, SysUtils, epidatafiles;
 
-procedure ShowResultListForm(Const Caption: String;
+procedure ShowResultListForm(
+  Const Owner: TComponent;
+  Const Caption: String;
   Const DataFile: TEpiDataFile;
   Const FieldList: TEpiFields;
   Const RecordList: TBoundArray = nil);
@@ -100,17 +102,17 @@ begin
   end;
 end;
 
-procedure ShowResultListForm(const Caption: String;
+procedure ShowResultListForm(const Owner: TComponent; const Caption: String;
   const DataFile: TEpiDataFile; const FieldList: TEpiFields;
   const RecordList: TBoundArray);
 begin
   if not Assigned(FResultListForm) then
-    FResultListForm := TResultListForm.Create(nil, DataFile);
+    FResultListForm := TResultListForm.Create(Owner, DataFile);
   with TDatasetViewerFrame(FResultListForm.FViewerFrame) do
   begin
     DisplayFields := FieldList;
     ShowRecords(RecordList);
-    ListGridHeaderClick(Nil, True, 0);
+//    ListGridHeaderClick(Nil, True, 0);
   end;
   FResultListForm.Caption := Caption + ' (' + IntToStr(Length(RecordList)) + ')';
   FResultListForm.Show;
