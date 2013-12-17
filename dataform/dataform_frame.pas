@@ -259,6 +259,7 @@ end;
 procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
 begin
   ShowResultListForm(
+    Self,
     'All Data',
     DataFile,
     DataFile.Fields
@@ -270,6 +271,7 @@ begin
   if RecNo = NewRecord then exit;
 
   FDataFile.Deleted[RecNo] := not FDataFile.Deleted[RecNo];
+  Modified := true;
   UpdateRecordEdit;
 end;
 
@@ -304,6 +306,7 @@ begin
     FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
 
   ShowResultListForm(
+    Self,
     'Result List:',
     DataFile,
     FieldList,
@@ -1243,6 +1246,7 @@ begin
       if Length(List) = 0 then exit;
 
       ShowResultListForm(
+          Self,
           'Showing results for: ' + SF.SearchLabel.Caption,
           DataFile,
           FieldList,
