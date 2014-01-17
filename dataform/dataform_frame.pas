@@ -270,6 +270,7 @@ begin
   if RecNo = NewRecord then exit;
 
   FDataFile.Deleted[RecNo] := not FDataFile.Deleted[RecNo];
+  Modified := true;
   UpdateRecordEdit;
 end;
 
