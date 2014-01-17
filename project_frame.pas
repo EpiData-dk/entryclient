@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  documentfile_ext;
+  documentfile_ext, epicustombase;
 
 type
 
@@ -16,6 +16,7 @@ type
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
+    ProgressBar1: TProgressBar;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
     ProjectActionList: TActionList;
@@ -32,6 +33,9 @@ type
     ToolButton3: TToolButton;
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
+    procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
+      ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
+      var Canceled: Boolean);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
@@ -60,7 +64,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor  Destroy; override;
     procedure   CloseQuery(var CanClose: boolean);
-    function   OpenProject(Const aFilename: string): boolean;
+    function    OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
@@ -108,6 +112,42 @@ begin
                 'Please enter password:');
 end;
 
+procedure TProjectFrame.EpiDocumentProgress(const Sender: TEpiCustomBase;
+  ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
+  var Canceled: Boolean);
+Const
+  LastUpdate: Cardinal = 0;
+  ProgressUpdate: Cardinal = 0;
+begin
+  case ProgressType of
+    eptInit:
+      begin
+        ProgressUpdate := MaxPos div 50;
+        ProgressBar1.Position := CurrentPos;
+        ProgressBar1.Visible := true;
+        ProgressBar1.Max := MaxPos;
+        Application.ProcessMessages;
+      end;
+    eptFinish:
+      begin
+        ProgressBar1.Visible := false;
+        Application.ProcessMessages;
+        LastUpdate := 0;
+      end;
+    eptRecords:
+      begin
+        if CurrentPos > (LastUpdate + ProgressUpdate) then
+        begin
+          ProgressBar1.Position := CurrentPos;
+          {$IFNDEF MSWINDOWS}
+          Application.ProcessMessages;
+          {$ENDIF}
+          LastUpdate := CurrentPos;
+        end;
+      end;
+  end;
+end;
+
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
   SaveProjectAction.Enabled := Assigned(DocumentFile);
@@ -124,24 +164,25 @@ function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
 begin
   Result := false;
   try
-    FDocumentFile := TEntryDocumentFile.Create;
-    if not FDocumentFile.OpenFile(AFileName) then
-    begin
-      FreeAndNil(FDocumentFile);
-      Exit;
-    end;
-  except
-    FreeAndNil(FDocumentFile);
-    // If ever this happens then it is because something not right happened
-    // during OpenFile(...) and we need to notify the user.
-    raise;
-  end;
-
-  try
     Screen.Cursor := crHourGlass;
     Application.ProcessMessages;
-    MainForm.BeginUpdateForm;
 
+    try
+      FDocumentFile := TEntryDocumentFile.Create;
+      FDocumentFile.OnProgress := @EpiDocumentProgress;
+      if not FDocumentFile.OpenFile(AFileName) then
+      begin
+        FreeAndNil(FDocumentFile);
+        Exit;
+      end;
+    except
+      FreeAndNil(FDocumentFile);
+      // If ever this happens then it is because something not right happened
+      // during OpenFile(...) and we need to notify the user.
+      raise;
+    end;
+
+    MainForm.BeginUpdateForm;
     try
       EpiDocument.OnModified := @EpiDocModified;
     except
