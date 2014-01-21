@@ -150,7 +150,9 @@ end;
 
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
-  SaveProjectAction.Enabled := Assigned(DocumentFile);
+  SaveProjectAction.Enabled :=
+    Assigned(DocumentFile) and
+    (not DocumentFile.ReadOnly);
 end;
 
 procedure TProjectFrame.ToolButton1Click(Sender: TObject);
