@@ -194,7 +194,8 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
   entrylabel, entrysection, entry_globals,
-  notes_report, epireport_generator_txt;
+  notes_report, epireport_generator_txt,
+  strutils;
 
 type
   TKeyDownData = record
@@ -1346,6 +1347,7 @@ var
   NoteText: String;
   Rep: TNotesReport;
   Lines: TStringList;
+  I: Integer;
 begin
   NoteText := FE.Field.Notes.Text;
   if (NoteText = '') and
@@ -1383,6 +1385,14 @@ begin
       if Assigned(FNotesHint) then FNotesHint.Hide;
       exit;
     end;
+
+    I := NPos(LineEnding, NoteText, 7);
+    if I > 0 then
+    begin
+      Delete(NoteText, I + 1, Length(NoteText));
+      NoteText += '...';
+    end;
+
 
     if not Assigned(FNotesHint) then
     begin
