@@ -20,7 +20,12 @@ implementation
 
 uses
   Forms, Controls, LCLType, main, LCLIntf, entry_messages,
-  epiv_dataset_viewer_frame, settings;
+  {$IFDEF DARWIN}
+  epiv_dataset_viewer_frame_mac,
+  {$ELSE}
+  epiv_dataset_viewer_frame,
+  {$ENDIF}
+  settings;
 
 type
   { TResultListForm }
@@ -112,7 +117,9 @@ begin
   begin
     DisplayFields := FieldList;
     ShowRecords(RecordList);
-//    ListGridHeaderClick(Nil, True, 0);
+    {$IFDEF DARWIN}
+    ListGridHeaderClick(Nil, True, 0);
+    {$ENDIF}
   end;
   FResultListForm.Caption := Caption + ' (' + IntToStr(Length(RecordList)) + ')';
   FResultListForm.Show;
