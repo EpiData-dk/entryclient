@@ -172,6 +172,8 @@ begin
     try
       FDocumentFile := TEntryDocumentFile.Create;
       FDocumentFile.OnProgress := @EpiDocumentProgress;
+      FDocumentFile.BackupDirectory := EntrySettings.BackupDirUTF8;
+      FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
       if not FDocumentFile.OpenFile(AFileName) then
       begin
         FreeAndNil(FDocumentFile);
