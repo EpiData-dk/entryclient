@@ -35,20 +35,21 @@ begin
   Result := False;
   if (not IsSaved) then exit;
 
-  Prefix := EntrySettings.BackupDirUTF8;
+  Prefix := EntrySettings.BackupDirUTF8 + DirectorySeparator;
   FileNameNoExt := ExtractFileNameOnly(FileName);
   if EntrySettings.PerProjectBackup then
     Prefix := Prefix + DirectorySeparator + FileNameNoExt + DirectorySeparator;
 
+  Prefix := ExpandFileNameUTF8(Prefix);
   if not DirectoryExistsUTF8(Prefix) then
     if not CreateDirUTF8(Prefix) then exit;
 
   DecodeDate(Now, Y, M, D);
-  S := Prefix + FileNameNoExt +                    // <backupdir>[/<projectfilename>]
+  S := Prefix + FileNameNoExt +                    // <backupdir>/[<projectfilename>/]projectfilename
        '_' + Format('%d-%.2d-%.2d', [Y,M,D]) +     // _<date>
        '_' + IntToStr(Document.CycleNo) +          // _<cycle>
-       '.epz';                                     // eg:  ./backupdir/myproject/test_2013-24-10_2.epz
-
+       '.epz';                                     // eg:  ./backupdir/test/test_2013-24-10_2.epz
+                                                   // or:  ./backupdir/test_2013-24-10_2.epz
   try
     DoSaveFile(S);
     Result := true;
