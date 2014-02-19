@@ -18,7 +18,8 @@
       <BuildNr Value="5"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable ProductVersion=""/>
+      <Attributes pvaSpecialBuild="True"/>
+      <StringTable ProductVersion="" SpecialBuild="EXTERNAL VALUELABELS"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
