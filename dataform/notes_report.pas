@@ -25,7 +25,7 @@ type
 implementation
 
 uses
-  epimiscutils, epireport_types;
+  epimiscutils, epireport_types, math;
 
 { TNotesReport }
 
@@ -38,13 +38,21 @@ procedure TNotesReport.RunReport;
 var
   i, j: Integer;
   S: String;
+  ShownVLCount: Integer;
+const
+  MaxShownVL = 8;
+
 begin
   inherited RunReport;
 
   I := 0;
+  if Assigned(Field.ValueLabelSet) then
+    ShownVLCount := Min(MaxShownVL, Field.ValueLabelSet.Count)
+  else
+    ShownVLCount :=  MaxShownVL;
 
   if Assigned(Field.ValueLabelSet) then
-    Inc(I, Field.ValueLabelSet.Count);
+    Inc(I, ShownVLCount);
 
   if (I = 0) and
      (not Assigned(Field.Ranges))
@@ -56,7 +64,7 @@ begin
   j := 0;
 
   if Assigned(Field.ValueLabelSet) then
-    for i := 0 to Field.ValueLabelSet.Count - 1 do
+    for i := 0 to ShownVLCount - 1 do
     with Field.ValueLabelSet[i] do
     begin
       DoTableCell(0, j, ValueAsString, tcaLeftAdjust);

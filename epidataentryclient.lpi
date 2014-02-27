@@ -159,6 +159,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/external_vl.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">

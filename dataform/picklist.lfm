@@ -1,31 +1,31 @@
 object ValueLabelsPickListForm: TValueLabelsPickListForm
-  Left = 994
-  Height = 229
-  Top = 528
-  Width = 248
+  Left = 751
+  Height = 422
+  Top = 307
+  Width = 466
   ActiveControl = Edit1
   BorderStyle = bsSizeToolWin
   Caption = 'Value Labels'
-  ClientHeight = 229
-  ClientWidth = 248
+  ClientHeight = 422
+  ClientWidth = 466
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
-  LCLVersion = '1.1'
+  LCLVersion = '1.3'
   object Panel1: TPanel
     Left = 0
     Height = 32
     Top = 0
-    Width = 248
+    Width = 466
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 248
+    ClientWidth = 466
     TabOrder = 0
     object Edit1: TEdit
       Left = 1
       Height = 30
       Top = 1
-      Width = 246
+      Width = 464
       Align = alClient
       AutoSize = False
       BorderSpacing.Around = 1
@@ -36,23 +36,22 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   end
   object LabelsListBox: TListBox
     Left = 81
-    Height = 195
+    Height = 388
     Top = 33
-    Width = 166
+    Width = 384
     Align = alClient
     BorderSpacing.Around = 1
     ItemHeight = 0
     OnDblClick = LabelsListBoxDblClick
-    OnKeyDown = LabelsListBoxKeyDown
     OnSelectionChange = LabelsListBoxSelectionChange
     OnUTF8KeyPress = UTF8KeyPress
-    ScrollWidth = 164
+    ScrollWidth = 382
     TabOrder = 2
     TopIndex = -1
   end
   object ValueListBox: TListBox
     Left = 1
-    Height = 195
+    Height = 388
     Top = 33
     Width = 73
     Align = alLeft
@@ -68,7 +67,7 @@ object ValueLabelsPickListForm: TValueLabelsPickListForm
   end
   object Splitter1: TSplitter
     Left = 75
-    Height = 197
+    Height = 390
     Top = 32
     Width = 5
     AutoSnap = False
