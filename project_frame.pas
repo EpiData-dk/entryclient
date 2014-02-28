@@ -36,6 +36,8 @@ type
     procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
       ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
       var Canceled: Boolean);
+    procedure LoadError(const Sender: TEpiCustomBase; ErrorType: Word;
+      Data: Pointer; out Continue: boolean);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
@@ -148,6 +150,22 @@ begin
   end;
 end;
 
+procedure TProjectFrame.LoadError(const Sender: TEpiCustomBase;
+  ErrorType: Word; Data: Pointer; out Continue: boolean);
+var
+  Fn: String;
+begin
+  Continue := false;
+
+  Fn := string(data^);
+  ShowMessage(
+    'External file "' + Fn + '" not found.' + LineEnding +
+    'Please restore "' + Fn + '" to folder: ' + ExtractFilePath(FDocumentFile.FileName) + LineEnding +
+    'Cannot Enter Data into: ' + ExtractFileName(FDocumentFile.FileName) + LineEnding +
+    'Contact Project Manager.'
+  );
+end;
+
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
   SaveProjectAction.Enabled :=
@@ -172,6 +190,7 @@ begin
     try
       FDocumentFile := TEntryDocumentFile.Create;
       FDocumentFile.OnProgress := @EpiDocumentProgress;
+      FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.BackupDirectory := EntrySettings.BackupDirUTF8;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
       if not FDocumentFile.OpenFile(AFileName) then

@@ -77,6 +77,9 @@ begin
     Edit1.Text := FInitialValue
   else
     Edit1.Text := ValueListBox.Items[0];
+
+  LabelsListBox.TopIndex := LabelsListBox.ItemIndex;
+  ValueListBox.TopIndex  := ValueListBox.ItemIndex;
 end;
 
 procedure TValueLabelsPickListForm.Edit1Change(Sender: TObject);
@@ -179,7 +182,7 @@ var
 begin
   S := String(UTF8Key);
 
-  If Word(UTF8Key[1]) in [VK_BACK] then
+  If Word(UTF8Key[1]) in [VK_BACK, VK_RETURN] then
   begin
     exit;
   end;

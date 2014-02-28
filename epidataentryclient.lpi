@@ -16,9 +16,11 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="1"/>
+      <BuildNr Value="1"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable ProductVersion=""/>
+      <Attributes pvaSpecialBuild="True"/>
+      <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -158,6 +160,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/external_vl.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">

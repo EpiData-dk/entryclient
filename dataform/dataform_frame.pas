@@ -2108,6 +2108,9 @@ begin
   if Assigned(FHintWindow) then FHintWindow.Hide;
   if Assigned(FNotesForm) then FNotesForm.Hide;
 
+  ShowHintMsg('', nil);
+  FNotesHint.Hide;
+
   VLForm := TValueLabelsPickListForm.Create(Self, AFieldEdit.Field);
   VLForm.SetInitialValue(AFieldEdit.Text);
   P := AFieldEdit.Parent.ClientToScreen(Point(AFieldEdit.Left + AFieldEdit.Width + 2, AFieldEdit.Top));
