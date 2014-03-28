@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  documentfile_ext, epicustombase;
+  VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics;
 
 type
 
@@ -31,6 +31,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    DataFileTree: TVirtualStringTree;
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
     procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
@@ -43,12 +44,11 @@ type
     procedure ToolButton1Click(Sender: TObject);
   private
     { private declarations }
-    FActiveFrame: TDataFormFrame;
     FDocumentFile: TEntryDocumentFile;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
     procedure DoSaveProject(Const aFilename: string);
-    procedure DoNewDataForm(DataFile: TEpiDataFile);
+    function  DoNewDataForm(DataFile: TEpiDataFile): TDataFormFrame;
     procedure DoCloseProject;
     procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
@@ -56,6 +56,32 @@ type
     function  DoOpenProject(Const aFilename: string): boolean;
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
+  private
+    { Relational handling (checking/updating/etc...) }
+    procedure RequireFocus(Sender: TObject);
+    procedure FrameModified(Sender: TObject);
+    function GetFilteredDataFileSize(Const DataFile: TEpiDataFile): Integer;
+    function DataformRecordChange(Sender: TObject): boolean;
+    procedure LM_ProjectRelate(var Msg: TLMessage); message LM_PROJECT_RELATE;
+  private
+    { Tree Handling }
+    FProjectNode: PVirtualNode;
+    FSelectedNode: PVirtualNode;
+    procedure DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex);
+    procedure DataFileTreeFocusChanging(Sender: TBaseVirtualTree; OldNode,
+      NewNode: PVirtualNode; OldColumn, NewColumn: TColumnIndex;
+      var Allowed: Boolean);
+    procedure DataFileTreeGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: String);
+    procedure DataFileTreeInitChildren(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; var ChildCount: Cardinal);
+    procedure DataFileTreeInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure DataFileTreePaintText(Sender: TBaseVirtualTree;
+      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+      TextType: TVSTTextType);
   private
     function GetEpiDocument: TEpiDocument;
     { messages }
@@ -70,7 +96,6 @@ type
     procedure   UpdateSettings;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
-    property    ActiveFrame: TDataFormFrame read FActiveFrame;
   public
     { Default position }
     class procedure RestoreDefaultPos(F: TProjectFrame);
@@ -82,8 +107,18 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType, shortcuts,
+  epistringutils, Menus, LCLType, shortcuts, entry_globals,
   RegExpr;
+
+type
+
+  TNodeData = record
+    Frame: TDataFormFrame;
+    Relation: TEpiMasterRelation;
+    RelationList: TEpiRelationList;
+  end;
+  PNodeData = ^TNodeData;
+
 
 { TProjectFrame }
 
@@ -166,6 +201,18 @@ begin
   );
 end;
 
+procedure TProjectFrame.RequireFocus(Sender: TObject);
+var
+  Frame: TDataFormFrame;
+begin
+  Frame := TDataFormFrame(Sender);
+
+  DataFileTree.FocusedNode := Frame.TreeNode;
+  DataFileTree.Selected[Frame.TreeNode] := true;
+  DataFileTree.InvalidateNode(Frame.TreeNode);
+  Frame.BringToFront;
+end;
+
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
   SaveProjectAction.Enabled :=
@@ -181,6 +228,8 @@ begin
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
+var
+  Node: PVirtualNode;
 begin
   Result := false;
   try
@@ -210,7 +259,7 @@ begin
       EpiDocument.OnModified := @EpiDocModified;
     except
       if Assigned(FDocumentFile) then FreeAndNil(FDocumentFile);
-      if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
+//      if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
       raise;
     end;
 
@@ -223,7 +272,10 @@ begin
       FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
     end;
 
-    DoNewDataForm(EpiDocument.DataFiles[0]);
+    DataFileTree.RootNodeCount := 1;
+    Node := FProjectNode^.FirstChild;
+    DataFileTree.Selected[Node] := true;
+    DataFileTree.FocusedNode := Node;
 
     EpiDocument.Modified := false;
 
@@ -238,8 +290,8 @@ begin
 
     // Put the "Activate first field" here, because prior to EndUpdateForm controls
     // have no handle, and hence cannot be focused correctly.
-    if Assigned(FActiveFrame) then
-      FActiveFrame.FirstFieldAction.Execute;
+{    if Assigned(FActiveFrame) then
+      FActiveFrame.FirstFieldAction.Execute;   }
   end;
 end;
 
@@ -254,6 +306,175 @@ begin
   SaveProjectAction.ShortCut := P_SaveProject;
 end;
 
+procedure TProjectFrame.FrameModified(Sender: TObject);
+begin
+  DataFileTree.InvalidateNode(TDataFormFrame(Sender).TreeNode);
+end;
+
+function TProjectFrame.GetFilteredDataFileSize(const DataFile: TEpiDataFile
+  ): Integer;
+begin
+  // TODO!
+  result := DataFile.Size;
+end;
+
+function TProjectFrame.DataformRecordChange(Sender: TObject): boolean;
+
+  function RecursiveRecordChange(Node: PVirtualNode): boolean;
+  var
+    ND: PNodeData;
+  begin
+    ND := DataFileTree.GetNodeData(Node);
+    result := ND^.Frame.CanChange;
+
+    Node := Node^.FirstChild;
+    while Result and Assigned(Node) do
+    begin
+      Result := RecursiveRecordChange(Node);
+      Node := Node^.NextSibling;
+    end;
+  end;
+
+var
+  Node: PVirtualNode;
+begin
+  Result := true;
+  Node := TDataFormFrame(Sender).TreeNode^.FirstChild;
+
+  while Result and Assigned(Node) do
+  begin
+    Result := RecursiveRecordChange(Node);
+    Node := Node^.NextSibling;
+  end;
+end;
+
+procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
+var
+  DetailRelation: TEpiDetailRelation;
+  Node: PVirtualNode;
+  ND: PNodeData;
+begin
+  ND := DataFileTree.GetNodeData(FSelectedNode);
+  if (not ND^.Frame.AllKeyFieldsAreFilled) then
+    Exit;
+
+  DetailRelation := TEpiDetailRelation(Msg.WParam);
+  Node := PVirtualNode(DetailRelation.FindCustomData(PROJECT_RELATION_NODE_KEY));
+  ND := DataFileTree.GetNodeData(Node);
+
+  DataFileTree.Selected[Node] := true;
+  DataFileTree.FocusedNode := node;
+
+  ND^.Frame.RelateInit();
+end;
+
+procedure TProjectFrame.DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex);
+var
+  NodeData: PNodeData;
+begin
+  NodeData := PNodeData(Sender.GetNodeData(Node));
+  NodeData^.Frame.BringToFront;
+  FSelectedNode := Node;
+
+  Sender.InvalidateChildren(FProjectNode, true);
+end;
+
+procedure TProjectFrame.DataFileTreeFocusChanging(Sender: TBaseVirtualTree;
+  OldNode, NewNode: PVirtualNode; OldColumn, NewColumn: TColumnIndex;
+  var Allowed: Boolean);
+var
+  NodeData: PNodeData;
+begin
+  if NewNode = FProjectNode then
+  begin
+    Allowed := False;
+    Exit;
+  end;
+
+
+  NodeData := Sender.GetNodeData(NewNode);
+
+
+  // TODO : KeyField checks etc...
+end;
+
+procedure TProjectFrame.DataFileTreeGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: String);
+var
+  DF: TEpiDataFile;
+  ND: PNodeData;
+begin
+  if (Node = FProjectNode) then
+  begin
+    if (TextType = ttNormal) then
+      CellText := EpiDocument.Study.Title.Text
+  end else
+  begin
+    ND := Sender.GetNodeData(Node);
+    DF := ND^.Relation.Datafile;
+    case TextType of
+      ttNormal:
+        CellText := BoolToStr(ND^.Frame.Modified, '*', '') + DF.Caption.Text;
+      ttStatic:
+        begin
+          if (Node = FSelectedNode) or
+             (Sender.HasAsParent(Node, FSelectedNode))
+          then
+            CellText := Format('(%d)', [GetFilteredDataFileSize(DF)]);
+        end;
+    end;
+  end;
+end;
+
+procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; var ChildCount: Cardinal);
+begin
+  ChildCount := PNodeData(Sender.GetNodeData(Node))^.RelationList.Count;
+end;
+
+procedure TProjectFrame.DataFileTreeInitNode(Sender: TBaseVirtualTree;
+  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  NodeData,
+  ParentData: PNodeData;
+  ARelation: TEpiMasterRelation;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  ParentData := Sender.GetNodeData(ParentNode);
+  InitialStates := [ivsExpanded];
+
+  if (ParentNode = nil) then
+  begin
+    FProjectNode := Node;
+    NodeData^.RelationList := EpiDocument.Relations;
+    Include(InitialStates, ivsHasChildren);
+  end else begin
+    ARelation := ParentData^.RelationList[Node^.Index];
+    ARelation.AddCustomData(PROJECT_RELATION_NODE_KEY, TObject(Node));
+    with NodeData^ do
+    begin
+      Relation := ARelation;
+      RelationList := ARelation.DetailRelations;
+      Frame := DoNewDataForm(ARelation.Datafile);
+      Frame.TreeNode := Node;
+    end;
+    if ARelation.DetailRelations.Count > 0 then
+      Include(InitialStates, ivsHasChildren);
+  end;
+end;
+
+procedure TProjectFrame.DataFileTreePaintText(Sender: TBaseVirtualTree;
+  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  TextType: TVSTTextType);
+begin
+  if Node = FProjectNode then exit;
+
+  if (TextType = ttStatic) then
+    TargetCanvas.Font.Color := clBlue;
+end;
+
 function TProjectFrame.GetEpiDocument: TEpiDocument;
 begin
   result := nil;
@@ -263,35 +484,38 @@ end;
 
 procedure TProjectFrame.LMDataFormGotoRec(var Msg: TLMessage);
 begin
-  if Assigned(FActiveFrame) then
-    Msg.Result := SendMessage(FActiveFrame.Handle, Msg.Msg, Msg.WParam, Msg.LParam);
+  // TODO
+{  if Assigned(FActiveFrame) then
+    Msg.Result := SendMessage(FActiveFrame.Handle, Msg.Msg, Msg.WParam, Msg.LParam);}
 end;
 
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
 begin
-  ActiveFrame.Cursor := crHourGlass;
+  Screen.Cursor := crHourGlass;
   Application.ProcessMessages;
   try
     DocumentFile.SaveFile(aFilename);
     AddToRecent(aFilename);
   finally
-    ActiveFrame.Cursor := crDefault;
+    Screen.Cursor := crDefault;
     Application.ProcessMessages;
   end;
 end;
 
-procedure TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile);
+function TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile): TDataFormFrame;
 var
   Frame: TDataFormFrame;
 begin
-  Frame := TDataFormFrame.Create(Self);
-  Frame.Align := alClient;
-  Frame.Parent := Self;
-  Frame.DataFile := DataFile;
-  FActiveFrame := Frame;
+  Result := TDataFormFrame.Create(Self);
+  Result.Align := alClient;
+  Result.Parent := Self;
+  Result.DataFile := DataFile;
+  Result.OnModified := @FrameModified;
+  Result.OnRecordChange := @DataformRecordChange;
+  Result.OnRequireFocus := @RequireFocus;
 
-  DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Caption.Text, Frame);
-
+//  DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Caption.Text, Frame);
+{
   // TODO : Adapt to multiple datafiles.
   With MainForm do
   begin
@@ -323,7 +547,7 @@ begin
     // Help menu.
     FieldNotesMenuItem.Action  := Frame.ShowFieldNotesAction;
     FieldNotesMenuItem.Action.Update;
-  end;
+  end;  }
 end;
 
 procedure TProjectFrame.DoCloseProject;
@@ -342,7 +566,6 @@ begin
 
   // TODO : Delete ALL dataforms!
   FreeAndNil(FDocumentFile);
-  FreeAndNil(FActiveFrame);
   FreeAndNil(FBackupTimer);
   DataFilesTreeView.Items.Clear;
 end;
@@ -405,17 +628,18 @@ constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   FDocumentFile := nil;
-  FActiveFrame := nil;
   FAllowForEndBackup := false;;
 
-  UpdateSettings;
+  DataFileTree.OnGetText      := @DataFileTreeGetText;
+  DataFileTree.OnInitNode     := @DataFileTreeInitNode;
+  DataFileTree.OnInitChildren := @DataFileTreeInitChildren;
+  DataFileTree.OnPaintText    := @DataFileTreePaintText;
+  DataFileTree.NodeDataSize   := SizeOf(TNodeData);
+  DataFileTree.OnFocusChanging := @DataFileTreeFocusChanging;
+  DataFileTree.OnFocusChanged := @DataFileTreeFocusChanged;
 
-  {$IFNDEF EPI_DEBUG}
-    ProjectPanel.Enabled := false;
-    ProjectPanel.Visible := false;
-    Splitter1.Enabled    := false;
-    Splitter1.Visible    := false;
-  {$ENDIF}
+
+  UpdateSettings;
 end;
 
 destructor TProjectFrame.Destroy;
@@ -431,11 +655,10 @@ begin
   CanClose := true;
 
   if not Assigned(EpiDocument) then exit;
-  if not Assigned(ActiveFrame) then exit;
 
   // Passes control to DataformFrame, which
   // ensures a potential modified record is commited.
-  ActiveFrame.CloseQuery(CanClose);
+//  ActiveFrame.CloseQuery(CanClose);
   if not CanClose then exit;
 
   if (EpiDocument.Modified) {or (ActiveFrame.Modified)} then
@@ -473,17 +696,19 @@ procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
 
-  if Assigned(ActiveFrame) then
-    ActiveFrame.UpdateSettings;
+  // TODO
+{  if Assigned(ActiveFrame) then
+    ActiveFrame.UpdateSettings;}
 end;
 
 class procedure TProjectFrame.RestoreDefaultPos(F: TProjectFrame);
 begin
-  if Assigned(F) then
+{  if Assigned(F) then
     TDataFormFrame.RestoreDefaultPos(F.FActiveFrame)
   else
-    TDataFormFrame.RestoreDefaultPos(nil);
+    TDataFormFrame.RestoreDefaultPos(nil);    }
 end;
 
 end.
+
 

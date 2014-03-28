@@ -7,12 +7,13 @@ interface
 uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
-  ComCtrls, fieldedit, notes_form, search, LMessages, entry_messages;
+  ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
+  VirtualTrees, search, entry_globals;
 
 type
 
   { TDataFormFrame }
-  TFieldExitFlowType = (fxtOk, fxtError, fxtJump);
+  TFieldExitFlowType = (fxtOk, fxtError, fxtJump, fxtRelate);
 
   TDataFormFrame = class(TFrame)
     BrowseAllAction: TAction;
@@ -150,6 +151,7 @@ type
     { Flow control/Validation/Script handling}
     procedure FieldEnterFlow(FE: TFieldEdit);
     function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+    function  DoValidateKeyFields: Boolean;
     function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
@@ -178,6 +180,24 @@ type
     property  FieldEditList: TFpList read FFieldEditList;
   public
     class procedure RestoreDefaultPos(F: TDataFormFrame);
+
+  { Project/Relation stuff }
+  private
+    FOnModified: TNotifyEvent;
+    FOnRecordChange: TRecordChangeEvent;
+    FOnRequireFocus: TNotifyEvent;
+    FTreeNode: PVirtualNode;
+    function  DoRecordChange: boolean;
+    procedure  DoRequireFocus;
+    procedure FillKeyFields;
+  public
+    function  CanChange: Boolean;
+    function  AllKeyFieldsAreFilled: boolean;
+    procedure RelateInit();
+    property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
+    property  OnRecordChange: TRecordChangeEvent read FOnRecordChange write FOnRecordChange;
+    property  OnModified: TNotifyEvent read FOnModified write FOnModified;
+    property  OnRequireFocus: TNotifyEvent read FOnRequireFocus write FOnRequireFocus;
   end;
 
 const
@@ -193,7 +213,7 @@ uses
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
-  entrylabel, entrysection, entry_globals,
+  entrylabel, entrysection,
   notes_report, epireport_generator_txt,
   strutils;
 
@@ -734,6 +754,9 @@ begin
     if AValue < 0 then AValue := 0;
   end;
 
+  if not DoRecordChange then exit;
+
+
   if (not (AValue = NewRecord)) and Modified then
   begin
     Res := MessageDlg('Warning',
@@ -767,6 +790,8 @@ begin
   if FModified = AValue then exit;
   FModified := AValue;
   UpdateRecordEdit;
+  if Assigned(OnModified) then
+    OnModified(Self);
 end;
 
 function TDataFormFrame.GetHintWindow: THintWindow;
@@ -805,7 +830,8 @@ var
   Res: LongInt;
   AVal: Int64;
 begin
-  Result := false;
+  Result := DoRecordChange;
+  if not Result then exit;
 
   // *******************
   // * Commit old data *
@@ -1491,12 +1517,66 @@ begin
   ResultListFormDefaultPosition();
 end;
 
+function TDataFormFrame.DoRecordChange: boolean;
+begin
+  result := true;
+
+  if Assigned(OnRecordChange) then
+    Result := OnRecordChange(Self);
+end;
+
+procedure TDataFormFrame.DoRequireFocus;
+begin
+  if Assigned(OnRequireFocus) then
+    OnRequireFocus(Self);
+end;
+
+procedure TDataFormFrame.FillKeyFields;
+var
+  F: TEpiField;
+  FE: TFieldEdit;
+begin
+  for F in DataFile.KeyFields do
+  begin
+    FE := FieldEditFromField(F);
+//    FE.
+  end;
+end;
+
+function TDataFormFrame.CanChange: Boolean;
+begin
+  Result := true;
+  CloseQuery(Result);
+end;
+
+function TDataFormFrame.AllKeyFieldsAreFilled: boolean;
+var
+  F: TEpiField;
+  FE: TFieldEdit;
+begin
+  Result := true;
+  for F in DataFile.KeyFields do
+  begin
+    FE := FieldEditFromField(F);
+    if FE.Text = '' then
+      Exit(false);
+  end;
+end;
+
+procedure TDataFormFrame.RelateInit;
+begin
+  FillKeyFields;
+  FirstFieldAction.Execute;
+end;
+
 procedure TDataFormFrame.CloseQuery(var CanClose: boolean);
 var
   Res: Integer;
 begin
   CanClose := true;
   if not Modified then exit;
+
+  DoRequireFocus;
 
   Res := MessageDlg('Warning',
            'Save record before close?',
@@ -1513,7 +1593,7 @@ begin
                 end;
                 CommitFields;
               end;
-    mrNo:     ; // Do nothing
+    mrNo:     Modified := false; // Do nothing
   end;
 end;
 
@@ -1642,12 +1722,24 @@ begin
 
     Res := FieldExitFlow(FieldEdit, NextFieldEdit);
     case Res of
-      fxtOk:    NextFieldEdit := NextFieldOnKeyDown;
-      fxtError: begin
-                  Key := VK_UNKNOWN;
-                  Exit;
-                end;
-      fxtJump:  ; // Do nothing - NextFieldEdit is set.
+      fxtOk:
+        NextFieldEdit := NextFieldOnKeyDown;
+
+      fxtError:
+        begin
+          Key := VK_UNKNOWN;
+          Exit;
+        end;
+
+      fxtRelate:
+        begin
+          // A PostMessage() has been sent to Project Frame, so just exit!
+          Key := VK_UNKNOWN;
+          Exit;
+        end;
+
+      fxtJump:
+        ; // Do nothing - NextFieldEdit is set.
     end;
 
     if not Assigned(NextFieldEdit) then
@@ -1782,6 +1874,7 @@ var
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
+  R: TEpiRelate;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -1983,6 +2076,33 @@ begin
       Exit(fxtJump);
     end;
   end;
+
+  if Assigned(Field.Relates)
+  then
+  begin
+    R := Field.Relates.RelateFromValue[FE.Text];
+
+    if Assigned(R) then
+    begin
+      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(R.DetailRelation), 0);
+      Result := fxtRelate;
+    end;
+  end;
+end;
+
+function TDataFormFrame.DoValidateKeyFields: Boolean;
+var
+  i: Integer;
+begin
+  Result := true;
+
+  if DataFile.KeyFields.Count > 0 then
+  begin
+    i := DoSearchKeyFields;
+    // if i = -1 then keys do not exists,
+    // if i = RecNo then current records is found in the search, which is ok
+    result := (i = RecNo) or (i = -1);
+  end;
 end;
 
 function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
@@ -1996,13 +2116,8 @@ begin
     if not FieldValidate(TFieldEdit(FieldEditList[i]), IgnoreMustEnter) then exit(false);
 
   // Additional check for KeyFields consistency.
-  if DataFile.KeyFields.Count > 0 then
-  begin
-    i := DoSearchKeyFields;
-    // if i = -1 then keys do not exists,
-    // if i = RecNo then current records is found in the search, which is ok
-    result := (i = -1) or (i = RecNo);
-  end;
+  Result := Result and
+    DoValidateKeyFields;
 end;
 
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean

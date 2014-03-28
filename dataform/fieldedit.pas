@@ -514,7 +514,7 @@ begin
 
   FQuestionLabel.Font.Assign(EntrySettings.FieldFont);
   FNameLabel.Font.Assign(EntrySettings.FieldFont);
-  Application.ProcessMessages;
+//  Application.ProcessMessages;
 end;
 
 function TFieldEdit.CompareTo(const AText: string; ct: TEpiComparisonType

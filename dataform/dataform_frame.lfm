@@ -108,7 +108,7 @@ object DataFormFrame: TDataFormFrame
         TabOrder = 0
       end
       object NextRecSpeedButton: TSpeedButton
-        Left = 168
+        Left = 167
         Height = 22
         Top = 1
         Width = 22
