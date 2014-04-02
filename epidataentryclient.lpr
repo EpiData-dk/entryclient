@@ -16,7 +16,7 @@ uses
   settings2_paths_frame, settings2_colours_frame, settings_general_frame,
   searchform, search, resultlist_form, settings2_fonts_frame, shortcuts,
   entry_messages, entrylabel, control_types, entrysection, entry_globals,
-  notes_report, documentfile_ext;
+  notes_report, documentfile_ext, new_record_form;
 
 {$R *.res}
 

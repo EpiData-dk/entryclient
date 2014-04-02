@@ -14,7 +14,7 @@ const
   LM_OPEN_RECENT   = LM_USER + 3;
 
   // Project
-  LM_PROJECT_RELATE = LM_USER + 4;   // WParam = TEpiDetailRelation (the relation to go to).
+  LM_PROJECT_RELATE = LM_USER + 4;   // WParam = TEpiMasterRelation (the relation to go to).
 
   // Dataform
   LM_DATAFORM_GOTOREC = LM_USER + 5;

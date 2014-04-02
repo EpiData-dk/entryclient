@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, search, entry_globals;
+  VirtualTrees, search, entry_globals, epirelations;
 
 type
 
@@ -99,15 +99,18 @@ type
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure ShowFieldNotesActionUpdate(Sender: TObject);
   private
+    FIndexField: TEpiField;
     FDataFile: TEpiDataFile;
     FFieldEditList: TFpList;
     FRecNo: integer;
     FLoadingDatafile: boolean;
+    procedure UpdateIndexField;
     procedure SetDataFile(const AValue: TEpiDataFile);
     procedure LoadRecord(RecordNo: Integer);
     procedure UpdateRecordEdit;
     procedure UpdateRecActionPanel;
     procedure SetRecNo(AValue: integer);
+    procedure UpdateModified;
     procedure SetModified(const AValue: boolean);
     function  DoNewRecord: boolean;
     function  ControlFromEpiControl(EpiControl: TEpiCustomItem): TControl;
@@ -152,7 +155,6 @@ type
     procedure FieldEnterFlow(FE: TFieldEdit);
     function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
     function  DoValidateKeyFields: Boolean;
-    function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
@@ -167,37 +169,46 @@ type
   protected
     procedure SetCursor(Value: TCursor); override;
   private
+    FRelation: TEpiMasterRelation;
+    function  GetDetailRelation: TEpiDetailRelation;
+    function  GetIndexedRecNo: Integer;
+    function GetIndexedSize: Integer;
+    procedure SetRelation(AValue: TEpiMasterRelation);
     procedure UpdateShortCuts;
     procedure UpdateNotesHints;
+    function  IsDetailRelation: boolean;
   public
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
     procedure UpdateSettings;
     procedure CloseQuery(var CanClose: boolean);
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
+    property  Relation: TEpiMasterRelation read FRelation write SetRelation;
+    property  DetailRelation: TEpiDetailRelation read GetDetailRelation;
     property  RecNo: integer read FRecNo write SetRecNo;
+    property  IndexedRecNo: Integer read GetIndexedRecNo;
     property  Modified: boolean read FModified write SetModified;
     property  FieldEditList: TFpList read FFieldEditList;
+    property  IndexedSize: Integer read GetIndexedSize;
   public
     class procedure RestoreDefaultPos(F: TDataFormFrame);
 
   { Project/Relation stuff }
   private
     FOnModified: TNotifyEvent;
-    FOnRecordChange: TRecordChangeEvent;
-    FOnRequireFocus: TNotifyEvent;
+    FOnRecordChanged: TNotifyEvent;
     FTreeNode: PVirtualNode;
-    function  DoRecordChange: boolean;
-    procedure  DoRequireFocus;
     procedure FillKeyFields;
+    procedure DoRecordChanged;
+    function  GetMasterDataForm: TDataFormFrame;
   public
     function  CanChange: Boolean;
+    function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
     function  AllKeyFieldsAreFilled: boolean;
-    procedure RelateInit();
+    procedure RelateInit;
     property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
-    property  OnRecordChange: TRecordChangeEvent read FOnRecordChange write FOnRecordChange;
     property  OnModified: TNotifyEvent read FOnModified write FOnModified;
-    property  OnRequireFocus: TNotifyEvent read FOnRequireFocus write FOnRequireFocus;
+    property  OnRecordChanged: TNotifyEvent read FOnRecordChanged write FOnRecordChanged;
   end;
 
 const
@@ -213,7 +224,7 @@ uses
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd,
-  entrylabel, entrysection,
+  entrylabel, entrysection, project_frame,
   notes_report, epireport_generator_txt,
   strutils;
 
@@ -255,7 +266,7 @@ var
   I: LongInt;
   FE: TFieldEdit;
 begin
-   I := NextUsableFieldIndex(-1, false);
+  I := NextUsableFieldIndex(-1, false);
   if i = -1 then exit;
 
   FE := TFieldEdit(FieldEditList[i]);
@@ -291,7 +302,7 @@ procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);
 begin
   if RecNo = NewRecord then exit;
 
-  FDataFile.Deleted[RecNo] := not FDataFile.Deleted[RecNo];
+  FDataFile.Deleted[IndexedRecNo] := not FDataFile.Deleted[IndexedRecNo];
   Modified := true;
   UpdateRecordEdit;
 end;
@@ -340,13 +351,13 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
-  Idx := Min(RecNo, FDataFile.Size) - 1;
+  Idx := Min(RecNo, FIndexField.Size) - 1;
   DoPerformSearch(FRecentSearch, Idx, true);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := (RecNo > 0) and (DataFile.Size > 0);
+  (Sender as TAction).Enabled := (RecNo > 0) and (FIndexField.Size > 0);
 end;
 
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
@@ -356,12 +367,12 @@ end;
 
 procedure TDataFormFrame.JumpNextRecActionExecute(Sender: TObject);
 begin
-  RecNo :=  RecNo + EntrySettings.RecordsToSkip;
+  RecNo := RecNo + EntrySettings.RecordsToSkip;
 end;
 
 procedure TDataFormFrame.JumpPrevRecActionExecute(Sender: TObject);
 begin
-  RecNo :=  Min(RecNo - EntrySettings.RecordsToSkip, DataFile.Size - EntrySettings.RecordsToSkip);
+  RecNo := Min(RecNo - EntrySettings.RecordsToSkip, FIndexField.Size - EntrySettings.RecordsToSkip);
 end;
 
 procedure TDataFormFrame.LastFieldActionExecute(Sender: TObject);
@@ -376,12 +387,12 @@ end;
 
 procedure TDataFormFrame.LastRecActionExecute(Sender: TObject);
 begin
-  RecNo := DataFile.Size - 1;
+  RecNo := FIndexField.Size - 1;
 end;
 
 procedure TDataFormFrame.LastRecActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := RecNo < (DataFile.Size - 1);
+  (Sender as TAction).Enabled := RecNo < (FIndexField.Size - 1);
 end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
@@ -433,7 +444,7 @@ end;
 
 procedure TDataFormFrame.PrevRecActionExecute(Sender: TObject);
 begin
-  RecNo := Min(RecNo - 1, DataFile.Size - 1);
+  RecNo := Min(RecNo - 1, FIndexField.Size - 1);
 end;
 
 procedure TDataFormFrame.PrintDataFormActionExecute(Sender: TObject);
@@ -453,7 +464,7 @@ begin
   Val(RecordEdit.Text, AValue, Code);
   if Code <> 0 then exit;
 
-  Code := Min(AValue - 1, DataFile.Size - 1);
+  Code := Min(AValue - 1, FIndexField.Size - 1);
   if Code < 0 then exit;
 
   RecNo := Code;
@@ -478,6 +489,51 @@ begin
   LAction.Enabled :=
     (MainForm.ActiveControl is TFieldEdit) and
     (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');
+end;
+
+procedure TDataFormFrame.UpdateIndexField;
+var
+  MasterKFs: TEpiFields;
+  MasterF: TEpiField;
+  KF: TEpiField;
+  AddToIndex: Boolean;
+  MasterFrame: TDataFormFrame;
+  i: Integer;
+begin
+  if IsDetailRelation then
+  begin
+    MasterKFs := DetailRelation.MasterRelation.Datafile.KeyFields;
+    MasterFrame := GetMasterDataForm;
+
+    FIndexField.Size := 0;
+    if MasterFrame.IndexedRecNo = NewRecord then exit;
+
+    for i := 0 to DataFile.Size - 1 do
+    begin
+      AddToIndex := true;
+
+      for MasterF in MasterKFs do
+      begin
+        KF := DataFile.KeyFields.FieldByName[MasterF.Name];
+
+        AddToIndex := AddToIndex and
+          (MasterF.AsValue[MasterFrame.RecNo] = KF.AsValue[i]);
+        if (not AddToIndex) then
+          break;
+      end;
+
+      if AddToIndex then
+      begin
+        FIndexField.Size := FIndexField.Size + 1;
+        FIndexField.AsInteger[FIndexField.Size - 1] := i;
+      end;
+    end;
+  end else begin
+    FIndexField.Size := DataFile.Size;
+
+    for i := 0 to FIndexField.Size - 1 do
+      FIndexField.AsInteger[i] := i;
+  end;
 end;
 
 procedure TDataFormFrame.FindNextActionExecute(Sender: TObject);
@@ -577,6 +633,8 @@ begin
   end;
   DataFile.EndUpdate;
 
+  UpdateIndexField;
+
   // Correct tab order of fields.
   FFieldEditList.Sort(@FieldSort);
   for i := 0 to FFieldEditList.Count - 1 do
@@ -589,7 +647,6 @@ begin
     RecNo := (DataFile.Size - 1);
 
   FLoadingDatafile := false;
-  RecordEdit.SetFocus;
 end;
 
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
@@ -608,21 +665,21 @@ begin
   begin
     if Modified then
       RecordEdit.Text :=
-          Format('New / %d *', [DataFile.Size])
+          Format('New / %d *', [FIndexField.Size])
     else
       RecordEdit.Text :=
-        Format('New / %d', [DataFile.Size]);
+        Format('New / %d', [FIndexField.Size]);
   end else begin
     if Modified then
       RecordEdit.Text :=
-          Format('%d / %d *', [RecNo + 1, DataFile.Size])
+          Format('%d / %d *', [RecNo + 1, FIndexField.Size])
     else
       RecordEdit.Text :=
-        Format('%d / %d', [RecNo + 1, DataFile.Size]);
+        Format('%d / %d', [RecNo + 1, FIndexField.Size]);
   end;
   UpdateRecActionPanel;
 
-  if DataFile.Size = 0 then
+  if FIndexField.Size = 0 then
     RecordEdit.Text := 'Empty';
 end;
 
@@ -630,11 +687,11 @@ procedure TDataFormFrame.UpdateRecActionPanel;
 var
   B: Boolean;
 begin
-  B := RecNo <> NewRecord;
+  B := IndexedRecNo <> NewRecord;
   DeleteRecSpeedButton.Enabled  := B;
   DeleteRecSpeedButton.ShowHint := B;
 
-  B := B and FDataFile.Deleted[RecNo];
+  B := B and FDataFile.Deleted[IndexedRecNo];
   DeleteRecSpeedButton.Hint := BoolToStr(B, 'UnDelete', 'Delete');
   DeleteLabel.Caption       := BoolToStr(B, 'DEL',      '');
 end;
@@ -729,6 +786,34 @@ begin
   PrintDataFormWithDataAction.ShortCut := D_PrintFormWithData;
 end;
 
+function TDataFormFrame.GetDetailRelation: TEpiDetailRelation;
+begin
+  result := nil;
+  if IsDetailRelation then
+    result := TEpiDetailRelation(Relation);
+end;
+
+function TDataFormFrame.GetIndexedRecNo: Integer;
+begin
+  if (RecNo = NewRecord) or
+     (RecNo >= FIndexField.Size)
+  then
+    Result := NewRecord
+  else
+    Result := FIndexField.AsInteger[RecNo];
+end;
+
+function TDataFormFrame.GetIndexedSize: Integer;
+begin
+  result := FIndexField.Size;
+end;
+
+procedure TDataFormFrame.SetRelation(AValue: TEpiMasterRelation);
+begin
+  if FRelation = AValue then Exit;
+  FRelation := AValue;
+end;
+
 procedure TDataFormFrame.UpdateNotesHints;
 begin
   if not Assigned(FNotesHint) then exit;
@@ -743,6 +828,11 @@ begin
   end;
 end;
 
+function TDataFormFrame.IsDetailRelation: boolean;
+begin
+  result := Relation.InheritsFrom(TEpiDetailRelation);
+end;
+
 procedure TDataFormFrame.SetRecNo(AValue: integer);
 var
   Res: LongInt;
@@ -750,12 +840,9 @@ begin
   if not (AValue = NewRecord) then
   begin
     if AValue = FRecNo then exit;
-    if AValue >= DataFile.Size then AValue := DataFile.Size - 1;
+    if AValue >= FIndexField.Size then AValue := FIndexField.Size - 1;
     if AValue < 0 then AValue := 0;
   end;
-
-  if not DoRecordChange then exit;
-
 
   if (not (AValue = NewRecord)) and Modified then
   begin
@@ -781,17 +868,23 @@ begin
   end;
 
   FRecNo := AValue;
-  LoadRecord(AValue);
+  LoadRecord(IndexedRecNo);
   UpdateRecordEdit;
+  DoRecordChanged;
+end;
+
+procedure TDataFormFrame.UpdateModified;
+begin
+  UpdateRecordEdit;
+  if Assigned(OnModified) then
+    OnModified(Self);
 end;
 
 procedure TDataFormFrame.SetModified(const AValue: boolean);
 begin
   if FModified = AValue then exit;
   FModified := AValue;
-  UpdateRecordEdit;
-  if Assigned(OnModified) then
-    OnModified(Self);
+  UpdateModified;
 end;
 
 function TDataFormFrame.GetHintWindow: THintWindow;
@@ -830,21 +923,21 @@ var
   Res: LongInt;
   AVal: Int64;
 begin
-  Result := DoRecordChange;
-  if not Result then exit;
+  // Sanity check
+  // - go through all fields for a validity check.
+  if (Modified) and
+     (not AllFieldsValidate(false))
+  then
+    Exit;
 
   // *******************
   // * Commit old data *
   // *******************
   if (RecNo <> NewRecord) and Modified then
   begin
-    // Sanity check
-    // - go through all fields for a validity check.
-    if not AllFieldsValidate(false) then exit;
-
     Res := MessageDlg('Warning',
              'Current record modified.' + LineEnding +
-             'Save before new record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
+             'Save record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel: Exit;
       mrYes:    CommitFields;
@@ -854,10 +947,6 @@ begin
 
   if (RecNo = NewRecord) then
   begin
-    // Sanity check
-    // - go through all fields for a validity check.
-    if not AllFieldsValidate(false) then exit;
-
     Res := MessageDlg('Confirmation',
              'Save Record?',
              mtConfirmation, mbYesNoCancel, 0, mbYes);
@@ -899,9 +988,12 @@ begin
       Text := Field.DefaultValueAsString;
 
     // Repeat
-    if (Field.RepeatValue) and (Field.Size > 0) and (not Field.IsMissing[Field.Size - 1]) then
-      Text := Field.AsString[Field.Size - 1];
+    if (Field.RepeatValue) and (FIndexField.Size > 0) and (not Field.IsMissing[FIndexField.AsInteger[FIndexField.Size - 1]]) then
+      Text := Field.AsString[FIndexField.AsInteger[FIndexField.Size - 1]];
   end;
+
+  FillKeyFields;
+
   Result := true;
 end;
 
@@ -1174,7 +1266,7 @@ begin
 
   case Search.Origin of
     soBeginning: Idx := 0;
-    soEnd:       Idx := Search.DataFile.Size - 1;
+    soEnd:       Idx := FIndexField.Size - 1;
   end;
 
   idx := SearchFindNext(Search, Idx);
@@ -1183,7 +1275,7 @@ begin
   else if wrap then begin
     case Search.Direction of
       sdForward:  Idx := 0;
-      sdBackward: Idx := FDataFile.Size - 1;
+      sdBackward: Idx := FIndexField.Size - 1;
     end;
     Idx := SearchFindNext(Search, Idx);
     if idx <> -1 then
@@ -1488,6 +1580,11 @@ begin
     DataFile.NewRecords();
   for i := 0 to FFieldEditList.Count - 1 do
     TFieldEdit(FFieldEditList[i]).Commit;
+
+  // Add to IndexField!
+  FIndexField.Size := FIndexField.Size + 1;
+  FIndexField.AsInteger[FIndexField.Size - 1] := DataFile.Size - 1;
+
   Modified := false;
 end;
 
@@ -1517,30 +1614,41 @@ begin
   ResultListFormDefaultPosition();
 end;
 
-function TDataFormFrame.DoRecordChange: boolean;
-begin
-  result := true;
-
-  if Assigned(OnRecordChange) then
-    Result := OnRecordChange(Self);
-end;
-
-procedure TDataFormFrame.DoRequireFocus;
-begin
-  if Assigned(OnRequireFocus) then
-    OnRequireFocus(Self);
-end;
-
 procedure TDataFormFrame.FillKeyFields;
 var
+  ParentKeyFields: TEpiFields;
+  ParentKeyField: TEpiField;
+  ParentFE: TFieldEdit;
   F: TEpiField;
   FE: TFieldEdit;
 begin
-  for F in DataFile.KeyFields do
+  if not IsDetailRelation then exit;
+
+  ParentKeyFields := TEpiDetailRelation(Relation).MasterRelation.Datafile.KeyFields;
+
+  for ParentKeyField in ParentKeyFields do
   begin
+    ParentFE := FieldEditFromField(ParentKeyField);
+
+    F := DataFile.KeyFields.FieldByName[ParentKeyField.Name];
     FE := FieldEditFromField(F);
-//    FE.
+
+    FE.Text := ParentFE.Text;
   end;
+end;
+
+procedure TDataFormFrame.DoRecordChanged;
+begin
+  if Assigned(OnRecordChanged) then
+    OnRecordChanged(Self);
+end;
+
+function TDataFormFrame.GetMasterDataForm: TDataFormFrame;
+begin
+  Result := nil;
+
+  if IsDetailRelation then
+    Result := TProjectFrame(Parent).FrameFromRelation(DetailRelation.MasterRelation);
 end;
 
 function TDataFormFrame.CanChange: Boolean;
@@ -1549,23 +1657,18 @@ begin
   CloseQuery(Result);
 end;
 
-function TDataFormFrame.AllKeyFieldsAreFilled: boolean;
-var
-  F: TEpiField;
-  FE: TFieldEdit;
-begin
-  Result := true;
-  for F in DataFile.KeyFields do
-  begin
-    FE := FieldEditFromField(F);
-    if FE.Text = '' then
-      Exit(false);
-  end;
-end;
-
 procedure TDataFormFrame.RelateInit;
 begin
-  FillKeyFields;
+  UpdateIndexField;
+  LoadRecord(IndexedRecNo);
+  UpdateRecordEdit;
+
+  if IsDetailRelation and
+     (RecNo = NewRecord)
+  then
+    FillKeyFields;
+
+  DoRecordChanged;
   FirstFieldAction.Execute;
 end;
 
@@ -1575,8 +1678,6 @@ var
 begin
   CanClose := true;
   if not Modified then exit;
-
-  DoRequireFocus;
 
   Res := MessageDlg('Warning',
            'Save record before close?',
@@ -1661,7 +1762,7 @@ var
     Idx := NextUsableFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
     if Idx = -1 then
     begin
-      if (RecNo = NewRecord) or (RecNo = (DataFile.Size - 1))  then
+      if (RecNo = NewRecord) or (RecNo = (FIndexField.Size - 1))  then
         exit
       else begin
         NextRecAction.Execute;
@@ -1747,9 +1848,17 @@ begin
       // NextFieldEdit = nil => either do a new record (if this is a new record or last record)
       //                        or increment record no...
       if (RecNo = NewRecord) or
-         (RecNo = (FDataFile.Size - 1))
+         (RecNo = (FIndexField.Size - 1))
       then
       begin
+        if IsDetailRelation and
+           (DetailRelation.MaxRecordCount = 1)
+        then
+          begin
+            PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0);
+            Exit;
+          end;
+
         if not DoNewRecord then exit;
       end else
       begin
@@ -1765,6 +1874,10 @@ begin
     NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
+
+  // Needed to keep project updated on changes to key fields.
+  if (DataFile.KeyFields.IndexOf(FieldEdit.Field) > -1) then
+    UpdateModified;
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
@@ -2120,6 +2233,17 @@ begin
     DoValidateKeyFields;
 end;
 
+function TDataFormFrame.AllKeyFieldsAreFilled: boolean;
+var
+  F: TEpiField;
+begin
+  Result := true;
+
+  for F in DataFile.KeyFields do
+    Result := Result and
+              (FieldEditFromField(F).Text <> '');
+end;
+
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
   ): boolean;
 
@@ -2241,6 +2365,8 @@ constructor TDataFormFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
 
+  FIndexField := TEpiField.CreateField(nil, ftInteger);
+  FIndexField.Size := 0;
   FFieldEditList := TFPList.Create;
   FHintWindow := nil;
   FRecNo := -1;

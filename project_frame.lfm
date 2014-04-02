@@ -6,8 +6,8 @@ object ProjectFrame: TProjectFrame
   ClientHeight = 777
   ClientWidth = 1096
   TabOrder = 0
-  DesignLeft = 557
-  DesignTop = 230
+  DesignLeft = 680
+  DesignTop = 245
   object ProjectPanel: TPanel
     Left = 0
     Height = 757
@@ -17,19 +17,6 @@ object ProjectFrame: TProjectFrame
     ClientHeight = 757
     ClientWidth = 170
     TabOrder = 0
-    object DataFilesTreeView: TTreeView
-      Left = 32
-      Height = 132
-      Top = 472
-      Width = 119
-      AutoExpand = True
-      DefaultItemHeight = 18
-      ReadOnly = True
-      ScrollBars = ssAutoBoth
-      TabOrder = 0
-      Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
-      TreeLinePenStyle = psDot
-    end
     object ToolBar1: TToolBar
       Left = 1
       Height = 26
@@ -37,7 +24,7 @@ object ProjectFrame: TProjectFrame
       Width = 168
       Caption = 'ToolBar1'
       Images = ProjectImageList
-      TabOrder = 1
+      TabOrder = 0
       object OpenProjectToolButton: TToolButton
         Left = 1
         Hint = 'Open Project'
@@ -96,7 +83,7 @@ object ProjectFrame: TProjectFrame
       Header.DefaultHeight = 17
       Header.MainColumn = -1
       ScrollBarOptions.ScrollBars = ssAutoBoth
-      TabOrder = 2
+      TabOrder = 1
       TreeOptions.PaintOptions = [toHotTrack, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages]
       TreeOptions.StringOptions = [toSaveCaptions, toShowStaticText, toAutoAcceptEditChange]
     end
@@ -119,6 +106,49 @@ object ProjectFrame: TProjectFrame
     TabOrder = 2
     Visible = False
     BarShowText = True
+  end
+  object Panel1: TPanel
+    Left = 926
+    Height = 757
+    Top = 0
+    Width = 170
+    Align = alRight
+    ClientHeight = 757
+    ClientWidth = 170
+    TabOrder = 3
+    Visible = False
+    object Label1: TLabel
+      Left = 18
+      Height = 15
+      Top = 54
+      Width = 90
+      Caption = 'GetTextCount:'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 54
+      Height = 15
+      Top = 90
+      Width = 42
+      Caption = 'Label2'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 18
+      Height = 15
+      Top = 150
+      Width = 98
+      Caption = 'PaintTextCount:'
+      ParentColor = False
+    end
+    object Label4: TLabel
+      Left = 54
+      Height = 15
+      Top = 192
+      Width = 42
+      Caption = 'Label4'
+      ParentColor = False
+    end
   end
   object ProjectActionList: TActionList
     Images = ProjectImageList

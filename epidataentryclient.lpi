@@ -190,7 +190,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="32">
+    <Units Count="33">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -389,6 +389,13 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="documentfile_ext"/>
       </Unit31>
+      <Unit32>
+        <Filename Value="dataform/new_record_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="new_record_form"/>
+      </Unit32>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
