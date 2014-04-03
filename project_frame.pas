@@ -69,6 +69,7 @@ type
     procedure LM_ProjectRelate(var Msg: TLMessage); message LM_PROJECT_RELATE;
   private
     { Tree Handling }
+    FChangingRecNo: integer;
     FProjectNode: PVirtualNode;
     FSelectedNode: PVirtualNode;
     function FrameFromNode(Node: PVirtualNode): TDataFormFrame;
@@ -348,13 +349,13 @@ var
   Relation: TEpiMasterRelation;
   i: Integer;
 begin
-  // TODO: Need to update keyfield values throughout the subtree.
+  // Invalidate updates the tree with new values/selectables
   DataFileTree.Invalidate;
 
   Relation := TDataFormFrame(Sender).Relation;
 
   for i := 0 to Relation.DetailRelations.Count - 1 do
-    FrameFromRelation(Relation[i]).RelateInit;
+    FrameFromRelation(Relation[i]).RelateInit(rrRecordChange);
 end;
 
 procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
@@ -413,7 +414,11 @@ end;
 
 procedure TProjectFrame.DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
+var
+  RelateReason: TRelateReason;
 begin
+  RelateReason := rrFocusShift;
+
   // We are allowed to change node (this was confirmed in DataFileTreeFocusChanging)
   // now we must commit unsaved data and position the at the saved record no.
   // There is not FSelectedNode first time after a project is loaded...
@@ -423,7 +428,11 @@ begin
       if Modified then
       begin
         CommitFields;
-        RecNo := DataFile.Size - 1;
+        if FChangingRecNo = NewRecord then
+        begin
+          RelateReason := rrNewRecord;
+          RecNo := DataFile.Size - 1
+        end;
       end;
     end;
 
@@ -434,7 +443,7 @@ begin
   begin
     BringToFront;
     UpdateSettings;
-    RelateInit;
+    RelateInit(RelateReason);
   end;
 
   Sender.Invalidate;
@@ -469,6 +478,9 @@ begin
   // Check for validated fields
   Allowed := Allowed and
     NodeIsValidated(OldNode);
+
+  if Allowed then
+    FChangingRecNo := FrameFromNode(OldNode).RecNo;
 end;
 
 procedure TProjectFrame.DataFileTreeGetText(Sender: TBaseVirtualTree;
@@ -692,6 +704,7 @@ begin
   FDocumentFile := nil;
   FAllowForEndBackup := false;;
 
+  FChangingRecNo := NewRecord;
   DataFileTree.OnGetText      := @DataFileTreeGetText;
   DataFileTree.OnInitNode     := @DataFileTreeInitNode;
   DataFileTree.OnInitChildren := @DataFileTreeInitChildren;

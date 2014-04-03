@@ -11,6 +11,12 @@ const
 type
   TRecordChangeEvent = function(Sender: TObject): boolean of object;
 
+  TRelateReason = (
+    rrRecordChange,   // A master changed it's current record number
+    rrNewRecord,      // A master commited a new record (sub-state of record change)
+    rrFocusShift      // A shift in focused frame (eg. by clicking mouse.
+  );
+
 implementation
 
 end.
