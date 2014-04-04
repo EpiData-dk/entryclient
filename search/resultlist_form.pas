@@ -8,13 +8,15 @@ uses
   Classes, SysUtils, epidatafiles;
 
 procedure ShowResultListForm(
-  Const Owner: TComponent;
-  Const Caption: String;
-  Const DataFile: TEpiDataFile;
-  Const FieldList: TEpiFields;
-  Const RecordList: TBoundArray = nil);
+  Const AOwner: TComponent;
+  Const ACaption: String;
+  Const ADataFile: TEpiDataFile;
+  Const AFieldList: TEpiFields;
+  Const ARecordList: TBoundArray = nil;
+  Const AReverseIndex: TEpiField = nil);
 
 procedure ResultListFormDefaultPosition();
+function  ResultListFormIsShowing: boolean;
 
 implementation
 
@@ -107,21 +109,34 @@ begin
   end;
 end;
 
-procedure ShowResultListForm(const Owner: TComponent; const Caption: String;
-  const DataFile: TEpiDataFile; const FieldList: TEpiFields;
-  const RecordList: TBoundArray);
+procedure ShowResultListForm(const AOwner: TComponent; const ACaption: String;
+  const ADataFile: TEpiDataFile; const AFieldList: TEpiFields;
+  const ARecordList: TBoundArray; const AReverseIndex: TEpiField);
+var
+  S: String;
 begin
   if not Assigned(FResultListForm) then
-    FResultListForm := TResultListForm.Create(Owner, DataFile);
+    FResultListForm := TResultListForm.Create(AOwner, ADataFile);
+
   with TDatasetViewerFrame(FResultListForm.FViewerFrame) do
   begin
-    DisplayFields := FieldList;
-    ShowRecords(RecordList);
+    BeginUpdate;
+    Datafile := ADataFile;
+    DisplayFields := AFieldList;
+    ShowRecords(ARecordList);
+    ReverseIndex := AReverseIndex;
     {$IFDEF DARWIN}
     ListGridHeaderClick(Nil, True, 0);
     {$ENDIF}
+
+    EndUpdate;
   end;
-  FResultListForm.Caption := Caption + ' (' + IntToStr(Length(RecordList)) + ')';
+
+  S := IntToStr(ADataFile.Size);
+  if Length(ARecordList) > 0 then
+    S := IntToStr(Length(ARecordList));
+
+  FResultListForm.Caption := ACaption + ' (' + S + ')';
   FResultListForm.Show;
 end;
 
@@ -147,6 +162,11 @@ begin
 
   if F <> FResultListForm then
     F.Free;
+end;
+
+function ResultListFormIsShowing: boolean;
+begin
+  result := Assigned(FResultListForm) and (FResultListForm.Showing);
 end;
 
 end.

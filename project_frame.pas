@@ -723,6 +723,7 @@ end;
 
 destructor TProjectFrame.Destroy;
 begin
+  SaveSplitterPosition(Splitter1, 'ProjectSplitter');
   DoCloseProject;
   inherited Destroy;
 end;
@@ -768,6 +769,7 @@ end;
 
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
+  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
   result := DoOpenProject(aFilename);
 end;
 

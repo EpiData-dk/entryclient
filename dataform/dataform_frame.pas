@@ -305,7 +305,9 @@ begin
     Self,
     'All Data',
     DataFile,
-    DataFile.Fields
+    DataFile.Fields,
+    nil,
+    FDFToLocalIndex
   );
 end;
 
@@ -1455,7 +1457,9 @@ begin
           'Showing results for: ' + SF.SearchLabel.Caption,
           DataFile,
           FieldList,
-          List);
+          List,
+          FDFToLocalIndex
+          );
     end;
   finally
     SF.Free;
@@ -1670,6 +1674,9 @@ begin
     // Add to IndexField!
     FLocalToDFIndex.Size := FLocalToDFIndex.Size + 1;
     FLocalToDFIndex.AsInteger[FLocalToDFIndex.Size - 1] := DataFile.Size - 1;
+
+    FDFToLocalIndex.Size := DataFile.Size;
+    FDFToLocalIndex.AsInteger[FDFToLocalIndex.Size - 1] := FLocalToDFIndex.Size - 1;
   end;
 
   for i := 0 to FFieldEditList.Count - 1 do
@@ -1802,6 +1809,8 @@ begin
       ftAutoInc:
         OldData := IntValue;
       ftFloat:
+        // IfThen needed because DefaultMissing = MaxExtended (on x86? systems) and
+        // passing that into a Variant f*cks up the stack!
         OldData := IfThen(FloatValue = TEpiFloatField.DefaultMissing, MaxDouble, FloatValue);
       ftDMYDate,
       ftMDYDate,
@@ -1839,7 +1848,6 @@ procedure TDataFormFrame.RelateInit(Reason: TRelateReason);
 begin
   UpdateIndexFields;
 
-
   case Reason of
     rrRecordChange:
       // TODO: A EntrySetting should determine which state the related frame should
@@ -1855,8 +1863,18 @@ begin
         Modified := false;
         DoNewRecord
       end
-      else
+      else begin
         LoadRecord(RecNo);
+        if ResultListFormIsShowing then
+          ShowResultListForm(
+            Self,
+            'All',
+            DataFile,
+            DataFile.Fields,
+            nil,
+            FDFToLocalIndex
+          );
+      end;
   end;
 
   UpdateRecordEdit;
