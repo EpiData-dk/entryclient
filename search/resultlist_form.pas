@@ -13,7 +13,9 @@ procedure ShowResultListForm(
   Const ADataFile: TEpiDataFile;
   Const AFieldList: TEpiFields;
   Const ARecordList: TBoundArray = nil;
-  Const AReverseIndex: TEpiField = nil);
+  Const AReverseIndex: TEpiField = nil;
+  Const AForwardIndex: TEpiField = nil
+  );
 
 procedure ResultListFormDefaultPosition();
 function  ResultListFormIsShowing: boolean;
@@ -111,7 +113,8 @@ end;
 
 procedure ShowResultListForm(const AOwner: TComponent; const ACaption: String;
   const ADataFile: TEpiDataFile; const AFieldList: TEpiFields;
-  const ARecordList: TBoundArray; const AReverseIndex: TEpiField);
+  const ARecordList: TBoundArray; const AReverseIndex: TEpiField;
+  const AForwardIndex: TEpiField);
 var
   S: String;
 begin
@@ -125,6 +128,7 @@ begin
     DisplayFields := AFieldList;
     ShowRecords(ARecordList);
     ReverseIndex := AReverseIndex;
+    ForwardIndex := AForwardIndex;
     {$IFDEF DARWIN}
     ListGridHeaderClick(Nil, True, 0);
     {$ENDIF}

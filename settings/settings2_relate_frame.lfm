@@ -1,0 +1,58 @@
+object RelateFrame: TRelateFrame
+  Left = 0
+  Height = 444
+  Top = 0
+  Width = 487
+  ClientHeight = 444
+  ClientWidth = 487
+  TabOrder = 0
+  DesignLeft = 820
+  DesignTop = 326
+  object RadioGroup1: TRadioGroup
+    Left = 24
+    Height = 106
+    Top = 22
+    Width = 419
+    Anchors = [akTop, akLeft, akRight]
+    AutoFill = True
+    Caption = 'Maximum record count:'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 89
+    ClientWidth = 415
+    Items.Strings = (
+      'Stay on entry form'
+      'Return to parent'
+    )
+    TabOrder = 0
+  end
+  object RadioGroup2: TRadioGroup
+    Left = 24
+    Height = 128
+    Top = 144
+    Width = 419
+    Anchors = [akTop, akLeft, akRight]
+    AutoFill = True
+    Caption = 'Changing a record:'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 111
+    ClientWidth = 415
+    Items.Strings = (
+      'Places child form at first record'
+      'Places child form at last record'
+      'Readies child form with new record'
+    )
+    TabOrder = 1
+  end
+end

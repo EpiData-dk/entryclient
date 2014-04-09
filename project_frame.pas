@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
   VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics,
-  StdCtrls;
+  StdCtrls, epidatafilestypes;
 
 type
 
@@ -72,6 +72,7 @@ type
     FChangingRecNo: integer;
     FProjectNode: PVirtualNode;
     FSelectedNode: PVirtualNode;
+    function GetRecordState(Node: PVirtualNode): TEpiRecordState;
     function FrameFromNode(Node: PVirtualNode): TDataFormFrame;
     function NodeIsSelectable(Node: PVirtualNode): boolean;
     function NodeIsValidated(Node: PVirtualNode): boolean;
@@ -90,6 +91,9 @@ type
     procedure DataFileTreePaintText(Sender: TBaseVirtualTree;
       const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       TextType: TVSTTextType);
+    procedure DataFileTreeGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle;
+      var HintText: String);
   private
     function GetEpiDocument: TEpiDocument;
     { messages }
@@ -271,10 +275,18 @@ begin
       FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
     end;
 
+    // We must initialize the project node by ourselves, because even though
+    // the project panel MIGHT be visible, is has not yet initialized the tree nodes.
+    // In that case FProjectNode is not available later on!
     DataFileTree.RootNodeCount := 1;
+    DataFileTree.ReinitNode(DataFileTree.RootNode, true);
+
     Node := FProjectNode^.FirstChild;
     DataFileTree.Selected[Node] := true;
     DataFileTree.FocusedNode := Node;
+
+    ProjectPanel.Visible := (EpiDocument.DataFiles.Count > 1);
+    Splitter1.Visible    := ProjectPanel.Visible;
 
     EpiDocument.Modified := false;
 
@@ -309,7 +321,7 @@ begin
   With MainForm do
   begin
     // File menu
-    PrintMenuItem.Action       := Frame.PrintDataFormAction;
+    PrintMenuItem.Action         := Frame.PrintDataFormAction;
     PrintWithDataMenuItem.Action := Frame.PrintDataFormWithDataAction;
 
     // Edit menu
@@ -355,7 +367,7 @@ begin
   Relation := TDataFormFrame(Sender).Relation;
 
   for i := 0 to Relation.DetailRelations.Count - 1 do
-    FrameFromRelation(Relation[i]).RelateInit(rrRecordChange);
+    FrameFromRelation(Relation[i]).RelateInit(rrRecordChange, GetRecordState(TDataFormFrame(Sender).TreeNode));
 end;
 
 procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
@@ -369,6 +381,29 @@ begin
   Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
   DataFileTree.Selected[Node] := true;
   DataFileTree.FocusedNode := Node;
+end;
+
+function TProjectFrame.GetRecordState(Node: PVirtualNode): TEpiRecordState;
+var
+  Idx: Integer;
+begin
+  Result := rsNormal;
+
+  if not Assigned(Node) then exit;
+  if Node = FProjectNode then exit;
+
+  with FrameFromNode(Node) do
+  begin
+    Idx := IndexedRecNo;
+
+    if Idx = NewRecord then exit;
+
+    if DataFile.Deleted[Idx] then
+      Result := rsDeleted;
+
+    if DataFile.Verified[Idx] then
+      Result := rsVerified;
+  end;
 end;
 
 function TProjectFrame.FrameFromNode(Node: PVirtualNode): TDataFormFrame;
@@ -420,8 +455,8 @@ begin
   RelateReason := rrFocusShift;
 
   // We are allowed to change node (this was confirmed in DataFileTreeFocusChanging)
-  // now we must commit unsaved data and position the at the saved record no.
-  // There is not FSelectedNode first time after a project is loaded...
+  // now we must commit unsaved data and position at the saved record no.
+  // There is no FSelectedNode first time after a project is loaded...
   if Assigned(FSelectedNode) then
     with FrameFromNode(FSelectedNode) do
     begin
@@ -434,6 +469,8 @@ begin
           RecNo := DataFile.Size - 1
         end;
       end;
+
+      ActionList1.State := asSuspended;
     end;
 
   FSelectedNode := Node;
@@ -441,9 +478,10 @@ begin
 
   with FrameFromNode(Node) do
   begin
+    ActionList1.State := asNormal;
     BringToFront;
     UpdateSettings;
-    RelateInit(RelateReason);
+    RelateInit(RelateReason, GetRecordState(Node^.Parent));
   end;
 
   Sender.Invalidate;
@@ -490,6 +528,7 @@ var
   DF: TEpiDataFile;
   ND: PNodeData;
   A: QWord;
+  S: String;
 begin
 
   A := GetTickCount64;
@@ -506,10 +545,15 @@ begin
         CellText := BoolToStr(ND^.Frame.Modified, '*', '') + DF.Caption.Text;
       ttStatic:
         begin
+          if (Node^.Parent = FProjectNode) then
+            S := '[%d]'
+          else
+            S := '(%d)';
+
           if (Node = FSelectedNode) or
              (Sender.HasAsParent(Node, FSelectedNode))
           then
-            CellText := Format('(%d)', [FrameFromNode(Node).IndexedSize]);
+            CellText := Format(S, [FrameFromNode(Node).IndexedSize]);
         end;
     end;
   end;
@@ -542,14 +586,21 @@ begin
     Include(InitialStates, ivsHasChildren);
   end else begin
     ARelation := ParentData^.RelationList[Node^.Index];
-    ARelation.AddCustomData(PROJECT_RELATION_NODE_KEY, TObject(Node));
-    with NodeData^ do
+
+    // In case of a double-initialization...
+    if (not Assigned(NodeData^.Frame)) then
     begin
-      Relation := ARelation;
-      RelationList := ARelation.DetailRelations;
-      Frame := DoNewDataForm(ARelation);
-      Frame.TreeNode := Node;
+      ARelation.AddCustomData(PROJECT_RELATION_NODE_KEY, TObject(Node));
+      with NodeData^ do
+      begin
+        Relation := ARelation;
+        RelationList := ARelation.DetailRelations;
+        Frame := DoNewDataForm(ARelation);
+        Frame.TreeNode := Node;
+        Frame.ActionList1.State := asSuspended;
+      end;
     end;
+
     if ARelation.DetailRelations.Count > 0 then
       Include(InitialStates, ivsHasChildren);
   end;
@@ -578,6 +629,15 @@ begin
   end;
   PaintCount := PaintCount + (GetTickCount64 - A);
   Label4.Caption := IntToStr(PaintCount);
+end;
+
+procedure TProjectFrame.DataFileTreeGetHint(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex;
+  var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: String);
+begin
+  if Node = FProjectNode then exit;
+
+  HintText := TrimRight(FrameFromNode(Node).GetCurrentKeyFieldValues);
 end;
 
 function TProjectFrame.GetEpiDocument: TEpiDocument;
@@ -705,6 +765,7 @@ begin
   FAllowForEndBackup := false;;
 
   FChangingRecNo := NewRecord;
+  DataFileTree.ShowHint       := true;
   DataFileTree.OnGetText      := @DataFileTreeGetText;
   DataFileTree.OnInitNode     := @DataFileTreeInitNode;
   DataFileTree.OnInitChildren := @DataFileTreeInitChildren;
@@ -712,18 +773,21 @@ begin
   DataFileTree.NodeDataSize   := SizeOf(TNodeData);
   DataFileTree.OnFocusChanging := @DataFileTreeFocusChanging;
   DataFileTree.OnFocusChanged := @DataFileTreeFocusChanged;
+  DataFileTree.OnGetHint      := @DataFileTreeGetHint;
 
   Label2.Caption := '0';
   TextCount := 0;
   Label4.Caption := '0';
   PaintCount := 0;
 
-  UpdateSettings;
+  UpdateShortCuts;
 end;
 
 destructor TProjectFrame.Destroy;
 begin
-  SaveSplitterPosition(Splitter1, 'ProjectSplitter');
+  if Splitter1.Visible then
+    SaveSplitterPosition(Splitter1, 'ProjectSplitter');
+
   DoCloseProject;
   inherited Destroy;
 end;
@@ -776,10 +840,7 @@ end;
 procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
-
-  // TODO
-{  if Assigned(ActiveFrame) then
-    ActiveFrame.UpdateSettings;}
+  FrameFromNode(FSelectedNode).UpdateSettings;
 end;
 
 function TProjectFrame.FrameFromRelation(Relation: TEpiMasterRelation
@@ -793,10 +854,12 @@ end;
 
 class procedure TProjectFrame.RestoreDefaultPos(F: TProjectFrame);
 begin
-{  if Assigned(F) then
-    TDataFormFrame.RestoreDefaultPos(F.FActiveFrame)
+  if Assigned(F) and
+     Assigned(F.FrameFromNode(F.FSelectedNode))
+   then
+    TDataFormFrame.RestoreDefaultPos(F.FrameFromNode(F.FSelectedNode))
   else
-    TDataFormFrame.RestoreDefaultPos(nil);    }
+    TDataFormFrame.RestoreDefaultPos(nil);
 end;
 
 end.

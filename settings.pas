@@ -456,7 +456,7 @@ var
 begin
   Idx := RecentFiles.IndexOf(AFilename);
   if (Idx >= 0) then
-    RecentFiles.Exchange(Idx, 0)
+    RecentFiles.Move(Idx, 0)
   else
     RecentFiles.Insert(0, AFilename);
   if RecentFiles.Count > 10 then

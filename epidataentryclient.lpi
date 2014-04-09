@@ -16,7 +16,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <Attributes pvaSpecialBuild="True"/>
@@ -191,7 +191,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="33">
+    <Units Count="34">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -397,6 +397,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="new_record_form"/>
       </Unit32>
+      <Unit33>
+        <Filename Value="settings/settings2_relate_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="RelateFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings2_relate_frame"/>
+      </Unit33>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

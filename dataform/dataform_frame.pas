@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, search, entry_globals, epirelations;
+  VirtualTrees, search, entry_globals, epirelations,epidatafilestypes;
 
 type
 
@@ -16,6 +16,7 @@ type
   TFieldExitFlowType = (fxtOk, fxtError, fxtJump, fxtRelate);
 
   TDataFormFrame = class(TFrame)
+    DeleteRecordAction: TAction;
     BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
     FieldLengthLabel: TLabel;
@@ -69,7 +70,8 @@ type
     procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-    procedure DeleteRecSpeedButtonClick(Sender: TObject);
+    procedure DeleteRecordActionExecute(Sender: TObject);
+    procedure DeleteRecordActionUpdate(Sender: TObject);
     procedure FindRecordExActionExecute(Sender: TObject);
     procedure FindFastListActionExecute(Sender: TObject);
     procedure FindNextActionExecute(Sender: TObject);
@@ -203,6 +205,7 @@ type
     FOnModified: TNotifyEvent;
     FOnRecordChanged: TNotifyEvent;
     FTreeNode: PVirtualNode;
+    FParentRecordState: TEpiRecordState;
     procedure FillKeyFields;
     procedure DoRecordChanged;
     function  GetMasterDataForm: TDataFormFrame;
@@ -212,11 +215,14 @@ type
     procedure KeyFieldDataChange(const Sender: TEpiCustomBase;
       const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
       EventType: Word; Data: Pointer);
+    procedure UpdateActions;
+    procedure ChangeParentRecordState(NewState: TEpiRecordState);
   public
     function  CanChange: Boolean;
     function  AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
     function  AllKeyFieldsAreFilled: boolean;
-    procedure RelateInit(Reason: TRelateReason);
+    function  GetCurrentKeyFieldValues: string;
+    procedure RelateInit(Reason: TRelateReason; ParentRecordState: TEpiRecordState);
     property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
     property  OnModified: TNotifyEvent read FOnModified write FOnModified;
     property  OnRecordChanged: TNotifyEvent read FOnRecordChanged write FOnRecordChanged;
@@ -230,7 +236,7 @@ implementation
 {$R *.lfm}
 
 uses
-  epidatafilestypes, LCLProc, settings,
+  LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
@@ -238,6 +244,14 @@ uses
   entrylabel, entrysection, project_frame,
   notes_report, epireport_generator_txt,
   strutils;
+
+const
+  Key_RelateToParentKeys = [VK_F10];
+  Key_ShowPickListKeys  = [VK_ADD, VK_F9, VK_OEM_PLUS];
+  Key_NextFieldFlowKeys = [VK_RETURN, VK_TAB, VK_DOWN];
+  Key_FieldActKeys =
+    Key_ShowPickListKeys +
+    Key_NextFieldFlowKeys;
 
 type
   TKeyDownData = record
@@ -294,6 +308,20 @@ begin
   Handled := true;
 end;
 
+procedure TDataFormFrame.DeleteRecordActionExecute(Sender: TObject);
+begin
+  FDataFile.Deleted[IndexedRecNo] := not FDataFile.Deleted[IndexedRecNo];
+  Modified := true;
+  UpdateRecordEdit;
+end;
+
+procedure TDataFormFrame.DeleteRecordActionUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled :=
+    (RecNo <> NewRecord) and
+    (FParentRecordState <> rsDeleted);
+end;
+
 procedure TDataFormFrame.CopyToClipBoardActionExecute(Sender: TObject);
 begin
   DoCopyToClipBoard;
@@ -307,17 +335,9 @@ begin
     DataFile,
     DataFile.Fields,
     nil,
-    FDFToLocalIndex
+    FDFToLocalIndex,
+    FLocalToDFIndex
   );
-end;
-
-procedure TDataFormFrame.DeleteRecSpeedButtonClick(Sender: TObject);
-begin
-  if RecNo = NewRecord then exit;
-
-  FDataFile.Deleted[IndexedRecNo] := not FDataFile.Deleted[IndexedRecNo];
-  Modified := true;
-  UpdateRecordEdit;
 end;
 
 procedure TDataFormFrame.FindRecordExActionExecute(Sender: TObject);
@@ -371,7 +391,7 @@ end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := (RecNo > 0) and (FLocalToDFIndex.Size > 0);
+  TAction(Sender).Enabled := (RecNo > 0) and (FLocalToDFIndex.Size > 0);
 end;
 
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
@@ -425,10 +445,20 @@ begin
 end;
 
 procedure TDataFormFrame.NewRecordActionUpdate(Sender: TObject);
+var
+  B: Boolean;
 begin
-  TAction(Sender).Enabled :=
-    (RecNo <> NewRecord) or
-    ((RecNo = NewRecord) and (Modified));
+  B := (FParentRecordState <> rsDeleted);
+  B := B and
+       (
+        (RecNo <> NewRecord) or
+        ((RecNo = NewRecord) and (Modified))
+       );
+  if IsDetailRelation then
+    B := B and
+      (FLocalToDFIndex.Size < DetailRelation.MaxRecordCount);
+
+  TAction(Sender).Enabled := B;
   NewRecSpeedButton.ShowHint := TAction(Sender).Enabled;
 end;
 
@@ -716,11 +746,10 @@ procedure TDataFormFrame.UpdateRecActionPanel;
 var
   B: Boolean;
 begin
-  B := IndexedRecNo <> NewRecord;
-  DeleteRecSpeedButton.Enabled  := B;
-  DeleteRecSpeedButton.ShowHint := B;
+  DeleteLabel.Caption := '';
+  if IndexedRecNo = NewRecord then exit;
 
-  B := B and FDataFile.Deleted[IndexedRecNo];
+  B := FDataFile.Deleted[IndexedRecNo];
   DeleteRecSpeedButton.Hint := BoolToStr(B, 'UnDelete', 'Delete');
   DeleteLabel.Caption       := BoolToStr(B, 'DEL',      '');
 end;
@@ -1458,7 +1487,8 @@ begin
           DataFile,
           FieldList,
           List,
-          FDFToLocalIndex
+          FDFToLocalIndex,
+          FLocalToDFIndex
           );
     end;
   finally
@@ -1838,13 +1868,27 @@ begin
   end;
 end;
 
+procedure TDataFormFrame.UpdateActions;
+var
+  A: TContainedAction;
+begin
+  for A in ActionList1 do
+    A.Update;
+end;
+
+procedure TDataFormFrame.ChangeParentRecordState(NewState: TEpiRecordState);
+begin
+  FParentRecordState := NewState;
+end;
+
 function TDataFormFrame.CanChange: Boolean;
 begin
   Result := true;
   CloseQuery(Result);
 end;
 
-procedure TDataFormFrame.RelateInit(Reason: TRelateReason);
+procedure TDataFormFrame.RelateInit(Reason: TRelateReason;
+  ParentRecordState: TEpiRecordState);
 begin
   UpdateIndexFields;
 
@@ -1852,34 +1896,55 @@ begin
     rrRecordChange:
       // TODO: A EntrySetting should determine which state the related frame should
       // be in after relation has happened...
-      RecNo := 0;
+      begin
+        // Trick to force a load of data using current filter.
+        FRecNo := -1;
+        RecNo := 0;
+      end;
 
     rrNewRecord:
       DoNewRecord;
 
     rrFocusShift:
-      if FLocalToDFIndex.Size = 0 then
       begin
-        Modified := false;
-        DoNewRecord
-      end
-      else begin
-        LoadRecord(RecNo);
-        if ResultListFormIsShowing then
-          ShowResultListForm(
-            Self,
-            'All',
-            DataFile,
-            DataFile.Fields,
-            nil,
-            FDFToLocalIndex
-          );
+        if FLocalToDFIndex.Size = 0 then
+        begin
+          Modified := false;
+          DoNewRecord;
+        end
+        else begin
+          LoadRecord(RecNo);
+          if ResultListFormIsShowing then
+            ShowResultListForm(
+              Self,
+              'All',
+              DataFile,
+              DataFile.Fields,
+              nil,
+              FDFToLocalIndex
+            );
+        end;
       end;
   end;
 
+  // The one special case where an empty subform is entered
+  // from a parentform, where selected record is "Marked for deletion"
+  DataFormScroolBox.Enabled :=
+    not (
+      (Reason = rrFocusShift) and
+      (ParentRecordState = rsDeleted) and
+      (FLocalToDFIndex.Size = 0)
+    );
+
   UpdateRecordEdit;
+  ChangeParentRecordState(ParentRecordState);
+  UpdateActions;
+
   DoRecordChanged;
-  FirstFieldAction.Execute;
+  if DataFormScroolBox.Enabled then
+    FirstFieldAction.Execute
+  else
+    UpdateFieldPanel(DataFile.KeyFields[0]);
 end;
 
 procedure TDataFormFrame.CloseQuery(var CanClose: boolean);
@@ -1962,7 +2027,7 @@ var
   NextFieldEdit: TFieldEdit;
   Res: TFieldExitFlowType;
   CRecNo: Integer;
-
+  B: Boolean;
 
   function NextFieldOnKeyDown: TFieldEdit;
   var
@@ -2007,14 +2072,24 @@ begin
     Key := VK_UNKNOWN;
   end;
 
+  if (Key in Key_RelateToParentKeys) and
+     (Shift = []) and
+     (IsDetailRelation)
+  then
+  begin
+    if AllFieldsValidate(false) then
+      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0);
+    Key := VK_UNKNOWN;
+    Exit;
+  end;
+
   // Leave field or see pick-list.
-  if (Key in [VK_RETURN, VK_TAB, VK_DOWN,
-              VK_ADD, VK_F9, VK_OEM_PLUS])
+  if (Key in Key_FieldActKeys)
   then begin
-    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
+    if (Key in Key_ShowPickListKeys) and
        (not Assigned(FieldEdit.Field.ValueLabelSet)) then exit;
 
-    if (Key in [VK_ADD, VK_F9, VK_OEM_PLUS]) and
+    if (Key in Key_ShowPickListKeys) and
        (Assigned(FieldEdit.Field.ValueLabelSet)) and
        (not ShowValueLabelPickList(FieldEdit)) then
     begin
@@ -2061,14 +2136,32 @@ begin
          (RecNo = (FLocalToDFIndex.Size - 1))
       then
       begin
-        if IsDetailRelation and
-           (DetailRelation.MaxRecordCount = 1)
-        then
+        // If we have reached the maximum number of possible records then =???
+        // (this should probably be a user setting)
+        if IsDetailRelation then
+        begin
+          // If we are entering a new record, then size of datafile/localindex is
+          // 1 records to short (it is not yet commited).
+          B :=
+            (RecNo = NewRecord) and
+            ((FLocalToDFIndex.Size + 1) = DetailRelation.MaxRecordCount);
+
+          // If we are editing the last record localindex/datafile size is correct
+          // size.
+          B := B or (
+              (RecNo = FLocalToDFIndex.Size - 1) and
+              (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
+             );
+
+          if B then
           begin
             PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0);
             Exit;
           end;
+        end;
 
+        // This was not the last possible record to enter,
+        // try to do a new record!
         if not DoNewRecord then exit;
       end else
       begin
@@ -2454,6 +2547,20 @@ begin
               (FieldEditFromField(F).Text <> '');
 end;
 
+function TDataFormFrame.GetCurrentKeyFieldValues: string;
+var
+  F: TEpiField;
+  FE: TFieldEdit;
+begin
+  Result := '';
+
+  for F in DataFile.KeyFields do
+  begin
+    FE := FieldEditFromField(F);
+    Result += F.Name + ' = ' + FE.Text + LineEnding;
+  end;
+end;
+
 function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
   ): boolean;
 
@@ -2574,6 +2681,8 @@ end;
 constructor TDataFormFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+
+  FParentRecordState := rsNormal;
 
   FLocalToDFIndex := TEpiField.CreateField(nil, ftInteger);
   FLocalToDFIndex.Size := 0;
