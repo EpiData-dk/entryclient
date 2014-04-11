@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit,
-  epiversionutils;
+  epiversionutils, setting_types;
 
 type
 
@@ -80,6 +80,10 @@ type
     HeadingFont3:          TFont;
     HeadingFont4:          TFont;
     HeadingFont5:          TFont;
+
+    // Relate
+    RelateMaxRecsReached:  TSettingRelateMaxRecordReached;
+    RelateChangeRecord:    TSettingRelateRecordChanged;
   end;
   PEntrySettings = ^TEntrySettings;
 
@@ -122,6 +126,10 @@ var
     HeadingFont3:          nil;
     HeadingFont4:          nil;
     HeadingFont5:          nil;
+
+    // Relate
+    RelateMaxRecsReached:  mrrReturnToParent;
+    RelateChangeRecord:    rcLastRecord;
   );
 
   {$I epidataentryclient.revision.inc}
@@ -240,6 +248,10 @@ begin
       WriteInteger(sec, 'NotesHintFontSize', NotesHintFont.Size);
       WriteInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style));
       WriteInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
+
+      Sec := 'relate';
+      WriteInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached));
+      WriteInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord));
     end;
 
     Result := true;
@@ -340,6 +352,11 @@ begin
     NotesHintFont.Size  := ReadInteger(sec, 'NotesHintFontSize', NotesHintFont.Size);
     NotesHintFont.Style := TFontStyles(ReadInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style)));
     NotesHintFont.Color := ReadInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
+
+    // Relate
+    Sec := 'relate';
+    RelateMaxRecsReached := TSettingRelateMaxRecordReached(ReadInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached)));
+    RelateChangeRecord := TSettingRelateRecordChanged(ReadInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord)));
   end;
   Result := true;
 end;

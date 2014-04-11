@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, search, entry_globals, epirelations,epidatafilestypes;
+  VirtualTrees, search, entry_globals, epirelations, epidatafilestypes;
 
 type
 
@@ -240,7 +240,7 @@ uses
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
-  Printers, OSPrinters, Clipbrd,
+  Printers, OSPrinters, Clipbrd, setting_types,
   entrylabel, entrysection, project_frame,
   notes_report, epireport_generator_txt,
   strutils;
@@ -853,12 +853,13 @@ end;
 
 function TDataFormFrame.GetIndexedRecNo: Integer;
 begin
-  if (RecNo = NewRecord) or
-     (RecNo >= FLocalToDFIndex.Size)
+  if (RecNo >= 0) and
+     (RecNo < FLocalToDFIndex.Size) and
+     (FLocalToDFIndex.Size >= 0)
   then
-    Result := NewRecord
+    Result := FLocalToDFIndex.AsInteger[RecNo]
   else
-    Result := FLocalToDFIndex.AsInteger[RecNo];
+    Result := NewRecord;
 end;
 
 function TDataFormFrame.GetIndexedSize: Integer;
@@ -1894,12 +1895,18 @@ begin
 
   case Reason of
     rrRecordChange:
-      // TODO: A EntrySetting should determine which state the related frame should
-      // be in after relation has happened...
       begin
         // Trick to force a load of data using current filter.
         FRecNo := -1;
-        RecNo := 0;
+
+        case EntrySettings.RelateChangeRecord of
+          rcFirstRecord:
+            RecNo := 0;
+          rcLastRecord:
+            RecNo := FLocalToDFIndex.Size - 1;
+          rcNewRecord:
+            DoNewRecord;
+        end;
       end;
 
     rrNewRecord:
@@ -1907,7 +1914,9 @@ begin
 
     rrFocusShift:
       begin
-        if FLocalToDFIndex.Size = 0 then
+        if (FLocalToDFIndex.Size = 0) or
+           (RecNo = NewRecord)
+        then
         begin
           Modified := false;
           DoNewRecord;
@@ -2155,7 +2164,12 @@ begin
 
           if B then
           begin
-            PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0);
+            if EntrySettings.RelateMaxRecsReached = mrrReturnToParent then
+              PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0)
+            else begin
+              DoNewRecord;
+              RecNo := FLocalToDFIndex.Size -1;
+            end;
             Exit;
           end;
         end;

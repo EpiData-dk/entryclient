@@ -6,16 +6,25 @@ object RelateFrame: TRelateFrame
   ClientHeight = 444
   ClientWidth = 487
   TabOrder = 0
-  DesignLeft = 820
-  DesignTop = 326
+  DesignLeft = 544
+  DesignTop = 352
   object RadioGroup1: TRadioGroup
-    Left = 24
-    Height = 106
-    Top = 22
-    Width = 419
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 49
+    Top = 20
+    Width = 467
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
-    Caption = 'Maximum record count:'
+    AutoSize = True
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 20
+    BorderSpacing.Right = 10
+    BorderSpacing.InnerBorder = 5
+    Caption = 'When maximum record count:'
     ChildSizing.LeftRightSpacing = 6
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -23,22 +32,29 @@ object RelateFrame: TRelateFrame
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 89
-    ClientWidth = 415
+    ClientHeight = 32
+    ClientWidth = 463
     Items.Strings = (
-      'Stay on entry form'
-      'Return to parent'
+      'Filling text...'
     )
     TabOrder = 0
   end
   object RadioGroup2: TRadioGroup
-    Left = 24
-    Height = 128
-    Top = 144
-    Width = 419
+    AnchorSideLeft.Control = RadioGroup1
+    AnchorSideTop.Control = RadioGroup1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = RadioGroup1
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 49
+    Top = 89
+    Width = 467
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
-    Caption = 'Changing a record:'
+    AutoSize = True
+    BorderSpacing.Top = 20
+    BorderSpacing.InnerBorder = 5
+    Caption = 'Changing a record at parent level:'
     ChildSizing.LeftRightSpacing = 6
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -46,12 +62,10 @@ object RelateFrame: TRelateFrame
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 111
-    ClientWidth = 415
+    ClientHeight = 32
+    ClientWidth = 463
     Items.Strings = (
-      'Places child form at first record'
-      'Places child form at last record'
-      'Readies child form with new record'
+      'Filling text...'
     )
     TabOrder = 1
   end

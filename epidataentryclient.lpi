@@ -16,7 +16,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="2"/>
+      <BuildNr Value="4"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <Attributes pvaSpecialBuild="True"/>
@@ -191,7 +191,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="34">
+    <Units Count="35">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -405,6 +405,11 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="settings2_relate_frame"/>
       </Unit33>
+      <Unit34>
+        <Filename Value="settings/setting_types.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="setting_types"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

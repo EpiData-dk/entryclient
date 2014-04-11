@@ -1,5 +1,6 @@
 unit project_frame;
 
+{$codepage UTF8}
 {$mode objfpc}{$H+}
 
 interface
@@ -121,7 +122,7 @@ implementation
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, Menus, LCLType, shortcuts, entry_globals,
-  RegExpr;
+  RegExpr, LazUTF8;
 
 type
 
@@ -563,8 +564,22 @@ end;
 
 procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var ChildCount: Cardinal);
+var
+  RelationList: TEpiRelationList;
+  MR: TEpiMasterRelation;
 begin
-  ChildCount := PNodeData(Sender.GetNodeData(Node))^.RelationList.Count;
+  RelationList := PNodeData(Sender.GetNodeData(Node))^.RelationList;
+
+  // EPX Version <= 2 file:
+  if (Node = FProjectNode) and
+     (RelationList.Count = 0)
+  then
+    begin
+      MR := RelationList.NewMasterRelation;
+      MR.Datafile := EpiDocument.DataFiles[0];
+    end;
+
+  ChildCount := RelationList.Count;
 end;
 
 procedure TProjectFrame.DataFileTreeInitNode(Sender: TBaseVirtualTree;
@@ -634,10 +649,31 @@ end;
 procedure TProjectFrame.DataFileTreeGetHint(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex;
   var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: String);
+var
+  ND: PNodeData;
+  Rel: TEpiDetailRelation;
+  S: String;
 begin
   if Node = FProjectNode then exit;
+  S := '';
 
-  HintText := TrimRight(FrameFromNode(Node).GetCurrentKeyFieldValues);
+  ND := Sender.GetNodeData(Node);
+  if ND^.Relation is TEpiDetailRelation then
+  begin
+    S += '1:';
+
+    Rel := TEpiDetailRelation(ND^.Relation);
+    if Rel.MaxRecordCount = 0 then
+      S += char($E2) + char($88) + char($9E)             // unicode infinity symbol (UTF-8 encoded)
+    else
+      S += IntToStr(Rel.MaxRecordCount);
+
+    S += LineEnding;
+  end;
+
+  S += TrimRight(FrameFromNode(Node).GetCurrentKeyFieldValues);
+
+  HintText := S;
 end;
 
 function TProjectFrame.GetEpiDocument: TEpiDocument;
