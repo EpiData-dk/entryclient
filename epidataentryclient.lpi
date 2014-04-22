@@ -13,10 +13,11 @@
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="5"/>
+      <BuildNr Value="7"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <Attributes pvaSpecialBuild="True"/>

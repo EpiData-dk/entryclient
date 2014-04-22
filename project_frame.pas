@@ -65,6 +65,7 @@ type
     procedure UpdateActionLinks;
   private
     { Relational handling (checking/updating/etc...) }
+    FRelateToParent: boolean;
     procedure FrameModified(Sender: TObject);
     procedure FrameRecordchanged(Sender: TObject);
     procedure LM_ProjectRelate(var Msg: TLMessage); message LM_PROJECT_RELATE;
@@ -380,8 +381,12 @@ var
 begin
   Relation := TEpiMasterRelation(Msg.WParam);
   Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
-  DataFileTree.Selected[Node] := true;
+  FRelateToParent := (Msg.LParam = 1);
+
   DataFileTree.FocusedNode := Node;
+
+  if DataFileTree.FocusedNode = Node then
+    DataFileTree.Selected[Node] := true;
 end;
 
 function TProjectFrame.GetRecordState(Node: PVirtualNode): TEpiRecordState;
@@ -433,6 +438,10 @@ begin
   begin
     if Modified then
     begin
+      // TODO Perhaps make a validate before asking?
+
+
+
       Res := MessageDlg('Warning',
                'Save record before change?',
                mtConfirmation, mbYesNoCancel, 0, mbCancel);
@@ -454,6 +463,12 @@ var
   RelateReason: TRelateReason;
 begin
   RelateReason := rrFocusShift;
+
+  if FRelateToParent then
+  begin
+    RelateReason := rrReturnToParent;
+    FRelateToParent := false;
+  end;
 
   // We are allowed to change node (this was confirmed in DataFileTreeFocusChanging)
   // now we must commit unsaved data and position at the saved record no.
@@ -798,7 +813,8 @@ constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   FDocumentFile := nil;
-  FAllowForEndBackup := false;;
+  FAllowForEndBackup := false;
+  FRelateToParent := false;
 
   FChangingRecNo := NewRecord;
   DataFileTree.ShowHint       := true;

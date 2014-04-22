@@ -147,6 +147,7 @@ type
   private
     { Field Enter/Exit Handling }
     // - Delayed key down handling.
+    FCurrentEdit: TFieldEdit;
     function  KeyDownData(Sender: TObject; Const Key: Word; Const Shift: TShiftState): PtrInt;
     procedure ASyncKeyDown(Data: PtrInt);
     procedure DoKeyFieldDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -246,6 +247,7 @@ uses
   strutils;
 
 const
+  Key_PrevFieldFlowKeys = [VK_UP];
   Key_RelateToParentKeys = [VK_F10];
   Key_ShowPickListKeys  = [VK_ADD, VK_F9, VK_OEM_PLUS];
   Key_NextFieldFlowKeys = [VK_RETURN, VK_TAB, VK_DOWN];
@@ -1035,7 +1037,7 @@ begin
   if (Modified) and
      (not AllFieldsValidate(false))
   then
-    Exit;
+    Exit(false);
 
   // *******************
   // * Commit old data *
@@ -1934,6 +1936,17 @@ begin
             );
         end;
       end;
+
+    rrReturnToParent:
+      if ResultListFormIsShowing then
+        ShowResultListForm(
+          Self,
+          'All',
+          DataFile,
+          DataFile.Fields,
+          nil,
+          FDFToLocalIndex
+        );
   end;
 
   // The one special case where an empty subform is entered
@@ -1950,7 +1963,17 @@ begin
   UpdateActions;
 
   DoRecordChanged;
-  if DataFormScroolBox.Enabled then
+  if (Reason = rrReturnToParent)
+  then
+    begin
+      if Assigned(FCurrentEdit) then
+      begin
+        NextUsableFieldIndex();
+        FCurrentEdit.SetFocus;
+      end;
+    end
+  else if (DataFormScroolBox.Enabled)
+  then
     FirstFieldAction.Execute
   else
     UpdateFieldPanel(DataFile.KeyFields[0]);
@@ -2069,7 +2092,7 @@ var
 
 begin
   // Jumps backward though fields.
-  if ((Key = VK_UP) and (Shift = [])) or
+  if ((Key in Key_PrevFieldFlowKeys) and (Shift = [])) or
      ((Key = VK_TAB) and (Shift = [ssShift]))
   then
   Begin
@@ -2086,8 +2109,7 @@ begin
      (IsDetailRelation)
   then
   begin
-    if AllFieldsValidate(false) then
-      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0);
+    PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 1);
     Key := VK_UNKNOWN;
     Exit;
   end;
@@ -2246,6 +2268,7 @@ begin
   FieldEdit.Color := EntrySettings.ActiveFieldColour;
   UpdateFieldPanel(FieldEdit.Field);
   ShowNotes(FieldEdit);
+  FCurrentEdit := FieldEdit;
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);
@@ -2679,7 +2702,7 @@ begin
   if Assigned(FNotesForm) then FNotesForm.Hide;
 
   ShowHintMsg('', nil);
-  FNotesHint.Hide;
+//  FNotesHint.Hide;
 
   VLForm := TValueLabelsPickListForm.Create(Self, AFieldEdit.Field);
   VLForm.SetInitialValue(AFieldEdit.Text);
