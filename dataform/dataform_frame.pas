@@ -1968,7 +1968,6 @@ begin
     begin
       if Assigned(FCurrentEdit) then
       begin
-        NextUsableFieldIndex();
         FCurrentEdit.SetFocus;
       end;
     end
