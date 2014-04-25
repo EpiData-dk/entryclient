@@ -28,10 +28,8 @@ object ProjectFrame: TProjectFrame
       TabOrder = 0
       object OpenProjectToolButton: TToolButton
         Left = 1
-        Hint = 'Open Project'
         Top = 2
-        Caption = 'Open Project'
-        ImageIndex = 0
+        Action = OpenProjectAction
       end
       object ProjectToolButtomDivider1: TToolButton
         Left = 24
@@ -61,8 +59,7 @@ object ProjectFrame: TProjectFrame
       object ToolButton2: TToolButton
         Left = 57
         Top = 2
-        Caption = 'CloseProjectAction'
-        ImageIndex = 2
+        Action = CloseProjectAction
       end
       object ToolButton3: TToolButton
         Left = 80
@@ -165,6 +162,16 @@ object ProjectFrame: TProjectFrame
       ImageIndex = 1
       OnExecute = SaveProjectActionExecute
       OnUpdate = SaveProjectActionUpdate
+    end
+    object OpenProjectAction: TAction
+      Caption = 'Open Project'
+      ImageIndex = 0
+      OnExecute = OpenProjectActionExecute
+    end
+    object CloseProjectAction: TAction
+      Caption = 'Close Project'
+      ImageIndex = 2
+      OnExecute = CloseProjectActionExecute
     end
   end
   object ProjectImageList: TImageList
@@ -269,5 +276,9 @@ object ProjectFrame: TProjectFrame
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
+  end
+  object ProjectRecentFilesDropDownMenu: TPopupMenu
+    left = 264
+    top = 80
   end
 end

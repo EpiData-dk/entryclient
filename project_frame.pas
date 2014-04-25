@@ -9,7 +9,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
   VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics,
-  StdCtrls, epidatafilestypes;
+  StdCtrls, Menus, epidatafilestypes;
 
 type
 
@@ -18,11 +18,14 @@ type
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
+    CloseProjectAction: TAction;
+    OpenProjectAction: TAction;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Panel1: TPanel;
+    ProjectRecentFilesDropDownMenu: TPopupMenu;
     ProgressBar1: TProgressBar;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
@@ -38,6 +41,7 @@ type
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     DataFileTree: TVirtualStringTree;
+    procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
     procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
@@ -45,6 +49,7 @@ type
       var Canceled: Boolean);
     procedure LoadError(const Sender: TEpiCustomBase; ErrorType: Word;
       Data: Pointer; out Continue: boolean);
+    procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
@@ -101,6 +106,8 @@ type
     { messages }
     // Relaying
     procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
+    procedure OpenRecentMenuItemClick(Sender: TObject);
+    procedure UpdateRecentFilesDropDown;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -122,8 +129,8 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType, shortcuts, entry_globals,
-  RegExpr, LazUTF8;
+  epistringutils, LCLType, shortcuts, entry_globals,
+  RegExpr, LazUTF8, entryprocs;
 
 type
 
@@ -165,6 +172,11 @@ begin
     PasswordBox('Project Password',
                 'Project data is password protected.' + LineEnding +
                 'Please enter password:');
+end;
+
+procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
+begin
+  PostMessage(MainForm.Handle, LM_CLOSE_PROJECT, WParam(Sender), 0);
 end;
 
 procedure TProjectFrame.EpiDocumentProgress(const Sender: TEpiCustomBase;
@@ -217,6 +229,11 @@ begin
     'Cannot Enter Data into: ' + ExtractFileName(FDocumentFile.FileName) + LineEnding +
     'Contact Project Manager.'
   );
+end;
+
+procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
+begin
+  PostMessage(MainForm.Handle, LM_OPEN_PROJECT, 0, 0);
 end;
 
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
@@ -451,6 +468,7 @@ begin
         mrNo:     begin
                     Modified := false; // Do nothing
                     RecNo := NewRecord;
+                    Result := false;
                   end;
       end;
     end;
@@ -709,6 +727,36 @@ begin
   end;
 end;
 
+procedure TProjectFrame.OpenRecentMenuItemClick(Sender: TObject);
+begin
+  OpenProjectToolButton.Style := tbsButton;
+  PostMessage(MainForm.Handle, LM_OPEN_RECENT, WParam(Sender), 0);
+end;
+
+procedure TProjectFrame.UpdateRecentFilesDropDown;
+var
+  K: Word;
+  Shift: TShiftState;
+  i: Integer;
+  Mi: TMenuItem;
+begin
+  ShortCutToKey(M_OpenRecent, K, Shift);
+
+  LoadRecentFilesIni(GetRecentIniFileName);
+  ProjectRecentFilesDropDownMenu.Items.Clear;
+
+  for i := 0 to RecentFiles.Count - 1 do
+  begin
+    Mi := TMenuItem.Create(ProjectRecentFilesDropDownMenu);
+    Mi.Name := 'project_frame_recent' + inttostr(i);
+    Mi.Caption := RecentFiles[i];
+    Mi.OnClick := @OpenRecentMenuItemClick;
+    if i < 9 then
+      Mi.ShortCut := ShortCut(VK_1 + i, Shift);
+    ProjectRecentFilesDropDownMenu.Items.Add(Mi);
+  end;
+end;
+
 procedure TProjectFrame.DoSaveProject(const aFilename: string);
 begin
   Screen.Cursor := crHourGlass;
@@ -833,6 +881,7 @@ begin
   PaintCount := 0;
 
   UpdateShortCuts;
+  UpdateRecentFilesDropDown;
 end;
 
 destructor TProjectFrame.Destroy;
@@ -847,6 +896,7 @@ end;
 procedure TProjectFrame.CloseQuery(var CanClose: boolean);
 var
   Res: LongInt;
+  Frame: TDataFormFrame;
 begin
   CanClose := true;
 
@@ -854,10 +904,11 @@ begin
 
   // Passes control to DataformFrame, which
   // ensures a potential modified record is commited.
-//  ActiveFrame.CloseQuery(CanClose);
+  Frame := FrameFromNode(FSelectedNode);
+  Frame.CloseQuery(CanClose);
   if not CanClose then exit;
 
-  if (EpiDocument.Modified) {or (ActiveFrame.Modified)} then
+  if (EpiDocument.Modified) {or (Frame.Modified)} then
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
