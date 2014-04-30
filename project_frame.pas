@@ -455,10 +455,6 @@ begin
   begin
     if Modified then
     begin
-      // TODO Perhaps make a validate before asking?
-
-
-
       Res := MessageDlg('Warning',
                'Save record before change?',
                mtConfirmation, mbYesNoCancel, 0, mbCancel);
@@ -482,12 +478,6 @@ var
 begin
   RelateReason := rrFocusShift;
 
-  if FRelateToParent then
-  begin
-    RelateReason := rrReturnToParent;
-    FRelateToParent := false;
-  end;
-
   // We are allowed to change node (this was confirmed in DataFileTreeFocusChanging)
   // now we must commit unsaved data and position at the saved record no.
   // There is no FSelectedNode first time after a project is loaded...
@@ -506,6 +496,14 @@ begin
 
       ActionList1.State := asSuspended;
     end;
+
+  // Relate to Parent here, because the reason is set to rrNewRecord
+  // based on RecNo - but relate to parent is define by eg. pressing a key;
+  if FRelateToParent then
+  begin
+    RelateReason := rrReturnToParent;
+    FRelateToParent := false;
+  end;
 
   FSelectedNode := Node;
   UpdateActionLinks;

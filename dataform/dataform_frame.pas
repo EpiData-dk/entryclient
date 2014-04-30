@@ -148,9 +148,11 @@ type
     { Field Enter/Exit Handling }
     // - Delayed key down handling.
     FCurrentEdit: TFieldEdit;
+    function  NewOrNextRecord: TFieldEdit;
     function  KeyDownData(Sender: TObject; Const Key: Word; Const Shift: TShiftState): PtrInt;
     procedure ASyncKeyDown(Data: PtrInt);
     procedure DoKeyFieldDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    function  NextFieldOnKeyDown(Const CurrentFieldEdit: TFieldEdit): TFieldEdit;
     function  NextUsableFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -721,7 +723,31 @@ begin
 end;
 
 procedure TDataFormFrame.UpdateRecordEdit;
+var
+  S: String;
 begin
+  UpdateRecActionPanel;
+
+  if FLocalToDFIndex.Size = 0 then
+  begin
+    RecordEdit.Text := 'Empty';
+    Exit;
+  end;
+
+  if Modified then
+    S := '*'
+  else
+    S := '';
+
+  if RecNo = NewRecord then
+    S := Format('New / %d %s', [FLocalToDFIndex.Size, S])
+  else
+    S := Format('%d / %d %s', [RecNo + 1, FLocalToDFIndex.Size, S]);
+
+
+  RecordEdit.Text := Trim(S);
+{
+
   if RecNo = NewRecord then
   begin
     if Modified then
@@ -738,10 +764,7 @@ begin
       RecordEdit.Text :=
         Format('%d / %d', [RecNo + 1, FLocalToDFIndex.Size]);
   end;
-  UpdateRecActionPanel;
-
-  if FLocalToDFIndex.Size = 0 then
-    RecordEdit.Text := 'Empty';
+    }
 end;
 
 procedure TDataFormFrame.UpdateRecActionPanel;
@@ -1663,6 +1686,59 @@ begin
   end;
 end;
 
+function TDataFormFrame.NewOrNextRecord: TFieldEdit;
+var
+  B: Boolean;
+  CRecNo: Integer;
+begin
+  Result := nil;
+
+  if (RecNo = NewRecord) or
+     (RecNo = (FLocalToDFIndex.Size - 1))
+  then
+  begin
+    // If we have reached the maximum number of possible records then???
+    if IsDetailRelation then
+    begin
+      // If we are entering a new record, then size of datafile/localindex is
+      // 1 records to short (it is not yet commited).
+      B :=
+        (RecNo = NewRecord) and
+        ((FLocalToDFIndex.Size + 1) = DetailRelation.MaxRecordCount);
+
+      // If we are editing the last record localindex/datafile size is correct
+      // size.
+      B := B or (
+          (RecNo = FLocalToDFIndex.Size - 1) and
+          (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
+         );
+
+      if B then
+      begin
+        if EntrySettings.RelateMaxRecsReached = mrrReturnToParent then
+          PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 1)
+        else begin
+          DoNewRecord;
+          RecNo := FLocalToDFIndex.Size -1;
+        end;
+        Exit;
+      end;
+    end;
+
+    // This was not the last possible record to enter,
+    // try to do a new record!
+    if not DoNewRecord then exit;
+  end else
+  begin
+    CRecNo := RecNo;
+    RecNo := RecNo + 1;
+    // if the recno was not changed a validation failed, hence do not
+    // shift focus field, etc...
+    if CRecNo = RecNo then exit;
+  end;
+  Result := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
+end;
+
 function TDataFormFrame.KeyDownData(Sender: TObject; const Key: Word;
   const Shift: TShiftState): PtrInt;
 var
@@ -1892,6 +1968,8 @@ end;
 
 procedure TDataFormFrame.RelateInit(Reason: TRelateReason;
   ParentRecordState: TEpiRecordState);
+var
+  FE: TFieldEdit;
 begin
   UpdateIndexFields;
 
@@ -1966,10 +2044,16 @@ begin
   if (Reason = rrReturnToParent)
   then
     begin
-      if Assigned(FCurrentEdit) then
-      begin
-        FCurrentEdit.SetFocus;
-      end;
+      FE := NextFieldOnKeyDown(FCurrentEdit);
+
+      if not Assigned(FE) then
+        FE := NewOrNextRecord;
+
+      if not Assigned(FE) then
+        Exit;
+
+      FieldEnterFlow(FE);
+      FE.SetFocus;
     end
   else if (DataFormScroolBox.Enabled)
   then
@@ -2060,25 +2144,6 @@ var
   CRecNo: Integer;
   B: Boolean;
 
-  function NextFieldOnKeyDown: TFieldEdit;
-  var
-    Idx: LongInt;
-  begin
-    Result := nil;
-    Idx := NextUsableFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
-    if Idx = -1 then
-    begin
-      if (RecNo = NewRecord) or (RecNo = (FLocalToDFIndex.Size - 1))  then
-        exit
-      else begin
-        NextRecAction.Execute;
-        Idx := NextUsableFieldIndex(-1, false);
-      end
-    end;
-    if Idx = -1 then ; // TODO : This should never happend?
-    result := TFieldEdit(FieldEditList[Idx]);
-  end;
-
   function PrevFieldOnKeyDown: TFieldEdit;
   var
     Idx: LongInt;
@@ -2139,7 +2204,7 @@ begin
     Res := FieldExitFlow(FieldEdit, NextFieldEdit);
     case Res of
       fxtOk:
-        NextFieldEdit := NextFieldOnKeyDown;
+        NextFieldEdit := NextFieldOnKeyDown(FieldEdit);
 
       fxtError:
         begin
@@ -2159,55 +2224,11 @@ begin
     end;
 
     if not Assigned(NextFieldEdit) then
-    begin
-      // NextFieldEdit = nil => either do a new record (if this is a new record or last record)
-      //                        or increment record no...
-      if (RecNo = NewRecord) or
-         (RecNo = (FLocalToDFIndex.Size - 1))
-      then
-      begin
-        // If we have reached the maximum number of possible records then =???
-        // (this should probably be a user setting)
-        if IsDetailRelation then
-        begin
-          // If we are entering a new record, then size of datafile/localindex is
-          // 1 records to short (it is not yet commited).
-          B :=
-            (RecNo = NewRecord) and
-            ((FLocalToDFIndex.Size + 1) = DetailRelation.MaxRecordCount);
+      NextFieldEdit := NewOrNextRecord;
 
-          // If we are editing the last record localindex/datafile size is correct
-          // size.
-          B := B or (
-              (RecNo = FLocalToDFIndex.Size - 1) and
-              (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
-             );
+    if not Assigned(NextFieldEdit) then
+      Exit;
 
-          if B then
-          begin
-            if EntrySettings.RelateMaxRecsReached = mrrReturnToParent then
-              PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 0)
-            else begin
-              DoNewRecord;
-              RecNo := FLocalToDFIndex.Size -1;
-            end;
-            Exit;
-          end;
-        end;
-
-        // This was not the last possible record to enter,
-        // try to do a new record!
-        if not DoNewRecord then exit;
-      end else
-      begin
-        CRecNo := RecNo;
-        RecNo := RecNo + 1;
-        // if the recno was not changed a validation failed, hence do not
-        // shift focus field, etc...
-        if CRecNo = RecNo then exit;
-      end;
-      NextFieldEdit := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
-    end;
     FieldEnterFlow(NextFieldEdit);
     NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
@@ -2216,6 +2237,26 @@ begin
   // Needed to keep project updated on changes to key fields.
   if (DataFile.KeyFields.IndexOf(FieldEdit.Field) > -1) then
     UpdateModified;
+end;
+
+function TDataFormFrame.NextFieldOnKeyDown(const CurrentFieldEdit: TFieldEdit
+  ): TFieldEdit;
+var
+  Idx: LongInt;
+begin
+  Result := nil;
+  Idx := NextUsableFieldIndex(FieldEditList.IndexOf(CurrentFieldEdit), false);
+  if Idx = -1 then
+  begin
+    if (RecNo = NewRecord) or (RecNo = (FLocalToDFIndex.Size - 1))  then
+      exit
+    else begin
+      NextRecAction.Execute;
+      Idx := NextUsableFieldIndex(-1, false);
+    end
+  end;
+  if Idx = -1 then ; // TODO : This should never happend?
+  result := TFieldEdit(FieldEditList[Idx]);
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
@@ -2412,7 +2453,10 @@ begin
      (DataFile.KeyFields.FieldExists(Field)) then
   begin
     if not PerformKeyFieldsCheck then
+    begin
+      FE.SelectAll;
       Exit(fxtError);
+    end;
   end;
 
   // Comparison
