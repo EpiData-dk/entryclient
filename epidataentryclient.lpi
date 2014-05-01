@@ -20,7 +20,6 @@
       <BuildNr Value="9"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <Attributes pvaSpecialBuild="True"/>
       <StringTable ProductVersion="" SpecialBuild="RELATIONAL DATASETS"/>
     </VersionInfo>
     <BuildModes Count="4">
