@@ -13,11 +13,10 @@
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="9"/>
+      <BuildNr Value="10"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="RELATIONAL DATASETS"/>
