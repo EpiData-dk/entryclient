@@ -322,7 +322,7 @@ end;
 procedure TDataFormFrame.DeleteRecordActionUpdate(Sender: TObject);
 begin
   TAction(Sender).Enabled :=
-    (RecNo <> NewRecord) and
+//    (RecNo <> NewRecord) and
     (FParentRecordState <> rsDeleted);
 end;
 
@@ -395,7 +395,7 @@ end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
 begin
-  TAction(Sender).Enabled := (RecNo > 0) and (FLocalToDFIndex.Size > 0);
+  //TAction(Sender).Enabled := (RecNo > 0) and (FLocalToDFIndex.Size > 0);
 end;
 
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
@@ -430,7 +430,7 @@ end;
 
 procedure TDataFormFrame.LastRecActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := RecNo < (FLocalToDFIndex.Size - 1);
+  //(Sender as TAction).Enabled := RecNo < (FLocalToDFIndex.Size - 1);
 end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
@@ -453,11 +453,11 @@ var
   B: Boolean;
 begin
   B := (FParentRecordState <> rsDeleted);
-  B := B and
+  {B := B and
        (
         (RecNo <> NewRecord) or
         ((RecNo = NewRecord) and (Modified))
-       );
+       );}
   if IsDetailRelation then
     B := B and
       (FLocalToDFIndex.Size < DetailRelation.MaxRecordCount);
@@ -534,9 +534,9 @@ procedure TDataFormFrame.ShowFieldNotesActionUpdate(Sender: TObject);
 var
   LAction: TAction absolute Sender;
 begin
-  LAction.Enabled :=
+  {LAction.Enabled :=
     (MainForm.ActiveControl is TFieldEdit) and
-    (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');
+    (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');      }
 end;
 
 procedure TDataFormFrame.UpdateIndexFields;
@@ -1994,8 +1994,13 @@ begin
 
     rrFocusShift:
       begin
-        if (FLocalToDFIndex.Size = 0) or
-           (RecNo = NewRecord)
+        if (FParentRecordState = rsDeleted) and
+           (FLocalToDFIndex.Size > 0)
+        then begin
+          RecNo := (FLocalToDFIndex.Size - 1);
+        end else
+        if ((FLocalToDFIndex.Size = 0) or
+            (RecNo = NewRecord))
         then
         begin
           Modified := false;
@@ -2003,16 +2008,17 @@ begin
         end
         else begin
           LoadRecord(RecNo);
-          if ResultListFormIsShowing then
-            ShowResultListForm(
-              Self,
-              'All',
-              DataFile,
-              DataFile.Fields,
-              nil,
-              FDFToLocalIndex
-            );
         end;
+
+        if ResultListFormIsShowing then
+          ShowResultListForm(
+            Self,
+            'All',
+            DataFile,
+            DataFile.Fields,
+            nil,
+            FDFToLocalIndex
+          );
       end;
 
     rrReturnToParent:
