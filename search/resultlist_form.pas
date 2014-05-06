@@ -123,24 +123,17 @@ begin
 
   with TDatasetViewerFrame(FResultListForm.FViewerFrame) do
   begin
-    {$IFNDEF DARWIN}
     BeginUpdate;
-
     Datafile := ADataFile;
-    {$ENDIF}
     DisplayFields := AFieldList;
     ShowRecords(ARecordList);
-    {$IFNDEF DARWIN}
     ReverseIndex := AReverseIndex;
     ForwardIndex := AForwardIndex;
-    {$ENDIF}
     {$IFDEF DARWIN}
     ListGridHeaderClick(Nil, True, 0);
     {$ENDIF}
 
-    {$IFNDEF DARWIN}
     EndUpdate;
-    {$ENDIF}
   end;
 
   S := IntToStr(ADataFile.Size);

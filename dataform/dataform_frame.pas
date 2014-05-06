@@ -2017,7 +2017,8 @@ begin
             DataFile,
             DataFile.Fields,
             nil,
-            FDFToLocalIndex
+            FDFToLocalIndex,
+            FLocalToDFIndex
           );
       end;
 
@@ -2029,7 +2030,8 @@ begin
           DataFile,
           DataFile.Fields,
           nil,
-          FDFToLocalIndex
+          FDFToLocalIndex,
+          FLocalToDFIndex
         );
   end;
 
