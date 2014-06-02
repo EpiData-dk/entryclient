@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, search, entry_globals, epirelations, epidatafilestypes;
+  VirtualTrees, epitools_search, entry_globals, epirelations, epidatafilestypes;
 
 type
 
@@ -129,12 +129,12 @@ type
     { Search }
     // ALL Searches are performed on the entire datafile!
     // - hence, result index MUST be translated to current filter, using FDFToLocalIndex.
-    FRecentSearch: TSearch;
-    function  DoIndexedSearchFindList(Const Search: TSearch; CurIndex: integer): TBoundArray;
-    function  DoIndexedSearchFindNext(Const Search: TSearch; Index: integer): Integer;
-    procedure DoPerformSearch(Search: TSearch; Idx: Integer; Wrap: boolean);
-    function  CreateSearchFromFieldEdits: TSearch;
-    function  DoSearchForm(Search: TSearch): Word;
+    FRecentSearch: TEpiSearch;
+    function  DoIndexedSearchFindList(Const Search: TEpiSearch; CurIndex: integer): TBoundArray;
+    function  DoIndexedSearchFindNext(Const Search: TEpiSearch; Index: integer): Integer;
+    procedure DoPerformSearch(Search: TEpiSearch; Idx: Integer; Wrap: boolean);
+    function  CreateSearchFromFieldEdits: TEpiSearch;
+    function  DoSearchForm(Search: TEpiSearch): Word;
     function  PerformKeyFieldsCheck: boolean;
     function  DoSearchKeyFields: integer;
     // Search Messages:
@@ -346,7 +346,7 @@ end;
 
 procedure TDataFormFrame.FindRecordExActionExecute(Sender: TObject);
 var
-  S: TSearch;
+  S: TEpiSearch;
 begin
   // Search data using current text in field for lookup. Will always be
   // from first record and forward.
@@ -356,7 +356,7 @@ end;
 
 procedure TDataFormFrame.FindFastListActionExecute(Sender: TObject);
 var
-  S: TSearch;
+  S: TEpiSearch;
   Lst: TBoundArray;
   FieldList: TEpiFields;
   i: Integer;
@@ -1017,7 +1017,7 @@ begin
   H.ActivateHint(R, Msg);
 end;
 
-function TDataFormFrame.DoIndexedSearchFindList(const Search: TSearch;
+function TDataFormFrame.DoIndexedSearchFindList(const Search: TEpiSearch;
   CurIndex: integer): TBoundArray;
 var
   i: Integer;
@@ -1033,7 +1033,7 @@ begin
       Result[i] := FDFToLocalIndex.AsInteger[Result[i]];
 end;
 
-function TDataFormFrame.DoIndexedSearchFindNext(const Search: TSearch;
+function TDataFormFrame.DoIndexedSearchFindNext(const Search: TEpiSearch;
   Index: integer): Integer;
 begin
   // Result from SearchFindNext is indexed using the entire Datafile!
@@ -1397,7 +1397,7 @@ begin
   Clipboard.AsText := S;
 end;
 
-procedure TDataFormFrame.DoPerformSearch(Search: TSearch; Idx: Integer;
+procedure TDataFormFrame.DoPerformSearch(Search: TEpiSearch; Idx: Integer;
   Wrap: boolean);
 var
   H: THintWindow;
@@ -1430,13 +1430,13 @@ begin
   end;
 end;
 
-function TDataFormFrame.CreateSearchFromFieldEdits: TSearch;
+function TDataFormFrame.CreateSearchFromFieldEdits: TEpiSearch;
 var
-  SC: TSearchCondition;
+  SC: TEpiSearchCondition;
   i: Integer;
 begin
   // Search is saved in FRecentSearch!
-  Result := TSearch.Create;
+  Result := TEpiSearch.Create;
   Result.DataFile := DataFile;
   Result.Direction := sdForward;
   Result.Origin := soBeginning;
@@ -1450,7 +1450,7 @@ begin
        (Text = '')
        then continue;
 
-    SC := TSearchCondition.Create;
+    SC := TEpiSearchCondition.Create;
     SC.BinOp := boAnd;
     SC.Field := Field;
     SC.Text := Text;
@@ -1464,7 +1464,7 @@ begin
   FRecentSearch := Result;
 end;
 
-function TDataFormFrame.DoSearchForm(Search: TSearch): Word;
+function TDataFormFrame.DoSearchForm(Search: TEpiSearch): Word;
 var
   SF: TSearchForm1;
   Res: LongInt;
@@ -1555,15 +1555,15 @@ end;
 
 function TDataFormFrame.DoSearchKeyFields: integer;
 var
-  S: TSearch;
+  S: TEpiSearch;
   i: Integer;
-  C: TSearchCondition;
+  C: TEpiSearchCondition;
   Txt: TCaption;
   F: TEpiField;
 begin
   Result := -1;
 
-  S := TSearch.Create;
+  S := TEpiSearch.Create;
   S.DataFile := DataFile;
   S.Direction := sdForward;
   S.Origin := soBeginning;
@@ -1572,7 +1572,7 @@ begin
     Txt := FieldEditFromField(F).Text;
     if Txt <> '' then
     begin
-      C := TSearchCondition.Create;
+      C := TEpiSearchCondition.Create;
       C.BinOp := boAnd;
       C.MatchCriteria := mcEq;
       C.Text := Txt;

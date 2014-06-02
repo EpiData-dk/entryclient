@@ -65,7 +65,7 @@ function SearchFindList(Const Search: TSearch; CurIndex: integer): TBoundArray;
 implementation
 
 uses
-  Math, LazUTF8, epidatafilestypes, entryprocs;
+  Math, LazUTF8, epidatafilestypes, epiglobals;
 
 function SearchFindNext(const Search: TSearch; const Index: integer): integer;
 var
@@ -90,7 +90,7 @@ var
       ftYMDDate,
       ftDMYAuto,
       ftMDYAuto,
-      ftYMDAuto: Result := SC.Field.AsDate[Idx] = StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DateSeparator);
+      ftYMDAuto: Result := SC.Field.AsDate[Idx] = StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DefaultFormatSettings.DateSeparator);
       ftTime,
       ftTimeAuto:  Result := SC.Field.AsTime[Idx] = StrToTime(SC.Text);
       ftString,
@@ -116,7 +116,7 @@ var
       ftYMDDate,
       ftDMYAuto,
       ftMDYAuto,
-      ftYMDAuto: Result := SC.Field.AsDate[Idx] < StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DateSeparator);
+      ftYMDAuto: Result := SC.Field.AsDate[Idx] < StrToDate(SC.Text, TEpiDateField(SC.Field).FormatString, DefaultFormatSettings.DateSeparator);
       ftTime,
       ftTimeAuto:  Result := SC.Field.AsTime[Idx] < StrToTime(SC.Text);
       ftString,

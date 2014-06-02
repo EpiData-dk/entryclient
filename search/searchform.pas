@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, types, FileUtil, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls, Search, epidatafiles, epidatafilestypes, LCLType,
+  StdCtrls, Buttons, ExtCtrls, epitools_search, epidatafiles, epidatafilestypes, LCLType,
   ActnList;
 
 type
@@ -58,7 +58,7 @@ type
     FActiveText: String;
     { private declarations }
     FDataFile: TEpiDataFile;
-    FSearch: TSearch;
+    FSearch: TEpiSearch;
     FSearchConditionList: TList;
     FHintWindow: THintWindow;
     FActiveFields: TStringList;
@@ -87,7 +87,7 @@ type
     property ActiveField: TEpiField read FActiveField write SetActiveField;
     property ActiveText: String read FActiveText write SetActiveText;
     property ActiveFields: TStringList read FActiveFields write SetActiveFields;
-    property Search: TSearch read FSearch;
+    property Search: TEpiSearch read FSearch;
   end; 
 
 const
@@ -396,10 +396,10 @@ end;
 
 procedure TSearchForm1.DoCreateSearch;
 var
-  SC: TSearchCondition;
+  SC: TEpiSearchCondition;
   i: Integer;
 begin
-  FSearch := TSearch.Create;
+  FSearch := TEpiSearch.Create;
   FSearch.DataFile := FDataFile;
   case OriginGrpBox.ItemIndex of
     0: FSearch.Origin := soBeginning;
@@ -414,7 +414,7 @@ begin
   for i := 0 to FSearchConditionList.Count - 1 do
   with PSearchConditions(FSearchConditionList[i])^ do
   begin
-    SC := TSearchCondition.Create;
+    SC := TEpiSearchCondition.Create;
     SC.BinOp         := TSearchBinOp(PtrUInt(BinOpCmb.Items.Objects[BinOpCmb.ItemIndex]));
     SC.MatchCriteria := TMatchCriteria(PtrUInt(MatchCriteriaCmb.Items.Objects[MatchCriteriaCmb.ItemIndex]));
     SC.Text          := ValueEdit.Text;

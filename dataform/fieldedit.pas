@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, Graphics, epicustombase, epidatafiles,
-  LCLType, epistringutils, entryprocs, LMessages, control_types;
+  LCLType, epistringutils, epiglobals, entryprocs, LMessages, control_types;
 
 type
 
