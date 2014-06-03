@@ -13,8 +13,8 @@ object DataFormFrame: TDataFormFrame
     Height = 772
     Top = 0
     Width = 902
-    HorzScrollBar.Page = 900
-    VertScrollBar.Page = 770
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
     Align = alClient
     Color = clWhite
     ParentColor = False

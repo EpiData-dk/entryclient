@@ -1994,8 +1994,11 @@ begin
 
     rrFocusShift:
       begin
-        if (FParentRecordState = rsDeleted) and
-           (FLocalToDFIndex.Size > 0)
+        if ((FParentRecordState = rsDeleted) and
+            (FLocalToDFIndex.Size > 0))
+           or
+           (IsDetailRelation and
+            (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount))
         then begin
           RecNo := (FLocalToDFIndex.Size - 1);
         end else
