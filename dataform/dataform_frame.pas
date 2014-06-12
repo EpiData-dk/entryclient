@@ -458,7 +458,9 @@ begin
         (RecNo <> NewRecord) or
         ((RecNo = NewRecord) and (Modified))
        );}
-  if IsDetailRelation then
+  if (IsDetailRelation) and
+     (DetailRelation.MaxRecordCount > 0)
+  then
     B := B and
       (FLocalToDFIndex.Size < DetailRelation.MaxRecordCount);
 
@@ -1997,8 +1999,11 @@ begin
         if ((FParentRecordState = rsDeleted) and
             (FLocalToDFIndex.Size > 0))
            or
-           (IsDetailRelation and
-            (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount))
+           (
+            (IsDetailRelation) and
+            (DetailRelation.MaxRecordCount > 0) and
+            (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
+           )
         then begin
           RecNo := (FLocalToDFIndex.Size - 1);
         end else
