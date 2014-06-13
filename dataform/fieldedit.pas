@@ -24,6 +24,8 @@ type
     FQuestionLabel: TLabel;
     FValueLabelLabel: TLabel;
     FRecNo: integer;
+    // FCommitingData = true, during .Commit call. This is to prevent updating text during a normal commit.
+    FCommitingData: boolean;
     procedure   SetRecNo(const AValue: integer);
     procedure   FieldChange(Const Sender, Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
   protected
@@ -252,6 +254,8 @@ end;
 procedure TFieldEdit.FieldChange(const Sender, Initiator: TEpiCustomBase;
   EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
 begin
+  if FCommitingData then exit;
+
   if (Initiator = Field) and
      (EventGroup = eegFields) and
      (EventType = Word(efceData))
@@ -419,6 +423,8 @@ begin
   FValueLabelLabel := TLabel.Create(Self);
   FValueLabelLabel.Font.Color := EntrySettings.ValueLabelColour;
 
+  FCommitingData := false;
+
   FRecNo := -1;
 end;
 
@@ -480,6 +486,8 @@ procedure TFieldEdit.Commit;
 var
   LRecNo: LongInt;
 begin
+  FCommitingData := true;
+
   LRecNo := RecNo;
   // Assume that if this is a new record and we are about to commit
   // the Datafile has been expanded to hold the new record.
@@ -489,6 +497,8 @@ begin
     Field.IsMissing[LRecNo] := true
   else
     Field.AsString[LRecNo] := Text;
+
+  FCommitingData := false;
 end;
 
 procedure TFieldEdit.UpdateSettings;
@@ -514,7 +524,6 @@ begin
 
   FQuestionLabel.Font.Assign(EntrySettings.FieldFont);
   FNameLabel.Font.Assign(EntrySettings.FieldFont);
-  Application.ProcessMessages;
 end;
 
 function TFieldEdit.CompareTo(const AText: string; ct: TEpiComparisonType

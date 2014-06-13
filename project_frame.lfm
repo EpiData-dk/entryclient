@@ -1,36 +1,23 @@
 object ProjectFrame: TProjectFrame
   Left = 0
-  Height = 580
+  Height = 777
   Top = 0
-  Width = 907
-  ClientHeight = 580
-  ClientWidth = 907
+  Width = 1096
+  ClientHeight = 777
+  ClientWidth = 1096
   TabOrder = 0
-  DesignLeft = 473
-  DesignTop = 324
+  DesignLeft = 680
+  DesignTop = 245
   object ProjectPanel: TPanel
     Left = 0
-    Height = 560
+    Height = 757
     Top = 0
     Width = 170
     Align = alLeft
-    ClientHeight = 560
+    ClientHeight = 757
     ClientWidth = 170
     TabOrder = 0
-    object DataFilesTreeView: TTreeView
-      Left = 1
-      Height = 532
-      Top = 27
-      Width = 168
-      Align = alClient
-      DefaultItemHeight = 18
-      ReadOnly = True
-      ScrollBars = ssAutoBoth
-      ShowRoot = False
-      TabOrder = 0
-      Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoToolTips, tvoThemedDraw]
-      TreeLinePenStyle = psDot
-    end
+    Visible = False
     object ToolBar1: TToolBar
       Left = 1
       Height = 26
@@ -38,13 +25,11 @@ object ProjectFrame: TProjectFrame
       Width = 168
       Caption = 'ToolBar1'
       Images = ProjectImageList
-      TabOrder = 1
+      TabOrder = 0
       object OpenProjectToolButton: TToolButton
         Left = 1
-        Hint = 'Open Project'
         Top = 2
-        Caption = 'Open Project'
-        ImageIndex = 0
+        Action = OpenProjectAction
       end
       object ProjectToolButtomDivider1: TToolButton
         Left = 24
@@ -74,8 +59,7 @@ object ProjectFrame: TProjectFrame
       object ToolButton2: TToolButton
         Left = 57
         Top = 2
-        Caption = 'CloseProjectAction'
-        ImageIndex = 2
+        Action = CloseProjectAction
       end
       object ToolButton3: TToolButton
         Left = 80
@@ -85,18 +69,38 @@ object ProjectFrame: TProjectFrame
         Style = tbsDivider
       end
     end
+    object DataFileTree: TVirtualStringTree
+      Left = 1
+      Height = 729
+      Top = 27
+      Width = 168
+      Align = alClient
+      DefaultText = 'Node'
+      Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.DefaultHeight = 17
+      Header.MainColumn = -1
+      HintMode = hmHint
+      ParentShowHint = False
+      ScrollBarOptions.ScrollBars = ssAutoBoth
+      ShowHint = True
+      TabOrder = 1
+      TreeOptions.PaintOptions = [toHotTrack, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages]
+      TreeOptions.StringOptions = [toSaveCaptions, toShowStaticText, toAutoAcceptEditChange]
+    end
   end
   object Splitter1: TSplitter
     Left = 170
-    Height = 560
+    Height = 757
     Top = 0
     Width = 5
+    Visible = False
   end
   object ProgressBar1: TProgressBar
     Left = 0
     Height = 20
-    Top = 560
-    Width = 907
+    Top = 757
+    Width = 1096
     Align = alBottom
     Position = 50
     Smooth = True
@@ -104,6 +108,49 @@ object ProjectFrame: TProjectFrame
     TabOrder = 2
     Visible = False
     BarShowText = True
+  end
+  object Panel1: TPanel
+    Left = 926
+    Height = 757
+    Top = 0
+    Width = 170
+    Align = alRight
+    ClientHeight = 757
+    ClientWidth = 170
+    TabOrder = 3
+    Visible = False
+    object Label1: TLabel
+      Left = 18
+      Height = 15
+      Top = 54
+      Width = 90
+      Caption = 'GetTextCount:'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 54
+      Height = 15
+      Top = 90
+      Width = 42
+      Caption = 'Label2'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 18
+      Height = 15
+      Top = 150
+      Width = 98
+      Caption = 'PaintTextCount:'
+      ParentColor = False
+    end
+    object Label4: TLabel
+      Left = 54
+      Height = 15
+      Top = 192
+      Width = 42
+      Caption = 'Label4'
+      ParentColor = False
+    end
   end
   object ProjectActionList: TActionList
     Images = ProjectImageList
@@ -115,6 +162,16 @@ object ProjectFrame: TProjectFrame
       ImageIndex = 1
       OnExecute = SaveProjectActionExecute
       OnUpdate = SaveProjectActionUpdate
+    end
+    object OpenProjectAction: TAction
+      Caption = 'Open Project'
+      ImageIndex = 0
+      OnExecute = OpenProjectActionExecute
+    end
+    object CloseProjectAction: TAction
+      Caption = 'Close Project'
+      ImageIndex = 2
+      OnExecute = CloseProjectActionExecute
     end
   end
   object ProjectImageList: TImageList
@@ -219,5 +276,9 @@ object ProjectFrame: TProjectFrame
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
+  end
+  object ProjectRecentFilesDropDownMenu: TPopupMenu
+    left = 264
+    top = 80
   end
 end

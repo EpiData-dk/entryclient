@@ -584,7 +584,7 @@ begin
   NewStable     := (StableScore - EntryScore) > 0;
   NewTest       := (TestScore   - EntryScore) > 0;
 
-  with EntryVersion do
+  with GetEpiVersion(HINSTANCE) do
     S := Format('Current Version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
   with Stable do
     if NewStable then

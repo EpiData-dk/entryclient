@@ -1,20 +1,20 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 762
+  Height = 802
   Top = 0
-  Width = 1084
-  ClientHeight = 762
-  ClientWidth = 1084
+  Width = 1072
+  ClientHeight = 802
+  ClientWidth = 1072
   TabOrder = 0
-  DesignLeft = 417
-  DesignTop = 197
+  DesignLeft = 1644
+  DesignTop = 192
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 732
+    Height = 772
     Top = 0
-    Width = 914
-    HorzScrollBar.Page = 912
-    VertScrollBar.Page = 730
+    Width = 902
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
     Align = alClient
     Color = clWhite
     ParentColor = False
@@ -25,11 +25,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 732
-    Width = 1084
+    Top = 772
+    Width = 1072
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1084
+    ClientWidth = 1072
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -108,7 +108,7 @@ object DataFormFrame: TDataFormFrame
         TabOrder = 0
       end
       object NextRecSpeedButton: TSpeedButton
-        Left = 168
+        Left = 167
         Height = 22
         Top = 1
         Width = 22
@@ -200,6 +200,7 @@ object DataFormFrame: TDataFormFrame
         Height = 22
         Top = 1
         Width = 22
+        Action = DeleteRecordAction
         Flat = True
         Glyph.Data = {
           46010000424D460100000000000076000000280000001E0000000D0000000100
@@ -216,7 +217,6 @@ object DataFormFrame: TDataFormFrame
         }
         NumGlyphs = 2
         Spacing = 0
-        OnClick = DeleteRecSpeedButtonClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
@@ -231,14 +231,14 @@ object DataFormFrame: TDataFormFrame
       Left = 566
       Height = 24
       Top = 3
-      Width = 301
+      Width = 289
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 301
+      ClientWidth = 289
       Color = clWhite
       Constraints.MinWidth = 80
       ParentColor = False
@@ -264,7 +264,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Control = NavigationPanel
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FieldLengthPanel
-      Left = 869
+      Left = 857
       Height = 24
       Top = 3
       Width = 107
@@ -361,7 +361,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 978
+      Left = 966
       Height = 24
       Top = 3
       Width = 103
@@ -430,12 +430,12 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object Panel1: TPanel
-    Left = 914
-    Height = 732
+    Left = 902
+    Height = 772
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 732
+    ClientHeight = 772
     ClientWidth = 170
     TabOrder = 2
     OnMouseMove = Panel1MouseMove
@@ -575,6 +575,12 @@ object DataFormFrame: TDataFormFrame
       Category = 'Browse'
       Caption = 'All Data'
       OnExecute = BrowseAllActionExecute
+    end
+    object DeleteRecordAction: TAction
+      Category = 'Record'
+      Caption = 'DeleteRecordAction'
+      OnExecute = DeleteRecordActionExecute
+      OnUpdate = DeleteRecordActionUpdate
     end
   end
   object PrintDialog1: TPrintDialog

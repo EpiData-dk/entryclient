@@ -1,5 +1,6 @@
 unit project_frame;
 
+{$codepage UTF8}
 {$mode objfpc}{$H+}
 
 interface
@@ -7,7 +8,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  documentfile_ext, epicustombase;
+  VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics,
+  StdCtrls, Menus, epidatafilestypes;
 
 type
 
@@ -16,6 +18,14 @@ type
   { TProjectFrame }
 
   TProjectFrame = class(TFrame)
+    CloseProjectAction: TAction;
+    OpenProjectAction: TAction;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Panel1: TPanel;
+    ProjectRecentFilesDropDownMenu: TPopupMenu;
     ProgressBar1: TProgressBar;
     ProjectImageList: TImageList;
     SaveProjectAction: TAction;
@@ -27,10 +37,11 @@ type
     ProjectToolButtomDivider1: TToolButton;
     SaveProjectToolButton: TToolButton;
     ProjectToolButtomDivider2: TToolButton;
-    DataFilesTreeView: TTreeView;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    DataFileTree: TVirtualStringTree;
+    procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
     procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
@@ -38,17 +49,17 @@ type
       var Canceled: Boolean);
     procedure LoadError(const Sender: TEpiCustomBase; ErrorType: Word;
       Data: Pointer; out Continue: boolean);
+    procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
   private
     { private declarations }
-    FActiveFrame: TDataFormFrame;
     FDocumentFile: TEntryDocumentFile;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
     procedure DoSaveProject(Const aFilename: string);
-    procedure DoNewDataForm(DataFile: TEpiDataFile);
+    function  DoNewDataForm(ARelation: TEpiMasterRelation): TDataFormFrame;
     procedure DoCloseProject;
     procedure EpiDocModified(Sender: TObject);
     procedure UpdateMainCaption;
@@ -56,11 +67,47 @@ type
     function  DoOpenProject(Const aFilename: string): boolean;
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
+    procedure UpdateActionLinks;
+  private
+    { Relational handling (checking/updating/etc...) }
+    FRelateToParent: boolean;
+    procedure FrameModified(Sender: TObject);
+    procedure FrameRecordchanged(Sender: TObject);
+    procedure LM_ProjectRelate(var Msg: TLMessage); message LM_PROJECT_RELATE;
+  private
+    { Tree Handling }
+    FChangingRecNo: integer;
+    FProjectNode: PVirtualNode;
+    FSelectedNode: PVirtualNode;
+    function GetRecordState(Node: PVirtualNode): TEpiRecordState;
+    function FrameFromNode(Node: PVirtualNode): TDataFormFrame;
+    function NodeIsSelectable(Node: PVirtualNode): boolean;
+    function NodeIsValidated(Node: PVirtualNode): boolean;
+    procedure DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex);
+    procedure DataFileTreeFocusChanging(Sender: TBaseVirtualTree; OldNode,
+      NewNode: PVirtualNode; OldColumn, NewColumn: TColumnIndex;
+      var Allowed: Boolean);
+    procedure DataFileTreeGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: String);
+    procedure DataFileTreeInitChildren(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; var ChildCount: Cardinal);
+    procedure DataFileTreeInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure DataFileTreePaintText(Sender: TBaseVirtualTree;
+      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+      TextType: TVSTTextType);
+    procedure DataFileTreeGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle;
+      var HintText: String);
   private
     function GetEpiDocument: TEpiDocument;
     { messages }
     // Relaying
     procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
+    procedure OpenRecentMenuItemClick(Sender: TObject);
+    procedure UpdateRecentFilesDropDown;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -68,9 +115,9 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     function    OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
+    function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
-    property    ActiveFrame: TDataFormFrame read FActiveFrame;
   public
     { Default position }
     class procedure RestoreDefaultPos(F: TProjectFrame);
@@ -82,8 +129,21 @@ implementation
 
 uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
-  epistringutils, Menus, LCLType, shortcuts,
-  RegExpr;
+  epistringutils, LCLType, shortcuts, entry_globals,
+  RegExpr, LazUTF8, entryprocs;
+
+type
+
+  TNodeData = record
+    Frame: TDataFormFrame;
+    Relation: TEpiMasterRelation;
+    RelationList: TEpiRelationList;
+  end;
+  PNodeData = ^TNodeData;
+
+var
+  TextCount: QWord;
+  PaintCount: QWord;
 
 { TProjectFrame }
 
@@ -112,6 +172,11 @@ begin
     PasswordBox('Project Password',
                 'Project data is password protected.' + LineEnding +
                 'Please enter password:');
+end;
+
+procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
+begin
+  PostMessage(MainForm.Handle, LM_CLOSE_PROJECT, WParam(Sender), 0);
 end;
 
 procedure TProjectFrame.EpiDocumentProgress(const Sender: TEpiCustomBase;
@@ -166,6 +231,11 @@ begin
   );
 end;
 
+procedure TProjectFrame.OpenProjectActionExecute(Sender: TObject);
+begin
+  PostMessage(MainForm.Handle, LM_OPEN_PROJECT, 0, 0);
+end;
+
 procedure TProjectFrame.SaveProjectActionUpdate(Sender: TObject);
 begin
   SaveProjectAction.Enabled :=
@@ -181,6 +251,8 @@ begin
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
+var
+  Node: PVirtualNode;
 begin
   Result := false;
   try
@@ -210,7 +282,6 @@ begin
       EpiDocument.OnModified := @EpiDocModified;
     except
       if Assigned(FDocumentFile) then FreeAndNil(FDocumentFile);
-      if Assigned(FActiveFrame) then FreeAndNil(FActiveFrame);
       raise;
     end;
 
@@ -223,7 +294,18 @@ begin
       FBackupTimer.Interval := EpiDocument.ProjectSettings.BackupInterval * 60000;
     end;
 
-    DoNewDataForm(EpiDocument.DataFiles[0]);
+    // We must initialize the project node by ourselves, because even though
+    // the project panel MIGHT be visible, is has not yet initialized the tree nodes.
+    // In that case FProjectNode is not available later on!
+    DataFileTree.RootNodeCount := 1;
+    DataFileTree.ReinitNode(DataFileTree.RootNode, true);
+
+    Node := FProjectNode^.FirstChild;
+    DataFileTree.Selected[Node] := true;
+    DataFileTree.FocusedNode := Node;
+
+    ProjectPanel.Visible := (EpiDocument.DataFiles.Count > 1);
+    Splitter1.Visible    := ProjectPanel.Visible;
 
     EpiDocument.Modified := false;
 
@@ -235,11 +317,6 @@ begin
     MainForm.EndUpdateForm;
     Screen.Cursor := crDefault;
     Application.ProcessMessages;
-
-    // Put the "Activate first field" here, because prior to EndUpdateForm controls
-    // have no handle, and hence cannot be focused correctly.
-    if Assigned(FActiveFrame) then
-      FActiveFrame.FirstFieldAction.Execute;
   end;
 end;
 
@@ -254,49 +331,16 @@ begin
   SaveProjectAction.ShortCut := P_SaveProject;
 end;
 
-function TProjectFrame.GetEpiDocument: TEpiDocument;
-begin
-  result := nil;
-  if Assigned(DocumentFile) then
-    result := DocumentFile.Document;
-end;
-
-procedure TProjectFrame.LMDataFormGotoRec(var Msg: TLMessage);
-begin
-  if Assigned(FActiveFrame) then
-    Msg.Result := SendMessage(FActiveFrame.Handle, Msg.Msg, Msg.WParam, Msg.LParam);
-end;
-
-procedure TProjectFrame.DoSaveProject(const aFilename: string);
-begin
-  ActiveFrame.Cursor := crHourGlass;
-  Application.ProcessMessages;
-  try
-    DocumentFile.SaveFile(aFilename);
-    AddToRecent(aFilename);
-  finally
-    ActiveFrame.Cursor := crDefault;
-    Application.ProcessMessages;
-  end;
-end;
-
-procedure TProjectFrame.DoNewDataForm(DataFile: TEpiDataFile);
+procedure TProjectFrame.UpdateActionLinks;
 var
   Frame: TDataFormFrame;
 begin
-  Frame := TDataFormFrame.Create(Self);
-  Frame.Align := alClient;
-  Frame.Parent := Self;
-  Frame.DataFile := DataFile;
-  FActiveFrame := Frame;
+  Frame := FrameFromNode(FSelectedNode);
 
-  DataFilesTreeView.Selected := DataFilesTreeView.Items.AddObject(nil, DataFile.Caption.Text, Frame);
-
-  // TODO : Adapt to multiple datafiles.
   With MainForm do
   begin
     // File menu
-    PrintMenuItem.Action       := Frame.PrintDataFormAction;
+    PrintMenuItem.Action         := Frame.PrintDataFormAction;
     PrintWithDataMenuItem.Action := Frame.PrintDataFormWithDataAction;
 
     // Edit menu
@@ -326,6 +370,418 @@ begin
   end;
 end;
 
+procedure TProjectFrame.FrameModified(Sender: TObject);
+begin
+  DataFileTree.Invalidate; //ToBottom(FProjectNode);
+end;
+
+procedure TProjectFrame.FrameRecordchanged(Sender: TObject);
+var
+  Relation: TEpiMasterRelation;
+  i: Integer;
+begin
+  // Invalidate updates the tree with new values/selectables
+  DataFileTree.Invalidate;
+
+  Relation := TDataFormFrame(Sender).Relation;
+
+  for i := 0 to Relation.DetailRelations.Count - 1 do
+    FrameFromRelation(Relation[i]).RelateInit(rrRecordChange, GetRecordState(TDataFormFrame(Sender).TreeNode));
+end;
+
+procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
+var
+  Relation: TEpiMasterRelation;
+  Node: PVirtualNode;
+  ND: PNodeData;
+  Frame: TDataFormFrame;
+begin
+  Relation := TEpiMasterRelation(Msg.WParam);
+  Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
+  FRelateToParent := (Msg.LParam = 1);
+
+  DataFileTree.FocusedNode := Node;
+
+  if DataFileTree.FocusedNode = Node then
+    DataFileTree.Selected[Node] := true;
+end;
+
+function TProjectFrame.GetRecordState(Node: PVirtualNode): TEpiRecordState;
+var
+  Idx: Integer;
+begin
+  Result := rsNormal;
+
+  if not Assigned(Node) then exit;
+  if Node = FProjectNode then exit;
+
+  with FrameFromNode(Node) do
+  begin
+    Idx := IndexedRecNo;
+
+    if Idx = NewRecord then exit;
+
+    if DataFile.Deleted[Idx] then
+      Result := rsDeleted;
+
+    if DataFile.Verified[Idx] then
+      Result := rsVerified;
+  end;
+end;
+
+function TProjectFrame.FrameFromNode(Node: PVirtualNode): TDataFormFrame;
+begin
+  result := PNodeData(DataFileTree.GetNodeData(Node))^.Frame;
+end;
+
+function TProjectFrame.NodeIsSelectable(Node: PVirtualNode): boolean;
+begin
+  Result := true;
+
+  if Node^.Parent = FProjectNode then exit;
+
+  Result := (FrameFromNode(Node^.Parent).AllKeyFieldsAreFilled);
+end;
+
+function TProjectFrame.NodeIsValidated(Node: PVirtualNode): boolean;
+var
+  Res: TModalResult;
+begin
+  result := true;
+
+  if Node = FProjectNode then exit;
+
+  with FrameFromNode(Node) do
+  begin
+    if Modified then
+    begin
+      Res := MessageDlg('Warning',
+               'Save record before change?',
+               mtConfirmation, mbYesNoCancel, 0, mbCancel);
+      case Res of
+        mrCancel: Result := false;
+        mrYes:    Result := AllFieldsValidate(false);
+        mrNo:     begin
+                    Modified := false; // Do nothing
+                    RecNo := NewRecord;
+                    Result := false;
+                  end;
+      end;
+    end;
+  end;
+end;
+
+procedure TProjectFrame.DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex);
+var
+  RelateReason: TRelateReason;
+begin
+  RelateReason := rrFocusShift;
+
+  // We are allowed to change node (this was confirmed in DataFileTreeFocusChanging)
+  // now we must commit unsaved data and position at the saved record no.
+  // There is no FSelectedNode first time after a project is loaded...
+  if Assigned(FSelectedNode) then
+    with FrameFromNode(FSelectedNode) do
+    begin
+      if Modified then
+      begin
+        CommitFields;
+        if FChangingRecNo = NewRecord then
+        begin
+          RelateReason := rrNewRecord;
+          RecNo := DataFile.Size - 1
+        end;
+      end;
+
+      ActionList1.State := asSuspended;
+    end;
+
+  // Relate to Parent here, because the reason is set to rrNewRecord
+  // based on RecNo - but relate to parent is define by eg. pressing a key;
+  if FRelateToParent then
+  begin
+    RelateReason := rrReturnToParent;
+    FRelateToParent := false;
+  end;
+
+  FSelectedNode := Node;
+  UpdateActionLinks;
+
+  with FrameFromNode(Node) do
+  begin
+    ActionList1.State := asNormal;
+    BringToFront;
+    UpdateSettings;
+    RelateInit(RelateReason, GetRecordState(Node^.Parent));
+  end;
+
+  Sender.Invalidate;
+end;
+
+procedure TProjectFrame.DataFileTreeFocusChanging(Sender: TBaseVirtualTree;
+  OldNode, NewNode: PVirtualNode; OldColumn, NewColumn: TColumnIndex;
+  var Allowed: Boolean);
+begin
+  Allowed := true;
+
+  // We can always change to the same node!
+  if NewNode = OldNode then exit;
+
+  // We can NEVER change to the project node!
+  if NewNode = FProjectNode then
+  begin
+    Allowed := False;
+    Exit;
+  end;
+
+  // We cannot select "nothing"
+  Allowed := Assigned(NewNode);
+
+  // Check for selectability.
+  Allowed := Allowed and
+    NodeIsSelectable(NewNode);
+
+  // This case is only when the project is just loaded.
+  if (not Assigned(OldNode)) then Exit;
+
+  // Check for validated fields
+  Allowed := Allowed and
+    NodeIsValidated(OldNode);
+
+  if Allowed then
+    FChangingRecNo := FrameFromNode(OldNode).RecNo;
+end;
+
+procedure TProjectFrame.DataFileTreeGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: String);
+var
+  DF: TEpiDataFile;
+  ND: PNodeData;
+  A: QWord;
+  S: String;
+begin
+
+  A := GetTickCount64;
+  if (Node = FProjectNode) then
+  begin
+    if (TextType = ttNormal) then
+      CellText := EpiDocument.Study.Title.Text
+  end else
+  begin
+    ND := Sender.GetNodeData(Node);
+    DF := ND^.Relation.Datafile;
+    case TextType of
+      ttNormal:
+        CellText := BoolToStr(ND^.Frame.Modified, '*', '') + DF.Caption.Text;
+      ttStatic:
+        begin
+          if (Node^.Parent = FProjectNode) then
+            S := '[%d]'
+          else
+            S := '(%d)';
+
+          if (Node = FSelectedNode) or
+             (Sender.HasAsParent(Node, FSelectedNode))
+          then
+            CellText := Format(S, [FrameFromNode(Node).IndexedSize]);
+        end;
+    end;
+  end;
+  TextCount := TextCount + (GetTickCount64 - A);
+  Label2.Caption := IntToStr(TextCount);
+end;
+
+procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; var ChildCount: Cardinal);
+var
+  RelationList: TEpiRelationList;
+  MR: TEpiMasterRelation;
+begin
+  RelationList := PNodeData(Sender.GetNodeData(Node))^.RelationList;
+
+  // EPX Version <= 2 file:
+  if (Node = FProjectNode) and
+     (RelationList.Count = 0)
+  then
+    begin
+      MR := RelationList.NewMasterRelation;
+      MR.Datafile := EpiDocument.DataFiles[0];
+    end;
+
+  ChildCount := RelationList.Count;
+end;
+
+procedure TProjectFrame.DataFileTreeInitNode(Sender: TBaseVirtualTree;
+  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  NodeData,
+  ParentData: PNodeData;
+  ARelation: TEpiMasterRelation;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  ParentData := Sender.GetNodeData(ParentNode);
+  InitialStates := [ivsExpanded];
+
+  if (ParentNode = nil) then
+  begin
+    // Project Node: In manager this is where the project details are set.
+    FProjectNode := Node;
+    NodeData^.RelationList := EpiDocument.Relations;
+    Include(InitialStates, ivsHasChildren);
+  end else begin
+    ARelation := ParentData^.RelationList[Node^.Index];
+
+    // In case of a double-initialization...
+    if (not Assigned(NodeData^.Frame)) then
+    begin
+      ARelation.AddCustomData(PROJECT_RELATION_NODE_KEY, TObject(Node));
+      with NodeData^ do
+      begin
+        Relation := ARelation;
+        RelationList := ARelation.DetailRelations;
+        Frame := DoNewDataForm(ARelation);
+        Frame.TreeNode := Node;
+        Frame.ActionList1.State := asSuspended;
+      end;
+    end;
+
+    if ARelation.DetailRelations.Count > 0 then
+      Include(InitialStates, ivsHasChildren);
+  end;
+end;
+
+procedure TProjectFrame.DataFileTreePaintText(Sender: TBaseVirtualTree;
+  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  TextType: TVSTTextType);
+var
+  A: QWord;
+begin
+  if Node = FProjectNode then exit;
+
+  A := GetTickCount64;
+  case TextType of
+    ttNormal:
+      begin
+        if NodeIsSelectable(Node)
+        then
+          TargetCanvas.Font.Color := clDefault
+        else
+          TargetCanvas.Font.Color := clInactiveCaption;
+      end;
+    ttStatic:
+      TargetCanvas.Font.Color := clBlue;
+  end;
+  PaintCount := PaintCount + (GetTickCount64 - A);
+  Label4.Caption := IntToStr(PaintCount);
+end;
+
+procedure TProjectFrame.DataFileTreeGetHint(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex;
+  var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: String);
+var
+  ND: PNodeData;
+  Rel: TEpiDetailRelation;
+  S: String;
+begin
+  if Node = FProjectNode then exit;
+  S := '';
+
+  ND := Sender.GetNodeData(Node);
+  if ND^.Relation is TEpiDetailRelation then
+  begin
+    S += '1:';
+
+    Rel := TEpiDetailRelation(ND^.Relation);
+    if Rel.MaxRecordCount = 0 then
+      S += char($E2) + char($88) + char($9E)             // unicode infinity symbol (UTF-8 encoded)
+    else
+      S += IntToStr(Rel.MaxRecordCount);
+
+    S += LineEnding;
+  end;
+
+  S += TrimRight(FrameFromNode(Node).GetCurrentKeyFieldValues);
+
+  HintText := S;
+end;
+
+function TProjectFrame.GetEpiDocument: TEpiDocument;
+begin
+  result := nil;
+  if Assigned(DocumentFile) then
+    result := DocumentFile.Document;
+end;
+
+procedure TProjectFrame.LMDataFormGotoRec(var Msg: TLMessage);
+var
+  ND: PNodeData;
+begin
+  if Assigned(FSelectedNode) then
+  begin
+    ND := DataFileTree.GetNodeData(FSelectedNode);
+    Msg.Result := SendMessage(ND^.Frame.Handle, Msg.Msg, Msg.WParam, Msg.LParam);
+  end;
+end;
+
+procedure TProjectFrame.OpenRecentMenuItemClick(Sender: TObject);
+begin
+  OpenProjectToolButton.Style := tbsButton;
+  PostMessage(MainForm.Handle, LM_OPEN_RECENT, WParam(Sender), 0);
+end;
+
+procedure TProjectFrame.UpdateRecentFilesDropDown;
+var
+  K: Word;
+  Shift: TShiftState;
+  i: Integer;
+  Mi: TMenuItem;
+begin
+  ShortCutToKey(M_OpenRecent, K, Shift);
+
+  LoadRecentFilesIni(GetRecentIniFileName);
+  ProjectRecentFilesDropDownMenu.Items.Clear;
+
+  for i := 0 to RecentFiles.Count - 1 do
+  begin
+    Mi := TMenuItem.Create(ProjectRecentFilesDropDownMenu);
+    Mi.Name := 'project_frame_recent' + inttostr(i);
+    Mi.Caption := RecentFiles[i];
+    Mi.OnClick := @OpenRecentMenuItemClick;
+    if i < 9 then
+      Mi.ShortCut := ShortCut(VK_1 + i, Shift);
+    ProjectRecentFilesDropDownMenu.Items.Add(Mi);
+  end;
+end;
+
+procedure TProjectFrame.DoSaveProject(const aFilename: string);
+begin
+  Screen.Cursor := crHourGlass;
+  Application.ProcessMessages;
+  try
+    DocumentFile.SaveFile(aFilename);
+    AddToRecent(aFilename);
+  finally
+    Screen.Cursor := crDefault;
+    Application.ProcessMessages;
+  end;
+end;
+
+function TProjectFrame.DoNewDataForm(ARelation: TEpiMasterRelation
+  ): TDataFormFrame;
+var
+  Frame: TDataFormFrame;
+begin
+  Result := TDataFormFrame.Create(Self);
+  Result.Align := alClient;
+  Result.Parent := Self;
+  Result.Relation := ARelation;
+  Result.DataFile := ARelation.DataFile;
+  Result.OnModified := @FrameModified;
+  Result.OnRecordChanged := @FrameRecordChanged;
+end;
+
 procedure TProjectFrame.DoCloseProject;
 begin
   if not Assigned(DocumentFile) then exit;
@@ -342,9 +798,7 @@ begin
 
   // TODO : Delete ALL dataforms!
   FreeAndNil(FDocumentFile);
-  FreeAndNil(FActiveFrame);
   FreeAndNil(FBackupTimer);
-  DataFilesTreeView.Items.Clear;
 end;
 
 procedure TProjectFrame.EpiDocModified(Sender: TObject);
@@ -405,21 +859,34 @@ constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   FDocumentFile := nil;
-  FActiveFrame := nil;
-  FAllowForEndBackup := false;;
+  FAllowForEndBackup := false;
+  FRelateToParent := false;
 
-  UpdateSettings;
+  FChangingRecNo := NewRecord;
+  DataFileTree.ShowHint       := true;
+  DataFileTree.OnGetText      := @DataFileTreeGetText;
+  DataFileTree.OnInitNode     := @DataFileTreeInitNode;
+  DataFileTree.OnInitChildren := @DataFileTreeInitChildren;
+  DataFileTree.OnPaintText    := @DataFileTreePaintText;
+  DataFileTree.NodeDataSize   := SizeOf(TNodeData);
+  DataFileTree.OnFocusChanging := @DataFileTreeFocusChanging;
+  DataFileTree.OnFocusChanged := @DataFileTreeFocusChanged;
+  DataFileTree.OnGetHint      := @DataFileTreeGetHint;
 
-  {$IFNDEF EPI_DEBUG}
-    ProjectPanel.Enabled := false;
-    ProjectPanel.Visible := false;
-    Splitter1.Enabled    := false;
-    Splitter1.Visible    := false;
-  {$ENDIF}
+  Label2.Caption := '0';
+  TextCount := 0;
+  Label4.Caption := '0';
+  PaintCount := 0;
+
+  UpdateShortCuts;
+  UpdateRecentFilesDropDown;
 end;
 
 destructor TProjectFrame.Destroy;
 begin
+  if Splitter1.Visible then
+    SaveSplitterPosition(Splitter1, 'ProjectSplitter');
+
   DoCloseProject;
   inherited Destroy;
 end;
@@ -427,18 +894,19 @@ end;
 procedure TProjectFrame.CloseQuery(var CanClose: boolean);
 var
   Res: LongInt;
+  Frame: TDataFormFrame;
 begin
   CanClose := true;
 
   if not Assigned(EpiDocument) then exit;
-  if not Assigned(ActiveFrame) then exit;
 
   // Passes control to DataformFrame, which
   // ensures a potential modified record is commited.
-  ActiveFrame.CloseQuery(CanClose);
+  Frame := FrameFromNode(FSelectedNode);
+  Frame.CloseQuery(CanClose);
   if not CanClose then exit;
 
-  if (EpiDocument.Modified) {or (ActiveFrame.Modified)} then
+  if (EpiDocument.Modified) {or (Frame.Modified)} then
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
@@ -466,24 +934,35 @@ end;
 
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
+  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
   result := DoOpenProject(aFilename);
 end;
 
 procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
+  FrameFromNode(FSelectedNode).UpdateSettings;
+end;
 
-  if Assigned(ActiveFrame) then
-    ActiveFrame.UpdateSettings;
+function TProjectFrame.FrameFromRelation(Relation: TEpiMasterRelation
+  ): TDataFormFrame;
+var
+  Node: PVirtualNode;
+begin
+  Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
+  result := FrameFromNode(Node);
 end;
 
 class procedure TProjectFrame.RestoreDefaultPos(F: TProjectFrame);
 begin
-  if Assigned(F) then
-    TDataFormFrame.RestoreDefaultPos(F.FActiveFrame)
+  if Assigned(F) and
+     Assigned(F.FrameFromNode(F.FSelectedNode))
+   then
+    TDataFormFrame.RestoreDefaultPos(F.FrameFromNode(F.FSelectedNode))
   else
     TDataFormFrame.RestoreDefaultPos(nil);
 end;
 
 end.
+
 
