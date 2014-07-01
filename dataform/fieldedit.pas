@@ -792,9 +792,11 @@ var
 begin
   if (Text = '') or (AText = '') then exit(false);
 
-
-  OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
-  CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
+  with DefaultFormatSettings do
+  begin
+    OwnVal := EpiStrToDate(Text, DateSeparator, Field.FieldType, S);
+    CmpVal := EpiStrToDate(AText, DateSeparator, Field.FieldType, S);
+  end;
   case ct of
     fcEq:  result := OwnVal = CmpVal;
     fcNEq: result := OwnVal <> CmpVal;
@@ -915,8 +917,12 @@ var
 begin
   if (Text = '') or (AText = '') then exit(false);
 
-  OwnVal := EpiStrToTime(Text, DateSeparator, S);
-  CmpVal := EpiStrToTime(AText, DateSeparator, S);
+  with DefaultFormatSettings do
+  begin
+    OwnVal := EpiStrToTime(Text, TimeSeparator, S);
+    CmpVal := EpiStrToTime(AText, TimeSeparator, S);
+  end;
+
   case ct of
     fcEq:  result := OwnVal = CmpVal;
     fcNEq: result := OwnVal <> CmpVal;
