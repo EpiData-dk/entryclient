@@ -6,8 +6,8 @@ object SettingsPathsFrame: TSettingsPathsFrame
   ClientHeight = 289
   ClientWidth = 482
   TabOrder = 0
-  DesignLeft = 915
-  DesignTop = 245
+  DesignLeft = 1940
+  DesignTop = 338
   object Label17: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -31,7 +31,6 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Width = 441
     ShowHidden = False
     ButtonWidth = 23
-    DirectInput = False
     NumGlyphs = 1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10
@@ -64,7 +63,6 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Width = 441
     ShowHidden = False
     ButtonWidth = 23
-    DirectInput = False
     NumGlyphs = 1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10
@@ -125,7 +123,6 @@ object SettingsPathsFrame: TSettingsPathsFrame
     Width = 441
     ShowHidden = False
     ButtonWidth = 23
-    DirectInput = False
     NumGlyphs = 1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10

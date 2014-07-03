@@ -1,22 +1,22 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 802
+  Height = 735
   Top = 0
-  Width = 1072
-  ClientHeight = 802
-  ClientWidth = 1072
+  Width = 1157
+  ClientHeight = 735
+  ClientWidth = 1157
   TabOrder = 0
-  DesignLeft = 1644
-  DesignTop = 192
+  DesignLeft = 1847
+  DesignTop = 262
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 772
+    Height = 705
     Top = 0
-    Width = 902
+    Width = 987
     HorzScrollBar.Page = 1
     VertScrollBar.Page = 1
     Align = alClient
-    Color = clWhite
+    Color = clWindow
     ParentColor = False
     TabOrder = 0
     OnMouseMove = Panel1MouseMove
@@ -25,11 +25,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 772
-    Width = 1072
+    Top = 705
+    Width = 1157
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1072
+    ClientWidth = 1157
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -231,15 +231,15 @@ object DataFormFrame: TDataFormFrame
       Left = 566
       Height = 24
       Top = 3
-      Width = 289
+      Width = 374
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 289
-      Color = clWhite
+      ClientWidth = 374
+      Color = clWindow
       Constraints.MinWidth = 80
       ParentColor = False
       TabOrder = 2
@@ -256,7 +256,9 @@ object DataFormFrame: TDataFormFrame
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
+        Color = clDefault
         ParentColor = False
+        Transparent = False
       end
     end
     object FieldTypePanel: TPanel
@@ -264,7 +266,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Control = NavigationPanel
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FieldLengthPanel
-      Left = 857
+      Left = 942
       Height = 24
       Top = 3
       Width = 107
@@ -275,7 +277,7 @@ object DataFormFrame: TDataFormFrame
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 107
-      Color = clWhite
+      Color = clWindow
       ParentColor = False
       TabOrder = 3
       object FieldTypeLabel: TLabel
@@ -286,7 +288,9 @@ object DataFormFrame: TDataFormFrame
         Top = 5
         Width = 90
         Caption = 'FieldTypeLabel'
+        Color = clDefault
         ParentColor = False
+        Transparent = False
       end
     end
     object FieldInfoPanel: TPanel
@@ -306,7 +310,7 @@ object DataFormFrame: TDataFormFrame
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 113
-      Color = clWhite
+      Color = clWindow
       ParentColor = False
       TabOrder = 4
       object FieldInfoLabel: TLabel
@@ -317,7 +321,9 @@ object DataFormFrame: TDataFormFrame
         Top = 5
         Width = 85
         Caption = 'FieldInfoLabel'
+        Color = clDefault
         ParentColor = False
+        Transparent = False
       end
     end
     object DeletePanel: TPanel
@@ -332,7 +338,7 @@ object DataFormFrame: TDataFormFrame
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 35
-      Color = clWhite
+      Color = clWindow
       ParentColor = False
       TabOrder = 5
       object DeleteLabel: TLabel
@@ -361,7 +367,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 966
+      Left = 1051
       Height = 24
       Top = 3
       Width = 103
@@ -372,7 +378,7 @@ object DataFormFrame: TDataFormFrame
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 103
-      Color = clWhite
+      Color = clWindow
       Constraints.MinWidth = 80
       ParentColor = False
       TabOrder = 6
@@ -389,7 +395,9 @@ object DataFormFrame: TDataFormFrame
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldLengthLabel'
+        Color = clDefault
         ParentColor = False
+        Transparent = False
       end
     end
     object FieldRangePanel: TPanel
@@ -408,7 +416,7 @@ object DataFormFrame: TDataFormFrame
       BevelOuter = bvLowered
       ClientHeight = 24
       ClientWidth = 143
-      Color = clWhite
+      Color = clWindow
       Constraints.MinWidth = 80
       ParentColor = False
       TabOrder = 7
@@ -425,17 +433,19 @@ object DataFormFrame: TDataFormFrame
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldRangeLabel'
+        Color = clDefault
         ParentColor = False
+        Transparent = False
       end
     end
   end
   object Panel1: TPanel
-    Left = 902
-    Height = 772
+    Left = 987
+    Height = 705
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 772
+    ClientHeight = 705
     ClientWidth = 170
     TabOrder = 2
     OnMouseMove = Panel1MouseMove
