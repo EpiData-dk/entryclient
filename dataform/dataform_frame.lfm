@@ -459,6 +459,7 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object ActionList1: TActionList
+    Images = DM.Icons16
     left = 432
     top = 183
     object FirstRecAction: TAction
@@ -569,11 +570,13 @@ object DataFormFrame: TDataFormFrame
     object PrintDataFormAction: TAction
       Category = 'File'
       Caption = 'Print'
+      ImageIndex = 22
       OnExecute = PrintDataFormActionExecute
     end
     object PrintDataFormWithDataAction: TAction
       Category = 'File'
       Caption = 'Print (with data)'
+      ImageIndex = 22
       OnExecute = PrintDataFormWithDataActionExecute
     end
     object CopyToClipBoardAction: TAction

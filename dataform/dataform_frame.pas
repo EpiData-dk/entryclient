@@ -239,6 +239,7 @@ implementation
 {$R *.lfm}
 
 uses
+  epiv_datamodule,
   LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
