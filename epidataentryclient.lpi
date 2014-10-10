@@ -14,9 +14,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
+      <BuildNr Value="1"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
+      <StringTable ProductVersion="" SpecialBuild="RC2"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -199,12 +200,10 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fieldedit"/>
       </Unit4>
       <Unit5>
         <Filename Value="entryprocs.pas"/>
@@ -252,7 +251,6 @@
         <ComponentName Value="Settings2Form"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="settings2"/>
       </Unit12>
       <Unit13>
         <Filename Value="settings/settings2_interface.pas"/>
@@ -264,7 +262,6 @@
         <ComponentName Value="SettingsPathsFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="settings2_paths_frame"/>
       </Unit14>
       <Unit15>
         <Filename Value="settings/settings2_colours_frame.pas"/>

@@ -7,14 +7,13 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   Menus, ActnList, StdActns, ComCtrls, LCLType, ExtCtrls, project_frame,
-  LMessages, StdCtrls, entry_messages;
+  LMessages, StdCtrls, Buttons, entry_messages;
 
 type
   { TMainForm }
 
   TMainForm = class(TForm)
     AboutAction: TAction;
-    OpenProjectBtn: TButton;
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
@@ -25,6 +24,7 @@ type
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
+    OpenProjectBtn: TBitBtn;
     RecentFilesPopupSubMenu: TMenuItem;
     OpenProjectPopupMenuItem: TMenuItem;
     MenuItem2: TMenuItem;
@@ -109,6 +109,7 @@ type
     procedure UpdateSettings;
     procedure UpdateProcessToolPanel;
     procedure SetCaption;
+    procedure LoadGlyphs;
     procedure OpenRecentMenuItemClick(Sender: TObject);
   { messages }
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
@@ -134,6 +135,7 @@ implementation
 {$R *.lfm}
 
 uses
+  epiv_datamodule,
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
   shortcuts, epistringutils, epiadmin, entryprocs;
@@ -360,6 +362,11 @@ begin
   Caption := 'EpiData Entry Client (v' + GetEntryVersion + ')';
 end;
 
+procedure TMainForm.LoadGlyphs;
+begin
+  DM.Icons16.GetBitmap(19, OpenProjectBtn.Glyph);
+end;
+
 procedure TMainForm.OpenRecentMenuItemClick(Sender: TObject);
 begin
   PostMessage(Self.Handle, LM_OPEN_RECENT, WParam(Sender), 0);
@@ -412,6 +419,8 @@ constructor TMainForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   FActiveFrame := nil;
+
+  LoadGlyphs;
   UpdateMainMenu;
 end;
 

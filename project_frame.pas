@@ -27,7 +27,6 @@ type
     Panel1: TPanel;
     ProjectRecentFilesDropDownMenu: TPopupMenu;
     ProgressBar1: TProgressBar;
-    ProjectImageList: TImageList;
     SaveProjectAction: TAction;
     ProjectActionList: TActionList;
     ProjectPanel: TPanel;
@@ -40,7 +39,6 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
-    DataFileTree: TVirtualStringTree;
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
@@ -55,6 +53,7 @@ type
     procedure ToolButton1Click(Sender: TObject);
   private
     { private declarations }
+    DataFileTree: TVirtualStringTree;
     FDocumentFile: TEntryDocumentFile;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
@@ -128,6 +127,7 @@ implementation
 {$R *.lfm}
 
 uses
+  epiv_datamodule,
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
   RegExpr, LazUTF8, entryprocs;
@@ -863,15 +863,29 @@ begin
   FRelateToParent := false;
 
   FChangingRecNo := NewRecord;
-  DataFileTree.ShowHint       := true;
-  DataFileTree.OnGetText      := @DataFileTreeGetText;
-  DataFileTree.OnInitNode     := @DataFileTreeInitNode;
-  DataFileTree.OnInitChildren := @DataFileTreeInitChildren;
-  DataFileTree.OnPaintText    := @DataFileTreePaintText;
-  DataFileTree.NodeDataSize   := SizeOf(TNodeData);
-  DataFileTree.OnFocusChanging := @DataFileTreeFocusChanging;
-  DataFileTree.OnFocusChanged := @DataFileTreeFocusChanged;
-  DataFileTree.OnGetHint      := @DataFileTreeGetHint;
+
+  DataFileTree := TVirtualStringTree.Create(Self);
+  with DataFileTree do
+  begin
+    Align := alClient;
+    Parent := ProjectPanel;
+    Header.AutoSizeIndex := 0;
+    HintMode := hmHint;
+    ScrollBarOptions.ScrollBars := ssAutoBoth;
+    TabOrder := 1;
+    TreeOptions.PaintOptions := [toHotTrack, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages];
+    TreeOptions.StringOptions := [toSaveCaptions, toShowStaticText, toAutoAcceptEditChange];
+
+    ShowHint       := true;
+    OnGetText      := @DataFileTreeGetText;
+    OnInitNode     := @DataFileTreeInitNode;
+    OnInitChildren := @DataFileTreeInitChildren;
+    OnPaintText    := @DataFileTreePaintText;
+    NodeDataSize   := SizeOf(TNodeData);
+    OnFocusChanging := @DataFileTreeFocusChanging;
+    OnFocusChanged := @DataFileTreeFocusChanged;
+    OnGetHint      := @DataFileTreeGetHint;
+  end;
 
   Label2.Caption := '0';
   TextCount := 0;
