@@ -200,7 +200,6 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
@@ -209,6 +208,7 @@
       <Unit5>
         <Filename Value="entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="entryprocs"/>
       </Unit5>
       <Unit6>
         <Filename Value="settings.pas"/>
@@ -216,6 +216,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>

@@ -279,7 +279,7 @@ var
 begin
   Result := false;
 
-  if not FileExistsUTF8(FileName) then exit;
+  if FileName = '' then exit;
 
   Ini := GetIniFile(FileName);
   With Ini, EntrySettings do
