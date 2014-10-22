@@ -793,8 +793,10 @@ end;
 
 function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
   AParent: TWinControl): TControl;
+var
+  Field: TEpiField absolute EpiControl;
 begin
-  case TEpiField(EpiControl).FieldType of
+  case Field.FieldType of
     ftBoolean:  Result := TBoolEdit.Create(AParent);
     ftInteger,
     ftAutoInc:  Result := TIntegerEdit.Create(AParent);
@@ -814,7 +816,15 @@ begin
     ftTimeAuto,
     ftTime:     Result := TTimeEdit.Create(AParent);
   end;
-  if TEpiField(EpiControl).EntryMode = emNoEnter then
+
+  //  This check is normal No-Entry mode
+  if (Field.EntryMode = emNoEnter) or
+     // This check is for Parent-Child related key fields.
+     (IsDetailRelation and
+      (DataFile.KeyFields.IndexOf(Field) >= 0) and
+      (Assigned(GetMasterDataForm.DataFile.KeyFields.FieldByName[Field.Name]))
+     )
+  then
     Result.Enabled := false;
 
   EpiControl.AddCustomData(DataFormCustomDataKey, result);
