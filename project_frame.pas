@@ -559,38 +559,35 @@ procedure TProjectFrame.DataFileTreeGetText(Sender: TBaseVirtualTree;
 var
   DF: TEpiDataFile;
   ND: PNodeData;
-  A: QWord;
   S: String;
+  Frame: TDataFormFrame;
 begin
-
-  A := GetTickCount64;
   if (Node = FProjectNode) then
   begin
     if (TextType = ttNormal) then
-      CellText := EpiDocument.Study.Title.Text
+      S := EpiDocument.Study.Title.Text
   end else
   begin
     ND := Sender.GetNodeData(Node);
     DF := ND^.Relation.Datafile;
+    Frame := ND^.Frame;
     case TextType of
       ttNormal:
-        CellText := BoolToStr(ND^.Frame.Modified, '*', '') + DF.Caption.Text;
+        S := BoolToStr(Frame.Modified, '*', '') + DF.Caption.Text;
       ttStatic:
-        begin
-          if (Node^.Parent = FProjectNode) then
-            S := '[%d]'
-          else
-            S := '(%d)';
-
-          if (Node = FSelectedNode) or
-             (Sender.HasAsParent(Node, FSelectedNode))
-          then
-            CellText := Format(S, [FrameFromNode(Node).IndexedSize]);
-        end;
+        if (Node = FSelectedNode) or
+           (Sender.HasAsParent(Node, FSelectedNode))
+        then
+          begin
+            if (Node^.Parent = FProjectNode) then
+              S := Format('[%d]', [Frame.IndexedSize])
+            else
+              S := Format('[%d] (%d)', [DF.Size, Frame.IndexedSize]);
+          end;
     end;
   end;
-  TextCount := TextCount + (GetTickCount64 - A);
-  Label2.Caption := IntToStr(TextCount);
+
+  CellText := S;
 end;
 
 procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
@@ -655,12 +652,9 @@ end;
 procedure TProjectFrame.DataFileTreePaintText(Sender: TBaseVirtualTree;
   const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
   TextType: TVSTTextType);
-var
-  A: QWord;
 begin
   if Node = FProjectNode then exit;
 
-  A := GetTickCount64;
   case TextType of
     ttNormal:
       begin
@@ -673,8 +667,6 @@ begin
     ttStatic:
       TargetCanvas.Font.Color := clBlue;
   end;
-  PaintCount := PaintCount + (GetTickCount64 - A);
-  Label4.Caption := IntToStr(PaintCount);
 end;
 
 procedure TProjectFrame.DataFileTreeGetHint(Sender: TBaseVirtualTree;

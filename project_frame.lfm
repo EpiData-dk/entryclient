@@ -6,7 +6,7 @@ object ProjectFrame: TProjectFrame
   ClientHeight = 777
   ClientWidth = 1096
   TabOrder = 0
-  DesignLeft = 1737
+  DesignLeft = 822
   DesignTop = 264
   object ProjectPanel: TPanel
     Left = 0
@@ -24,7 +24,6 @@ object ProjectFrame: TProjectFrame
       Top = 1
       Width = 168
       Caption = 'ToolBar1'
-      Images = DM.Icons16
       TabOrder = 0
       object OpenProjectToolButton: TToolButton
         Left = 1
@@ -134,7 +133,6 @@ object ProjectFrame: TProjectFrame
     end
   end
   object ProjectActionList: TActionList
-    Images = DM.Icons16
     left = 464
     top = 168
     object SaveProjectAction: TAction
@@ -156,7 +154,6 @@ object ProjectFrame: TProjectFrame
     end
   end
   object ProjectRecentFilesDropDownMenu: TPopupMenu
-    Images = DM.Icons16
     left = 360
     top = 112
   end

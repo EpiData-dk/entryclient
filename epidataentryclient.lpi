@@ -193,6 +193,7 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -208,7 +209,6 @@
       <Unit5>
         <Filename Value="entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="entryprocs"/>
       </Unit5>
       <Unit6>
         <Filename Value="settings.pas"/>
@@ -216,7 +216,6 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -235,6 +234,7 @@
         <ComponentName Value="ValueLabelsPickListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="picklist"/>
       </Unit9>
       <Unit10>
         <Filename Value="dataform/notes_form.pas"/>
