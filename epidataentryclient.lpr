@@ -17,7 +17,7 @@ uses
   searchform, search, resultlist_form, settings2_fonts_frame, shortcuts,
   entry_messages, entrylabel, control_types, entrysection, entry_globals,
   notes_report, documentfile_ext, new_record_form, settings2_relate_frame,
-  setting_types;
+  setting_types, picklist2;
 
 {$R *.res}
 

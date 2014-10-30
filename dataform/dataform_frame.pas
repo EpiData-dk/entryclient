@@ -242,7 +242,7 @@ uses
   epiv_datamodule,
   LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
+  picklist, picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd, setting_types,
   entrylabel, entrysection, project_frame,
@@ -2765,7 +2765,7 @@ end;
 
 function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
 var
-  VLForm: TValueLabelsPickListForm;
+  VLForm: TValueLabelsPickListForm2;
   P: TPoint;
 begin
   if Assigned(FHintWindow) then FHintWindow.Hide;
@@ -2774,7 +2774,7 @@ begin
   ShowHintMsg('', nil);
 //  FNotesHint.Hide;
 
-  VLForm := TValueLabelsPickListForm.Create(Self, AFieldEdit.Field);
+  VLForm := TValueLabelsPickListForm2.Create(Self, AFieldEdit.Field);
   VLForm.SetInitialValue(AFieldEdit.Text);
   P := AFieldEdit.Parent.ClientToScreen(Point(AFieldEdit.Left + AFieldEdit.Width + 2, AFieldEdit.Top));
   VLForm.Top := P.Y;
