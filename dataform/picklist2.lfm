@@ -1,7 +1,7 @@
 object ValueLabelsPickListForm2: TValueLabelsPickListForm2
-  Left = 658
+  Left = 509
   Height = 539
-  Top = 272
+  Top = 136
   Width = 547
   Caption = 'ValueLabelsPickListForm2'
   ClientHeight = 539
@@ -26,6 +26,7 @@ object ValueLabelsPickListForm2: TValueLabelsPickListForm2
       AutoSize = False
       BorderSpacing.Around = 1
       OnChange = Edit1Change
+      OnKeyDown = Edit1KeyDown
       TabOrder = 0
     end
   end

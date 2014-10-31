@@ -5,10 +5,9 @@ object DataFormFrame: TDataFormFrame
   Width = 1157
   ClientHeight = 735
   ClientWidth = 1157
-  LCLVersion = '1.3'
   TabOrder = 0
-  DesignLeft = 1847
-  DesignTop = 262
+  DesignLeft = 1776
+  DesignTop = 250
   object DataFormScroolBox: TScrollBox
     Left = 0
     Height = 705
