@@ -145,6 +145,7 @@ type
     FNotesHint: THintWindow;
     procedure ShowNotes(FE: TFieldEdit; ForceShow: boolean = false);
     procedure UnShowNotes;
+    procedure UnShowNotesAndHint;
   private
     { Field Enter/Exit Handling }
     // - Delayed key down handling.
@@ -1706,6 +1707,12 @@ begin
     FNotesHint.Hide;
 end;
 
+procedure TDataFormFrame.UnShowNotesAndHint;
+begin
+  UnShowNotes;
+  ShowHintMsg('', nil);
+end;
+
 function TDataFormFrame.NewOrNextRecord: TFieldEdit;
 var
   B: Boolean;
@@ -2778,9 +2785,7 @@ begin
   if Assigned(FHintWindow) then FHintWindow.Hide;
   if Assigned(FNotesForm) then FNotesForm.Hide;
 
-  ShowHintMsg('', nil);
-  UnShowNotes;
-//  FNotesHint.Hide;
+  UnShowNotesAndHint;
 
   VLForm := TValueLabelsPickListForm2.Create(Self, AFieldEdit.Field);
   VLForm.SetInitialValue(AFieldEdit.Text);
