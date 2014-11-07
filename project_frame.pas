@@ -879,6 +879,8 @@ begin
     OnGetHint      := @DataFileTreeGetHint;
   end;
 
+  ToolBar1.Images := DM.Icons16;
+
   Label2.Caption := '0';
   TextCount := 0;
   Label4.Caption := '0';

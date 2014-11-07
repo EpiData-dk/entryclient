@@ -2408,7 +2408,7 @@ var
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
-  R: TEpiRelate;
+  R: TEpiValueRelate;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
