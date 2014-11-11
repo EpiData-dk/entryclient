@@ -1738,14 +1738,20 @@ begin
 
       // If we are editing the last record localindex/datafile size is correct
       // size.
-      B := B or (
+      B := B or
+         (
           (RecNo = FLocalToDFIndex.Size - 1) and
           (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
          );
 
+      // DataFile settings has presedence over ReachedLastRecord setting.
+      B := B or (DataFile.AfterRecordState = arsReturnToParent);
+
       if B then
       begin
-        if EntrySettings.RelateMaxRecsReached = mrrReturnToParent then
+        if (EntrySettings.RelateMaxRecsReached = mrrReturnToParent) or
+           (DataFile.AfterRecordState = arsReturnToParent)
+        then
           PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 1)
         else begin
           DoNewRecord;
@@ -2260,11 +2266,29 @@ begin
       fxtJump:
         ; // Do nothing - NextFieldEdit is set.
     end;
+{
+    if not Assigned(NextFieldEdit) then
+      NextFieldEdit := NewOrNextRecord;
 
     if not Assigned(NextFieldEdit) then
-      DoAfterRecord(NextFieldEdit);
+      Exit;
 
-    if not Assigned(NextFieldEdit) then exit;
+    FieldEnterFlow(NextFieldEdit);
+    NextFieldEdit.SetFocus;
+    Key := VK_UNKNOWN;          }
+
+
+    if not Assigned(NextFieldEdit)
+    then
+      begin
+        DoAfterRecord(NextFieldEdit);
+        if not Assigned(NextFieldEdit) then exit;
+      end
+    else
+      begin
+        FieldEnterFlow(NextFieldEdit);
+        NextFieldEdit.SetFocus;
+      end;
 
     Key := VK_UNKNOWN;
   end;
