@@ -185,7 +185,6 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="main"/>
       </Unit1>
       <Unit2>
         <Filename Value="project_frame.pas"/>
@@ -235,7 +234,6 @@
         <ComponentName Value="ValueLabelsPickListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="picklist"/>
       </Unit9>
       <Unit10>
         <Filename Value="dataform/notes_form.pas"/>
@@ -316,7 +314,6 @@
       <Unit23>
         <Filename Value="entry_messages.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="entry_messages"/>
       </Unit23>
       <Unit24>
         <Filename Value="include/linux/initfont.inc"/>
@@ -341,6 +338,7 @@
       <Unit29>
         <Filename Value="entry_globals.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="entry_globals"/>
       </Unit29>
       <Unit30>
         <Filename Value="dataform/notes_report.pas"/>
@@ -374,7 +372,6 @@
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="picklist2"/>
       </Unit35>
     </Units>
   </ProjectOptions>

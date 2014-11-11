@@ -172,7 +172,7 @@ type
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
-    procedure DoAfterRecord;
+    procedure DoAfterRecord(out NewFieldEdit: TFieldEdit);
   private
     FModified: boolean;
     { DataForm Control }
@@ -2091,8 +2091,7 @@ begin
       FE := NextFieldOnKeyDown(FCurrentEdit);
 
       if not Assigned(FE) then
-        DoAfterRecord;
-
+        DoAfterRecord(FE);
     end
   else if (DataFormScroolBox.Enabled)
   then
@@ -2263,7 +2262,9 @@ begin
     end;
 
     if not Assigned(NextFieldEdit) then
-      DoAfterRecord;
+      DoAfterRecord(NextFieldEdit);
+
+    if not Assigned(NextFieldEdit) then exit;
 
     Key := VK_UNKNOWN;
   end;
@@ -2791,9 +2792,8 @@ begin
   VLForm.Free;
 end;
 
-procedure TDataFormFrame.DoAfterRecord;
+procedure TDataFormFrame.DoAfterRecord(out NewFieldEdit: TFieldEdit);
 var
-  FE: TFieldEdit;
   Relate: TEpiRelate;
   Idx: Integer;
 begin
@@ -2819,13 +2819,13 @@ begin
     end;
   end;
 
-  FE := NewOrNextRecord;
+  NewFieldEdit := NewOrNextRecord;
 
-  if not Assigned(FE) then
+  if not Assigned(NewFieldEdit) then
     Exit;
 
-  FieldEnterFlow(FE);
-  FE.SetFocus;
+  FieldEnterFlow(NewFieldEdit);
+  NewFieldEdit.SetFocus;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);
