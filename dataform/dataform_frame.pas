@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, epitools_search, entry_globals, epirelations, epidatafilestypes;
+  VirtualTrees, epitools_search, entry_globals, epirelations, epidatafilestypes,
+  epirelates;
 
 type
 
@@ -164,12 +165,14 @@ type
     procedure UpdateFieldPanel(Field: TEpiField);
   private
     { Flow control/Validation/Script handling}
+    FLastDataFileRelate: TEpiRelate;
     procedure FieldEnterFlow(FE: TFieldEdit);
     function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
     function  DoValidateKeyFields: Boolean;
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
     function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
+    procedure DoAfterRecord;
   private
     FModified: boolean;
     { DataForm Control }
@@ -2088,13 +2091,8 @@ begin
       FE := NextFieldOnKeyDown(FCurrentEdit);
 
       if not Assigned(FE) then
-        FE := NewOrNextRecord;
+        DoAfterRecord;
 
-      if not Assigned(FE) then
-        Exit;
-
-      FieldEnterFlow(FE);
-      FE.SetFocus;
     end
   else if (DataFormScroolBox.Enabled)
   then
@@ -2265,13 +2263,8 @@ begin
     end;
 
     if not Assigned(NextFieldEdit) then
-      NextFieldEdit := NewOrNextRecord;
+      DoAfterRecord;
 
-    if not Assigned(NextFieldEdit) then
-      Exit;
-
-    FieldEnterFlow(NextFieldEdit);
-    NextFieldEdit.SetFocus;
     Key := VK_UNKNOWN;
   end;
 
@@ -2798,11 +2791,44 @@ begin
   VLForm.Free;
 end;
 
+procedure TDataFormFrame.DoAfterRecord;
+var
+  FE: TFieldEdit;
+  Relate: TEpiRelate;
+  Idx: Integer;
+begin
+  // First relate dataforms
+  Relate := nil;
+  if DataFile.Relates.Count > 0 then
+  begin
+    if not Assigned(FLastDataFileRelate) then
+      Relate := DataFile.Relates[0]
+    else
+      begin
+        Idx := DataFile.Relates.IndexOf(FLastDataFileRelate) + 1;
+        if (Idx < DataFile.Relates.Count) then
+          Relate := DataFile.Relates[Idx];
+      end;
+
+    if Assigned(Relate) then
+      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(Relate.DetailRelation.MasterRelation), 1);
+  end;
+
+  FE := NewOrNextRecord;
+
+  if not Assigned(FE) then
+    Exit;
+
+  FieldEnterFlow(FE);
+  FE.SetFocus;
+end;
+
 constructor TDataFormFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
 
   FParentRecordState := rsNormal;
+  FLastDataFileRelate := nil;
 
   FLocalToDFIndex := TEpiField.CreateField(nil, ftInteger);
   FLocalToDFIndex.Size := 0;

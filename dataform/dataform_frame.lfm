@@ -6,7 +6,7 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 735
   ClientWidth = 1157
   TabOrder = 0
-  DesignLeft = 1920
+  DesignLeft = 761
   DesignTop = 250
   object DataFormScroolBox: TScrollBox
     Left = 0
@@ -250,9 +250,9 @@ object DataFormFrame: TDataFormFrame
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
         Left = 6
-        Height = 21
-        Top = 1
-        Width = 100
+        Height = 15
+        Top = 4
+        Width = 101
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
@@ -284,9 +284,9 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Control = FieldTypePanel
         AnchorSideTop.Side = asrCenter
         Left = 4
-        Height = 21
-        Top = 2
-        Width = 94
+        Height = 15
+        Top = 5
+        Width = 90
         Caption = 'FieldTypeLabel'
         Color = clDefault
         ParentColor = False
@@ -317,9 +317,9 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Control = FieldInfoPanel
         AnchorSideTop.Side = asrCenter
         Left = 4
-        Height = 21
-        Top = 2
-        Width = 88
+        Height = 15
+        Top = 5
+        Width = 85
         Caption = 'FieldInfoLabel'
         Color = clDefault
         ParentColor = False
@@ -348,10 +348,10 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
-        Left = -19
-        Height = 21
-        Top = 2
-        Width = 73
+        Left = -21
+        Height = 15
+        Top = 5
+        Width = 76
         BorderSpacing.Left = 5
         Caption = 'DeleteLabel'
         Color = clDefault
@@ -389,8 +389,8 @@ object DataFormFrame: TDataFormFrame
         AnchorSideBottom.Control = FieldLengthPanel
         AnchorSideBottom.Side = asrCenter
         Left = 6
-        Height = 21
-        Top = 1
+        Height = 15
+        Top = 4
         Width = 106
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
@@ -427,8 +427,8 @@ object DataFormFrame: TDataFormFrame
         AnchorSideBottom.Control = FieldRangePanel
         AnchorSideBottom.Side = asrCenter
         Left = 6
-        Height = 21
-        Top = 1
+        Height = 15
+        Top = 4
         Width = 102
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
@@ -451,7 +451,7 @@ object DataFormFrame: TDataFormFrame
     OnMouseMove = Panel1MouseMove
     object Label1: TLabel
       Left = 30
-      Height = 21
+      Height = 15
       Top = 48
       Width = 42
       Caption = 'Label1'
