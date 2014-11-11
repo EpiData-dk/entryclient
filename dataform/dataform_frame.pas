@@ -2810,8 +2810,13 @@ begin
           Relate := DataFile.Relates[Idx];
       end;
 
+    FLastDataFileRelate := Relate;
+
     if Assigned(Relate) then
-      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(Relate.DetailRelation.MasterRelation), 1);
+    begin
+      PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(Relate.DetailRelation), 0);
+      Exit;
+    end;
   end;
 
   FE := NewOrNextRecord;
