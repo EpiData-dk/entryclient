@@ -14,7 +14,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -192,7 +192,6 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -205,7 +204,6 @@
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fieldedit"/>
       </Unit4>
       <Unit5>
         <Filename Value="entryprocs.pas"/>
@@ -339,7 +337,6 @@
       <Unit29>
         <Filename Value="entry_globals.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="entry_globals"/>
       </Unit29>
       <Unit30>
         <Filename Value="dataform/notes_report.pas"/>
