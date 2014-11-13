@@ -46,6 +46,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile);
+    destructor Destroy; override;
   end;
 
 var
@@ -109,6 +110,12 @@ begin
     OnSelectRecord := @SelectRecord;
     Parent := Self;
   end;
+end;
+
+destructor TResultListForm.Destroy;
+begin
+  FResultListForm := nil;
+  inherited Destroy;
 end;
 
 procedure ShowResultListForm(const AOwner: TComponent; const ACaption: String;

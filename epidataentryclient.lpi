@@ -192,6 +192,7 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -294,6 +295,7 @@
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="resultlist_form"/>
       </Unit19>
       <Unit20>
         <Filename Value="settings/settings2_fonts_frame.pas"/>
