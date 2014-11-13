@@ -101,15 +101,15 @@ object ProjectFrame: TProjectFrame
     Visible = False
     object Label1: TLabel
       Left = 18
-      Height = 21
+      Height = 15
       Top = 54
-      Width = 91
+      Width = 90
       Caption = 'GetTextCount:'
       ParentColor = False
     end
     object Label2: TLabel
       Left = 54
-      Height = 21
+      Height = 15
       Top = 90
       Width = 42
       Caption = 'Label2'
@@ -117,15 +117,15 @@ object ProjectFrame: TProjectFrame
     end
     object Label3: TLabel
       Left = 18
-      Height = 21
+      Height = 15
       Top = 150
-      Width = 100
+      Width = 98
       Caption = 'PaintTextCount:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 54
-      Height = 21
+      Height = 15
       Top = 192
       Width = 42
       Caption = 'Label4'

@@ -886,6 +886,8 @@ begin
   Label4.Caption := '0';
   PaintCount := 0;
 
+//  LoadSplitterPosition(Splitter1, 'ProjectFrame');
+
   UpdateShortCuts;
   UpdateRecentFilesDropDown;
 end;
@@ -942,8 +944,8 @@ end;
 
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
-  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
   result := DoOpenProject(aFilename);
+  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
 end;
 
 procedure TProjectFrame.UpdateSettings;

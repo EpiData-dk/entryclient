@@ -216,6 +216,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
