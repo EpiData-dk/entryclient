@@ -2015,14 +2015,19 @@ begin
         // Trick to force a load of data using current filter.
         FRecNo := -1;
 
-        case EntrySettings.RelateChangeRecord of
-          rcFirstRecord:
-            RecNo := 0;
-          rcLastRecord:
-            RecNo := FLocalToDFIndex.Size - 1;
-          rcNewRecord:
-            DoNewRecord;
-        end;
+        // In case no records exists, always do a new record.
+        // otherwise Key Fields will not be set, etc. (needed eg. by GetCurrentKeyFieldValues).
+        if FLocalToDFIndex.Size = 0 then
+          DoNewRecord
+        else
+          case EntrySettings.RelateChangeRecord of
+            rcFirstRecord:
+              RecNo := 0;
+            rcLastRecord:
+              RecNo := FLocalToDFIndex.Size - 1;
+            rcNewRecord:
+              DoNewRecord;
+          end;
       end;
 
     rrNewRecord:
