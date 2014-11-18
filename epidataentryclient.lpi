@@ -143,7 +143,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/trunk.ini -r=~/.config/epidata/recent.trunk.ini"/>
+        <CommandLineParams Value="-b=/tmp"/>
       </local>
     </RunParams>
     <RequiredPackages Count="7">
@@ -185,6 +185,7 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="main"/>
       </Unit1>
       <Unit2>
         <Filename Value="project_frame.pas"/>
@@ -200,7 +201,6 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
@@ -209,6 +209,7 @@
       <Unit5>
         <Filename Value="entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="entryprocs"/>
       </Unit5>
       <Unit6>
         <Filename Value="settings.pas"/>
@@ -296,7 +297,6 @@
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="resultlist_form"/>
       </Unit19>
       <Unit20>
         <Filename Value="settings/settings2_fonts_frame.pas"/>
@@ -348,6 +348,7 @@
       <Unit31>
         <Filename Value="utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="documentfile_ext"/>
       </Unit31>
       <Unit32>
         <Filename Value="dataform/new_record_form.pas"/>

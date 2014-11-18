@@ -253,6 +253,8 @@ end;
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
 var
   Node: PVirtualNode;
+  Dummy: string;
+  Res: TModalResult;
 begin
   Result := false;
   try
@@ -263,7 +265,6 @@ begin
       FDocumentFile := TEntryDocumentFile.Create;
       FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
-      FDocumentFile.BackupDirectory := EntrySettings.BackupDirUTF8;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
       if not FDocumentFile.OpenFile(AFileName) then
       begin
@@ -276,6 +277,37 @@ begin
       // during OpenFile(...) and we need to notify the user.
       raise;
     end;
+
+    // Test the End-Backup location. If not then warn and ask user what
+    // to do.
+    if (not FDocumentFile.IsEndBackupFileWriteable(Dummy)) then
+    begin
+      Res := MessageDlg(
+        'Warning',
+        'The file: ' + LineEnding +
+          FDocumentFile.FileName + LineEnding +
+          'cannot be backed-up when closed!' + LineEnding +
+          LineEnding +
+          'Continue opening this project?' + LineEnding +
+          LineEnding +
+          '(Use program parameter -b to change default backup location)',
+        mtWarning,
+        mbYesNo,
+        0,
+        mbOK
+      );
+
+      case Res of
+        mrOk:
+          ;  // Do nothing
+        mrNo:
+          begin
+            FreeAndNil(FDocumentFile);
+            Exit;
+          end;
+      end;
+    end;
+
 
     MainForm.BeginUpdateForm;
     try
@@ -885,8 +917,6 @@ begin
   TextCount := 0;
   Label4.Caption := '0';
   PaintCount := 0;
-
-//  LoadSplitterPosition(Splitter1, 'ProjectFrame');
 
   UpdateShortCuts;
   UpdateRecentFilesDropDown;

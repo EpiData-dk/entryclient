@@ -40,10 +40,13 @@ const
   RecentFileIniShort = '-r';
   IniFile =            '--inifile';
   IniFileShort =       '-i';
+  BackupDir =          '--backupdir';
+  BackupDirShort =     '-b';
   ShowHelp =           '--help';
   ShowHelpShort =      '-h';
   ShowVersion =        '--version';
   ShowVersionShort =   '-v';
+
 
   function ParseLine(Const Param, Option: string; var Value: string): boolean;
   begin
@@ -83,6 +86,10 @@ const
     HText.Add('                         This file can be shared with EpiData Manager.');
     HText.Add('                         If no location is specified, the default configuration file is used.');
     HText.Add('');
+    HText.Add('-b= or --backupdir=...   Location of the backup folder, where daily backups are stored.');
+    HText.Add('                         If no location is specified, the backup location is in the folder "backup" in the');
+    HText.Add('                         same folder as the project file.');
+    HText.Add('');
     HText.Add('FILE                     If a project file is specified (either .epx or .epz), then this file is');
     HText.Add('                         is opened at startup.');
     DoOutputText(HText.Text);
@@ -115,6 +122,14 @@ begin
     then
     begin
       IniFileName := ExpandFileNameUTF8(IniFileName);
+      Continue;
+    end;
+
+    if ParseLine(P, BackupDir, S) or
+       ParseLine(P, BackupDirShort, S)
+    then
+    begin
+      EntrySettings.BackupDirUTF8 := ExpandFileNameUTF8(S);
       Continue;
     end;
 

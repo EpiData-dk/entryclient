@@ -32,6 +32,7 @@ object ProjectFrame: TProjectFrame
       end
       object ProjectToolButtomDivider1: TToolButton
         Left = 24
+        Height = 22
         Top = 2
         Width = 5
         Caption = 'ProjectToolButtomDivider1'
@@ -44,6 +45,7 @@ object ProjectFrame: TProjectFrame
       end
       object ProjectToolButtomDivider2: TToolButton
         Left = 52
+        Height = 22
         Top = 2
         Width = 5
         Caption = 'ProjectToolButtomDivider2'
@@ -62,6 +64,7 @@ object ProjectFrame: TProjectFrame
       end
       object ToolButton3: TToolButton
         Left = 80
+        Height = 22
         Top = 2
         Width = 5
         Caption = 'ToolButton3'

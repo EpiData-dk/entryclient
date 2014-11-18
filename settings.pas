@@ -58,7 +58,6 @@ type
     TutorialDirUTF8: string;
     TutorialURLUTF8: string;
     BackupDirUTF8: string;
-    PerProjectBackup: boolean;
 
     // Colours
     ValidateErrorColour: TColor;
@@ -106,7 +105,6 @@ var
     TutorialDirUTF8: '';
     TutorialURLUTF8: 'http://epidata.dk/documentation.php';
     BackupDirUTF8: '';
-    PerProjectBackup: true;
 
     ValidateErrorColour: clYellow;
     ValueLabelColour: clBlue;
@@ -193,8 +191,6 @@ begin
       Sec := 'advanced';
       WriteString(Sec, 'WorkingDirectory', WorkingDirUTF8);
       WriteString(Sec, 'TutorialDirectory', TutorialDirUTF8);
-      WriteString(Sec, 'BackupDirUTF8', BackupDirUTF8);
-      WriteBool(Sec, 'PerProjectBackup', PerProjectBackup);
       WriteString(Sec, 'TutorialURL', TutorialURLUTF8);
       WriteInteger(Sec, 'RecordsToSkip', RecordsToSkip);
       WriteInteger(Sec, 'HintTimeOut', HintTimeOut);
@@ -290,8 +286,6 @@ begin
     WorkingDirUTF8   := ReadString(Sec, 'WorkingDirectory', WorkingDirUTF8);
     TutorialDirUTF8  := ReadString(Sec, 'TutorialDirectory', TutorialDirUTF8);
     TutorialURLUTF8  := ReadString(Sec, 'TutorialURL', TutorialURLUTF8);
-    BackupDirUTF8    := ReadString(Sec, 'BackupDirUTF8', BackupDirUTF8);
-    PerProjectBackup := ReadBool(Sec, 'PerProjectBackup', PerProjectBackup);
     RecordsToSkip    := ReadInteger(Sec, 'RecordsToSkip', RecordsToSkip);
     HintTimeOut      := ReadInteger(Sec, 'HintTimeout', HintTimeOut);
     MultipleInstances := ReadBool(Sec, 'MultipleInstances', MultipleInstances);
@@ -561,9 +555,7 @@ begin
   if not DirectoryExistsUTF8(EntrySettings.TutorialDirUTF8) then
     EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
 
-  EntrySettings.BackupDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'backup';
-  if not DirectoryExistsUTF8(EntrySettings.BackupDirUTF8) then
-    EntrySettings.BackupDirUTF8 := GetCurrentDirUTF8;
+  EntrySettings.BackupDirUTF8 := '';
 
   RecentFiles := TStringList.Create;
   RecentFiles.CaseSensitive := true;
