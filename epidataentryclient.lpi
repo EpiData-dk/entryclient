@@ -205,10 +205,12 @@
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="fieldedit"/>
       </Unit4>
       <Unit5>
         <Filename Value="entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="entryprocs"/>
       </Unit5>
       <Unit6>
         <Filename Value="settings.pas"/>

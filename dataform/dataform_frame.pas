@@ -306,6 +306,12 @@ begin
 
   FE := TFieldEdit(FieldEditList[i]);
   FieldEnterFlow(FE);
+
+  // Line below:
+  // Fixes bug where opening a single form, doesn't have a handle prior to
+  // focusing the first field.
+  FE.HandleNeeded;
+
   FE.SetFocus;
 end;
 
@@ -2402,7 +2408,6 @@ begin
   // TODO : Before field script
 
   // Top-of-screen?
-
 
   // TORSTEN Okt. 2012:
   // Due to the flow of event, it is nessesary to check if a Project
