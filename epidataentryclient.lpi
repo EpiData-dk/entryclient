@@ -210,7 +210,6 @@
       <Unit5>
         <Filename Value="entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="entryprocs"/>
       </Unit5>
       <Unit6>
         <Filename Value="settings.pas"/>
@@ -218,6 +217,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -254,6 +254,7 @@
         <ComponentName Value="Settings2Form"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings2"/>
       </Unit12>
       <Unit13>
         <Filename Value="settings/settings2_interface.pas"/>
@@ -348,7 +349,6 @@
       <Unit31>
         <Filename Value="utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="documentfile_ext"/>
       </Unit31>
       <Unit32>
         <Filename Value="dataform/new_record_form.pas"/>
@@ -363,10 +363,12 @@
         <ComponentName Value="RelateFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings2_relate_frame"/>
       </Unit33>
       <Unit34>
         <Filename Value="settings/setting_types.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="setting_types"/>
       </Unit34>
       <Unit35>
         <Filename Value="dataform/picklist2.pas"/>

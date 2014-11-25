@@ -6,8 +6,8 @@ object RelateFrame: TRelateFrame
   ClientHeight = 444
   ClientWidth = 487
   TabOrder = 0
-  DesignLeft = 544
-  DesignTop = 352
+  DesignLeft = 787
+  DesignTop = 371
   object RadioGroup1: TRadioGroup
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner

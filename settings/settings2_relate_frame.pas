@@ -69,13 +69,13 @@ begin
 
   with FData^ do
   begin
-    RadioGroup1.ItemIndex := RadioGroup1.Items.IndexOfObject(
+{    RadioGroup1.ItemIndex := RadioGroup1.Items.IndexOfObject(
       TObject(PtrInt(RelateMaxRecsReached))
     );
 
     RadioGroup2.ItemIndex := RadioGroup2.Items.IndexOfObject(
       TObject(PtrInt(RelateChangeRecord))
-    );
+    );   }
   end;
 end;
 
@@ -83,8 +83,8 @@ function TRelateFrame.ApplySettings: boolean;
 begin
   with FData^ do
   begin
-    RelateMaxRecsReached := TSettingRelateMaxRecordReached(PtrInt(RadioGroup1.Items.Objects[RadioGroup1.ItemIndex]));
-    RelateChangeRecord   := TSettingRelateRecordChanged(PtrInt(RadioGroup2.Items.Objects[RadioGroup2.ItemIndex]));
+//    RelateMaxRecsReached := TSettingRelateMaxRecordReached(PtrInt(RadioGroup1.Items.Objects[RadioGroup1.ItemIndex]));
+//    RelateChangeRecord   := TSettingRelateRecordChanged(PtrInt(RadioGroup2.Items.Objects[RadioGroup2.ItemIndex]));
   end;
 
   result := true;
@@ -93,7 +93,7 @@ end;
 initialization
 
 begin
- RegisterSettingFrame(4, TRelateFrame, 'Relate');
+// RegisterSettingFrame(4, TRelateFrame, 'Relate');
 end;
 
 end.

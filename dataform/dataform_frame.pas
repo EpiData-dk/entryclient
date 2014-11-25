@@ -1755,8 +1755,7 @@ begin
 
       if B then
       begin
-        if (EntrySettings.RelateMaxRecsReached = mrrReturnToParent) or
-           (DataFile.AfterRecordState = arsReturnToParent)
+        if (DataFile.AfterRecordState in [arsReturnToParent, arsReturnToParentOnMax])
         then
           PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 1)
         else begin
@@ -2021,7 +2020,9 @@ begin
         // Trick to force a load of data using current filter.
         FRecNo := -1;
 
-        // In case no records exists, always do a new record.
+        DoNewRecord;
+
+{        // In case no records exists, always do a new record.
         // otherwise Key Fields will not be set, etc. (needed eg. by GetCurrentKeyFieldValues).
         if FLocalToDFIndex.Size = 0 then
           DoNewRecord
@@ -2033,7 +2034,7 @@ begin
               RecNo := FLocalToDFIndex.Size - 1;
             rcNewRecord:
               DoNewRecord;
-          end;
+          end;   }
       end;
 
     rrNewRecord:
@@ -2051,17 +2052,17 @@ begin
            )
         then begin
           RecNo := (FLocalToDFIndex.Size - 1);
-        end else
+        end else{
         if ((FLocalToDFIndex.Size = 0) or
             (RecNo = NewRecord))
         then
         begin
-          Modified := false;
+          Modified := false; }
           DoNewRecord;
-        end
+       { end
         else begin
           LoadRecord(RecNo);
-        end;
+        end;  }
 
         if ResultListFormIsShowing then
           ShowResultListForm(

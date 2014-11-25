@@ -81,8 +81,8 @@ type
     HeadingFont5:          TFont;
 
     // Relate
-    RelateMaxRecsReached:  TSettingRelateMaxRecordReached;
-    RelateChangeRecord:    TSettingRelateRecordChanged;
+//    RelateMaxRecsReached:  TSettingRelateMaxRecordReached;
+//    RelateChangeRecord:    TSettingRelateRecordChanged;
   end;
   PEntrySettings = ^TEntrySettings;
 
@@ -126,8 +126,8 @@ var
     HeadingFont5:          nil;
 
     // Relate
-    RelateMaxRecsReached:  mrrReturnToParent;
-    RelateChangeRecord:    rcLastRecord;
+//    RelateMaxRecsReached:  mrrReturnToParent;
+//    RelateChangeRecord:    rcLastRecord;
   );
 
   {$I epidataentryclient.revision.inc}
@@ -246,8 +246,8 @@ begin
       WriteInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
 
       Sec := 'relate';
-      WriteInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached));
-      WriteInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord));
+//      WriteInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached));
+//      WriteInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord));
     end;
 
     Result := true;
@@ -349,8 +349,8 @@ begin
 
     // Relate
     Sec := 'relate';
-    RelateMaxRecsReached := TSettingRelateMaxRecordReached(ReadInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached)));
-    RelateChangeRecord := TSettingRelateRecordChanged(ReadInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord)));
+//    RelateMaxRecsReached := TSettingRelateMaxRecordReached(ReadInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached)));
+//    RelateChangeRecord := TSettingRelateRecordChanged(ReadInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord)));
   end;
   Result := true;
 end;
