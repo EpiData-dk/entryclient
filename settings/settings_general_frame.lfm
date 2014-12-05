@@ -1,20 +1,20 @@
 object SettingsGeneralFrame: TSettingsGeneralFrame
   Left = 0
-  Height = 409
+  Height = 450
   Top = 0
-  Width = 541
-  ClientHeight = 409
-  ClientWidth = 541
+  Width = 569
+  ClientHeight = 450
+  ClientWidth = 569
   TabOrder = 0
-  DesignLeft = 931
-  DesignTop = 282
+  DesignLeft = 639
+  DesignTop = 279
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = RecordsToSkipEdit
     AnchorSideTop.Side = asrCenter
     Left = 10
-    Height = 33
-    Top = 70
+    Height = 30
+    Top = 71
     Width = 149
     BorderSpacing.Left = 10
     Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
@@ -28,7 +28,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 256
     Height = 25
     Top = 74
-    Width = 275
+    Width = 303
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -59,7 +59,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 256
     Height = 25
     Top = 109
-    Width = 275
+    Width = 303
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -109,7 +109,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   object UnAssociateBtn: TButton
     AnchorSideTop.Control = AssociateBtn
     AnchorSideRight.Control = AssociateBtn
-    Left = 350
+    Left = 378
     Height = 27
     Top = 144
     Width = 97
@@ -126,7 +126,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 457
+    Left = 485
     Height = 27
     Top = 144
     Width = 74
@@ -148,7 +148,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 10
     Height = 96
     Top = 176
-    Width = 521
+    Width = 549
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     BorderSpacing.Left = 10
@@ -164,7 +164,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 79
-    ClientWidth = 517
+    ClientWidth = 545
     Items.Strings = (
       'Show notes as hint'
       'Show notes in window'
@@ -175,11 +175,11 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       Height = 22
       Hint = 'The extra information is:'#10' - Valuelabels'#10' - Range'
       Top = 51
-      Width = 505
+      Width = 533
       Caption = 'Show extra field info in note'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 2
     end
   end
   object ClipBoardFormatCombo: TComboBox
@@ -190,7 +190,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     Left = 256
     Height = 27
     Top = 282
-    Width = 241
+    Width = 269
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 5
@@ -217,7 +217,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 502
+    Left = 530
     Height = 28
     Top = 281
     Width = 29
@@ -301,5 +301,61 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     }
     OnClick = FormatHlpBtnClick
     TabOrder = 8
+  end
+  object CheckUpdateGrpBox: TGroupBox
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = ClipBoardFormatCombo
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 10
+    Height = 82
+    Top = 319
+    Width = 549
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    Caption = 'Program Updates'
+    ClientHeight = 65
+    ClientWidth = 545
+    TabOrder = 9
+    object AutomaticUpdatesChkBox: TCheckBox
+      Left = 8
+      Height = 22
+      Top = 8
+      Width = 212
+      Caption = 'Check for new versions online'
+      TabOrder = 0
+    end
+    object DaysBetweenUpdatedEdit: TMaskEdit
+      AnchorSideLeft.Control = Label4
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideBottom.Control = Label4
+      AnchorSideBottom.Side = asrBottom
+      Left = 158
+      Height = 25
+      Top = 30
+      Width = 32
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Left = 15
+      CharCase = ecNormal
+      MaxLength = 2
+      TabOrder = 1
+      EditMask = '99;0; '
+      SpaceChar = ' '
+    end
+    object Label4: TLabel
+      AnchorSideLeft.Control = AutomaticUpdatesChkBox
+      AnchorSideTop.Control = AutomaticUpdatesChkBox
+      AnchorSideTop.Side = asrBottom
+      Left = 8
+      Height = 15
+      Top = 40
+      Width = 135
+      BorderSpacing.Top = 10
+      Caption = 'Days between check:'
+      ParentColor = False
+    end
   end
 end

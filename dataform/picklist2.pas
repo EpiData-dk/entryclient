@@ -29,6 +29,7 @@ type
     procedure VSTKeyAction(Sender: TBaseVirtualTree; var CharCode: Word;
       var Shift: TShiftState; var DoDefault: Boolean);
   private
+    FEdit1Typing: Boolean;
     FSelectedValueLabel: TEpiCustomValueLabel;
     FField: TEpiField;
     FValueLabelSet: TEpiValueLabelSet;
@@ -64,8 +65,10 @@ begin
 
   NodeByIndex(I, Node);
 
+  FEdit1Typing := true;
   if Assigned(Node) then
     SelectNode(Node);
+  FEdit1Typing := false;
 end;
 
 procedure TValueLabelsPickListForm2.Edit1KeyDown(Sender: TObject;
@@ -82,6 +85,7 @@ begin
     VK_PRIOR,
     VK_NEXT:
       begin
+        FEdit1Typing := true;
         LCLSendKeyDownEvent(VST,
           Key,
           ShiftStateToKeys(Shift),
@@ -89,7 +93,16 @@ begin
           false
         );
 
+        FEdit1Typing := false;
         Key := VK_UNKNOWN;
+      end;
+
+    VK_N,
+    VK_P:
+      begin
+        if (Shift <> [ssCtrlOS]) then exit;
+
+        // TODO: Move up/down according to current filter
       end;
 
     VK_RETURN:
@@ -122,7 +135,9 @@ procedure TValueLabelsPickListForm2.VSTFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
   FSelectedValueLabel := FField.ValueLabelSet[Node^.Index];
-  Edit1.Text := FSelectedValueLabel.ValueAsString;
+
+  if not FEdit1Typing then
+    Edit1.Text := FSelectedValueLabel.ValueAsString;
 end;
 
 procedure TValueLabelsPickListForm2.VSTGetText(Sender: TBaseVirtualTree;
@@ -188,6 +203,7 @@ begin
   inherited Create(TheOwner);
   FField := AField;
   FValueLabelSet := FField.ValueLabelSet;
+  FEdit1Typing := false;
 
   VST := TVirtualStringTree.Create(self);
   with VST do

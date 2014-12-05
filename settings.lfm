@@ -3,7 +3,6 @@ object SettingsForm: TSettingsForm
   Height = 413
   Top = 363
   Width = 517
-  ActiveControl = WorkingDirEdit
   Caption = 'Settings'
   ClientHeight = 413
   ClientWidth = 517

@@ -110,6 +110,7 @@ type
     procedure UpdateProcessToolPanel;
     procedure SetCaption;
     procedure LoadGlyphs;
+    procedure CheckForUpdates(Data: PtrInt);
     procedure OpenRecentMenuItemClick(Sender: TObject);
   { messages }
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
@@ -138,7 +139,8 @@ uses
   epiv_datamodule,
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
-  shortcuts, epistringutils, epiadmin, entryprocs;
+  shortcuts, epistringutils, epiadmin, entryprocs,
+  epiv_checkversionform;
 
 { TMainForm }
 
@@ -492,6 +494,8 @@ begin
 
   UpdateSettings;
   UpdateRecentFiles;
+
+  Application.QueueAsyncCall(@CheckForUpdates, 0);
 end;
 
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
@@ -562,50 +566,31 @@ begin
   Frm.Free;
 end;
 
+procedure TMainForm.CheckForUpdates(Data: PtrInt);
+begin
+  // User does not want to show updates.
+  if not EntrySettings.CheckForUpdates then exit;
+
+  // Check if it is time to search for updates.
+  if (EntrySettings.LastUpdateCheck + EntrySettings.DaysBetweenChecks) >= Now
+  then
+    Exit;
+
+  CheckVersionAction.Execute;
+
+  EntrySettings.LastUpdateCheck := Now;
+end;
+
 procedure TMainForm.CheckVersionActionExecute(Sender: TObject);
 var
-  Stable: TEpiVersionInfo;
-  Test: TEpiVersionInfo;
-  Response: string;
-  NewStable: Boolean;
-  NewTest: Boolean;
-  EntryScore: Integer;
-  StableScore: Integer;
-  TestScore: Integer;
-  S: String;
+  F: TCheckVersionForm;
 begin
-  if not CheckVersionOnline('epidataentryclient', Stable, Test, Response) then
-  begin
-    ShowMessage(
-      'ERROR: Could not find version information.' + LineEnding +
-      'Response: ' + Response + LineEnding +
-      'Check internet connection!');
-    exit;
-  end;
-
-  with EntryVersion do
-    EntryScore  := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
-  With Stable do
-    StableScore := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
-  With Test do
-    TestScore   := (VersionNo * 10000) + (MajorRev * 100) + (MinorRev);
-
-  NewStable     := (StableScore - EntryScore) > 0;
-  NewTest       := (TestScore   - EntryScore) > 0;
-
-  with GetEpiVersion(HINSTANCE) do
-    S := Format('Current Version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
-  with Stable do
-    if NewStable then
-      S := S + Format('New public release available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding
-    else
-      S := S + Format('Latest public release: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]) + LineEnding;
-   with Test do
-     if NewTest then
-      S := S + Format('New test version available: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo])
-    else
-      S := S + Format('Latest test version: %d.%d.%d.%d', [VersionNo, MajorRev, MinorRev, BuildNo]);
-  ShowMessage(S);
+  F := TCheckVersionForm.Create(Self);
+  F.Caption := 'EpiData EntryClient';
+  F.CheckBoxValue := EntrySettings.CheckForUpdates;
+  F.ShowModal;
+  EntrySettings.CheckForUpdates := F.CheckBoxValue;
+  F.Free;
 end;
 
 procedure TMainForm.CloseProjectActionExecute(Sender: TObject);

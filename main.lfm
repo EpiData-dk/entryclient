@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1823
+  Left = 490
   Height = 642
-  Top = 362
+  Top = 230
   Width = 977
   Caption = 'epidataentryclient'
   ClientHeight = 619
@@ -47,7 +47,6 @@ object MainForm: TMainForm
     end
   end
   object MainFormMenu: TMainMenu
-    Images = DM.Icons16
     left = 328
     top = 176
     object FileMenu: TMenuItem
@@ -188,7 +187,6 @@ object MainForm: TMainForm
     end
   end
   object MainActionList: TActionList
-    Images = DM.Icons16
     OnUpdate = MainActionListUpdate
     left = 328
     top = 256
@@ -253,7 +251,6 @@ object MainForm: TMainForm
     end
   end
   object OpenProjectPopupMenu: TPopupMenu
-    Images = DM.Icons16
     left = 112
     top = 80
     object OpenProjectPopupMenuItem: TMenuItem

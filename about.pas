@@ -18,20 +18,19 @@ type
     CloseButton: TBitBtn;
     CoreRevisionLabel: TLabel;
     CoreVersionLabel: TLabel;
+    EntryRevisionLabel: TLabel;
     FPCVersionLabel: TLabel;
     Image1: TImage;
-    EntryRevisionLabel: TLabel;
     Memo1: TMemo;
     AboutPageControl: TPageControl;
     AboutPage: TTabSheet;
-    Panel1: TPanel;
     PlatformLabel: TLabel;
+    Shape1: TShape;
     VersionLabel: TLabel;
     VersionPage: TTabSheet;
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure VersionPageResize(Sender: TObject);
   private
     { private declarations }
   public
@@ -109,12 +108,6 @@ end;
 procedure TAboutForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   SaveFormPosition(Self, Self.ClassName);
-end;
-
-procedure TAboutForm.VersionPageResize(Sender: TObject);
-begin
-  Panel1.Left := (VersionPage.Width div 2) - (Panel1.Width div 2);
-  Panel1.Top  := (VersionPage.Height div 2) - (Panel1.Height div 2);
 end;
 
 class procedure TAboutForm.RestoreDefaultPos;

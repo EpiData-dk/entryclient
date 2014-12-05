@@ -1,7 +1,7 @@
 object ValueLabelsPickListForm2: TValueLabelsPickListForm2
-  Left = 2032
+  Left = 721
   Height = 539
-  Top = 380
+  Top = 369
   Width = 547
   Caption = 'ValueLabelsPickListForm2'
   ClientHeight = 539

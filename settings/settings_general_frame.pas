@@ -15,6 +15,10 @@ type
   TSettingsGeneralFrame = class(TFrame, ISettingsFrame)
     AssociateBtn: TButton;
     AssociateLabel: TLabel;
+    AutomaticUpdatesChkBox: TCheckBox;
+    CheckUpdateGrpBox: TGroupBox;
+    DaysBetweenUpdatedEdit: TMaskEdit;
+    Label4: TLabel;
     ShowValuelabelsAsNoteChkBox: TCheckBox;
     FormatHlpBtn: TBitBtn;
     ClipBoardFormatCombo: TComboBox;
@@ -144,6 +148,8 @@ begin
     NotesGroupBox.ItemIndex := NotesDisplay;
     ClipBoardFormatCombo.Text := CopyToClipBoardFormat;
     ShowValuelabelsAsNoteChkBox.Checked := ValueLabelsAsNotes;
+    AutomaticUpdatesChkBox.Checked := CheckForUpdates;
+    DaysBetweenUpdatedEdit.EditText := IntToStr(DaysBetweenChecks);
   end;
 end;
 
@@ -151,6 +157,10 @@ function TSettingsGeneralFrame.ApplySettings: boolean;
 begin
   result := false;
   if StrToInt(RecordsToSkipEdit.Text) < 1 then exit;
+  if AutomaticUpdatesChkBox.Checked and
+     (Trim(DaysBetweenUpdatedEdit.EditText) = '')
+  then
+    Exit(false);
 
   with FData^ do
   begin
@@ -161,6 +171,9 @@ begin
     NotesDisplay := NotesGroupBox.ItemIndex;
     CopyToClipBoardFormat := ClipBoardFormatCombo.Text;
     ValueLabelsAsNotes := ShowValuelabelsAsNoteChkBox.Checked;
+    CheckForUpdates    := AutomaticUpdatesChkBox.Checked;
+    if CheckForUpdates then
+      DaysBetweenChecks   := StrToInt(Trim(DaysBetweenUpdatedEdit.EditText));;
   end;
 
   result := true;

@@ -52,6 +52,10 @@ type
     NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
     CopyToClipBoardFormat: string;
     ValueLabelsAsNotes: boolean;
+    CheckForUpdates: boolean;
+    DaysBetweenChecks: byte;
+    LastUpdateCheck: TDateTime;
+
 
     // Paths:
     WorkingDirUTF8: string;
@@ -100,6 +104,9 @@ var
     NotesDisplay:   0;
     CopyToClipBoardFormat: '%f\t%q\t%d\t%v\n';
     ValueLabelsAsNotes: true;
+    CheckForUpdates: true;
+    DaysBetweenChecks: 7;
+    LastUpdateCheck: 0;
 
     WorkingDirUTF8: '';
     TutorialDirUTF8: '';
@@ -198,6 +205,9 @@ begin
       WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
       WriteString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
       WriteBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
+      WriteBool(Sec, 'CheckForUpdates', CheckForUpdates);
+      WriteInteger(Sec, 'DaysBetweenChecks', DaysBetweenChecks);
+      WriteDateTime(Sec, 'LastUpdateCheck', LastUpdateCheck);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -292,6 +302,9 @@ begin
     NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
     CopyToClipBoardFormat := ReadString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
     ValueLabelsAsNotes := ReadBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
+    CheckForUpdates    := ReadBool(Sec, 'CheckForUpdates', CheckForUpdates);
+    DaysBetweenChecks  := ReadInteger(Sec, 'DaysBetweenChecks', DaysBetweenChecks);
+    LastUpdateCheck    := ReadDateTime(Sec, 'LastUpdateCheck', LastUpdateCheck);
 
     // Fonts
     Sec := 'fonts';
@@ -464,12 +477,15 @@ end;
 procedure AddToRecent(const AFilename: string);
 var
   Idx: Integer;
+  Fn: String;
 begin
-  Idx := RecentFiles.IndexOf(AFilename);
+  Fn := ExpandFileNameUTF8(AFilename);
+
+  Idx := RecentFiles.IndexOf(Fn);
   if (Idx >= 0) then
     RecentFiles.Move(Idx, 0)
   else
-    RecentFiles.Insert(0, AFilename);
+    RecentFiles.Insert(0, Fn);
   if RecentFiles.Count > 10 then
     RecentFiles.Delete(10);
 
