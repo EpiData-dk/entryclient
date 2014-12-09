@@ -13,10 +13,16 @@ type
   { TValueLabelsPickListForm2 }
 
   TValueLabelsPickListForm2 = class(TForm)
-    Edit1: TEdit;
+    FilterEdit: TEdit;
     Panel1: TPanel;
-    procedure Edit1Change(Sender: TObject);
-    procedure Edit1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FilterEditChange(Sender: TObject);
+    procedure FilterEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    { Filter Edit }
+    procedure FilterEditEnter(Sender: TObject);
+    procedure FilterEditExit(Sender: TObject);
+    procedure UpdateFilter;
   private
     { VST }
     VST: TVirtualStringTree;
@@ -45,6 +51,9 @@ type
 var
   ValueLabelsPickListForm2: TValueLabelsPickListForm2;
 
+resourcestring
+  rsPickListFilter = '(filter)';
+
 implementation
 
 {$R *.lfm}
@@ -52,26 +61,81 @@ implementation
 uses
   LazUTF8, LCLType, LCLIntf, LMessages, LCLMessageGlue;
 
+const
+  FilterColor = clGrayText;
+
 { TValueLabelsPickListForm2 }
 
-procedure TValueLabelsPickListForm2.Edit1Change(Sender: TObject);
-var
-  I: Integer;
-  Node: PVirtualNode;
+procedure TValueLabelsPickListForm2.FilterEditChange(Sender: TObject);
 begin
-  IndexOfText(TEdit(Sender).Text, I);
-  if I < 0 then
-    exit;
-
-  NodeByIndex(I, Node);
-
-  FEdit1Typing := true;
-  if Assigned(Node) then
-    SelectNode(Node);
-  FEdit1Typing := false;
+  UpdateFilter;
 end;
 
-procedure TValueLabelsPickListForm2.Edit1KeyDown(Sender: TObject;
+procedure TValueLabelsPickListForm2.FilterEditEnter(Sender: TObject);
+begin
+  if FilterEdit.Text = rsPickListFilter then
+  with FilterEdit do
+    begin
+      Text := '';
+      Font.Color := clDefault;
+    end;
+end;
+
+procedure TValueLabelsPickListForm2.FilterEditExit(Sender: TObject);
+begin
+  if FilterEdit.Text = '' then
+  with FilterEdit do
+    begin
+      Text := rsPickListFilter;
+      Font.Color := FilterColor;
+    end;
+end;
+
+procedure TValueLabelsPickListForm2.UpdateFilter;
+var
+  Node: PVirtualNode;
+  T: String;
+  S0: String;
+  S1: String;
+  FocusNode: PVirtualNode;
+begin
+  T := UTF8LowerString(FilterEdit.Text);
+
+  FocusNode := VST.FocusedNode;
+
+  Node := VST.GetFirst();
+  if (T = '') or (T = rsPickListFilter) then
+    begin
+      while Assigned(Node) do
+      begin
+        VST.IsVisible[Node] := true;
+        Node := VST.GetNext(Node);
+      end;
+    end
+  else
+    begin
+      while Assigned(Node) do
+      begin
+        S0 := UTF8LowerString(VST.Text[Node, 0]);
+        S1 := UTF8LowerString(VST.Text[Node, 1]);
+
+        VST.IsVisible[Node] := (UTF8Pos(T, S1) > 0) or (UTF8Pos(T, S0) > 0)  ;
+
+        Node := VST.GetNext(Node);
+      end;
+    end;
+
+  if (not VST.IsVisible[FocusNode]) then
+    FocusNode := VST.GetNextVisible(FocusNode);
+
+  if (not Assigned(FocusNode)) then
+    FocusNode := VST.GetFirstVisible();
+
+  SelectNode(FocusNode);
+  VST.Invalidate;
+end;
+
+procedure TValueLabelsPickListForm2.FilterEditKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 var
   NextNode: PVirtualNode;
@@ -85,39 +149,27 @@ begin
     VK_PRIOR,
     VK_NEXT:
       begin
-        FEdit1Typing := true;
         LCLSendKeyDownEvent(VST,
           Key,
           ShiftStateToKeys(Shift),
           false,
           false
         );
-
-        FEdit1Typing := false;
         Key := VK_UNKNOWN;
-      end;
-
-    VK_N,
-    VK_P:
-      begin
-        if (Shift <> [ssCtrlOS]) then exit;
-
-        // TODO: Move up/down according to current filter
       end;
 
     VK_RETURN:
       begin
-        if (Shift <> []) then exit;
-
-        IndexOfText(Edit1.Text, I);
-        if I < 0 then Exit;
-
-        NodeByIndex(I, Node);
-        SelectNode(Node);
-
         ModalResult := mrOK;
       end;
   end;
+end;
+
+procedure TValueLabelsPickListForm2.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_ESCAPE) and (Shift = []) then
+    ModalResult := mrCancel;
 end;
 
 procedure TValueLabelsPickListForm2.SelectNode(Node: PVirtualNode);
@@ -135,9 +187,6 @@ procedure TValueLabelsPickListForm2.VSTFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
   FSelectedValueLabel := FField.ValueLabelSet[Node^.Index];
-
-  if not FEdit1Typing then
-    Edit1.Text := FSelectedValueLabel.ValueAsString;
 end;
 
 procedure TValueLabelsPickListForm2.VSTGetText(Sender: TBaseVirtualTree;
@@ -205,6 +254,12 @@ begin
   FValueLabelSet := FField.ValueLabelSet;
   FEdit1Typing := false;
 
+  with FilterEdit do
+  begin
+    OnEnter    := @FilterEditEnter;
+    OnExit     := @FilterEditExit;
+  end;
+
   VST := TVirtualStringTree.Create(self);
   with VST do
   begin
@@ -250,6 +305,8 @@ begin
 
     EndUpdate;
   end;
+
+  UpdateFilter;
 end;
 
 class procedure TValueLabelsPickListForm2.RestoreDefaultPos;
@@ -259,8 +316,8 @@ end;
 
 procedure TValueLabelsPickListForm2.SetInitialValue(const S: string);
 begin
-  Edit1.Text := S;
-  Edit1Change(Edit1);
+  FilterEdit.Text := S;
+//  Edit1Change(FilterEdit);
 end;
 
 end.
