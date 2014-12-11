@@ -103,6 +103,7 @@ begin
 
   FocusNode := VST.FocusedNode;
 
+  VST.BeginUpdate;
   Node := VST.GetFirst();
   if (T = '') or (T = rsPickListFilter) then
     begin
@@ -119,7 +120,7 @@ begin
         S0 := UTF8LowerString(VST.Text[Node, 0]);
         S1 := UTF8LowerString(VST.Text[Node, 1]);
 
-        VST.IsVisible[Node] := (UTF8Pos(T, S1) > 0) or (UTF8Pos(T, S0) > 0)  ;
+        VST.IsVisible[Node] := (UTF8Pos(T, S1) > 0) or (UTF8Pos(T, S0) > 0);
 
         Node := VST.GetNext(Node);
       end;
@@ -133,6 +134,7 @@ begin
 
   SelectNode(FocusNode);
   VST.Invalidate;
+  VST.EndUpdate;
 end;
 
 procedure TValueLabelsPickListForm2.FilterEditKeyDown(Sender: TObject;
@@ -186,7 +188,8 @@ end;
 procedure TValueLabelsPickListForm2.VSTFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
-  FSelectedValueLabel := FField.ValueLabelSet[Node^.Index];
+  if Assigned(Node) then
+    FSelectedValueLabel := FField.ValueLabelSet[Node^.Index];
 end;
 
 procedure TValueLabelsPickListForm2.VSTGetText(Sender: TBaseVirtualTree;
