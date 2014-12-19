@@ -17,7 +17,7 @@
       <BuildNr Value="7"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
+      <StringTable ProductVersion="" SpecialBuild="RC3"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -221,7 +221,6 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="about"/>
       </Unit7>
       <Unit8>
         <Filename Value="../EpiData.dk/checkversion.php"/>
