@@ -575,7 +575,7 @@ begin
   if Length(FileNames) = 0 then Exit;
 
   S := TString.Create(FileNames[0]);
-  PostMessage(Self.Handle, LM_MAIN_OPENPROJECT, WPARAM(S), 0);
+  PostMessage(Self.Handle, LM_OPEN_PROJECT, WPARAM(S), 0);
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);

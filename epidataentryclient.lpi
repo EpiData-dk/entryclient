@@ -293,7 +293,6 @@
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="resultlist_form"/>
       </Unit19>
       <Unit20>
         <Filename Value="settings/settings2_fonts_frame.pas"/>
