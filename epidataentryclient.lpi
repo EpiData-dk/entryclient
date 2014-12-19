@@ -293,6 +293,7 @@
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="resultlist_form"/>
       </Unit19>
       <Unit20>
         <Filename Value="settings/settings2_fonts_frame.pas"/>
@@ -369,7 +370,6 @@
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="picklist2"/>
       </Unit35>
     </Units>
   </ProjectOptions>

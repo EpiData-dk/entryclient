@@ -97,6 +97,7 @@ constructor TResultListForm.Create(TheOwner: TComponent;
   const DataFile: TEpiDataFile);
 begin
   inherited CreateNew(TheOwner);
+
   OnShow := @ShowResultListForm;
   OnCloseQuery := @CloseQueryResultListForm;
   OnKeyDown := @KeyDown;

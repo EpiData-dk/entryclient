@@ -82,8 +82,10 @@ type
     procedure CopyProjectInfoActionExecute(Sender: TObject);
     procedure DefaultPosActionExecute(Sender: TObject);
     procedure FileMenuClick(Sender: TObject);
+    procedure FormChanged(Sender: TObject; Form: TCustomForm);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
     procedure MainActionListUpdate(AAction: TBasicAction; var Handled: Boolean);
@@ -506,10 +508,10 @@ end;
 procedure TMainForm.MainActionListUpdate(AAction: TBasicAction;
   var Handled: Boolean);
 begin
-  if Screen.ActiveCustomForm <> MainForm then
+{  if Screen.ActiveCustomForm <> MainForm then
     MainActionList.State := asSuspended
   else
-    MainActionList.State := asNormal;
+    MainActionList.State := asNormal;     }
 end;
 
 procedure TMainForm.MenuItem1Click(Sender: TObject);
@@ -546,6 +548,8 @@ var
   Fn: String;
   i: Integer;
 begin
+  Screen.AddHandlerActiveFormChanged(@FormChanged);
+
   if Assigned(StartupFiles) then
   begin
     for i := 0 to StartupFiles.Count - 1 do
@@ -555,6 +559,11 @@ begin
         PostMessage(Self.Handle, LM_OPEN_PROJECT, WPARAM(TString.Create(Fn)), 0);
     end;
   end;
+end;
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+  Screen.RemoveAllHandlersOfObject(Self);
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);
@@ -624,6 +633,14 @@ end;
 procedure TMainForm.FileMenuClick(Sender: TObject);
 begin
 //  UpdateRecentFiles;
+end;
+
+procedure TMainForm.FormChanged(Sender: TObject; Form: TCustomForm);
+begin
+  if (Form <> MainForm) then
+    MainActionList.State := asSuspended
+  else
+    MainActionList.State := asNormal;
 end;
 
 end.
