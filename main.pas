@@ -86,6 +86,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
     procedure FormShow(Sender: TObject);
     procedure EpiDataWebTutorialsMenuItemClick(Sender: TObject);
     procedure MainActionListUpdate(AAction: TBasicAction; var Handled: Boolean);
@@ -564,6 +565,17 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   Screen.RemoveAllHandlersOfObject(Self);
+end;
+
+procedure TMainForm.FormDropFiles(Sender: TObject;
+  const FileNames: array of String);
+var
+  S: TString;
+begin
+  if Length(FileNames) = 0 then Exit;
+
+  S := TString.Create(FileNames[0]);
+  PostMessage(Self.Handle, LM_MAIN_OPENPROJECT, WPARAM(S), 0);
 end;
 
 procedure TMainForm.AboutActionExecute(Sender: TObject);
