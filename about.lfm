@@ -58,7 +58,6 @@ object AboutForm: TAboutForm
       Caption = 'Version'
       ClientHeight = 287
       ClientWidth = 444
-      OnResize = VersionPageResize
       object Shape1: TShape
         Left = 0
         Height = 287
