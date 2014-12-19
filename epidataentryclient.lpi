@@ -221,6 +221,7 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="about"/>
       </Unit7>
       <Unit8>
         <Filename Value="../EpiData.dk/checkversion.php"/>
