@@ -3,6 +3,7 @@ object MainForm: TMainForm
   Height = 642
   Top = 230
   Width = 977
+  AllowDropFiles = True
   Caption = 'epidataentryclient'
   ClientHeight = 619
   ClientWidth = 977
