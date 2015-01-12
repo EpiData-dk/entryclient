@@ -192,7 +192,6 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -223,7 +222,6 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="about"/>
       </Unit7>
       <Unit8>
         <Filename Value="../EpiData.dk/checkversion.php"/>
@@ -347,7 +345,6 @@
       <Unit31>
         <Filename Value="utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="documentfile_ext"/>
       </Unit31>
       <Unit32>
         <Filename Value="dataform/new_record_form.pas"/>

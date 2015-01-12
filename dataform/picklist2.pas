@@ -35,12 +35,9 @@ type
     procedure VSTKeyAction(Sender: TBaseVirtualTree; var CharCode: Word;
       var Shift: TShiftState; var DoDefault: Boolean);
   private
-    FEdit1Typing: Boolean;
     FSelectedValueLabel: TEpiCustomValueLabel;
     FField: TEpiField;
     FValueLabelSet: TEpiValueLabelSet;
-    procedure IndexOfText(Const S: string; out Index: integer);
-    procedure NodeByIndex(Const Index: Integer; Out Node: PVirtualNode);
   public
     constructor Create(TheOwner: TComponent; Const AField: TEpiField);
     class procedure RestoreDefaultPos;
@@ -162,7 +159,8 @@ begin
 
     VK_RETURN:
       begin
-        ModalResult := mrOK;
+        if Assigned(FSelectedValueLabel) then
+          ModalResult := mrOK;
       end;
   end;
 end;
@@ -182,14 +180,17 @@ end;
 
 procedure TValueLabelsPickListForm2.VSTDblClick(Sender: TObject);
 begin
-  ModalResult := mrOK;
+  if Assigned(FSelectedValueLabel) then
+    ModalResult := mrOK;
 end;
 
 procedure TValueLabelsPickListForm2.VSTFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
   if Assigned(Node) then
-    FSelectedValueLabel := FField.ValueLabelSet[Node^.Index];
+    FSelectedValueLabel := FField.ValueLabelSet[Node^.Index]
+  else
+    FSelectedValueLabel := nil;
 end;
 
 procedure TValueLabelsPickListForm2.VSTGetText(Sender: TBaseVirtualTree;
@@ -211,43 +212,10 @@ procedure TValueLabelsPickListForm2.VSTKeyAction(Sender: TBaseVirtualTree;
 begin
   if (CharCode = VK_RETURN) and (Shift = []) then
     begin
-      ModalResult := mrOk;
+      if Assigned(FSelectedValueLabel) then
+        ModalResult := mrOk;
       DoDefault := false;
     end;
-end;
-
-procedure TValueLabelsPickListForm2.IndexOfText(const S: string; out
-  Index: integer);
-var
-  VL: TEpiCustomValueLabel;
-begin
-  Index := 0;
-  for VL in FValueLabelSet do
-  begin
-    if Pos(UTF8UpperCase(S), UTF8UpperCase(VL.ValueAsString)) = 1 then
-      Break;
-
-    if Pos(UTF8UpperCase(S), UTF8UpperCase(VL.TheLabel.Text)) >= 1 then
-      Break;
-
-    Inc(Index);
-  end;
-
-  if Index >= FValueLabelSet.Count then
-    Index := -1;
-end;
-
-procedure TValueLabelsPickListForm2.NodeByIndex(const Index: Integer; out
-  Node: PVirtualNode);
-begin
-  Node := VST.GetFirst();
-  while Assigned(Node) do
-  begin
-    if Node^.Index = Index then
-      Exit
-    else
-      Node := VST.GetNext(Node);
-  end;
 end;
 
 constructor TValueLabelsPickListForm2.Create(TheOwner: TComponent; const AField: TEpiField);
@@ -255,7 +223,6 @@ begin
   inherited Create(TheOwner);
   FField := AField;
   FValueLabelSet := FField.ValueLabelSet;
-  FEdit1Typing := false;
 
   with FilterEdit do
   begin
@@ -299,10 +266,10 @@ begin
       AutoSizeIndex := 1;
     end;
 
-    OnGetText      := @VSTGetText;
-    OnFocusChanged := @VSTFocusChanged;
     OnDblClick     := @VSTDblClick;
-    OnKeyAction := @VSTKeyAction;
+    OnFocusChanged := @VSTFocusChanged;
+    OnGetText      := @VSTGetText;
+    OnKeyAction    := @VSTKeyAction;
 
     RootNodeCount := AField.ValueLabelSet.Count;
 
