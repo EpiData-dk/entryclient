@@ -192,6 +192,7 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -199,6 +200,7 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
@@ -345,6 +347,7 @@
       <Unit31>
         <Filename Value="utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="documentfile_ext"/>
       </Unit31>
       <Unit32>
         <Filename Value="dataform/new_record_form.pas"/>
@@ -370,6 +373,7 @@
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="picklist2"/>
       </Unit35>
     </Units>
   </ProjectOptions>

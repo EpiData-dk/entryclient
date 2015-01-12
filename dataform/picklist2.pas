@@ -320,7 +320,6 @@ end;
 procedure TValueLabelsPickListForm2.SetInitialValue(const S: string);
 begin
   FilterEdit.Text := S;
-//  Edit1Change(FilterEdit);
 end;
 
 end.

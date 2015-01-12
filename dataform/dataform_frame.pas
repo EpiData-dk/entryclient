@@ -2811,9 +2811,6 @@ var
   VLForm: TValueLabelsPickListForm2;
   P: TPoint;
 begin
-  if Assigned(FHintWindow) then FHintWindow.Hide;
-  if Assigned(FNotesForm) then FNotesForm.Hide;
-
   UnShowNotesAndHint;
 
   VLForm := TValueLabelsPickListForm2.Create(Self, AFieldEdit.Field);

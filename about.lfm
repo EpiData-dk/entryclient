@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 2010
+  Left = 653
   Height = 370
-  Top = 370
+  Top = 376
   Width = 450
   ActiveControl = AboutPageControl
   BorderIcons = []
