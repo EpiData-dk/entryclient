@@ -11,7 +11,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, printer4lazarus, lnetbase, virtualtreeview_package, main,
   project_frame, dataform_frame, fieldedit, entryprocs, settings, about,
-  picklist, sysutils, UniqueInstanceRaw, epidatacore, notes_form,
+  sysutils, UniqueInstanceRaw, epidatacore, notes_form,
   dataform_field_calculations, settings2, settings2_interface,
   settings2_paths_frame, settings2_colours_frame, settings_general_frame,
   searchform, search, resultlist_form, settings2_fonts_frame, shortcuts,

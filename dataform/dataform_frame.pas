@@ -247,7 +247,7 @@ uses
   epiv_datamodule,
   LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
-  picklist, picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
+  picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd, setting_types,
   entrylabel, entrysection, project_frame,
@@ -1856,7 +1856,7 @@ begin
     TNotesForm.RestoreDefaultPos();
 
   TSearchForm1.RestoreDefaultPos;
-  TValueLabelsPickListForm.RestoreDefaultPos;
+  TValueLabelsPickListForm2.RestoreDefaultPos;
 
   ResultListFormDefaultPosition();
 end;
