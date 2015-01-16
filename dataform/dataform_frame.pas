@@ -302,7 +302,16 @@ var
   FE: TFieldEdit;
 begin
   I := NextUsableFieldIndex(-1, false);
-  if i = -1 then exit;
+  if i = -1 then
+  begin
+    // In the odd case that this is a related dataform with only no-enter fields (eg. keyfields, etc.)
+    // then FOCUS is still on the last used field in the previous dataform.
+    // And pressing buttons will act on previous dataform - hence we need focus on this
+    // dataform.
+    DataFormScroolBox.SetFocus;
+    UpdateFieldPanel(DataFile.KeyFields[0]);
+    Exit;
+  end;
 
   FE := TFieldEdit(FieldEditList[i]);
   FieldEnterFlow(FE);
@@ -311,7 +320,6 @@ begin
   // Fixes bug where opening a single form, doesn't have a handle prior to
   // focusing the first field.
   FE.HandleNeeded;
-
   FE.SetFocus;
 end;
 
