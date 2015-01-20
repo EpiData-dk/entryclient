@@ -14,7 +14,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -173,7 +173,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="34">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -217,6 +217,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -280,92 +281,88 @@
         <ResourceBaseClass Value="Form"/>
       </Unit16>
       <Unit17>
-        <Filename Value="search/search.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit17>
-      <Unit18>
         <Filename Value="search/resultlist_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="settings/settings2_fonts_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SettingsFontsFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="shortcuts.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="shortcuts.pas"/>
+        <Filename Value="include/linux/shortcuts.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="include/linux/shortcuts.inc"/>
+        <Filename Value="entry_messages.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="entry_messages.pas"/>
+        <Filename Value="include/linux/initfont.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="include/linux/initfont.inc"/>
+        <Filename Value="dataform/dataform_getfunctions.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="dataform/dataform_getfunctions.inc"/>
+        <Filename Value="dataform/entrylabel.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="dataform/entrylabel.pas"/>
+        <Filename Value="dataform/control_types.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="dataform/control_types.pas"/>
+        <Filename Value="dataform/entrysection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="dataform/entrysection.pas"/>
+        <Filename Value="entry_globals.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="entry_globals.pas"/>
+        <Filename Value="dataform/notes_report.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="dataform/notes_report.pas"/>
+        <Filename Value="utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="utils/documentfile_ext.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit30>
-      <Unit31>
         <Filename Value="dataform/new_record_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit31>
-      <Unit32>
+      </Unit30>
+      <Unit31>
         <Filename Value="settings/settings2_relate_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="RelateFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit32>
-      <Unit33>
+      </Unit31>
+      <Unit32>
         <Filename Value="settings/setting_types.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
+      </Unit32>
+      <Unit33>
         <Filename Value="dataform/picklist2.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit34>
+      </Unit33>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -558,8 +558,8 @@ var
 begin
   if (Text = '') or (AText = '') then exit(false);
 
-  OwnVal := StrToInt(Text);
-  CmpVal := StrToInt(AText);
+  OwnVal := StrToInt64(Text);
+  CmpVal := StrToInt64(AText);
   case ct of
     fcEq:  result := OwnVal = CmpVal;
     fcNEq: result := OwnVal <> CmpVal;
