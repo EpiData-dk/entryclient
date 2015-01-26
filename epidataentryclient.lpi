@@ -14,10 +14,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="9"/>
+      <BuildNr Value="10"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -192,7 +192,6 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -200,12 +199,10 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fieldedit"/>
       </Unit4>
       <Unit5>
         <Filename Value="entryprocs.pas"/>
@@ -217,7 +214,6 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
