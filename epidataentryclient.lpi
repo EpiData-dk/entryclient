@@ -14,7 +14,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="9"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="11"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -148,13 +149,13 @@
     <RequiredPackages Count="7">
       <Item1>
         <PackageName Value="epidatacore_visuals"/>
-        <MaxVersion Major="2" Valid="True"/>
-        <MinVersion Major="2" Valid="True"/>
+        <MaxVersion Major="2" Minor="1" Valid="True"/>
+        <MinVersion Major="2" Minor="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="epidatacore"/>
-        <MaxVersion Major="2" Valid="True"/>
-        <MinVersion Major="2" Valid="True"/>
+        <MaxVersion Major="2" Minor="1" Valid="True"/>
+        <MinVersion Major="2" Minor="1" Valid="True"/>
       </Item2>
       <Item3>
         <PackageName Value="virtualtreeview_package"/>
@@ -192,7 +193,6 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -200,12 +200,10 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fieldedit"/>
       </Unit4>
       <Unit5>
         <Filename Value="entryprocs.pas"/>
@@ -217,7 +215,6 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
