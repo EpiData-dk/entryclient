@@ -2670,13 +2670,24 @@ var
 begin
   Result := true;
 
-  if DataFile.KeyFields.Count > 0 then
-  begin
-    i := DoSearchKeyFields;
-    // if i = -1 then keys do not exists,
-    // if i = RecNo then current records is found in the search, which is ok
-    result := (i = RecNo) or (i = -1);
-  end;
+  if (
+      // This is only possible on main dataforms.
+      (DataFile.KeyFields.Count > 0) and
+      (not IsDetailRelation)
+     ) or
+     (
+     // Is this is a detail, only check keyfields if there are actually more
+     // keyfields than the parent, otherwise it will naturally always fail.
+      (IsDetailRelation) and
+      (DetailRelation.MasterRelation.Datafile.KeyFields.Count < DataFile.KeyFields.Count)
+     )
+  then
+    begin
+      i := DoSearchKeyFields;
+      // if i = -1 then keys do not exists,
+      // if i = RecNo then current records is found in the search, which is ok
+      result := (i = RecNo) or (i = -1);
+    end;
 end;
 
 function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;
