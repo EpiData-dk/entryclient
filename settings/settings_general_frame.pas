@@ -49,50 +49,14 @@ implementation
 {$R *.lfm}
 
 uses
-  settings2, shortcuts, LCLIntf
-  {$IFDEF WINDOWS}
-  ,registry
-  {$ENDIF};
+  settings2, shortcuts, LCLIntf, epimiscutils;
 
 { TSettingsGeneralFrame }
 
 procedure TSettingsGeneralFrame.AssociateBtnClick(Sender: TObject);
+begin
 {$IFDEF WINDOWS}
-var
-  Reg: TRegistry;
-const
-  ExtA = '.epx';
-  ExtB = '.epz';
-  FileType = 'EpiDataProjectFile';
-begin
-  Reg:=TRegistry.Create(KEY_WRITE);
-  try
-    Reg.RootKey := HKEY_CLASSES_ROOT;
-    // File Extesion association - associate with "FileType" description!
-    Reg.OpenKey(ExtA, True);
-    Reg.WriteString('', FileType);
-    Reg.CloseKey;
-    Reg.OpenKey(ExtB, True);
-    Reg.WriteString('', FileType);
-    Reg.CloseKey;
-
-    // File Type registration - set programm to execute, etc.
-    Reg.OpenKey(FileType, True);
-    Reg.WriteString('', 'EpiData Project File');
-    Reg.CloseKey;
-    // - icon
-    Reg.OpenKey(Filetype + '\DefaultIcon', True);
-    Reg.WriteString('', Application.ExeName + ',0');
-    reg.CloseKey;
-    // - executable.
-    Reg.OpenKey(Filetype + '\Shell\Open\Command', True);
-    Reg.Writestring('','"' + Application.ExeName + '" "%1"');
-    Reg.CloseKey;
-  finally
-    Reg.Free;
-  end;
-{$ELSE}
-begin
+  AssociateFiles('EpiData EntryClient', 'Entry Tool', Application.ExeName);
 {$ENDIF}
 end;
 
@@ -102,26 +66,9 @@ begin
 end;
 
 procedure TSettingsGeneralFrame.UnAssociateBtnClick(Sender: TObject);
+begin
 {$IFDEF WINDOWS}
-var
-  Reg: TRegistry;
-const
-  ExtA = '.epx';
-  ExtB = '.epz';
-  FileType = 'EpiDataProjectFile';
-begin
-  Reg:=TRegistry.Create(KEY_WRITE);
-  try
-    Reg.RootKey := HKEY_CLASSES_ROOT;
-    Reg.DeleteKey(ExtA);
-    Reg.DeleteKey(ExtB);
-    Reg.DeleteKey(FileType);
-    Reg.CloseKey;
-  finally
-    Reg.Free;
-  end;
-{$ELSE}
-begin
+  UnAssociateFiles('EpiData EntryClient', 'Entry Tool', Application.ExeName);
 {$ENDIF}
 end;
 
