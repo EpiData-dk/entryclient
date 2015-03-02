@@ -192,6 +192,7 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -199,6 +200,7 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
@@ -214,6 +216,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -268,6 +271,7 @@
         <ComponentName Value="SettingsGeneralFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="settings_general_frame"/>
       </Unit15>
       <Unit16>
         <Filename Value="search/searchform.pas"/>
@@ -301,7 +305,6 @@
       <Unit21>
         <Filename Value="entry_messages.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="entry_messages"/>
       </Unit21>
       <Unit22>
         <Filename Value="include/linux/initfont.inc"/>
@@ -389,7 +392,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="4">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -399,6 +402,9 @@
       <Item3>
         <Name Value="EFOpenError"/>
       </Item3>
+      <Item4>
+        <Name Value="EKeyNotFoundException"/>
+      </Item4>
     </Exceptions>
   </Debugging>
 </CONFIG>
