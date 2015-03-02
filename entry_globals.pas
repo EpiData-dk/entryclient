@@ -15,7 +15,8 @@ type
     rrRecordChange,   // A master changed it's current record number
     rrNewRecord,      // A master commited a new record (sub-state of record change)
     rrFocusShift,     // A shift in focused frame (eg. by clicking mouse.
-    rrReturnToParent  // A child form is returning to the parent (using shortcut, 1:1 relation, etc.)
+    rrReturnToParent, // A child form is returning to the parent (using shortcut, 1:1 relation, etc.)
+    rrRelateToNextDF  // A child form is returning to the parent. Parent should select next Dataform in relate list.
   );
 
 implementation

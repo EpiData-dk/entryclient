@@ -15,7 +15,9 @@ const
 
   // Project
   LM_PROJECT_RELATE            = LM_OPEN_RECENT + 1;     // WParam: TEpiMasterRelation (the relation to go to).
-                                                         // LParam: 0 = parent->child, 1 = child->parent (return)
+                                                         // LParam: 0 = parent->child
+                                                         //         1 = child->parent, explicit return
+                                                         //         2 = child->parent, implicit return -> check for next child
 
   // Dataform
   LM_DATAFORM_GOTOREC          = LM_PROJECT_RELATE + 1;
