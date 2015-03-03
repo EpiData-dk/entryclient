@@ -230,7 +230,7 @@ type
     function  AllKeyFieldsAreFilled: boolean;
     function  GetCurrentKeyFieldValues: string;
     procedure RelateInit(Reason: TRelateReason; ParentRecordState: TEpiRecordState);
-    procedure UpdateChildFocusShift(Const NewChildIndex: Integer);
+    procedure UpdateChildFocusShift(Const NewChildRelation: TEpiMasterRelation);
     property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
     property  OnModified: TNotifyEvent read FOnModified write FOnModified;
     property  OnRecordChanged: TNotifyEvent read FOnRecordChanged write FOnRecordChanged;
@@ -2105,12 +2105,25 @@ begin
     UpdateFieldPanel(DataFile.KeyFields[0]);
 end;
 
-procedure TDataFormFrame.UpdateChildFocusShift(const NewChildIndex: Integer);
+procedure TDataFormFrame.UpdateChildFocusShift(
+  const NewChildRelation: TEpiMasterRelation);
+var
+  R: TEpiRelate;
 begin
-  if (NewChildIndex < 0) then
-    FLastDataFileRelate := nil
-  else
-    FLastDataFileRelate := DataFile.Relates[NewChildIndex];
+  if not (Assigned(NewChildRelation)) then
+  begin
+    FLastDataFileRelate := nil;
+    Exit;
+  end;
+
+  for R in DataFile.Relates do
+  begin
+    if R.DetailRelation = NewChildRelation then
+    begin
+      FLastDataFileRelate := R;
+      Break;
+    end;
+  end;
 end;
 
 procedure TDataFormFrame.CloseQuery(var CanClose: boolean);
