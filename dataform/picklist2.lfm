@@ -1,14 +1,14 @@
 object ValueLabelsPickListForm2: TValueLabelsPickListForm2
-  Left = 721
+  Left = 880
   Height = 539
-  Top = 369
+  Top = 306
   Width = 547
   Caption = 'Value Labels'
   ClientHeight = 539
   ClientWidth = 547
   KeyPreview = True
   OnKeyDown = FormKeyDown
-  LCLVersion = '1.3'
+  LCLVersion = '1.5'
   object Panel1: TPanel
     Left = 0
     Height = 32
@@ -21,9 +21,9 @@ object ValueLabelsPickListForm2: TValueLabelsPickListForm2
     TabOrder = 0
     object FilterEdit: TEdit
       Left = 1
-      Height = 30
+      Height = 26
       Top = 1
-      Width = 545
+      Width = 541
       Align = alClient
       AutoSize = False
       BorderSpacing.Around = 1

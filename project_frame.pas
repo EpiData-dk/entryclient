@@ -574,7 +574,7 @@ begin
     while (P <> FProjectNode) and
           (not PFrame.Relation.IsChild(DestRelation, true)) do
     begin
-      PFrame.UpdateChildFocusShift(-1);
+      PFrame.UpdateChildFocusShift(nil);
       P := P^.Parent;
       PFrame := FrameFromNode(P);
     end;
@@ -592,7 +592,7 @@ begin
 
       // PFrame could be nil, if NODE is a main dataform.
       if Assigned(PFrame) then
-        PFrame.UpdateChildFocusShift(C^.Index);
+        PFrame.UpdateChildFocusShift(CFrame.Relation);
 
       P := C;
       PFrame := CFrame;
