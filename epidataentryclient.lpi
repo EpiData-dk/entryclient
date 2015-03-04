@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="12"/>
+      <BuildNr Value="13"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -271,7 +271,6 @@
         <ComponentName Value="SettingsGeneralFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="settings_general_frame"/>
       </Unit15>
       <Unit16>
         <Filename Value="search/searchform.pas"/>
@@ -362,7 +361,6 @@
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="picklist2"/>
       </Unit33>
     </Units>
   </ProjectOptions>
