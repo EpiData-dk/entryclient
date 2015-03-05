@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, ComCtrls;
+  Buttons, ComCtrls, StdCtrls;
 
 type
 
@@ -15,9 +15,11 @@ type
   TSettings2Form = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    Button1: TButton;
     Panel1: TPanel;
     Splitter1: TSplitter;
     SettingsView: TTreeView;
+    procedure Button1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormShow(Sender: TObject);
     procedure SettingsViewChange(Sender: TObject; Node: TTreeNode);
@@ -104,6 +106,12 @@ begin
   SaveSettingToIni(GetIniFileName);
   SaveFormPosition(Self, 'SettingsForm');
   CanClose := true;
+end;
+
+procedure TSettings2Form.Button1Click(Sender: TObject);
+begin
+  RestoreSettingsDefaults;
+  (FActiveFrame as ISettingsFrame).SetSettings(@EntrySettings);
 end;
 
 procedure TSettings2Form.SettingsViewChanging(Sender: TObject; Node: TTreeNode;

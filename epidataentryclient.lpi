@@ -193,7 +193,6 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="project_frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="dataform/dataform_frame.pas"/>
@@ -201,7 +200,6 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>
@@ -217,6 +215,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -246,10 +245,12 @@
         <ComponentName Value="Settings2Form"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings2"/>
       </Unit11>
       <Unit12>
         <Filename Value="settings/settings2_interface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="settings2_interface"/>
       </Unit12>
       <Unit13>
         <Filename Value="settings/settings2_paths_frame.pas"/>

@@ -96,46 +96,7 @@ const
   );
 
 var
-  EntrySettings: TEntrySettings = (
-    RecordsToSkip:  25;
-    HintTimeOut:    15;
-    MultipleInstances: false;
-    ShowWorkToolbar: true;
-    NotesDisplay:   0;
-    CopyToClipBoardFormat: '%f\t%q\t%d\t%v\n';
-    ValueLabelsAsNotes: true;
-    CheckForUpdates: true;
-    DaysBetweenChecks: 7;
-    LastUpdateCheck: 0;
-
-    WorkingDirUTF8: '';
-    TutorialDirUTF8: '';
-    TutorialURLUTF8: 'http://epidata.dk/documentation.php';
-    BackupDirUTF8: '';
-
-    ValidateErrorColour: clYellow;
-    ValueLabelColour: clBlue;
-    ActiveFieldColour: TCOlor($FFC26B);
-    InactiveFieldColour: clWhite;
-    MustEnterFieldColour: clRed;
-
-    // Color:
-    NotesUseSystem:        true;
-    NotesHintBgColor:      clInfoBk;
-    NotesHintFont:         nil;
-
-    FieldFont:             nil;
-    SectionFont:           nil;
-    HeadingFont1:          nil;
-    HeadingFont2:          nil;
-    HeadingFont3:          nil;
-    HeadingFont4:          nil;
-    HeadingFont5:          nil;
-
-    // Relate
-//    RelateMaxRecsReached:  mrrReturnToParent;
-//    RelateChangeRecord:    rcLastRecord;
-  );
+  EntrySettings: TEntrySettings;
 
   {$I epidataentryclient.revision.inc}
 
@@ -155,6 +116,7 @@ var
   procedure AddToRecent(const AFilename: string);
 
   procedure InitFont(Font: TFont);
+  procedure RestoreSettingsDefaults;
 
 var
   RecentFiles: TStringList;
@@ -494,6 +456,96 @@ end;
 
 {$I initfont.inc}
 
+procedure RestoreSettingsDefaults;
+const
+  OriginalSettings: TEntrySettings = (
+    RecordsToSkip:          25;
+    HintTimeOut:            15;
+    MultipleInstances:      false;
+    ShowWorkToolbar:        true;
+    NotesDisplay:           0;
+    CopyToClipBoardFormat: '%f\t%q\t%d\t%v\n';
+    ValueLabelsAsNotes:    true;
+    CheckForUpdates:       true;
+    DaysBetweenChecks:     7;
+    LastUpdateCheck:       0;
+
+    WorkingDirUTF8:        '';
+    TutorialDirUTF8:       '';
+    TutorialURLUTF8:       'http://epidata.dk/documentation.php';
+    BackupDirUTF8:         '';
+
+    ValidateErrorColour:   clYellow;
+    ValueLabelColour:      clBlue;
+    ActiveFieldColour:     TColor($FFC26B);
+    InactiveFieldColour:   clWhite;
+    MustEnterFieldColour:  clRed;
+
+    // Color:
+    NotesUseSystem:        true;
+    NotesHintBgColor:      clInfoBk;
+    NotesHintFont:         nil;
+
+    FieldFont:             nil;
+    SectionFont:           nil;
+    HeadingFont1:          nil;
+    HeadingFont2:          nil;
+    HeadingFont3:          nil;
+    HeadingFont4:          nil;
+    HeadingFont5:          nil;
+  );
+begin
+  with EntrySettings do
+  begin
+    if Assigned(FieldFont) then FieldFont.Free;
+    if Assigned(SectionFont) then SectionFont.Free;
+    if Assigned(HeadingFont1) then HeadingFont1.Free;
+    if Assigned(HeadingFont2) then HeadingFont2.Free;
+    if Assigned(HeadingFont3) then HeadingFont3.Free;
+    if Assigned(HeadingFont4) then HeadingFont4.Free;
+    if Assigned(HeadingFont5) then HeadingFont5.Free;
+  end;
+
+  EntrySettings := OriginalSettings;
+
+  with EntrySettings do
+  begin
+    NotesHintFont := TFont.Create;
+    FieldFont := TFont.Create;
+    SectionFont := TFont.Create;
+    HeadingFont1 := TFont.Create;
+    HeadingFont2 := TFont.Create;
+    HeadingFont3 := TFont.Create;
+    HeadingFont4 := TFont.Create;
+    HeadingFont5 := TFont.Create;
+
+    InitFont(NotesHintFont);
+    InitFont(FieldFont);
+    InitFont(SectionFont);
+    InitFont(HeadingFont1);
+    InitFont(HeadingFont2);
+    InitFont(HeadingFont3);
+    InitFont(HeadingFont4);
+    InitFont(HeadingFont5);
+
+    HeadingFont1.Size := Trunc(HeadingFont1.Size * 2.0);
+    HeadingFont2.Size := Trunc(HeadingFont2.Size * 1.5);
+    HeadingFont3.Size := Trunc(HeadingFont3.Size * 1.2);
+    HeadingFont4.Size := Trunc(HeadingFont4.Size * 1.0);
+    HeadingFont5.Size := Trunc(HeadingFont5.Size * 0.8);
+  end;
+
+  EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
+  if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then
+    EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8;
+
+  EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'tutorials';
+  if not DirectoryExistsUTF8(EntrySettings.TutorialDirUTF8) then
+    EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
+
+  EntrySettings.BackupDirUTF8 := '';
+end;
+
 { TSettingsForm }
 
 procedure TSettingsForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -540,41 +592,10 @@ end;
 initialization
 
 begin
-  EntrySettings.NotesHintFont := TFont.Create;
-  InitFont(EntrySettings.NotesHintFont);
-
-  EntrySettings.FieldFont := TFont.Create;
-  EntrySettings.SectionFont := TFont.Create;
-  EntrySettings.HeadingFont1 := TFont.Create;
-  EntrySettings.HeadingFont2 := TFont.Create;
-  EntrySettings.HeadingFont3 := TFont.Create;
-  EntrySettings.HeadingFont4 := TFont.Create;
-  EntrySettings.HeadingFont5 := TFont.Create;
-  InitFont(EntrySettings.FieldFont);
-  InitFont(EntrySettings.SectionFont);
-  InitFont(EntrySettings.HeadingFont1);
-  EntrySettings.HeadingFont1.Size := Trunc(EntrySettings.HeadingFont1.Size * 2.0);
-  InitFont(EntrySettings.HeadingFont2);
-  EntrySettings.HeadingFont2.Size := Trunc(EntrySettings.HeadingFont2.Size * 1.5);
-  InitFont(EntrySettings.HeadingFont3);
-  EntrySettings.HeadingFont3.Size := Trunc(EntrySettings.HeadingFont3.Size * 1.2);
-  InitFont(EntrySettings.HeadingFont4);
-  EntrySettings.HeadingFont4.Size := Trunc(EntrySettings.HeadingFont4.Size * 1.0);
-  InitFont(EntrySettings.HeadingFont5);
-  EntrySettings.HeadingFont5.Size := Trunc(EntrySettings.HeadingFont5.Size * 0.8);
-
-  EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'data';
-  if not DirectoryExistsUTF8(EntrySettings.WorkingDirUTF8) then
-    EntrySettings.WorkingDirUTF8 := GetCurrentDirUTF8;
-
-  EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8 + DirectorySeparator + 'tutorials';
-  if not DirectoryExistsUTF8(EntrySettings.TutorialDirUTF8) then
-    EntrySettings.TutorialDirUTF8 := GetCurrentDirUTF8;
-
-  EntrySettings.BackupDirUTF8 := '';
-
   RecentFiles := TStringList.Create;
   RecentFiles.CaseSensitive := true;
+
+  RestoreSettingsDefaults;
 end;
 
 finalization
@@ -584,4 +605,4 @@ begin
 end;
 
 end.
-
+
