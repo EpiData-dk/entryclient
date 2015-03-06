@@ -215,6 +215,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings"/>
       </Unit6>
       <Unit7>
         <Filename Value="about.pas"/>
@@ -244,10 +245,12 @@
         <ComponentName Value="Settings2Form"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="settings2"/>
       </Unit11>
       <Unit12>
         <Filename Value="settings/settings2_interface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="settings2_interface"/>
       </Unit12>
       <Unit13>
         <Filename Value="settings/settings2_paths_frame.pas"/>
