@@ -559,9 +559,9 @@ begin
   {$ELSE}
   AppleMenuItem.Visible := false;
   {$ENDIF}
-  AboutMenuItem.Visible := not (AppleMenuItem.Visible);
-  HelpMenuDivider3.Visible := not (AppleMenuItem.Visible);
-  FieldNotesDivider.Visible := not (AppleMenuItem.Visible);
+  AboutMenuItem.Visible    := not (AppleMenuItem.Visible);
+  HelpMenuDivider2.Visible := not (AppleMenuItem.Visible);
+  SettingsMenuItem.Visible := not (AppleMenuItem.Visible);
 
   Screen.AddHandlerActiveFormChanged(@FormChanged);
 
