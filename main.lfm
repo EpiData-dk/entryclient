@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 490
+  Left = 508
   Height = 642
-  Top = 230
+  Top = 265
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -52,6 +52,19 @@ object MainForm: TMainForm
   object MainFormMenu: TMainMenu
     left = 328
     top = 176
+    object AppleMenuItem: TMenuItem
+      Caption = 'epidataentryclient'
+      object MenuItem1: TMenuItem
+        Action = AboutAction
+      end
+      object MenuItem3: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem4: TMenuItem
+        Action = SettingsAction
+        Caption = 'Preferences...'
+      end
+    end
     object FileMenu: TMenuItem
       Caption = '&File'
       OnClick = FileMenuClick
