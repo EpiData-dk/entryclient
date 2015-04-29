@@ -5,7 +5,7 @@ unit settings;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
   EditBtn, StdCtrls, ExtCtrls, ComCtrls, Buttons, MaskEdit,
   epiversionutils, setting_types;
 
@@ -130,7 +130,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLProc, IniFiles, entryprocs;
+  LCLProc, IniFiles, entryprocs, FileUtil, LazFileUtils;
 
 const
   RecentIniFileName: string = '';

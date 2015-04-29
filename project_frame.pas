@@ -288,7 +288,7 @@ begin
         'The file: ' + LineEnding +
           FDocumentFile.FileName + LineEnding +
           LineEnding +
-          'cannot write backed-up when closed in folder:' + LineEnding +
+          'cannot write backups when project is closed in folder:' + LineEnding +
           ExtractFilePath(Dummy) + LineEnding +
           LineEnding +
           'Continue opening this project?' + LineEnding +
