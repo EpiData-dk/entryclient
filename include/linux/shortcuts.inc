@@ -10,7 +10,7 @@ begin
   M_ShowAbout       := KeyToShortCut(VK_UNKNOWN, []);
   M_CopyProjectInfo := KeyToShortCut(VK_UNKNOWN, []);
   M_CheckVersion    := KeyToShortCut(VK_UNKNOWN, []);
-  M_DefaultPos      := KeyToShortCut(VK_UNKNOWN, []);
+  M_DefaultPos      := KeyToShortCut(VK_0, [ssMeta, ssShift]);
   M_CloseProject    := KeyToShortCut(VK_W, [ssCtrl]);
   M_OpenProject     := KeyToShortCut(VK_O, [ssCtrl]);
 

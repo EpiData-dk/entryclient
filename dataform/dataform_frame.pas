@@ -309,7 +309,8 @@ begin
     // And pressing buttons will act on previous dataform - hence we need focus on this
     // dataform.
     DataFormScroolBox.SetFocus;
-    UpdateFieldPanel(DataFile.KeyFields[0]);
+    if DataFile.KeyFields.Count > 0 then
+      UpdateFieldPanel(DataFile.KeyFields[0]);
     Exit;
   end;
 
