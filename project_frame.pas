@@ -70,6 +70,7 @@ type
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
+    FRelateToNextDataform: boolean;
     procedure FrameModified(Sender: TObject);
     procedure FrameRecordchanged(Sender: TObject);
     procedure LM_ProjectRelate(var Msg: TLMessage); message LM_PROJECT_RELATE;
@@ -287,7 +288,7 @@ begin
         'The file: ' + LineEnding +
           FDocumentFile.FileName + LineEnding +
           LineEnding +
-          'cannot write backed-up when closed in folder:' + LineEnding +
+          'cannot write backups when project is closed in folder:' + LineEnding +
           ExtractFilePath(Dummy) + LineEnding +
           LineEnding +
           'Continue opening this project?' + LineEnding +
@@ -432,7 +433,9 @@ var
 begin
   Relation := TEpiMasterRelation(Msg.WParam);
   Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
+
   FRelateToParent := (Msg.LParam = 1);
+  FRelateToNextDataform := (Msg.LParam = 2);
 
   DataFileTree.FocusedNode := Node;
 
@@ -480,6 +483,7 @@ end;
 function TProjectFrame.NodeIsValidated(Node: PVirtualNode): boolean;
 var
   Res: TModalResult;
+  DefaultBtn: TMsgDlgBtn;
 begin
   result := true;
 
@@ -487,11 +491,16 @@ begin
 
   with FrameFromNode(Node) do
   begin
+    if RecNo = NewRecord then
+      DefaultBtn := mbOk
+    else
+      DefaultBtn := mbCancel;
+
     if Modified then
     begin
       Res := MessageDlg('Warning',
                'Save record before change?',
-               mtConfirmation, mbYesNoCancel, 0, mbCancel);
+               mtConfirmation, mbYesNoCancel, 0, DefaultBtn);
       case Res of
         mrCancel: Result := false;
         mrYes:    Result := AllFieldsValidate(false);
@@ -509,6 +518,11 @@ procedure TProjectFrame.DataFileTreeFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 var
   RelateReason: TRelateReason;
+  P: PVirtualNode;
+  DestRelation: TEpiMasterRelation;
+  PFrame: TDataFormFrame;
+  C: PVirtualNode;
+  CFrame: TDataFormFrame;
 begin
   RelateReason := rrFocusShift;
 
@@ -537,6 +551,52 @@ begin
   begin
     RelateReason := rrReturnToParent;
     FRelateToParent := false;
+  end;
+
+  if FRelateToNextDataform then
+  begin
+    RelateReason := rrRelateToNextDF;
+    FRelateToNextDataform := false;
+  end;
+
+
+  if (RelateReason = rrFocusShift) and
+     (Assigned(FSelectedNode)) and
+     (Assigned(Node))
+  then
+  begin
+    // Notify dataforms, that an explicit focus-shift occured. Information about dataform-relate
+    // information may need to be updated.
+    DestRelation := FrameFromNode(Node).Relation;
+
+    P := FSelectedNode;
+    PFrame := FrameFromNode(P);
+    while (P <> FProjectNode) and
+          (not PFrame.Relation.IsChild(DestRelation, true)) do
+    begin
+      PFrame.UpdateChildFocusShift(nil);
+      P := P^.Parent;
+      PFrame := FrameFromNode(P);
+    end;
+
+    repeat
+      C := DataFileTree.GetFirstChild(P);
+      CFrame := FrameFromNode(C);
+      while (not CFrame.Relation.IsChild(DestRelation, true)) and
+            (C <> Node)
+      do
+        begin
+          C := DataFileTree.GetNextSibling(C);
+          CFrame := FrameFromNode(C);
+        end;
+
+      // PFrame could be nil, if NODE is a main dataform.
+      if Assigned(PFrame) then
+        PFrame.UpdateChildFocusShift(CFrame.Relation);
+
+      P := C;
+      PFrame := CFrame;
+    until (P = Node);
   end;
 
   FSelectedNode := Node;

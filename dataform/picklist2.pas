@@ -50,6 +50,8 @@ var
 
 resourcestring
   rsPickListFilter = '(filter)';
+  rsPickListFormCaptionDefault = 'Value Labels';
+  rsPickListFormCaptionNoValue = 'Value Labels: Illegal value, delete to see all';
 
 implementation
 
@@ -128,6 +130,11 @@ begin
 
   if (not Assigned(FocusNode)) then
     FocusNode := VST.GetFirstVisible();
+
+  if Assigned(FocusNode) then
+    Caption := rsPickListFormCaptionDefault
+  else
+    Caption := rsPickListFormCaptionNoValue;
 
   SelectNode(FocusNode);
   VST.Invalidate;

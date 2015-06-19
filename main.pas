@@ -24,6 +24,10 @@ type
     FieldNotesMenuItem: TMenuItem;
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
+    AppleMenuItem: TMenuItem;
+    MenuItem1: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
     OpenProjectBtn: TBitBtn;
     RecentFilesPopupSubMenu: TMenuItem;
     OpenProjectPopupMenuItem: TMenuItem;
@@ -549,6 +553,16 @@ var
   Fn: String;
   i: Integer;
 begin
+  {$IFDEF darwin}
+  AppleMenuItem.Visible := true;
+  AppleMenuItem.Caption := #$EF#$A3#$BF;
+  {$ELSE}
+  AppleMenuItem.Visible := false;
+  {$ENDIF}
+  AboutMenuItem.Visible    := not (AppleMenuItem.Visible);
+  HelpMenuDivider2.Visible := not (AppleMenuItem.Visible);
+  SettingsMenuItem.Visible := not (AppleMenuItem.Visible);
+
   Screen.AddHandlerActiveFormChanged(@FormChanged);
 
   if Assigned(StartupFiles) then

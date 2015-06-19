@@ -100,7 +100,6 @@ type
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
-    procedure ShowFieldNotesActionUpdate(Sender: TObject);
   private
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
@@ -231,6 +230,7 @@ type
     function  AllKeyFieldsAreFilled: boolean;
     function  GetCurrentKeyFieldValues: string;
     procedure RelateInit(Reason: TRelateReason; ParentRecordState: TEpiRecordState);
+    procedure UpdateChildFocusShift(Const NewChildRelation: TEpiMasterRelation);
     property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
     property  OnModified: TNotifyEvent read FOnModified write FOnModified;
     property  OnRecordChanged: TNotifyEvent read FOnRecordChanged write FOnRecordChanged;
@@ -309,7 +309,8 @@ begin
     // And pressing buttons will act on previous dataform - hence we need focus on this
     // dataform.
     DataFormScroolBox.SetFocus;
-    UpdateFieldPanel(DataFile.KeyFields[0]);
+    if DataFile.KeyFields.Count > 0 then
+      UpdateFieldPanel(DataFile.KeyFields[0]);
     Exit;
   end;
 
@@ -552,15 +553,6 @@ begin
     ShowNotes(TFieldEdit(MainForm.ActiveControl), true);
 end;
 
-procedure TDataFormFrame.ShowFieldNotesActionUpdate(Sender: TObject);
-var
-  LAction: TAction absolute Sender;
-begin
-  {LAction.Enabled :=
-    (MainForm.ActiveControl is TFieldEdit) and
-    (TFieldEdit(MainForm.ActiveControl).Field.Notes.Text <> '');      }
-end;
-
 procedure TDataFormFrame.UpdateIndexFields;
 var
   MasterKFs: TEpiFields;
@@ -591,7 +583,8 @@ begin
         KF := DataFile.KeyFields.FieldByName[MasterF.Name];
 
         AddToIndex := AddToIndex and
-          (MasterF.AsValue[MasterFrame.RecNo] = KF.AsValue[i]);
+          (MasterF.AsValue[MasterFrame.IndexedRecNo] = KF.AsValue[i]);
+//          (MasterF.AsValue[MasterFrame.RecNo] = KF.AsValue[i]);
         if (not AddToIndex) then
           break;
       end;
@@ -1167,6 +1160,9 @@ begin
 
   // Finally fill all key fields with inherited data
   FillKeyFields;
+
+  // Reset last related datafil, otherwise subsequest relates may end up in the wrong place
+  FLastDataFileRelate := nil;
 
   Result := true;
 end;
@@ -1765,7 +1761,7 @@ begin
       begin
         if (DataFile.AfterRecordState in [arsReturnToParent, arsReturnToParentOnMax])
         then
-          PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 1)
+          PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 2)
         else begin
           DoNewRecord;
           RecNo := FLocalToDFIndex.Size -1;
@@ -2029,20 +2025,6 @@ begin
         FRecNo := -1;
 
         DoNewRecord;
-
-{        // In case no records exists, always do a new record.
-        // otherwise Key Fields will not be set, etc. (needed eg. by GetCurrentKeyFieldValues).
-        if FLocalToDFIndex.Size = 0 then
-          DoNewRecord
-        else
-          case EntrySettings.RelateChangeRecord of
-            rcFirstRecord:
-              RecNo := 0;
-            rcLastRecord:
-              RecNo := FLocalToDFIndex.Size - 1;
-            rcNewRecord:
-              DoNewRecord;
-          end;   }
       end;
 
     rrNewRecord:
@@ -2060,17 +2042,8 @@ begin
            )
         then begin
           RecNo := (FLocalToDFIndex.Size - 1);
-        end else{
-        if ((FLocalToDFIndex.Size = 0) or
-            (RecNo = NewRecord))
-        then
-        begin
-          Modified := false; }
+        end else
           DoNewRecord;
-       { end
-        else begin
-          LoadRecord(RecNo);
-        end;  }
 
         if ResultListFormIsShowing then
           ShowResultListForm(
@@ -2095,6 +2068,13 @@ begin
           FDFToLocalIndex,
           FLocalToDFIndex
         );
+
+    rrRelateToNextDF:
+      begin
+        FE := nil;
+        DoAfterRecord(FE);
+        Exit;
+      end;
   end;
 
   // The one special case where an empty subform is entered
@@ -2116,7 +2096,7 @@ begin
     begin
       FE := NextFieldOnKeyDown(FCurrentEdit);
 
-      if not Assigned(FE) then
+      if (not Assigned(FE)) then
         DoAfterRecord(FE);
     end
   else if (DataFormScroolBox.Enabled)
@@ -2124,6 +2104,27 @@ begin
     FirstFieldAction.Execute
   else
     UpdateFieldPanel(DataFile.KeyFields[0]);
+end;
+
+procedure TDataFormFrame.UpdateChildFocusShift(
+  const NewChildRelation: TEpiMasterRelation);
+var
+  R: TEpiRelate;
+begin
+  if not (Assigned(NewChildRelation)) then
+  begin
+    FLastDataFileRelate := nil;
+    Exit;
+  end;
+
+  for R in DataFile.Relates do
+  begin
+    if R.DetailRelation = NewChildRelation then
+    begin
+      FLastDataFileRelate := R;
+      Break;
+    end;
+  end;
 end;
 
 procedure TDataFormFrame.CloseQuery(var CanClose: boolean);
@@ -2670,13 +2671,24 @@ var
 begin
   Result := true;
 
-  if DataFile.KeyFields.Count > 0 then
-  begin
-    i := DoSearchKeyFields;
-    // if i = -1 then keys do not exists,
-    // if i = RecNo then current records is found in the search, which is ok
-    result := (i = RecNo) or (i = -1);
-  end;
+  if (
+      // This is only possible on main dataforms.
+      (DataFile.KeyFields.Count > 0) and
+      (not IsDetailRelation)
+     ) or
+     (
+     // Is this is a detail, only check keyfields if there are actually more
+     // keyfields than the parent, otherwise it will naturally always fail.
+      (IsDetailRelation) and
+      (DetailRelation.MasterRelation.Datafile.KeyFields.Count < DataFile.KeyFields.Count)
+     )
+  then
+    begin
+      i := DoSearchKeyFields;
+      // if i = -1 then keys do not exists,
+      // if i = RecNo then current records is found in the search, which is ok
+      result := (i = RecNo) or (i = -1);
+    end;
 end;
 
 function TDataFormFrame.AllFieldsValidate(IgnoreMustEnter: boolean): boolean;

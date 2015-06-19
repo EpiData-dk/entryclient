@@ -1,18 +1,23 @@
 object DataFormFrame: TDataFormFrame
   Left = 0
-  Height = 735
+  Height = 634
   Top = 0
-  Width = 1157
-  ClientHeight = 735
-  ClientWidth = 1157
+  Width = 939
+  ClientHeight = 634
+  ClientWidth = 939
   TabOrder = 0
+<<<<<<< .working
   DesignLeft = 544
   DesignTop = 276
+=======
+  DesignLeft = 631
+  DesignTop = 326
+>>>>>>> .merge-right.r482
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 705
+    Height = 604
     Top = 0
-    Width = 987
+    Width = 769
     HorzScrollBar.Page = 1
     VertScrollBar.Page = 1
     Align = alClient
@@ -25,11 +30,11 @@ object DataFormFrame: TDataFormFrame
   object InformationPanel: TPanel
     Left = 0
     Height = 30
-    Top = 705
-    Width = 1157
+    Top = 604
+    Width = 939
     Align = alBottom
     ClientHeight = 30
-    ClientWidth = 1157
+    ClientWidth = 939
     TabOrder = 1
     object NavigationPanel: TPanel
       AnchorSideLeft.Control = InformationPanel
@@ -231,14 +236,14 @@ object DataFormFrame: TDataFormFrame
       Left = 566
       Height = 24
       Top = 3
-      Width = 374
+      Width = 156
       Alignment = taLeftJustify
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 2
       BorderSpacing.Right = 2
       BevelOuter = bvLowered
       ClientHeight = 24
-      ClientWidth = 374
+      ClientWidth = 156
       Color = clWindow
       Constraints.MinWidth = 80
       ParentColor = False
@@ -266,7 +271,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Control = NavigationPanel
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FieldLengthPanel
-      Left = 942
+      Left = 724
       Height = 24
       Top = 3
       Width = 107
@@ -367,7 +372,7 @@ object DataFormFrame: TDataFormFrame
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = InformationPanel
       AnchorSideRight.Side = asrBottom
-      Left = 1051
+      Left = 833
       Height = 24
       Top = 3
       Width = 103
@@ -440,12 +445,12 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object Panel1: TPanel
-    Left = 987
-    Height = 705
+    Left = 769
+    Height = 604
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 705
+    ClientHeight = 604
     ClientWidth = 170
     TabOrder = 2
     OnMouseMove = Panel1MouseMove
@@ -564,7 +569,6 @@ object DataFormFrame: TDataFormFrame
       Category = 'Field'
       Caption = 'Show Field Notes'
       OnExecute = ShowFieldNotesActionExecute
-      OnUpdate = ShowFieldNotesActionUpdate
     end
     object PrintDataFormAction: TAction
       Category = 'File'
