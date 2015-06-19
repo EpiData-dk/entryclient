@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, types, FileUtil, PrintersDlgs, Forms, Controls,
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
-  VirtualTrees, epitools_search, entry_globals, epirelations, epidatafilestypes,
+  VirtualTrees, epitools_search, entry_globals, epidatafilerelations, epidatafilestypes,
   epirelates;
 
 type

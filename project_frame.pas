@@ -8,7 +8,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics,
+  VirtualTrees, documentfile_ext, epicustombase, epidatafilerelations, Graphics,
   StdCtrls, Menus, epidatafilestypes;
 
 type
@@ -137,7 +137,7 @@ type
   TNodeData = record
     Frame: TDataFormFrame;
     Relation: TEpiMasterRelation;
-    RelationList: TEpiRelationList;
+    RelationList: TEpiDatafileRelationList;
   end;
   PNodeData = ^TNodeData;
 
@@ -627,7 +627,7 @@ end;
 procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var ChildCount: Cardinal);
 var
-  RelationList: TEpiRelationList;
+  RelationList: TEpiDatafileRelationList;
   MR: TEpiMasterRelation;
 begin
   RelationList := PNodeData(Sender.GetNodeData(Node))^.RelationList;
