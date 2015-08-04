@@ -619,8 +619,27 @@ begin
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
+var
+  Search: TEpiSearch;
+  SC: TEpiSearchCondition;
 begin
-  DoSearchForm(nil);
+  Search := TEpiSearch.Create;
+  Search.DataFile := DataFile;
+  Search.Direction := sdForward;
+  Search.Origin := soBeginning;
+
+  SC := TEpiSearchCondition.Create;
+  SC.BinOp := boAnd;
+  SC.Field := FCurrentEdit.Field;
+  SC.Text  := FCurrentEdit.Text;
+  SC.CaseSensitive := false;
+  if FCurrentEdit.Field.FieldType in StringFieldTypes then
+    SC.MatchCriteria := mcContains
+  else
+    SC.MatchCriteria := mcEq;
+  Search.List.Add(SC);
+
+  DoSearchForm(Search);
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;

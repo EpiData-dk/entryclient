@@ -152,8 +152,22 @@ begin
 end;
 
 procedure TSearchForm1.FormShow(Sender: TObject);
+var
+  SCs: PSearchConditions;
+  VE: TEdit;
 begin
   LoadFormPosition(Self, 'SearchForm');
+
+  SCs := PSearchConditions(FSearchConditionList.Last);
+  if Assigned(SCs) then
+  begin
+    VE := SCs^.ValueEdit;
+
+    if Assigned(VE) and
+       (VE.CanFocus)
+    then
+      VE.SetFocus;
+  end;
 end;
 
 procedure TSearchForm1.AddBtnClick(Sender: TObject);
