@@ -2839,8 +2839,13 @@ begin
   VLForm.Top := P.Y;
   VLForm.Left := P.X;
   result := VLForm.ShowModal = mrOK;
+
   if Result then
+  begin
     AFieldEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
+    Modified := true;
+  end;
+
   VLForm.Free;
 end;
 
