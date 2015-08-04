@@ -410,8 +410,8 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
-  Idx := Min(RecNo, FLocalToDFIndex.Size) - 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo - 1, true);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -614,8 +614,8 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdForward;
-  Idx := Min(RecNo, FDataFile.Size) + 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo + 1, true);
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
@@ -1085,7 +1085,13 @@ begin
   // index to SearchFindNext MUST be in Datafile record number
 
   // This should only be the case when FLocalToDFIndex.Size = 0
-  if Index < FLocalToDFIndex.Size then
+  if Index >= FLocalToDFIndex.Size then
+    Exit(-1);
+
+  if Index < 0 then
+    Exit(-1);
+
+//  if Index < FLocalToDFIndex.Size then
     Index := FLocalToDFIndex.AsInteger[Index];
 
   Result := SearchFindNext(Search, Index);
