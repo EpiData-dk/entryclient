@@ -364,20 +364,23 @@ end;
 
 procedure TSearchForm1.AddMatchCriteriaToCombo(Combo: TComboBox;
   Ft: TEpiFieldType);
+var
+  ItemSet:TMatchCriterias;
+  Item: TMatchCriteria;
 begin
   with Combo do
   begin
     Items.BeginUpdate;
     Clear;
-    AddItem('=',  TObject(PtrUInt(mcEq)));
-    AddItem('<>', TObject(PtrUInt(mcNEq)));
-    if not (Ft in StringFieldTypes) then AddItem('<=', TObject(PtrUInt(mcLEq)));
-    if not (Ft in StringFieldTypes) then AddItem('<',  TObject(PtrUInt(mcLT)));
-    if not (Ft in StringFieldTypes) then AddItem('>',  TObject(PtrUInt(mcGT)));
-    if not (Ft in StringFieldTypes) then AddItem('=>', TObject(PtrUInt(mcGEq)));
-    if (Ft in StringFieldTypes) then AddItem('Begins',   TObject(PtrUInt(mcBegin)));
-    if (Ft in StringFieldTypes) then AddItem('Contains', TObject(PtrUInt(mcContains)));
-    if (Ft in StringFieldTypes) then AddItem('Ends',     TObject(PtrUInt(mcEnd)));
+
+    if (Ft in StringFieldTypes) then
+      ItemSet := MatchCriteriaStrings
+    else
+      ItemSet := MatchCriteriaDefault;
+
+    for Item in ItemSet do
+      AddItem(MatchCriteriaCaption[Item], TObject(PtrUInt(Item)));
+
     Items.EndUpdate;
   end;
 end;
@@ -404,7 +407,19 @@ begin
 end;
 
 procedure TSearchForm1.MatchChange(Sender: TObject);
+var
+  Item: TMatchCriteria;
+  ValueEdit: TEdit;
+  Idx: PtrInt;
 begin
+  with TComboBox(Sender) do
+  begin
+    Idx := Tag;
+    Item := TMatchCriteria(PtrInt(Items.Objects[ItemIndex]));
+  end;
+  ValueEdit := PSearchConditions(FSearchConditionList[Idx])^.ValueEdit;
+  ValueEdit.Enabled := not (Item in MatchCriteriaNoTextSearch);
+
   UpdateSearchLabel;
 end;
 
@@ -428,7 +443,7 @@ begin
   for i := 0 to FSearchConditionList.Count - 1 do
   with PSearchConditions(FSearchConditionList[i])^ do
   begin
-    SC := TEpiSearchCondition.Create;
+    SC               := TEpiSearchCondition.Create;
     SC.BinOp         := TSearchBinOp(PtrUInt(BinOpCmb.Items.Objects[BinOpCmb.ItemIndex]));
     SC.MatchCriteria := TMatchCriteria(PtrUInt(MatchCriteriaCmb.Items.Objects[MatchCriteriaCmb.ItemIndex]));
     SC.Text          := ValueEdit.Text;
@@ -479,36 +494,39 @@ var
   W1, W2, W3: Word;
   S: String;
   i: Integer;
+  SC: TEpiSearchCondition;
+  ValueEdit: TEdit;
 begin
   result := false;
 
-  for i := 0 to FSearchConditionList.Count - 1 do
-  with PSearchConditions(FSearchConditionList[i])^ do
+  for i := 0 to FSearch.ConditionCount - 1 do
+  with FSearch.SearchCondiction[I] do
   begin
-    with FieldListCmb do
-      Field := TEpiField(Items.Objects[ItemIndex]);
+    if MatchCriteria in [mcIsSysMissing..mcIs2ndMaXMissing] then continue;
+
+    ValueEdit := PSearchConditions(FSearchConditionList[i])^.ValueEdit;
 
     case Field.FieldType of
       ftBoolean,
       ftInteger, ftAutoInc:
         begin
-          if not TryStrToInt64(ValueEdit.Text, I64) then
+          if not TryStrToInt64(Text, I64) then
           begin
-            DoError(Format('Not a valid integer: %s', [ValueEdit.Text]), ValueEdit);
+            DoError(Format('Not a valid integer: %s', [Text]), ValueEdit);
             Exit;
           end;
         end;
       ftFloat:
         begin
-          if not TryStrToFloat(ValueEdit.Text, F) then
+          if not TryStrToFloat(Text, F) then
           begin
-            DoError(Format('Not a valid float: %s', [ValueEdit.Text]), ValueEdit);
+            DoError(Format('Not a valid float: %s', [Text]), ValueEdit);
             Exit;
           end;
         end;
       ftTime, ftTimeAuto:
         begin
-          if not EpiStrToTime(ValueEdit.Text, TimeSeparator, W1, W2, W3, S) then
+          if not EpiStrToTime(Text, TimeSeparator, W1, W2, W3, S) then
           begin
             DoError(S, ValueEdit);
             Exit;
@@ -518,7 +536,7 @@ begin
       ftMDYDate, ftMDYAuto,
       ftYMDDate, ftYMDAuto:
         begin
-          if not EpiStrToDate(ValueEdit.Text, DateSeparator, Field.FieldType, W1, W2, W3, S) then
+          if not EpiStrToDate(Text, DateSeparator, Field.FieldType, W1, W2, W3, S) then
           begin
             DoError(S, ValueEdit);
             Exit;
