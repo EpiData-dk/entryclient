@@ -79,7 +79,7 @@ end;
 
 function GetProgramInfo: string;
 begin
-  Result := 'EpiData Entry Client' + LineEnding +
+  Result := 'EpiData Entry Client: ' + FormatDateTime('(YYYY/MM/DD - HH:NN:SS)', Now) + LineEnding +
             EntryVersionCaption + ' ' + EntryRevisionCaption + LineEnding +
             CoreVersionCaption + ' ' + CoreRevisionCaption + LineEnding +
             FPCCaption + LineEnding +

@@ -410,8 +410,8 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
-  Idx := Min(RecNo, FLocalToDFIndex.Size) - 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo - 1, true);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -614,13 +614,32 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdForward;
-  Idx := Min(RecNo, FDataFile.Size) + 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo + 1, true);
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
+var
+  Search: TEpiSearch;
+  SC: TEpiSearchCondition;
 begin
-  DoSearchForm(nil);
+  Search := TEpiSearch.Create;
+  Search.DataFile := DataFile;
+  Search.Direction := sdForward;
+  Search.Origin := soBeginning;
+
+  SC := TEpiSearchCondition.Create;
+  SC.BinOp := boAnd;
+  SC.Field := FCurrentEdit.Field;
+  SC.Text  := FCurrentEdit.Text;
+  SC.CaseSensitive := false;
+  if FCurrentEdit.Field.FieldType in StringFieldTypes then
+    SC.MatchCriteria := mcContains
+  else
+    SC.MatchCriteria := mcEq;
+  Search.List.Add(SC);
+
+  DoSearchForm(Search);
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
@@ -1066,7 +1085,13 @@ begin
   // index to SearchFindNext MUST be in Datafile record number
 
   // This should only be the case when FLocalToDFIndex.Size = 0
-  if Index < FLocalToDFIndex.Size then
+  if Index >= FLocalToDFIndex.Size then
+    Exit(-1);
+
+  if Index < 0 then
+    Exit(-1);
+
+//  if Index < FLocalToDFIndex.Size then
     Index := FLocalToDFIndex.AsInteger[Index];
 
   Result := SearchFindNext(Search, Index);
@@ -2839,8 +2864,13 @@ begin
   VLForm.Top := P.Y;
   VLForm.Left := P.X;
   result := VLForm.ShowModal = mrOK;
+
   if Result then
+  begin
     AFieldEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
+    Modified := true;
+  end;
+
   VLForm.Free;
 end;
 
