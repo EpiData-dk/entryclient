@@ -115,10 +115,38 @@ begin
 
     Escaped := FormatStr[ChPos] = '\';
     Inc(ChPos);
+{
+    %f Returns the Field Name (even if it not shown on the form)
+    %q Returns the Field Question
+    %v Returns the label part of a valuelabel if availble (even if the label is not shown on the form)
+    %l Returns the label part of a valuelabel if exists otherwise returns data for the record
+    %p : include project file name
+
+    %d Returns the current data for the record (or blank if no data)
+    %dt : include date of current "copy to clipboard"
+    %df : Include dataform name
+
+    %ti : include time of current "copy to clipboard"
+
+    \n Inserts a “newline” into the text (usefull for have eg. each field on a seperate line)
+    \t Inserts a “tab” into the text
+    \% Insert the character “%” into the text (otherwise the program interprets the % as a specifier.
+
+    Applied to "copy field to clipboard" - ignored on "copy record to clipboard":
+    %k : include any key defined for current dataform (only applies to
+    will be with field name, e.g. key id: 100 datevisit: 18-9-2015 childno: 3   }
+
     case UpCase(FormatStr[ChPos]) of
       'F': AddFunction(Result, gftFieldEdit, PtrUInt(@GetF), 0);
       'Q': AddFunction(Result, gftFieldEdit, PtrUInt(@GetQ), 0);
-      'D': AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
+      'D': begin
+             case UpCase(FormatStr[ChPos+1]) of
+               ''
+               ''
+             else
+               AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
+             end;
+           end;
       'V': AddFunction(Result, gftFieldEdit, PtrUInt(@GetV), 0);
       'L': AddFunction(Result, gftFieldEdit, PtrUInt(@GetL), 0);
       'N': AddFunction(Result, gftFieldEdit, PtrUInt(@GetN), 0);

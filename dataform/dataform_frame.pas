@@ -1439,13 +1439,13 @@ begin
   for i := 0 to DataFile.Fields.Count -1 do
   begin
     for j := 0 to l - 1 do
-    with Functions[j] do
-    case FuncType of
-      gftIndexedString:
-        S += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
-      gftFieldEdit:
-        S += TGetFEFunction(FuncPtr)(FieldEditFromField(DataFile.Field[i]));
-    end;
+      with Functions[j] do
+        case FuncType of
+          gftIndexedString:
+            S += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
+          gftFieldEdit:
+            S += TGetFEFunction(FuncPtr)(FieldEditFromField(DataFile.Field[i]));
+        end;
   end;
   Clipboard.AsText := S;
 end;
@@ -2312,17 +2312,6 @@ begin
       fxtJump:
         ; // Do nothing - NextFieldEdit is set.
     end;
-{
-    if not Assigned(NextFieldEdit) then
-      NextFieldEdit := NewOrNextRecord;
-
-    if not Assigned(NextFieldEdit) then
-      Exit;
-
-    FieldEnterFlow(NextFieldEdit);
-    NextFieldEdit.SetFocus;
-    Key := VK_UNKNOWN;          }
-
 
     if not Assigned(NextFieldEdit)
     then
