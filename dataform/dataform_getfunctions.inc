@@ -27,6 +27,7 @@ type
     ggfProjectName,
     ggfCurrentDate,
     ggfCycleNo,
+    ggfFileName,
     ggfKeyFields
   );
   TGetGlobalFuncSet = set of TGetGlobalFuncEnum;
@@ -144,10 +145,11 @@ begin
     %n Inserts a “newline” into the text (usefull for have eg. each field on a seperate line)
     %% Insert the character “%” into the text (otherwise the program interprets the % as a specifier.
 
-    %gd Include current date and time globally
-    %gf Include dataform name globally
-    %gp Include project title globally
-    %gc Include project cycle no. globally
+    %gd Include current date and time
+    %gn Include project file including full path
+    %gc Include project cycle no.
+    %gp Include project title
+    %gf Include dataform name
 
     Applied to "copy field to clipboard" - ignored on "copy record to clipboard":
     %gk : include any key defined for current dataform (only applies to
@@ -171,6 +173,7 @@ begin
                'F': Include(Globals, ggfDataFormName);
                'C': Include(Globals, ggfCycleNo);
                'P': Include(Globals, ggfProjectName);
+               'N': Include(Globals, ggfFileName);
                'K': Include(Globals, ggfKeyFields);
              else
                // ERROR

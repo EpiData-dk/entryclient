@@ -1463,40 +1463,49 @@ begin
   l := Length(Functions);
 
   S := '';
+  if ggfCurrentDate in Globals
+  then
+    S += DateTimeToStr(Now) + LineEnding;
+
+  if ggfFileName in Globals
+  then
+    S += 'File: ' + MainForm.ActiveFrame.DocumentFile.FileName;
+
+  if ggfCycleNo in Globals
+  then
+    S += Format(' (cycle %d)', [MainForm.ActiveFrame.EpiDocument.CycleNo]) + LineEnding
+  else
+    if (ggfFileName in Globals) then S += LineEnding;
+
+  if ggfProjectName  in Globals
+  then
+    S += 'Title: ' + MainForm.ActiveFrame.EpiDocument.Study.Title.Text + LineEnding;
+
+  if (ggfDataFormName in Globals) and
+     (FDataFile.Caption.Text <> '')
+  then
+    S += 'Dataform: ' + FDataFile.Caption.Text + LineEnding;
+
+  if (SingleField) and
+     (ggfKeyFields in Globals) and
+     (DataFile.KeyFields.Count > 0)
+  then
+    begin
+      S += 'KEY: ';
+      for F in DataFile.KeyFields do
+        S += F.Name + '=' + FieldEditFromField(F).Text + ' ';
+
+      TrimRight(S);
+      S += LineEnding;
+    end;
+
   if SingleField then
-    S := FunctionsCall(FCurrentEdit)
+    S += FunctionsCall(FCurrentEdit)
   else
     for i := 0 to DataFile.Fields.Count -1 do
       begin
         S += FunctionsCall(FieldEditFromField(DataFile.Field[i]));
       end;
-
-  // Add Globals in inverse order as wanted, since the actual text is prefixed to existing string.
-  if (SingleField) and
-     (ggfKeyFields in Globals)
-  then
-    begin
-      S1 := 'KEY: ';
-      for F in DataFile.KeyFields do
-        S1 += F.Name + '=' + FieldEditFromField(F).Text + ' ';
-
-      TrimRight(S1);
-      S := S1 + LineEnding + S;
-    end;
-
-  if (ggfDataFormName in Globals) and
-     (FDataFile.Caption.Text <> '')
-  then
-    S := FDataFile.Caption.Text + LineEnding + S;
-
-  if ggfProjectName  in Globals then
-    begin
-      if ggfCycleNo in Globals then
-        S := MainForm.ActiveFrame.EpiDocument.Study.Title.Text + Format(' (%d)', [MainForm.ActiveFrame.EpiDocument.CycleNo]) + LineEnding + S
-      else
-        S := MainForm.ActiveFrame.EpiDocument.Study.Title.Text + LineEnding + S;
-    end;
-  if ggfCurrentDate  in Globals then S := DateTimeToStr(Now) + LineEnding + S;
 
   S := TrimRight(S);
   Clipboard.AsText := S;
