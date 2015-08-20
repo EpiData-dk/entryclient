@@ -39,7 +39,10 @@ begin
   D_SearchRepeatForward  := KeyToShortCut(VK_F3, []);
   D_SearchRepeatBackward := KeyToShortCut(VK_F3, [ssShift]);
   D_SearchRecordList     := KeyToShortCut(VK_L, [ssCtrl]);
+
   D_CopyRecordToClipBoard := KeyToShortCut(VK_C, [ssCtrl, ssShift]);
+  D_CopyFieldToClipBoard  := KeyToShortCut(VK_F5, []);
+
   D_PrintForm             := KeyToShortCut(VK_P, [ssCtrl, ssShift]);
   D_PrintFormWithData     := KeyToShortCut(VK_P, [ssCtrl]);
 end;
