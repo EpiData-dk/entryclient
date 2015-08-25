@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="13"/>
+      <BuildNr Value="16"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -199,7 +199,6 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="dataform_frame"/>
       </Unit3>
       <Unit4>
         <Filename Value="dataform/fieldedit.pas"/>

@@ -44,6 +44,7 @@ var
   D_SearchRepeatBackward,
   D_SearchRecordList,
   D_CopyRecordToClipBoard,
+  D_CopyFieldToClipBoard,
   D_PrintForm,
   D_PrintFormWithData:
     TShortCut;

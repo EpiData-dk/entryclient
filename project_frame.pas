@@ -194,12 +194,14 @@ begin
         ProgressBar1.Position := CurrentPos;
         ProgressBar1.Visible := true;
         ProgressBar1.Max := MaxPos;
-        Application.ProcessMessages;
+        if not (csDestroying in ComponentState) then
+          Application.ProcessMessages;
       end;
     eptFinish:
       begin
         ProgressBar1.Visible := false;
-        Application.ProcessMessages;
+        if not (csDestroying in ComponentState) then
+          Application.ProcessMessages;
         LastUpdate := 0;
       end;
     eptRecords:

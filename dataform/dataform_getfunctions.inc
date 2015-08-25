@@ -1,5 +1,11 @@
 type
-  TGetFunctionType = (gftIndexedString, gftFieldEdit);
+  TGetFunctionType = (
+    gftIndexedString,   // Extracts text from format string that is NOT escaped:
+                        //   Data = PGetIdxStrRec
+
+    gftFieldEdit        // Calls neded function based on format specifiers
+    );
+
   TGetFunction = record
     FuncType: TGetFunctionType;
     FuncPtr: PtrUInt;
@@ -15,6 +21,16 @@ type
     EIdx: Integer;
   end;
   PGetIdxStrRec = ^TGetIdxStrRec;
+
+  TGetGlobalFuncEnum = (
+    ggfDataFormName,
+    ggfProjectName,
+    ggfCurrentDate,
+    ggfCycleNo,
+    ggfFileName,
+    ggfKeyFields
+  );
+  TGetGlobalFuncSet = set of TGetGlobalFuncEnum;
 
 function GetF(Const FE: TFieldEdit): string;
 begin
@@ -63,20 +79,18 @@ begin
   result := Copy(FmtStr, SIdx, EIdx-SIdx);
 end;
 
-function DecodeFormat(FormatStr: string): TGetFunctions;
+function DecodeFormat(FormatStr: string; out Globals: TGetGlobalFuncSet): TGetFunctions;
 var
-  i: integer;
   ChPos: integer;
   ChLen: integer;
-  l: Integer;
   OldPos: Integer;
-  Escaped: Boolean;
-  IdxRec: PGetIdxStrRec;
 
   procedure AddFunction(var Res: TGetFunctions;
                             FType: TGetFunctionType;
                             Func: PtrUInt;
                             Data: PtrUInt);
+  var
+    l: Integer;
   begin
     l := Length(Res);
     SetLength(Res, l + 1);
@@ -88,8 +102,19 @@ var
     end;
   end;
 
+  procedure CreateIndexedString(Const StartIdx, EndIdx: Integer);
+  var
+    IdxRec: PGetIdxStrRec;
+  begin
+    IdxRec := New(PGetIdxStrRec);
+    IdxRec^.SIdx := StartIdx;
+    IdxRec^.EIdx := EndIdx;
+    AddFunction(Result, gftIndexedString, PtrUInt(@GetStr), PtrUInt(IdxRec));
+  end;
+
 begin
   Result := nil;
+  Globals := [];
 
   ChPos := 1;
   ChLen := Length(FormatStr);
@@ -98,31 +123,62 @@ begin
   while ChPos <= ChLen do
   begin
     while (ChPos <= ChLen) and
-          (not (FormatStr[ChPos] = '%')) and
-          (not (FormatStr[ChPos] = '\'))
+          (not (FormatStr[ChPos] = '%'))
     do
       inc(ChPos);
 
     if ChPos > OldPos then
     begin
-      IdxRec := New(PGetIdxStrRec);
-      IdxRec^.SIdx := OldPos;
-      IdxRec^.EIdx := ChPos;
-      AddFunction(Result, gftIndexedString, PtrUInt(@GetStr), PtrUInt(IdxRec)); // TODO: Kopier "rå" tekst
+      CreateIndexedString(OldPos, ChPos);
       OldPos := ChPos;
       Continue;
     end;
 
-    Escaped := FormatStr[ChPos] = '\';
+    {
+    %f Returns the Field Name (even if it not shown on the form)
+    %q Returns the Field Question
+    %v Returns the label part of a valuelabel if availble (even if the label is not shown on the form)
+    %l Returns the label part of a valuelabel if exists otherwise returns data for the record
+    %d Returns the current data for the record (or blank if no data)
+
+    %t Inserts a “tab” into the text
+    %n Inserts a “newline” into the text (usefull for have eg. each field on a seperate line)
+    %% Insert the character “%” into the text (otherwise the program interprets the % as a specifier.
+
+    %gd Include current date and time
+    %gn Include project file including full path
+    %gc Include project cycle no.
+    %gp Include project title
+    %gf Include dataform name
+
+    Applied to "copy field to clipboard" - ignored on "copy record to clipboard":
+    %gk : include any key defined for current dataform (only applies to
+    will be with field name, e.g. key id: 100 datevisit: 18-9-2015 childno: 3
+    }
+
     Inc(ChPos);
     case UpCase(FormatStr[ChPos]) of
       'F': AddFunction(Result, gftFieldEdit, PtrUInt(@GetF), 0);
       'Q': AddFunction(Result, gftFieldEdit, PtrUInt(@GetQ), 0);
-      'D': AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
       'V': AddFunction(Result, gftFieldEdit, PtrUInt(@GetV), 0);
       'L': AddFunction(Result, gftFieldEdit, PtrUInt(@GetL), 0);
-      'N': AddFunction(Result, gftFieldEdit, PtrUInt(@GetN), 0);
+      'D': AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
       'T': AddFunction(Result, gftFieldEdit, PtrUInt(@GetT), 0);
+      'N': AddFunction(Result, gftFieldEdit, PtrUInt(@GetN), 0);
+      '%': CreateIndexedString(OldPos, ChPos);
+      'G': begin
+             Inc(ChPos);
+             case UpCase(FormatStr[ChPos]) of
+               'D': Include(Globals, ggfCurrentDate);
+               'F': Include(Globals, ggfDataFormName);
+               'C': Include(Globals, ggfCycleNo);
+               'P': Include(Globals, ggfProjectName);
+               'N': Include(Globals, ggfFileName);
+               'K': Include(Globals, ggfKeyFields);
+             else
+               // ERROR
+             end;
+           end;
     else
       // ERROR!
     end;

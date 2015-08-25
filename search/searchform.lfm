@@ -10,7 +10,7 @@ object SearchForm1: TSearchForm1
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.5'
   object ComboBox6: TComboBox
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Label4
@@ -18,8 +18,8 @@ object SearchForm1: TSearchForm1
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 29
-    Top = 30
+    Height = 27
+    Top = 27
     Width = 631
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10
@@ -33,9 +33,9 @@ object SearchForm1: TSearchForm1
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 10
-    Height = 18
+    Height = 15
     Top = 10
-    Width = 123
+    Width = 120
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Previous searches:'
@@ -50,27 +50,27 @@ object SearchForm1: TSearchForm1
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = CurSearchGrpBox
     Left = 10
-    Height = 280
-    Top = 69
+    Height = 285
+    Top = 64
     Width = 631
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
     BorderSpacing.Bottom = 2
-    ClientHeight = 276
+    ClientHeight = 281
     ClientWidth = 627
     TabOrder = 1
     object ScrollBox1: TScrollBox
       Left = 0
-      Height = 276
+      Height = 281
       Top = 0
       Width = 627
-      HorzScrollBar.Page = 627
-      VertScrollBar.Page = 276
+      HorzScrollBar.Page = 77
+      VertScrollBar.Page = 59
       Align = alClient
       BorderStyle = bsNone
-      ClientHeight = 276
+      ClientHeight = 281
       ClientWidth = 627
       TabOrder = 0
       object Label1: TLabel
@@ -78,9 +78,9 @@ object SearchForm1: TSearchForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = TopBevel
         Left = 96
-        Height = 18
-        Top = 10
-        Width = 36
+        Height = 15
+        Top = 13
+        Width = 32
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -92,9 +92,9 @@ object SearchForm1: TSearchForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = TopBevel
         Left = 250
-        Height = 18
-        Top = 10
-        Width = 95
+        Height = 15
+        Top = 13
+        Width = 91
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -106,9 +106,9 @@ object SearchForm1: TSearchForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = TopBevel
         Left = 422
-        Height = 18
-        Top = 10
-        Width = 41
+        Height = 15
+        Top = 13
+        Width = 39
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Bottom = 5
@@ -147,7 +147,7 @@ object SearchForm1: TSearchForm1
         AnchorSideBottom.Control = ScrollBox1
         AnchorSideBottom.Side = asrBottom
         Left = 88
-        Height = 234
+        Height = 239
         Top = 40
         Width = 3
         Anchors = [akTop, akLeft, akBottom]
@@ -160,7 +160,7 @@ object SearchForm1: TSearchForm1
         AnchorSideBottom.Control = ScrollBox1
         AnchorSideBottom.Side = asrBottom
         Left = 242
-        Height = 234
+        Height = 239
         Top = 40
         Width = 3
         Anchors = [akTop, akBottom]
@@ -173,7 +173,7 @@ object SearchForm1: TSearchForm1
         AnchorSideBottom.Control = ScrollBox1
         AnchorSideBottom.Side = asrBottom
         Left = 414
-        Height = 234
+        Height = 239
         Top = 40
         Width = 3
         Anchors = [akTop, akBottom]
@@ -186,7 +186,7 @@ object SearchForm1: TSearchForm1
         AnchorSideBottom.Control = ScrollBox1
         AnchorSideBottom.Side = asrBottom
         Left = 563
-        Height = 234
+        Height = 239
         Top = 40
         Width = 3
         Anchors = [akTop, akRight, akBottom]
@@ -239,9 +239,9 @@ object SearchForm1: TSearchForm1
         AnchorSideLeft.Control = TopBevel
         AnchorSideBottom.Control = TopBevel
         Left = 10
-        Height = 18
-        Top = 10
-        Width = 69
+        Height = 15
+        Top = 13
+        Width = 67
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 5
         Caption = 'Operation:'
@@ -293,7 +293,6 @@ object SearchForm1: TSearchForm1
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
-        NumGlyphs = 0
         OnClick = AddBtnClick
       end
       object DelBtn: TSpeedButton
@@ -341,7 +340,6 @@ object SearchForm1: TSearchForm1
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
-        NumGlyphs = 0
         OnClick = DelBtnClick
       end
     end
@@ -369,7 +367,7 @@ object SearchForm1: TSearchForm1
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 78
+    ClientHeight = 80
     ClientWidth = 311
     ItemIndex = 0
     Items.Strings = (
@@ -405,7 +403,7 @@ object SearchForm1: TSearchForm1
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 78
+    ClientHeight = 80
     ClientWidth = 306
     ItemIndex = 0
     Items.Strings = (
@@ -439,10 +437,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      Left = 605
-      Height = 29
-      Top = 11
-      Width = 35
+      Left = 606
+      Height = 27
+      Top = 12
+      Width = 34
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -455,10 +453,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = ListBtn
-      Left = 556
-      Height = 29
-      Top = 11
-      Width = 39
+      Left = 559
+      Height = 27
+      Top = 12
+      Width = 37
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -471,10 +469,10 @@ object SearchForm1: TSearchForm1
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = FindBtn
-      Left = 467
-      Height = 32
-      Top = 9
-      Width = 79
+      Left = 468
+      Height = 34
+      Top = 8
+      Width = 81
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10
@@ -499,17 +497,17 @@ object SearchForm1: TSearchForm1
     BorderSpacing.Right = 10
     BorderSpacing.Bottom = 5
     Caption = 'Current Search'
-    ClientHeight = 38
+    ClientHeight = 40
     ClientWidth = 627
     TabOrder = 2
     object Panel2: TPanel
       Left = 0
-      Height = 38
+      Height = 40
       Top = 0
       Width = 627
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 38
+      ClientHeight = 40
       ClientWidth = 627
       Color = clWhite
       ParentColor = False
@@ -519,9 +517,9 @@ object SearchForm1: TSearchForm1
         AnchorSideTop.Control = Panel2
         AnchorSideTop.Side = asrCenter
         Left = 10
-        Height = 18
-        Top = 10
-        Width = 80
+        Height = 15
+        Top = 13
+        Width = 79
         BorderSpacing.Left = 10
         Caption = 'SearchLabel'
         ParentColor = False

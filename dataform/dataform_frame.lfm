@@ -598,6 +598,11 @@ object DataFormFrame: TDataFormFrame
       OnExecute = DeleteRecordActionExecute
       OnUpdate = DeleteRecordActionUpdate
     end
+    object CopyFieldToClipboardAction: TAction
+      Category = 'File'
+      Caption = 'Copy Field To Clipboard'
+      OnExecute = CopyFieldToClipboardActionExecute
+    end
   end
   object PrintDialog1: TPrintDialog
     left = 211

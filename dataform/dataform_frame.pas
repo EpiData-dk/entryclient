@@ -67,6 +67,7 @@ type
     FirstRecSpeedButton: TSpeedButton;
     NextRecSpeedButton: TSpeedButton;
     LastRecSpeedButton: TSpeedButton;
+    CopyFieldToClipboardAction: TAction;
     procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -100,6 +101,7 @@ type
     procedure RecordEditEditingDone(Sender: TObject);
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
+    procedure CopyFieldToClipboardActionExecute(Sender: TObject);
   private
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
@@ -119,7 +121,7 @@ type
     function  ControlFromEpiControl(EpiControl: TEpiCustomItem): TControl;
     function  FieldEditFromField(Field: TEpiField): TFieldEdit;
     procedure DoPrintDataForm(WithData: boolean);
-    procedure DoCopyToClipBoard;
+    procedure DoCopyToClipBoard(Const SingleField: Boolean);
   private
     { Hint }
     FHintWindow: THintWindow;
@@ -349,7 +351,7 @@ end;
 
 procedure TDataFormFrame.CopyToClipBoardActionExecute(Sender: TObject);
 begin
-  DoCopyToClipBoard;
+  DoCopyToClipBoard(false);
 end;
 
 procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
@@ -410,8 +412,8 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
-  Idx := Min(RecNo, FLocalToDFIndex.Size) - 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo - 1, true);
 end;
 
 procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
@@ -553,6 +555,11 @@ begin
     ShowNotes(TFieldEdit(MainForm.ActiveControl), true);
 end;
 
+procedure TDataFormFrame.CopyFieldToClipboardActionExecute(Sender: TObject);
+begin
+  DoCopyToClipBoard(true);
+end;
+
 procedure TDataFormFrame.UpdateIndexFields;
 var
   MasterKFs: TEpiFields;
@@ -614,13 +621,32 @@ var
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdForward;
-  Idx := Min(RecNo, FDataFile.Size) + 1;
-  DoPerformSearch(FRecentSearch, Idx, true);
+  FRecentSearch.Origin    := soCurrent;
+  DoPerformSearch(FRecentSearch, RecNo + 1, true);
 end;
 
 procedure TDataFormFrame.FindRecordActionExecute(Sender: TObject);
+var
+  Search: TEpiSearch;
+  SC: TEpiSearchCondition;
 begin
-  DoSearchForm(nil);
+  Search := TEpiSearch.Create;
+  Search.DataFile := DataFile;
+  Search.Direction := sdForward;
+  Search.Origin := soBeginning;
+
+  SC := TEpiSearchCondition.Create;
+  SC.BinOp := boAnd;
+  SC.Field := FCurrentEdit.Field;
+  SC.Text  := FCurrentEdit.Text;
+  SC.CaseSensitive := false;
+  if FCurrentEdit.Field.FieldType in StringFieldTypes then
+    SC.MatchCriteria := mcContains
+  else
+    SC.MatchCriteria := mcEq;
+  Search.List.Add(SC);
+
+  DoSearchForm(Search);
 end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
@@ -890,6 +916,7 @@ begin
   FindPrevAction.ShortCut := D_SearchRepeatBackward;
   FindFastListAction.ShortCut := D_SearchRecordList;
   CopyToClipBoardAction.ShortCut := D_CopyRecordToClipBoard;
+  CopyFieldToClipboardAction.ShortCut := D_CopyFieldToClipBoard;
   PrintDataFormAction.ShortCut   := D_PrintForm;
   PrintDataFormWithDataAction.ShortCut := D_PrintFormWithData;
 end;
@@ -1066,7 +1093,13 @@ begin
   // index to SearchFindNext MUST be in Datafile record number
 
   // This should only be the case when FLocalToDFIndex.Size = 0
-  if Index < FLocalToDFIndex.Size then
+  if Index >= FLocalToDFIndex.Size then
+    Exit(-1);
+
+  if Index < 0 then
+    Exit(-1);
+
+//  if Index < FLocalToDFIndex.Size then
     Index := FLocalToDFIndex.AsInteger[Index];
 
   Result := SearchFindNext(Search, Index);
@@ -1399,38 +1432,87 @@ end;
 
 {$I dataform_getfunctions.inc}
 
-procedure TDataFormFrame.DoCopyToClipBoard;
+procedure TDataFormFrame.DoCopyToClipBoard(const SingleField: Boolean);
 var
   i: integer;
   Functions: TGetFunctions;
   S: String;
   l: Integer;
-  j: Integer;
+  Globals: TGetGlobalFuncSet;
+  F: TEpiField;
+  S1: String;
+
+  function FunctionsCall(Const FE: TFieldEdit): String;
+  var
+    j: Integer;
+  begin
+    Result := '';
+
+    for j := 0 to l - 1 do
+      with Functions[j] do
+        case FuncType of
+          gftIndexedString:
+            Result += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
+          gftFieldEdit:
+            Result += TGetFEFunction(FuncPtr)(FE);
+        end;
+  end;
+
 begin
-  Functions := DecodeFormat(EntrySettings.CopyToClipBoardFormat);
+  Functions := DecodeFormat(EntrySettings.CopyToClipBoardFormat, Globals);
   l := Length(Functions);
 
   S := '';
-  for i := 0 to DataFile.Fields.Count -1 do
-  begin
-    for j := 0 to l - 1 do
-    with Functions[j] do
-    case FuncType of
-      gftIndexedString:
-        S += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
-      gftFieldEdit:
-        S += TGetFEFunction(FuncPtr)(FieldEditFromField(DataFile.Field[i]));
+  if ggfCurrentDate in Globals
+  then
+    S += DateTimeToStr(Now) + LineEnding;
+
+  if ggfFileName in Globals
+  then
+    S += 'File: ' + MainForm.ActiveFrame.DocumentFile.FileName;
+
+  if ggfCycleNo in Globals
+  then
+    S += Format(' (cycle %d)', [MainForm.ActiveFrame.EpiDocument.CycleNo]) + LineEnding
+  else
+    if (ggfFileName in Globals) then S += LineEnding;
+
+  if ggfProjectName  in Globals
+  then
+    S += 'Title: ' + MainForm.ActiveFrame.EpiDocument.Study.Title.Text + LineEnding;
+
+  if (ggfDataFormName in Globals) and
+     (FDataFile.Caption.Text <> '')
+  then
+    S += 'Dataform: ' + FDataFile.Caption.Text + LineEnding;
+
+  if (SingleField) and
+     (ggfKeyFields in Globals) and
+     (DataFile.KeyFields.Count > 0)
+  then
+    begin
+      S += 'KEY: ';
+      for F in DataFile.KeyFields do
+        S += F.Name + '=' + FieldEditFromField(F).Text + ' ';
+
+      TrimRight(S);
+      S += LineEnding;
     end;
-  end;
+
+  if SingleField then
+    S += FunctionsCall(FCurrentEdit)
+  else
+    for i := 0 to DataFile.Fields.Count -1 do
+      begin
+        S += FunctionsCall(FieldEditFromField(DataFile.Field[i]));
+      end;
+
+  S := TrimRight(S);
   Clipboard.AsText := S;
 end;
 
 procedure TDataFormFrame.DoPerformSearch(Search: TEpiSearch; Idx: Integer;
   Wrap: boolean);
-var
-  H: THintWindow;
-  R: TRect;
-  P: TPoint;
 begin
   if not Assigned(Search) then exit;
 
@@ -2287,17 +2369,6 @@ begin
       fxtJump:
         ; // Do nothing - NextFieldEdit is set.
     end;
-{
-    if not Assigned(NextFieldEdit) then
-      NextFieldEdit := NewOrNextRecord;
-
-    if not Assigned(NextFieldEdit) then
-      Exit;
-
-    FieldEnterFlow(NextFieldEdit);
-    NextFieldEdit.SetFocus;
-    Key := VK_UNKNOWN;          }
-
 
     if not Assigned(NextFieldEdit)
     then
@@ -2839,8 +2910,13 @@ begin
   VLForm.Top := P.Y;
   VLForm.Left := P.X;
   result := VLForm.ShowModal = mrOK;
+
   if Result then
+  begin
     AFieldEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
+    Modified := true;
+  end;
+
   VLForm.Free;
 end;
 
