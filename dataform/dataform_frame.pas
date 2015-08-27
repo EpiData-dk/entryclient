@@ -81,13 +81,11 @@ type
     procedure FindPrevActionExecute(Sender: TObject);
     procedure FirstFieldActionExecute(Sender: TObject);
     procedure FirstRecActionExecute(Sender: TObject);
-    procedure FirstRecActionUpdate(Sender: TObject);
     procedure GotoRecordActionExecute(Sender: TObject);
     procedure JumpNextRecActionExecute(Sender: TObject);
     procedure JumpPrevRecActionExecute(Sender: TObject);
     procedure LastFieldActionExecute(Sender: TObject);
     procedure LastRecActionExecute(Sender: TObject);
-    procedure LastRecActionUpdate(Sender: TObject);
     procedure NewRecordActionExecute(Sender: TObject);
     procedure NewRecordActionUpdate(Sender: TObject);
     procedure NextRecActionExecute(Sender: TObject);
@@ -102,6 +100,7 @@ type
     procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure CopyFieldToClipboardActionExecute(Sender: TObject);
+    procedure NoViewDataActionUpdate(Sender: TObject);
   private
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
@@ -253,7 +252,7 @@ uses
   searchform, resultlist_form, shortcuts, control_types,
   Printers, OSPrinters, Clipbrd, setting_types,
   entrylabel, entrysection, project_frame,
-  notes_report, epireport_generator_txt,
+  notes_report, epireport_generator_txt, admin_authenticator, epirights,
   strutils;
 
 const
@@ -345,8 +344,8 @@ end;
 procedure TDataFormFrame.DeleteRecordActionUpdate(Sender: TObject);
 begin
   TAction(Sender).Enabled :=
-//    (RecNo <> NewRecord) and
-    (FParentRecordState <> rsDeleted);
+    (FParentRecordState <> rsDeleted) and
+    (Authenticator.IsAuthorizedEntry(DataFile, [eerDelete]));
 end;
 
 procedure TDataFormFrame.CopyToClipBoardActionExecute(Sender: TObject);
@@ -416,11 +415,6 @@ begin
   DoPerformSearch(FRecentSearch, RecNo - 1, true);
 end;
 
-procedure TDataFormFrame.FirstRecActionUpdate(Sender: TObject);
-begin
-  //TAction(Sender).Enabled := (RecNo > 0) and (FLocalToDFIndex.Size > 0);
-end;
-
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
 begin
   RecordEdit.SetFocus;
@@ -451,11 +445,6 @@ begin
   RecNo := FLocalToDFIndex.Size - 1;
 end;
 
-procedure TDataFormFrame.LastRecActionUpdate(Sender: TObject);
-begin
-  //(Sender as TAction).Enabled := RecNo < (FLocalToDFIndex.Size - 1);
-end;
-
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
 var
   FE: TFieldEdit;
@@ -475,12 +464,9 @@ procedure TDataFormFrame.NewRecordActionUpdate(Sender: TObject);
 var
   B: Boolean;
 begin
-  B := (FParentRecordState <> rsDeleted);
-  {B := B and
-       (
-        (RecNo <> NewRecord) or
-        ((RecNo = NewRecord) and (Modified))
-       );}
+  B := (FParentRecordState <> rsDeleted) and
+       (Authenticator.IsAuthorizedEntry(DataFile, [eerCreate]));
+
   if (IsDetailRelation) and
      (DetailRelation.MaxRecordCount > 0)
   then
@@ -558,6 +544,11 @@ end;
 procedure TDataFormFrame.CopyFieldToClipboardActionExecute(Sender: TObject);
 begin
   DoCopyToClipBoard(true);
+end;
+
+procedure TDataFormFrame.NoViewDataActionUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled := Authenticator.IsAuthorizedEntry(DataFile, [eerRead]);
 end;
 
 procedure TDataFormFrame.UpdateIndexFields;
@@ -861,7 +852,8 @@ begin
      (IsDetailRelation and
       (DataFile.KeyFields.IndexOf(Field) >= 0) and
       (Assigned(GetMasterDataForm.DataFile.KeyFields.FieldByName[Field.Name]))
-     )
+     ) or
+     (not Authenticator.IsAuthorizedEntry(DataFile, [eerUpdate]))
   then
     Result.Enabled := false;
 
@@ -1818,51 +1810,52 @@ begin
   if (RecNo = NewRecord) or
      (RecNo = (FLocalToDFIndex.Size - 1))
   then
-  begin
-    // If we have reached the maximum number of possible records then???
-    if IsDetailRelation then
     begin
-      // If we are entering a new record, then size of datafile/localindex is
-      // 1 records to short (it is not yet commited).
-      B :=
-        (RecNo = NewRecord) and
-        ((FLocalToDFIndex.Size + 1) = DetailRelation.MaxRecordCount);
-
-      // If we are editing the last record localindex/datafile size is correct
-      // size.
-      B := B or
-         (
-          (RecNo = FLocalToDFIndex.Size - 1) and
-          (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
-         );
-
-      // DataFile settings has presedence over ReachedLastRecord setting.
-      B := B or (DataFile.AfterRecordState = arsReturnToParent);
-
-      if B then
+      // If we have reached the maximum number of possible records then???
+      if IsDetailRelation then
       begin
-        if (DataFile.AfterRecordState in [arsReturnToParent, arsReturnToParentOnMax])
-        then
-          PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 2)
-        else begin
-          DoNewRecord;
-          RecNo := FLocalToDFIndex.Size -1;
-        end;
-        Exit;
-      end;
-    end;
+        // If we are entering a new record, then size of datafile/localindex is
+        // 1 records to short (it is not yet commited).
+        B :=
+          (RecNo = NewRecord) and
+          ((FLocalToDFIndex.Size + 1) = DetailRelation.MaxRecordCount);
 
-    // This was not the last possible record to enter,
-    // try to do a new record!
-    if not DoNewRecord then exit;
-  end else
-  begin
-    CRecNo := RecNo;
-    RecNo := RecNo + 1;
-    // if the recno was not changed a validation failed, hence do not
-    // shift focus field, etc...
-    if CRecNo = RecNo then exit;
-  end;
+        // If we are editing the last record localindex/datafile size is correct
+        // size.
+        B := B or
+           (
+            (RecNo = FLocalToDFIndex.Size - 1) and
+            (FLocalToDFIndex.Size = DetailRelation.MaxRecordCount)
+           );
+
+        // DataFile settings has presedence over ReachedLastRecord setting.
+        B := B or (DataFile.AfterRecordState = arsReturnToParent);
+
+        if B then
+        begin
+          if (DataFile.AfterRecordState in [arsReturnToParent, arsReturnToParentOnMax])
+          then
+            PostMessage(Parent.Handle, LM_PROJECT_RELATE, WPARAM(DetailRelation.MasterRelation), 2)
+          else begin
+            DoNewRecord;
+            RecNo := FLocalToDFIndex.Size -1;
+          end;
+          Exit;
+        end;
+      end;
+
+      // This was not the last possible record to enter,
+      // try to do a new record!
+      if not DoNewRecord then exit;
+    end
+  else
+    begin
+      CRecNo := RecNo;
+      RecNo := RecNo + 1;
+      // if the recno was not changed a validation failed, hence do not
+      // shift focus field, etc...
+      if CRecNo = RecNo then exit;
+    end;
   Result := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
 end;
 

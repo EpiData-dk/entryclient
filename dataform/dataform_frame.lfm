@@ -466,7 +466,7 @@ object DataFormFrame: TDataFormFrame
       Caption = 'First Record'
       Hint = 'First Record'
       OnExecute = FirstRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object FirstFieldAction: TAction
       Category = 'Field'
@@ -492,34 +492,34 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'Skip to prev records'
       OnExecute = JumpPrevRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object PrevRecAction: TAction
       Category = 'Record'
       Caption = 'Previous Record'
       Hint = 'Previous Record'
       OnExecute = PrevRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object NextRecAction: TAction
       Category = 'Record'
       Caption = 'Next Record'
       Hint = 'Next Record'
       OnExecute = NextRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object JumpNextRecAction: TAction
       Category = 'Record'
       Caption = 'JumpNextRecAction'
       OnExecute = JumpNextRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object LastRecAction: TAction
       Category = 'Record'
       Caption = 'Last Record'
       Hint = 'Last Record'
       OnExecute = LastRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object NewRecordAction: TAction
       Category = 'Record'
@@ -532,6 +532,7 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'Goto Record'
       OnExecute = GotoRecordActionExecute
+      OnUpdate = NoViewDataActionUpdate
     end
     object FindRecordAction: TAction
       Category = 'Browse'

@@ -131,6 +131,7 @@ uses
   epiv_datamodule,
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
+  epiadmin, admin_authenticator,
   RegExpr, LazUTF8, entryprocs;
 
 type
@@ -269,11 +270,31 @@ begin
       FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
+
       if not FDocumentFile.OpenFile(AFileName) then
       begin
         FreeAndNil(FDocumentFile);
         Exit;
       end;
+
+      Authenticator := TAuthenticator.Create(FDocumentFile);
+
+      if Assigned(FDocumentFile) and
+         Assigned(FDocumentFile.AuthedUser) and
+         (not Authenticator.IsAuthorizedManager([earViewData]))
+      then
+        begin
+          MessageDlg(
+            'Error',
+            'You do not have the required administrative rights' + LineEnding +
+              'to view the data in this project!',
+            mtError,
+            [mbOK],
+            0
+          );
+          FreeAndNil(FDocumentFile);
+          Exit;
+        end;
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened
@@ -1039,7 +1060,9 @@ end;
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
   result := DoOpenProject(aFilename);
-  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
+
+  if Result then
+    LoadSplitterPosition(Splitter1, 'ProjectSplitter');
 end;
 
 procedure TProjectFrame.UpdateSettings;

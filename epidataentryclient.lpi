@@ -144,6 +144,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/admin.ini -r=~/.config/epidata/recent.admin.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="7">
@@ -174,7 +175,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="34">
+    <Units Count="35">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -359,6 +360,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit33>
+      <Unit34>
+        <Filename Value="admin/admin_authenticator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -368,7 +373,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-      <OtherUnitFiles Value="dataform;settings;search;utils"/>
+      <OtherUnitFiles Value="dataform;settings;search;utils;admin"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
