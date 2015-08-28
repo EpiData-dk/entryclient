@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="16"/>
+      <BuildNr Value="17"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="TRUNK"/>
@@ -33,7 +33,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-            <OtherUnitFiles Value="dataform;settings;search;utils"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils;admin"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
