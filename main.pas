@@ -80,6 +80,7 @@ type
     MainFormPageControl: TPageControl;
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
+    CopyFieldToClpMenuItem: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
@@ -322,7 +323,8 @@ begin
   FileMenuDivider2.Visible      := Assigned(FActiveFrame);
 
   // EDIT:
-  CopyRecToClpMenuItem.Visible := Assigned(FActiveFrame);
+  CopyRecToClpMenuItem.Visible   := Assigned(FActiveFrame);
+  CopyFieldToClpMenuItem.Visible := Assigned(FActiveFrame);
 
   // BROWSE:
   BrowseMenu.Visible            := Assigned(FActiveFrame);

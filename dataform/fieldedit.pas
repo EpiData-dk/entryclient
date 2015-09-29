@@ -192,7 +192,7 @@ begin
   TmpFont.Assign(Cv.Font);
   Cv.Font.Assign(Self.Font);
   //         Side buffer (pixel from controls left side to first character.
-  Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * FField.Length;
+  Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * Min(FField.Length, 50);
   Cv.Font.Assign(TmpFont);
   TmpFont.Free;
 

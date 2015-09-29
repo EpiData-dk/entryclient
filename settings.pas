@@ -464,7 +464,7 @@ const
     MultipleInstances:      false;
     ShowWorkToolbar:        true;
     NotesDisplay:           0;
-    CopyToClipBoardFormat: '%f\t%q\t%d\t%v\n';
+    CopyToClipBoardFormat: '%f%t%q%t%d%t%v%n';
     ValueLabelsAsNotes:    true;
     CheckForUpdates:       true;
     DaysBetweenChecks:     7;

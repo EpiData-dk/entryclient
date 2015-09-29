@@ -108,6 +108,9 @@ object MainForm: TMainForm
       object CopyRecToClpMenuItem: TMenuItem
         Caption = 'RecordToClipBoard'
       end
+      object CopyFieldToClpMenuItem: TMenuItem
+        Caption = 'FieldToClipBoard'
+      end
     end
     object BrowseMenu: TMenuItem
       Caption = '&Browse Data'
