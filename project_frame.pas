@@ -403,6 +403,7 @@ begin
 
     // Edit menu
     CopyRecToClpMenuItem.Action := Frame.CopyToClipBoardAction;
+    CopyFieldToClpMenuItem.Action := FRame.CopyFieldToClipboardAction;
 
     // Goto menu
     GotoRecordMenuItem.Action  := Frame.GotoRecordAction;
