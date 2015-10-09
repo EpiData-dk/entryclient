@@ -62,12 +62,8 @@ type
     DeleteRecSpeedButton: TSpeedButton;
     RecActionPanel: TPanel;
     RecordEdit: TEdit;
-    PrevRecSpeedButton: TSpeedButton;
     InformationPanel: TPanel;
     NavigationPanel: TPanel;
-    FirstRecSpeedButton: TSpeedButton;
-    NextRecSpeedButton: TSpeedButton;
-    LastRecSpeedButton: TSpeedButton;
     CopyFieldToClipboardAction: TAction;
     procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
@@ -236,6 +232,7 @@ type
     property  TreeNode: PVirtualNode read FTreeNode write FTreeNode;
     property  OnModified: TNotifyEvent read FOnModified write FOnModified;
     property  OnRecordChanged: TNotifyEvent read FOnRecordChanged write FOnRecordChanged;
+    property  MasterDataform: TDataFormFrame read GetMasterDataForm;
   end;
 
 const

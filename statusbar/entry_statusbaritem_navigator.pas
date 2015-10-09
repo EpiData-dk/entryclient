@@ -11,20 +11,20 @@ type
 
   { TEntryClientStatusBarNavigator }
 
-  TEntryClientStatusBarNavigator = class(TEpiVCustomStatusBarItem)
+  TEntryClientStatusBarNavigator = class(TEntryClientStatusBarItem)
   private
     FFirstBtn: TSpeedButton;
     FPrevBtn: TSpeedButton;
     FRecordStatus: TEdit;
     FNextBtn: TSpeedButton;
     FLastBtn: TSpeedButton;
-    function  GetStatusbar: TEntryClientStatusBar;
+    FSpeedBtnBitmapInit: boolean;
     procedure UpdateSpeedBtns;
     procedure RecordStatusEditDone(Sender: TObject);
     procedure UpdateRecordEdit;
   protected
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
-    property  Statusbar: TEntryClientStatusBar read GetStatusbar;
+    procedure Update(Condition: TEntryClientStatusbarUpdateCondition); override;
   public
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     function GetPreferedWidth: Integer; override;
@@ -33,22 +33,26 @@ type
 
 implementation
 
+{$ *.rc}
+
 uses
-  Graphics, Controls;
+  Graphics, Controls, dataform_frame;
 
 { TEntryClientStatusBarNavigator }
 
 procedure TEntryClientStatusBarNavigator.UpdateSpeedBtns;
 begin
-  Statusbar.DataForm.ImageList1.GetBitmap(0, FFirstBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(1, FLastBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(2, FNextBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(3, FPrevBtn.Glyph);
-
   FFirstBtn.Action := Statusbar.DataForm.FirstRecAction;
   FPrevBtn.Action  := Statusbar.DataForm.PrevRecAction;
   FNextBtn.Action  := Statusbar.DataForm.NextRecAction;
   FLastBtn.Action  := Statusbar.DataForm.LastRecAction;
+
+  if FSpeedBtnBitmapInit then exit;
+  Statusbar.DataForm.ImageList1.GetBitmap(0, FFirstBtn.Glyph);
+  Statusbar.DataForm.ImageList1.GetBitmap(1, FLastBtn.Glyph);
+  Statusbar.DataForm.ImageList1.GetBitmap(2, FNextBtn.Glyph);
+  Statusbar.DataForm.ImageList1.GetBitmap(3, FPrevBtn.Glyph);
+  FSpeedBtnBitmapInit := true;
 end;
 
 procedure TEntryClientStatusBarNavigator.RecordStatusEditDone(Sender: TObject);
@@ -67,13 +71,33 @@ begin
 end;
 
 procedure TEntryClientStatusBarNavigator.UpdateRecordEdit;
+var
+  IndexSize, RecNo: Integer;
+  S: String;
 begin
+  if (not Assigned(Statusbar.DataForm)) then
+    Exit;
 
-end;
+  IndexSize := Statusbar.DataForm.IndexedSize;
+  if IndexSize = 0 then
+  begin
+    FRecordStatus.Text := 'Empty';
+    Exit;
+  end;
 
-function TEntryClientStatusBarNavigator.GetStatusbar: TEntryClientStatusBar;
-begin
-  result := TEntryClientStatusBar(Inherited Statusbar);
+  if Statusbar.DataForm.Modified then
+    S := '*'
+  else
+    S := '';
+
+  RecNo := Statusbar.DataForm.RecNo;
+
+  if RecNo = NewRecord then
+    S := Format('New / %d %s', [IndexSize, S])
+  else
+    S := Format('%d / %d %s', [RecNo + 1, IndexSize, S]);
+
+  FRecordStatus.Text := Trim(S);
 end;
 
 procedure TEntryClientStatusBarNavigator.Update(
@@ -82,12 +106,22 @@ begin
   inherited Update(Condition);
 
   case Condition of
-    sucDefault: ;
-    sucCustom: UpdateSpeedBtns;
+    sucDefault:
+      UpdateRecordEdit;
     sucDocFile: ;
-    sucDataFile: ;
+    sucDataFile:
+      UpdateRecordEdit;
     sucSelection: ;
     sucSave: ;
+  end;
+end;
+
+procedure TEntryClientStatusBarNavigator.Update(
+  Condition: TEntryClientStatusbarUpdateCondition);
+begin
+  case Condition of
+    esucDataform:
+      UpdateSpeedBtns;
   end;
 end;
 
@@ -95,6 +129,7 @@ constructor TEntryClientStatusBarNavigator.Create(AStatusBar: TEpiVCustomStatusB
 begin
   inherited Create(AStatusBar);
 
+  FSpeedBtnBitmapInit := false;
   Panel.Color := clDefault;
 
   FFirstBtn := TSpeedButton.Create(Panel);

@@ -431,6 +431,7 @@ var
 begin
   // Invalidate updates the tree with new values/selectables
   DataFileTree.Invalidate;
+  FStatusBar.Update();
 
   Relation := TDataFormFrame(Sender).Relation;
 
@@ -965,6 +966,7 @@ begin
   FStatusBar.Align := alBottom;
   FStatusBar.Parent := Self;
   FStatusBar.Visible := false;
+  FStatusBar.Height := 30;
   FStatusBar.LoadSettings;
 
   FDocumentFile := nil;
