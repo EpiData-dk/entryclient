@@ -24,6 +24,7 @@ type
     FieldRangeLabel: TLabel;
     FieldLengthPanel: TPanel;
     FieldRangePanel: TPanel;
+    ImageList1: TImageList;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
     DeleteLabel: TLabel;
@@ -187,7 +188,7 @@ type
     FRelation: TEpiMasterRelation;
     function  GetDetailRelation: TEpiDetailRelation;
     function  GetIndexedRecNo: Integer;
-    function GetIndexedSize: Integer;
+    function  GetIndexedSize: Integer;
     procedure SetRelation(AValue: TEpiMasterRelation);
     procedure UpdateShortCuts;
     procedure UpdateNotesHints;
@@ -1189,6 +1190,7 @@ begin
   // Reset last related datafil, otherwise subsequest relates may end up in the wrong place
   FLastDataFileRelate := nil;
 
+  TProjectFrame(Parent).StatusBar.Update();
   Result := true;
 end;
 
@@ -2859,6 +2861,7 @@ end;
 procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);
 var
   S: String;
+  L: TEpiCustomList;
 begin
   with Field do
   begin
@@ -2888,6 +2891,11 @@ begin
     else
       FieldRangeLabel.Caption := '';
   end;
+
+  L := TEpiCustomList.Create(nil);
+  L.ItemOwner := false;
+  L.AddItem(Field);
+  TProjectFrame(Parent).StatusBar.Selection := L;
 end;
 
 function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;

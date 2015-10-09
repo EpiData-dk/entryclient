@@ -9,7 +9,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
   VirtualTrees, documentfile_ext, epicustombase, epidatafilerelations, Graphics,
-  StdCtrls, Menus, epidatafilestypes;
+  StdCtrls, Menus, epidatafilestypes, entry_statusbar;
 
 type
 
@@ -108,6 +108,10 @@ type
     procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
     procedure OpenRecentMenuItemClick(Sender: TObject);
     procedure UpdateRecentFilesDropDown;
+
+  { StatusBar}
+  private
+    FStatusBar: TEntryClientStatusBar;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -118,6 +122,7 @@ type
     function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
+    property    StatusBar: TEntryClientStatusBar read FStatusBar;
   public
     { Default position }
     class procedure RestoreDefaultPos(F: TProjectFrame);
@@ -128,7 +133,7 @@ implementation
 {$R *.lfm}
 
 uses
-  epiv_datamodule,
+  epiv_datamodule, epiv_custom_statusbar,
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
   epiadmin, admin_authenticator,
@@ -278,23 +283,6 @@ begin
       end;
 
       Authenticator := TAuthenticator.Create(FDocumentFile);
-
-      if Assigned(FDocumentFile) and
-         Assigned(FDocumentFile.AuthedUser) and
-         (not Authenticator.IsAuthorizedManager([earViewData]))
-      then
-        begin
-          MessageDlg(
-            'Error',
-            'You do not have the required administrative rights' + LineEnding +
-              'to view the data in this project!',
-            mtError,
-            [mbOK],
-            0
-          );
-          FreeAndNil(FDocumentFile);
-          Exit;
-        end;
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened
@@ -336,6 +324,7 @@ begin
 
 
     MainForm.BeginUpdateForm;
+    FStatusBar.DocFile := DocumentFile;
     try
       EpiDocument.OnModified := @EpiDocModified;
     except
@@ -366,6 +355,7 @@ begin
     Splitter1.Visible    := ProjectPanel.Visible;
 
     EpiDocument.Modified := false;
+    FStatusBar.Visible :=  true;
 
     AddToRecent(DocumentFile.FileName);
     UpdateMainCaption;
@@ -633,6 +623,7 @@ begin
     UpdateSettings;
     RelateInit(RelateReason, GetRecordState(Node^.Parent));
   end;
+  FStatusBar.DataForm := FrameFromNode(Node);
 
   Sender.Invalidate;
 end;
@@ -872,6 +863,7 @@ begin
   try
     DocumentFile.SaveFile(aFilename);
     AddToRecent(aFilename);
+    FStatusBar.Update(sucSave);
   finally
     Screen.Cursor := crDefault;
     Application.ProcessMessages;
@@ -968,6 +960,13 @@ end;
 constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+
+  FStatusBar := TEntryClientStatusBar.Create(Self);
+  FStatusBar.Align := alBottom;
+  FStatusBar.Parent := Self;
+  FStatusBar.Visible := false;
+  FStatusBar.LoadSettings;
+
   FDocumentFile := nil;
   FAllowForEndBackup := false;
   FRelateToParent := false;
