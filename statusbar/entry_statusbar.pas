@@ -46,6 +46,7 @@ implementation
 
 uses
   entry_statusbaritem_navigator,
+  entry_statusbaritem_keyvalues,
   epiv_statusbar_item_recordcount, epiv_statusbar_item_cycleno,
   epiv_statusbar_item_currentuser, epiv_statusbar_item_savetime,
   epiv_statusbar_item_selectionnames;

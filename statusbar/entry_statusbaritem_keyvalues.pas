@@ -14,7 +14,7 @@ type
 
   TEntryClientStatusBarKeyInformation = class(TEntryClientStatusBarItem)
   private
-
+    FKeyLabel: TLabel;
     procedure DoUpdate;
   protected
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
@@ -25,6 +25,9 @@ type
 
 implementation
 
+uses
+  Controls;
+
 { TEntryClientStatusBarKeyInformation }
 
 procedure TEntryClientStatusBarKeyInformation.DoUpdate;
@@ -33,31 +36,57 @@ var
   KFs: TEpiFields;
   RecNo: Integer;
   F: TEpiField;
+  S: String;
 begin
-  MasterDataForm := Statusbar.DataForm.MasterDataform
+  if not Assigned(Statusbar.DataForm) then exit;
 
-  if (not (Assigned(MasterDataForm)) then
+  MasterDataForm := Statusbar.DataForm.MasterDataform;
+
+  if (not (Assigned(MasterDataForm))) then
     MasterDataForm := Statusbar.DataForm;
 
   KFs := MasterDataForm.DataFile.KeyFields;
   RecNo := MasterDataForm.RecNo;
 
-  for F in KFs do
+  S := '';
+  if RecNo <> NewRecord then
   begin
+    for F in KFs do
+      S += '(' + F.Name + ': ' + F.AsString[RecNo] + '), ';
 
-  end;
+    Delete(S, Length(S) - 1, 2);
+  end else
+    S := 'No Key';
+
+  FKeyLabel.Caption := S;
 end;
 
 procedure TEntryClientStatusBarKeyInformation.Update(
   Condition: TEpiVCustomStatusbarUpdateCondition);
 begin
   inherited Update(Condition);
+
+  case Condition of
+    sucDefault:
+      DoUpdate;
+    sucDocFile: ;
+    sucDataFile:
+      DoUpdate;
+    sucSelection: ;
+    sucSave: ;
+  end;
 end;
 
 constructor TEntryClientStatusBarKeyInformation.Create(
   AStatusBar: TEpiVCustomStatusBar);
 begin
   inherited Create(AStatusBar);
+
+  FKeyLabel := TLabel.Create(Panel);
+  FKeyLabel.AnchorParallel(akLeft, 2, Panel);
+  FKeyLabel.AnchorVerticalCenterTo(Panel);
+  FKeyLabel.Caption := '';
+  FKeyLabel.Parent := Panel;
 end;
 
 function TEntryClientStatusBarKeyInformation.GetPreferedWidth: Integer;
@@ -68,8 +97,10 @@ begin
       Exit;
     end;
 
-  Result := FRecordsLabel.Left + FRecordsLabel.Width + 2;
+  Result := FKeyLabel.Left + FKeyLabel.Width + 2;
 end;
 
+initialization
+  EpiV_RegisterCustomStatusBarItem(TEntryClientStatusBarKeyInformation);
 end.
 
