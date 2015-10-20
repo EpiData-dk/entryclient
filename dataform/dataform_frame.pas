@@ -1222,6 +1222,7 @@ var
   i: Integer;
   S: String;
   Sz: TSize;
+  FE: TFieldEdit;
 
   function RecursiveFindControl(Const EpiCtrl: TEpiCustomControlItem;
     Const WinControl: TWinControl): TControl;
@@ -1366,6 +1367,8 @@ begin
       if CI is TEpiField then
       with TEpiField(CI) do
       begin
+        FE := FieldEditFromField(TEpiField(CI));
+
         // Draw box
         ARight := ALeft + Round(FieldEditFromField(TEpiField(CI)).Width * xscale);
         ATop := ABot - ((ABot - ATop) div 2);
@@ -1376,16 +1379,18 @@ begin
         Canvas.LineTo(ARight, ATop);
 
         // DATA!
-        if WithData and (RecNo <> NewRecord) then
+        if WithData and
+           (Trim(FE.Text) <> '')
+        then
         begin
           Canvas.TextOut(
             ALeft + Round(2 * xscale),
-            ABot - Canvas.TextHeight(FieldEditFromField(TEpiField(CI)).Text) - Round(2 * yscale),
-            FieldEditFromField(TEpiField(CI)).Text
+            ABot - Canvas.TextHeight(FE.Text) - Round(2 * yscale),
+            FE.Text
             );
         end;
 
-        IF trim(Question.Text)<>'' THEN
+        IF Trim(Question.Text)<>'' THEN
         BEGIN
           aLeft := ALeft - Round(5 * xscale) - Canvas.TextWidth(Question.Text);
           ATop := ABot - Canvas.TextHeight(Question.Text);
@@ -1401,12 +1406,12 @@ begin
 
         // VALUELABEL
         if WithData and
-           (RecNo <> NewRecord) and
-           (Assigned(ValueLabelSet))
+           (Assigned(ValueLabelSet)) and
+           (FE.Text <> '')
         then
         begin
           Canvas.Font.Color := EntrySettings.ValueLabelColour;
-          S := ValueLabelSet.ValueLabelString[FieldEditFromField(TEpiField(CI)).Text];
+          S := ValueLabelSet.ValueLabelString[FE.Text];
           ALeft := ARight + Round(5 * xscale);
           ATop := ABot - Canvas.TextHeight(S);
           Canvas.TextOut(ALeft, ATop, S);
