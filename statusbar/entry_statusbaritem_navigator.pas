@@ -5,7 +5,8 @@ unit entry_statusbaritem_navigator;
 interface
 
 uses
-  Classes, SysUtils, epiv_custom_statusbar, Buttons, StdCtrls, entry_statusbar;
+  Classes, SysUtils, epiv_custom_statusbar, Buttons, StdCtrls, entry_statusbar,
+  LMessages;
 
 type
 
@@ -25,6 +26,7 @@ type
   protected
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
     procedure Update(Condition: TEntryClientStatusbarUpdateCondition); override;
+    procedure IsShortCut(var Msg: TLMKey; var Handled: Boolean); override;
   public
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     function GetPreferedWidth: Integer; override;
@@ -36,22 +38,22 @@ implementation
 {$ *.rc}
 
 uses
-  Graphics, Controls, dataform_frame;
+  Graphics, Controls, dataform_frame, LCLType, LCLIntf;
 
 { TEntryClientStatusBarNavigator }
 
 procedure TEntryClientStatusBarNavigator.UpdateSpeedBtns;
 begin
-  FFirstBtn.Action := Statusbar.DataForm.FirstRecAction;
-  FPrevBtn.Action  := Statusbar.DataForm.PrevRecAction;
-  FNextBtn.Action  := Statusbar.DataForm.NextRecAction;
-  FLastBtn.Action  := Statusbar.DataForm.LastRecAction;
+  FFirstBtn.Action := DataForm.FirstRecAction;
+  FPrevBtn.Action  := DataForm.PrevRecAction;
+  FNextBtn.Action  := DataForm.NextRecAction;
+  FLastBtn.Action  := DataForm.LastRecAction;
 
   if FSpeedBtnBitmapInit then exit;
-  Statusbar.DataForm.ImageList1.GetBitmap(0, FFirstBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(1, FLastBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(2, FNextBtn.Glyph);
-  Statusbar.DataForm.ImageList1.GetBitmap(3, FPrevBtn.Glyph);
+  DataForm.ImageList1.GetBitmap(0, FFirstBtn.Glyph);
+  DataForm.ImageList1.GetBitmap(1, FLastBtn.Glyph);
+  DataForm.ImageList1.GetBitmap(2, FNextBtn.Glyph);
+  DataForm.ImageList1.GetBitmap(3, FPrevBtn.Glyph);
   FSpeedBtnBitmapInit := true;
 end;
 
@@ -66,8 +68,8 @@ begin
       Exit;
     end;
 
-  Statusbar.DataForm.RecNo := (AValue - 1);
-  Statusbar.DataForm.FirstFieldAction.Execute;
+  DataForm.RecNo := (AValue - 1);
+  DataForm.FirstFieldAction.Execute;
 end;
 
 procedure TEntryClientStatusBarNavigator.UpdateRecordEdit;
@@ -75,22 +77,22 @@ var
   IndexSize, RecNo: Integer;
   S: String;
 begin
-  if (not Assigned(Statusbar.DataForm)) then
+  if (not Assigned(DataForm)) then
     Exit;
 
-  IndexSize := Statusbar.DataForm.IndexedSize;
+  IndexSize := DataForm.IndexedSize;
   if IndexSize = 0 then
   begin
     FRecordStatus.Text := 'Empty';
     Exit;
   end;
 
-  if Statusbar.DataForm.Modified then
+  if DataForm.Modified then
     S := '*'
   else
     S := '';
 
-  RecNo := Statusbar.DataForm.RecNo;
+  RecNo := DataForm.RecNo;
 
   if RecNo = NewRecord then
     S := Format('New / %d %s', [IndexSize, S])
@@ -122,6 +124,22 @@ begin
   case Condition of
     esucDataform:
       UpdateSpeedBtns;
+  end;
+end;
+
+procedure TEntryClientStatusBarNavigator.IsShortCut(var Msg: TLMKey;
+  var Handled: Boolean);
+begin
+  with Msg do
+  begin
+    if (CharCode = VK_G) and
+       (MsgKeyDataToShiftState(KeyData) = [ssCtrl]) and
+       FRecordStatus.CanFocus
+    then
+    begin
+      FRecordStatus.SetFocus;
+      Handled := true;
+    end;
   end;
 end;
 
@@ -161,7 +179,7 @@ begin
     AnchorToNeighbour(akLeft, 1, FPrevBtn);
     AnchorVerticalCenterTo(Panel);
     Width := 120;
-    Height := 22;
+    Height := 20;
     Alignment := taCenter;
     Font.Size := 10;
     OnEditingDone := @RecordStatusEditDone;

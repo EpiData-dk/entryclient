@@ -103,6 +103,7 @@ type
     procedure ShowIntroActionExecute(Sender: TObject);
     procedure ShowShortCutsActionExecute(Sender: TObject);
     procedure WebTutorialsMenuItemClick(Sender: TObject);
+    procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
   private
     { private declarations }
     FActiveFrame: TProjectFrame;
@@ -216,6 +217,12 @@ end;
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
 begin
   OpenURL(EntrySettings.TutorialURLUTF8);
+end;
+
+procedure TMainForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+begin
+  if Assigned(FActiveFrame) then
+    FActiveFrame.IsShortCut(Msg, Handled);
 end;
 
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);

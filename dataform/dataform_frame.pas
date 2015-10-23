@@ -194,6 +194,7 @@ type
     procedure CommitFields;
     procedure UpdateSettings;
     procedure CloseQuery(var CanClose: boolean);
+    procedure IsShortCut(var Msg: TLMKey; var Handled: Boolean);
     property  DataFile: TEpiDataFile read FDataFile write SetDataFile;
     property  Relation: TEpiMasterRelation read FRelation write SetRelation;
     property  DetailRelation: TEpiDetailRelation read GetDetailRelation;
@@ -897,7 +898,7 @@ begin
   JumpNextRecAction.ShortCut := D_MoveSkipNextRec;
   LastRecAction.ShortCut := D_MoveLastRec;
   NewRecordAction.ShortCut := D_NewRec;
-  GotoRecordAction.ShortCut := D_GotoRec;
+//  GotoRecordAction.ShortCut := D_GotoRec;
   PageUpAction.ShortCut := D_SideUp;
   PageDownAction.ShortCut := D_SideDown;
   FindRecordAction.ShortCut := D_SearchRecordEmpty;
@@ -2230,6 +2231,11 @@ begin
               end;
     mrNo:     Modified := false; // Do nothing
   end;
+end;
+
+procedure TDataFormFrame.IsShortCut(var Msg: TLMKey; var Handled: Boolean);
+begin
+  //
 end;
 
 function TDataFormFrame.NextUsableFieldIndex(const Index: integer;

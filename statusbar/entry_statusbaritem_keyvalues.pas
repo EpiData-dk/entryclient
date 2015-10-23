@@ -38,12 +38,12 @@ var
   F: TEpiField;
   S: String;
 begin
-  if not Assigned(Statusbar.DataForm) then exit;
+  if not Assigned(DataForm) then exit;
 
-  MasterDataForm := Statusbar.DataForm.MasterDataform;
+  MasterDataForm := DataForm.MasterDataform;
 
   if (not (Assigned(MasterDataForm))) then
-    MasterDataForm := Statusbar.DataForm;
+    MasterDataForm := DataForm;
 
   KFs := MasterDataForm.DataFile.KeyFields;
   RecNo := MasterDataForm.RecNo;

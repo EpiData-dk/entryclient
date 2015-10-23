@@ -119,6 +119,7 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     function    OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
+    procedure   IsShortCut(var Msg: TLMKey; var Handled: Boolean);
     function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
@@ -1071,6 +1072,20 @@ procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
   FrameFromNode(FSelectedNode).UpdateSettings;
+end;
+
+procedure TProjectFrame.IsShortCut(var Msg: TLMKey; var Handled: Boolean);
+var
+  DF: TDataFormFrame;
+begin
+  if Assigned(FSelectedNode) then
+  begin
+    DF := FrameFromNode(FSelectedNode);
+    DF.IsShortCut(Msg, Handled);
+    if Handled then exit;
+  end;
+
+  FStatusBar.IsShortCut(Msg, Handled);
 end;
 
 function TProjectFrame.FrameFromRelation(Relation: TEpiMasterRelation
