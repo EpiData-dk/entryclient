@@ -102,5 +102,6 @@ end;
 
 initialization
   EpiV_RegisterCustomStatusBarItem(TEntryClientStatusBarKeyInformation);
+
 end.
 

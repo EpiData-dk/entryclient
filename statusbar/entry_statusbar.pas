@@ -36,7 +36,7 @@ type
   TEntryClientStatusBarItem = class(TEpiVCustomStatusBarItem)
   private
     function  GetStatusbar: TEntryClientStatusBar;
-    function GetDataform: TDataFormFrame;
+    function  GetDataform: TDataFormFrame;
   protected
     procedure  Update(Condition: TEntryClientStatusbarUpdateCondition); virtual; overload;
     property  Statusbar: TEntryClientStatusBar read GetStatusbar;
@@ -48,7 +48,7 @@ implementation
 
 uses
   entry_statusbaritem_navigator,
-  entry_statusbaritem_keyvalues,
+  entry_statusbaritem_keyvalues, entry_statusbaritem_datafilecontent,
   epiv_statusbar_item_recordcount, epiv_statusbar_item_cycleno,
   epiv_statusbar_item_currentuser, {epiv_statusbar_item_savetime,}
   epiv_statusbar_item_selectionnames;

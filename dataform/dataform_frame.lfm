@@ -152,7 +152,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 15
         Top = 4
-        Width = 101
+        Width = 93
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldNameLabel'
@@ -186,7 +186,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 15
         Top = 5
-        Width = 90
+        Width = 86
         Caption = 'FieldTypeLabel'
         Color = clDefault
         ParentColor = False
@@ -219,7 +219,7 @@ object DataFormFrame: TDataFormFrame
         Left = 4
         Height = 15
         Top = 5
-        Width = 85
+        Width = 79
         Caption = 'FieldInfoLabel'
         Color = clDefault
         ParentColor = False
@@ -248,10 +248,10 @@ object DataFormFrame: TDataFormFrame
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = FieldNamePanel
         AnchorSideBottom.Side = asrCenter
-        Left = -21
+        Left = -17
         Height = 15
         Top = 5
-        Width = 76
+        Width = 68
         BorderSpacing.Left = 5
         Caption = 'DeleteLabel'
         Color = clDefault
@@ -291,7 +291,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 15
         Top = 4
-        Width = 106
+        Width = 98
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldLengthLabel'
@@ -329,7 +329,7 @@ object DataFormFrame: TDataFormFrame
         Left = 6
         Height = 15
         Top = 4
-        Width = 102
+        Width = 96
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'FieldRangeLabel'
@@ -353,7 +353,7 @@ object DataFormFrame: TDataFormFrame
       Left = 30
       Height = 15
       Top = 48
-      Width = 42
+      Width = 38
       Caption = 'Label1'
       ParentColor = False
     end

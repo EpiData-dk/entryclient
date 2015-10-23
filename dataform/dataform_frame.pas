@@ -115,9 +115,10 @@ type
     procedure SetModified(const AValue: boolean);
     function  DoNewRecord: boolean;
     function  ControlFromEpiControl(EpiControl: TEpiCustomItem): TControl;
-    function  FieldEditFromField(Field: TEpiField): TFieldEdit;
     procedure DoPrintDataForm(WithData: boolean);
     procedure DoCopyToClipBoard(Const SingleField: Boolean);
+  public
+    function  FieldEditFromField(Field: TEpiField): TFieldEdit;
   private
     { Hint }
     FHintWindow: THintWindow;
