@@ -358,7 +358,7 @@ procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
 begin
   ShowResultListForm(
     Self,
-    'All Data',
+    DataFile.Caption.Text,
     DataFile,
     DataFile.Fields,
     nil,
@@ -2133,7 +2133,8 @@ begin
           DoNewRecord;
 
         if ResultListFormIsShowing then
-          ShowResultListForm(
+          BrowseAllAction.Execute;
+{          ShowResultListForm(
             Self,
             'All',
             DataFile,
@@ -2141,12 +2142,13 @@ begin
             nil,
             FDFToLocalIndex,
             FLocalToDFIndex
-          );
+          );        }
       end;
 
     rrReturnToParent:
       if ResultListFormIsShowing then
-        ShowResultListForm(
+        BrowseAllAction.Execute;
+  {      ShowResultListForm(
           Self,
           'All',
           DataFile,
@@ -2154,7 +2156,7 @@ begin
           nil,
           FDFToLocalIndex,
           FLocalToDFIndex
-        );
+        );     }
 
     rrRelateToNextDF:
       begin
@@ -2471,7 +2473,9 @@ procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
 begin
-  if FieldEdit.Field.EntryMode = emMustEnter then
+  if (FieldEdit.Field.EntryMode = emMustEnter) or
+     (DataFile.KeyFields.IndexOf(FieldEdit.Field) >= 0)
+  then
     FieldEdit.Color := EntrySettings.MustEnterFieldColour
   else
     FieldEdit.Color := EntrySettings.InactiveFieldColour;
