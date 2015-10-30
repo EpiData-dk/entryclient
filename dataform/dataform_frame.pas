@@ -188,7 +188,7 @@ type
     FRelation: TEpiMasterRelation;
     function  GetDetailRelation: TEpiDetailRelation;
     function  GetIndexedRecNo: Integer;
-    function GetIndexedSize: Integer;
+    function  GetIndexedSize: Integer;
     procedure SetRelation(AValue: TEpiMasterRelation);
     procedure UpdateShortCuts;
     procedure UpdateNotesHints;
@@ -640,10 +640,13 @@ begin
   SC.Field := FCurrentEdit.Field;
   SC.Text  := FCurrentEdit.Text;
   SC.CaseSensitive := false;
-  if FCurrentEdit.Field.FieldType in StringFieldTypes then
-    SC.MatchCriteria := mcContains
+  if SC.Text = TEpiStringField.DefaultMissing then
+    SC.MatchCriteria := mcIsSysMissing
   else
-    SC.MatchCriteria := mcEq;
+    if FCurrentEdit.Field.FieldType in StringFieldTypes then
+      SC.MatchCriteria := mcContains
+    else
+      SC.MatchCriteria := mcEq;
   Search.List.Add(SC);
 
   DoSearchForm(Search);
@@ -1570,10 +1573,13 @@ begin
     SC.Field := Field;
     SC.Text := Text;
     SC.CaseSensitive := false;
-    if Field.FieldType in StringFieldTypes then
-      SC.MatchCriteria := mcContains
+    if (SC.Text = TEpiStringField.DefaultMissing) then
+      SC.MatchCriteria := mcIsSysMissing
     else
-      SC.MatchCriteria := mcEq;
+      if Field.FieldType in StringFieldTypes then
+        SC.MatchCriteria := mcContains
+      else
+        SC.MatchCriteria := mcEq;
     Result.List.Add(SC);
   end;
   FRecentSearch := Result;
@@ -1601,7 +1607,8 @@ begin
         L.AddObject(Text, Field);
     end;
 
-    SF.ActiveFields := L;
+//    SF.ActiveFields := L;
+    SF.Search := Search;
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 

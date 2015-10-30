@@ -134,9 +134,9 @@ begin
     BeginUpdate;
     Datafile := ADataFile;
     DisplayFields := AFieldList;
-    ShowRecords(ARecordList);
     ReverseIndex := AReverseIndex;
     ForwardIndex := AForwardIndex;
+    ShowRecords(ARecordList);
     {$IFDEF DARWIN}
     ListGridHeaderClick(Nil, True, 0);
     {$ENDIF}

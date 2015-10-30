@@ -80,14 +80,15 @@ type
     function ValidateCriterias: boolean;
     procedure DoError(Const Msg: string; Const Ctrl: TControl);
     procedure UpdateSearchLabel;
+    procedure SetSearch(AValue: TEpiSearch);
   public
     { public declarations }
     constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile);
     class procedure RestoreDefaultPos;
-    property ActiveField: TEpiField read FActiveField write SetActiveField;
-    property ActiveText: String read FActiveText write SetActiveText;
-    property ActiveFields: TStringList read FActiveFields write SetActiveFields;
-    property Search: TEpiSearch read FSearch;
+//    property ActiveField: TEpiField read FActiveField write SetActiveField;
+//    property ActiveText: String read FActiveText write SetActiveText;
+//    property ActiveFields: TStringList read FActiveFields write SetActiveFields;
+    property Search: TEpiSearch read FSearch write SetSearch;
   end; 
 
 const
@@ -190,7 +191,7 @@ procedure TSearchForm1.FormCreate(Sender: TObject);
 begin
   FSearchConditionList := TList.Create;
   FSearch := nil;
-  DoAddNewSearchCondition;
+//  DoAddNewSearchCondition;
 end;
 
 procedure TSearchForm1.ListBtnClick(Sender: TObject);
@@ -593,6 +594,27 @@ begin
   end;
 
   SearchLabel.Caption := S;
+end;
+
+procedure TSearchForm1.SetSearch(AValue: TEpiSearch);
+var
+  SC: TEpiSearchCondition;
+  PRec: PSearchConditions;
+  I: Integer;
+begin
+  if FSearch = AValue then Exit;
+  FSearch := AValue;
+
+  for I := 0 to AValue.ConditionCount - 1 do
+  begin
+    PRec := PSearchConditions(DoAddNewSearchCondition);
+    SC := AValue.SearchCondiction[i];
+
+    with PRec^.BinOpCmb         do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.BinOp)));
+    with PRec^.FieldListCmb     do ItemIndex := Items.IndexOfObject(SC.Field);
+    with PRec^.MatchCriteriaCmb do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.MatchCriteria)));
+    with PRec^.ValueEdit        do Text      := SC.Text;
+  end;
 end;
 
 constructor TSearchForm1.Create(TheOwner: TComponent;
