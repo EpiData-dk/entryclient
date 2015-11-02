@@ -403,7 +403,6 @@ begin
     DataFile,
     FieldList,
     Lst);
-  FieldList.Free;
 end;
 
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
