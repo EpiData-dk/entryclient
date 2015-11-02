@@ -188,7 +188,7 @@ type
     FRelation: TEpiMasterRelation;
     function  GetDetailRelation: TEpiDetailRelation;
     function  GetIndexedRecNo: Integer;
-    function GetIndexedSize: Integer;
+    function  GetIndexedSize: Integer;
     procedure SetRelation(AValue: TEpiMasterRelation);
     procedure UpdateShortCuts;
     procedure UpdateNotesHints;
@@ -358,7 +358,7 @@ procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
 begin
   ShowResultListForm(
     Self,
-    'All Data',
+    DataFile.Caption.Text,
     DataFile,
     DataFile.Fields,
     nil,
@@ -403,12 +403,11 @@ begin
     DataFile,
     FieldList,
     Lst);
-  FieldList.Free;
+  if RecNo = NewRecord then
+    Modified := false;
 end;
 
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
-var
-  idx: LongInt;
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
@@ -640,10 +639,13 @@ begin
   SC.Field := FCurrentEdit.Field;
   SC.Text  := FCurrentEdit.Text;
   SC.CaseSensitive := false;
-  if FCurrentEdit.Field.FieldType in StringFieldTypes then
-    SC.MatchCriteria := mcContains
+  if SC.Text = TEpiStringField.DefaultMissing then
+    SC.MatchCriteria := mcIsSysMissing
   else
-    SC.MatchCriteria := mcEq;
+    if FCurrentEdit.Field.FieldType in StringFieldTypes then
+      SC.MatchCriteria := mcContains
+    else
+      SC.MatchCriteria := mcEq;
   Search.List.Add(SC);
 
   DoSearchForm(Search);
@@ -1231,6 +1233,7 @@ var
   i: Integer;
   S: String;
   Sz: TSize;
+  FE: TFieldEdit;
 
   function RecursiveFindControl(Const EpiCtrl: TEpiCustomControlItem;
     Const WinControl: TWinControl): TControl;
@@ -1375,6 +1378,8 @@ begin
       if CI is TEpiField then
       with TEpiField(CI) do
       begin
+        FE := FieldEditFromField(TEpiField(CI));
+
         // Draw box
         ARight := ALeft + Round(FieldEditFromField(TEpiField(CI)).Width * xscale);
         ATop := ABot - ((ABot - ATop) div 2);
@@ -1385,16 +1390,18 @@ begin
         Canvas.LineTo(ARight, ATop);
 
         // DATA!
-        if WithData and (RecNo <> NewRecord) then
+        if WithData and
+           (Trim(FE.Text) <> '')
+        then
         begin
           Canvas.TextOut(
             ALeft + Round(2 * xscale),
-            ABot - Canvas.TextHeight(FieldEditFromField(TEpiField(CI)).Text) - Round(2 * yscale),
-            FieldEditFromField(TEpiField(CI)).Text
+            ABot - Canvas.TextHeight(FE.Text) - Round(2 * yscale),
+            FE.Text
             );
         end;
 
-        IF trim(Question.Text)<>'' THEN
+        IF Trim(Question.Text)<>'' THEN
         BEGIN
           aLeft := ALeft - Round(5 * xscale) - Canvas.TextWidth(Question.Text);
           ATop := ABot - Canvas.TextHeight(Question.Text);
@@ -1410,12 +1417,12 @@ begin
 
         // VALUELABEL
         if WithData and
-           (RecNo <> NewRecord) and
-           (Assigned(ValueLabelSet))
+           (Assigned(ValueLabelSet)) and
+           (FE.Text <> '')
         then
         begin
           Canvas.Font.Color := EntrySettings.ValueLabelColour;
-          S := ValueLabelSet.ValueLabelString[FieldEditFromField(TEpiField(CI)).Text];
+          S := ValueLabelSet.ValueLabelString[FE.Text];
           ALeft := ARight + Round(5 * xscale);
           ATop := ABot - Canvas.TextHeight(S);
           Canvas.TextOut(ALeft, ATop, S);
@@ -1565,10 +1572,13 @@ begin
     SC.Field := Field;
     SC.Text := Text;
     SC.CaseSensitive := false;
-    if Field.FieldType in StringFieldTypes then
-      SC.MatchCriteria := mcContains
+    if (SC.Text = TEpiStringField.DefaultMissing) then
+      SC.MatchCriteria := mcIsSysMissing
     else
-      SC.MatchCriteria := mcEq;
+      if Field.FieldType in StringFieldTypes then
+        SC.MatchCriteria := mcContains
+      else
+        SC.MatchCriteria := mcEq;
     Result.List.Add(SC);
   end;
   FRecentSearch := Result;
@@ -1596,7 +1606,8 @@ begin
         L.AddObject(Text, Field);
     end;
 
-    SF.ActiveFields := L;
+//    SF.ActiveFields := L;
+    SF.Search := Search;
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 
@@ -2128,7 +2139,8 @@ begin
           DoNewRecord;
 
         if ResultListFormIsShowing then
-          ShowResultListForm(
+          BrowseAllAction.Execute;
+{          ShowResultListForm(
             Self,
             'All',
             DataFile,
@@ -2136,12 +2148,13 @@ begin
             nil,
             FDFToLocalIndex,
             FLocalToDFIndex
-          );
+          );        }
       end;
 
     rrReturnToParent:
       if ResultListFormIsShowing then
-        ShowResultListForm(
+        BrowseAllAction.Execute;
+  {      ShowResultListForm(
           Self,
           'All',
           DataFile,
@@ -2149,7 +2162,7 @@ begin
           nil,
           FDFToLocalIndex,
           FLocalToDFIndex
-        );
+        );     }
 
     rrRelateToNextDF:
       begin
@@ -2466,7 +2479,9 @@ procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
 begin
-  if FieldEdit.Field.EntryMode = emMustEnter then
+  if (FieldEdit.Field.EntryMode = emMustEnter) or
+     (DataFile.KeyFields.IndexOf(FieldEdit.Field) >= 0)
+  then
     FieldEdit.Color := EntrySettings.MustEnterFieldColour
   else
     FieldEdit.Color := EntrySettings.InactiveFieldColour;
