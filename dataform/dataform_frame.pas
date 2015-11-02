@@ -403,11 +403,11 @@ begin
     DataFile,
     FieldList,
     Lst);
+  if RecNo = NewRecord then
+    Modified := false;
 end;
 
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
-var
-  idx: LongInt;
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
