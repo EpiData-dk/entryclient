@@ -133,6 +133,7 @@ begin
   begin
     BeginUpdate;
     Datafile := ADataFile;
+    KeyFields := nil;
     DisplayFields := AFieldList;
     ReverseIndex := AReverseIndex;
     ForwardIndex := AForwardIndex;
