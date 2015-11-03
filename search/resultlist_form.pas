@@ -147,7 +147,10 @@ begin
 
   S := IntToStr(ADataFile.Size);
   if Length(ARecordList) > 0 then
-    S := IntToStr(Length(ARecordList));
+    if ARecordList[0] = -1 then
+      S := 'no records found'
+    else
+      S := IntToStr(Length(ARecordList));
 
   FResultListForm.Caption := ACaption + ' (' + S + ')';
   FResultListForm.Show;

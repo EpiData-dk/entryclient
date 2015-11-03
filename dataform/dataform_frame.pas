@@ -389,8 +389,10 @@ begin
   Lst := SearchFindList(S, 0);
   if Length(Lst) = 0 then
   begin
-    ShowHintMsg('No records found', RecordEdit);
-    exit;
+    SetLength(Lst, 1);
+    Lst[0] := -1;
+//    ShowHintMsg('No records found', RecordEdit);
+//    exit;
   end;
 
   FieldList := TEpiFields.Create(nil);
