@@ -2170,6 +2170,8 @@ begin
       begin
         FE := nil;
         DoAfterRecord(FE);
+        if ResultListFormIsShowing then
+          BrowseAllAction.Execute;
         Exit;
       end;
   end;
