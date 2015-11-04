@@ -114,7 +114,12 @@ begin
 end;
 
 destructor TResultListForm.Destroy;
+var
+  tmp: boolean;
 begin
+  tmp := true;
+  if HandleAllocated then
+    CloseQueryResultListForm(nil, tmp);
   FResultListForm := nil;
   inherited Destroy;
 end;
