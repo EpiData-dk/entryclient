@@ -100,7 +100,7 @@ var
   L: TList;
   i: Integer;
 begin
-  L := EpiV_GetCustomStatusBarItems;
+//  L := EpiV_GetCustomStatusBarItems;
   if Assigned(L) then
     for i := 0 to L.Count - 1 do
       AddItem(TEpiVCustomStatusBarItemClass(L[i]).Create(Self));

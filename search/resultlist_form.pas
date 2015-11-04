@@ -114,7 +114,12 @@ begin
 end;
 
 destructor TResultListForm.Destroy;
+var
+  tmp: boolean;
 begin
+  tmp := true;
+  if HandleAllocated then
+    CloseQueryResultListForm(nil, tmp);
   FResultListForm := nil;
   inherited Destroy;
 end;
@@ -133,10 +138,11 @@ begin
   begin
     BeginUpdate;
     Datafile := ADataFile;
+    KeyFields := nil;
     DisplayFields := AFieldList;
-    ShowRecords(ARecordList);
     ReverseIndex := AReverseIndex;
     ForwardIndex := AForwardIndex;
+    ShowRecords(ARecordList);
     {$IFDEF DARWIN}
     ListGridHeaderClick(Nil, True, 0);
     {$ENDIF}
@@ -146,7 +152,10 @@ begin
 
   S := IntToStr(ADataFile.Size);
   if Length(ARecordList) > 0 then
-    S := IntToStr(Length(ARecordList));
+    if ARecordList[0] = -1 then
+      S := 'no records found'
+    else
+      S := IntToStr(Length(ARecordList));
 
   FResultListForm.Caption := ACaption + ' (' + S + ')';
   FResultListForm.Show;

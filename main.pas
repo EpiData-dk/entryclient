@@ -653,8 +653,9 @@ begin
     S := S + LineEnding +
       'Filename: ' + TProjectFrame(ActiveFrame).DocumentFile.FileName + LineEnding +
       'XML Version: ' + IntToStr(Version) + LineEnding +
-      'Field count: ' + IntToStr(DataFiles[0].Fields.Count) + LineEnding +
-      'Record count: ' + IntToStr(DataFiles[0].Size);
+      'Dataforms: ' + IntToStr(DataFiles.Count);
+//      'Field count: ' + IntToStr(DataFiles[0].Fields.Count) + LineEnding +
+//      'Record count: ' + IntToStr(DataFiles[0].Size);
   end;
   Clipboard.AsText := S;
   ShowMessage('Version info copied to clipboard!');

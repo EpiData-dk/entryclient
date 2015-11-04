@@ -357,7 +357,7 @@ procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
 begin
   ShowResultListForm(
     Self,
-    'All Data',
+    DataFile.Caption.Text,
     DataFile,
     DataFile.Fields,
     nil,
@@ -388,8 +388,10 @@ begin
   Lst := SearchFindList(S, 0);
   if Length(Lst) = 0 then
   begin
-    ShowHintMsg('No records found', RecordEdit);
-    exit;
+    SetLength(Lst, 1);
+    Lst[0] := -1;
+//    ShowHintMsg('No records found', RecordEdit);
+//    exit;
   end;
 
   FieldList := TEpiFields.Create(nil);
@@ -402,12 +404,11 @@ begin
     DataFile,
     FieldList,
     Lst);
-  FieldList.Free;
+  if RecNo = NewRecord then
+    Modified := false;
 end;
 
 procedure TDataFormFrame.FindPrevActionExecute(Sender: TObject);
-var
-  idx: LongInt;
 begin
   if not Assigned(FRecentSearch) then exit;
   FRecentSearch.Direction := sdBackward;
@@ -631,10 +632,13 @@ begin
   SC.Field := FCurrentEdit.Field;
   SC.Text  := FCurrentEdit.Text;
   SC.CaseSensitive := false;
-  if FCurrentEdit.Field.FieldType in StringFieldTypes then
-    SC.MatchCriteria := mcContains
+  if SC.Text = TEpiStringField.DefaultMissing then
+    SC.MatchCriteria := mcIsSysMissing
   else
-    SC.MatchCriteria := mcEq;
+    if FCurrentEdit.Field.FieldType in StringFieldTypes then
+      SC.MatchCriteria := mcContains
+    else
+      SC.MatchCriteria := mcEq;
   Search.List.Add(SC);
 
   DoSearchForm(Search);
@@ -1563,10 +1567,13 @@ begin
     SC.Field := Field;
     SC.Text := Text;
     SC.CaseSensitive := false;
-    if Field.FieldType in StringFieldTypes then
-      SC.MatchCriteria := mcContains
+    if (SC.Text = TEpiStringField.DefaultMissing) then
+      SC.MatchCriteria := mcIsSysMissing
     else
-      SC.MatchCriteria := mcEq;
+      if Field.FieldType in StringFieldTypes then
+        SC.MatchCriteria := mcContains
+      else
+        SC.MatchCriteria := mcEq;
     Result.List.Add(SC);
   end;
   FRecentSearch := Result;
@@ -1594,7 +1601,8 @@ begin
         L.AddObject(Text, Field);
     end;
 
-    SF.ActiveFields := L;
+//    SF.ActiveFields := L;
+    SF.Search := Search;
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 
@@ -2127,7 +2135,8 @@ begin
           DoNewRecord;
 
         if ResultListFormIsShowing then
-          ShowResultListForm(
+          BrowseAllAction.Execute;
+{          ShowResultListForm(
             Self,
             'All',
             DataFile,
@@ -2135,12 +2144,13 @@ begin
             nil,
             FDFToLocalIndex,
             FLocalToDFIndex
-          );
+          );        }
       end;
 
     rrReturnToParent:
       if ResultListFormIsShowing then
-        ShowResultListForm(
+        BrowseAllAction.Execute;
+  {      ShowResultListForm(
           Self,
           'All',
           DataFile,
@@ -2148,12 +2158,14 @@ begin
           nil,
           FDFToLocalIndex,
           FLocalToDFIndex
-        );
+        );     }
 
     rrRelateToNextDF:
       begin
         FE := nil;
         DoAfterRecord(FE);
+        if ResultListFormIsShowing then
+          BrowseAllAction.Execute;
         Exit;
       end;
   end;
@@ -2470,7 +2482,9 @@ procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
   FieldEdit: TFieldEdit absolute Sender;
 begin
-  if FieldEdit.Field.EntryMode = emMustEnter then
+  if (FieldEdit.Field.EntryMode = emMustEnter) or
+     (DataFile.KeyFields.IndexOf(FieldEdit.Field) >= 0)
+  then
     FieldEdit.Color := EntrySettings.MustEnterFieldColour
   else
     FieldEdit.Color := EntrySettings.InactiveFieldColour;
