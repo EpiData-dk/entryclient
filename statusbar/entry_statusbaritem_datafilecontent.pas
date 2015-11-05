@@ -24,6 +24,9 @@ type
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
     procedure Update(Condition: TEntryClientStatusbarUpdateCondition); override;
   public
+    class function Caption: string; override;
+    class function Name: string; override;
+  public
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     destructor Destroy; override;
     function GetPreferedWidth: Integer; override;
@@ -97,6 +100,16 @@ begin
     esucDataform:
       ParseContentString;
   end;
+end;
+
+class function TEntryClientStatusBarDatafileContent.Caption: string;
+begin
+  Result := 'DataForm Information';
+end;
+
+class function TEntryClientStatusBarDatafileContent.Name: string;
+begin
+  result := 'datafilecontent';
 end;
 
 constructor TEntryClientStatusBarDatafileContent.Create(

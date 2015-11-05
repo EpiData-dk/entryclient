@@ -28,6 +28,9 @@ type
     procedure Update(Condition: TEntryClientStatusbarUpdateCondition); override;
     procedure IsShortCut(var Msg: TLMKey; var Handled: Boolean); override;
   public
+    class function Caption: string; override;
+    class function Name: string; override;
+  public
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     function GetPreferedWidth: Integer; override;
   end;
@@ -141,6 +144,16 @@ begin
       Handled := true;
     end;
   end;
+end;
+
+class function TEntryClientStatusBarNavigator.Caption: string;
+begin
+  Result := 'Records Navigation';
+end;
+
+class function TEntryClientStatusBarNavigator.Name: string;
+begin
+  result := 'Navigator';
 end;
 
 constructor TEntryClientStatusBarNavigator.Create(AStatusBar: TEpiVCustomStatusBar);

@@ -47,6 +47,7 @@ type
 implementation
 
 uses
+  settings,
   entry_statusbaritem_navigator,
   entry_statusbaritem_keyvalues, entry_statusbaritem_datafilecontent,
   epiv_statusbar_item_recordcount, epiv_statusbar_item_cycleno,
@@ -97,13 +98,24 @@ end;
 
 procedure TEntryClientStatusBar.LoadSettings;
 var
-  L: TList;
-  i: Integer;
+  L: TStrings;
+  S: String;
+  Idx: Integer;
 begin
-//  L := EpiV_GetCustomStatusBarItems;
-  if Assigned(L) then
-    for i := 0 to L.Count - 1 do
-      AddItem(TEpiVCustomStatusBarItemClass(L[i]).Create(Self));
+  Clear;
+
+  L := TStringList.Create;
+  L.StrictDelimiter := true;
+  L.CommaText := EntrySettings.StatusBarItemNames;
+
+  for S in L do
+  begin
+    Idx := EpiV_GetCustomStatusBarItems.IndexOf(S);
+    if (Idx < 0) then continue;
+
+    AddItem(TEpiVCustomStatusBarItemClass(EpiV_GetCustomStatusBarItems.Objects[Idx]).Create(Self));
+  end;
+  Resize;
 end;
 
 procedure TEntryClientStatusBar.Update(

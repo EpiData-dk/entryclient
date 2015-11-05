@@ -19,6 +19,9 @@ type
   protected
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
   public
+    class function Caption: string; override;
+    class function Name: string; override;
+  public
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     function GetPreferedWidth: Integer; override;
   end;
@@ -75,6 +78,16 @@ begin
     sucSelection: ;
     sucSave: ;
   end;
+end;
+
+class function TEntryClientStatusBarKeyInformation.Caption: string;
+begin
+  Result := 'Key Values';
+end;
+
+class function TEntryClientStatusBarKeyInformation.Name: string;
+begin
+  result := 'KeyInfo';
 end;
 
 constructor TEntryClientStatusBarKeyInformation.Create(
