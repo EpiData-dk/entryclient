@@ -52,14 +52,16 @@ begin
   RecNo := MasterDataForm.RecNo;
 
   S := '';
-  if RecNo <> NewRecord then
-  begin
-    for F in KFs do
-      S += '(' + F.Name + ': ' + F.AsString[RecNo] + '), ';
+  if (RecNo <> NewRecord) and
+     (RecNo < MasterDataForm.DataFile.Size)
+  then
+    begin
+      for F in KFs do
+        S += '(' + F.Name + ': ' + F.AsString[RecNo] + '), ';
 
-    Delete(S, Length(S) - 1, 2);
-  end else
-    S := 'No Key';
+      Delete(S, Length(S) - 1, 2);
+    end else
+      S := 'No Key';
 
   FKeyLabel.Caption := S;
 end;

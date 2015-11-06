@@ -234,14 +234,31 @@ begin
 end;
 
 function TSettingsStatusbarFrame.ApplySettings: boolean;
+var
+  S: String;
+  i: Integer;
+  ExItem: TEpiVCustomStatusBarItem;
+  CB: TCheckBoxThemed;
 begin
+  result:= true;
+  S := '';
 
+  for i := 0 to FControlList.Count - 1 do
+  begin
+    ExItem := PControlsRec(FControlList.Objects[i])^.ExItem;
+    CB     := PControlsRec(FControlList.Objects[i])^.CB;
+
+    if CB.Checked then
+      S := S + ExItem.Name + ',';
+  end;
+  Delete(S, Length(S), 1);
+
+  EntrySetting^.StatusBarItemNames := S;
 end;
 
 procedure TSettingsStatusbarFrame.SetSettings(Data: PEntrySettings);
 var
   L: TStringList;
-  CB: TCheckBoxThemed;
   i, Idx: Integer;
   PrevCtrl: TControl;
   Rec, ERec: PControlsRec;

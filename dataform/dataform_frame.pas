@@ -20,15 +20,9 @@ type
     DeleteRecordAction: TAction;
     BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
-    FieldLengthLabel: TLabel;
-    FieldRangeLabel: TLabel;
-    FieldLengthPanel: TPanel;
-    FieldRangePanel: TPanel;
     ImageList1: TImageList;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
-    DeleteLabel: TLabel;
-    DeletePanel: TPanel;
     Label1: TLabel;
     Panel1: TPanel;
     PrintDialog1: TPrintDialog;
@@ -38,14 +32,8 @@ type
     FindPrevAction: TAction;
     FindNextAction: TAction;
     FindRecordAction: TAction;
-    FieldInfoLabel: TLabel;
-    FieldInfoPanel: TPanel;
-    FieldTypeLabel: TLabel;
-    FieldTypePanel: TPanel;
     JumpNextRecAction: TAction;
     JumpPrevRecAction: TAction;
-    FieldNamePanel: TPanel;
-    FieldNameLabel: TLabel;
     PageDownAction: TAction;
     PageUpAction: TAction;
     GotoRecordAction: TAction;
@@ -58,12 +46,6 @@ type
     FirstRecAction: TAction;
     ActionList1: TActionList;
     DataFormScroolBox: TScrollBox;
-    NewRecSpeedButton: TSpeedButton;
-    DeleteRecSpeedButton: TSpeedButton;
-    RecActionPanel: TPanel;
-    RecordEdit: TEdit;
-    InformationPanel: TPanel;
-    NavigationPanel: TPanel;
     CopyFieldToClipboardAction: TAction;
     procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
@@ -108,8 +90,6 @@ type
     procedure UpdateIndexFields;
     procedure SetDataFile(const AValue: TEpiDataFile);
     procedure LoadRecord(RecordNo: Integer);
-    procedure UpdateRecordEdit;
-    procedure UpdateRecActionPanel;
     procedure SetRecNo(AValue: integer);
     procedure UpdateModified;
     procedure SetModified(const AValue: boolean);
@@ -160,7 +140,6 @@ type
     procedure FieldKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FieldEnter(Sender: TObject);
     procedure FieldExit(Sender: TObject);
-    procedure UpdateFieldPanel(Field: TEpiField);
   private
     { Flow control/Validation/Script handling}
     FLastDataFileRelate: TEpiRelate;
@@ -310,8 +289,6 @@ begin
     // And pressing buttons will act on previous dataform - hence we need focus on this
     // dataform.
     DataFormScroolBox.SetFocus;
-    if DataFile.KeyFields.Count > 0 then
-      UpdateFieldPanel(DataFile.KeyFields[0]);
     Exit;
   end;
 
@@ -338,7 +315,6 @@ procedure TDataFormFrame.DeleteRecordActionExecute(Sender: TObject);
 begin
   FDataFile.Deleted[IndexedRecNo] := not FDataFile.Deleted[IndexedRecNo];
   Modified := true;
-  UpdateRecordEdit;
 end;
 
 procedure TDataFormFrame.DeleteRecordActionUpdate(Sender: TObject);
@@ -418,7 +394,7 @@ end;
 
 procedure TDataFormFrame.GotoRecordActionExecute(Sender: TObject);
 begin
-  RecordEdit.SetFocus;
+  //RecordEdit.SetFocus;
 end;
 
 procedure TDataFormFrame.JumpNextRecActionExecute(Sender: TObject);
@@ -475,7 +451,7 @@ begin
       (FLocalToDFIndex.Size < DetailRelation.MaxRecordCount);
 
   TAction(Sender).Enabled := B;
-  NewRecSpeedButton.ShowHint := TAction(Sender).Enabled;
+  //NewRecSpeedButton.ShowHint := TAction(Sender).Enabled;
 end;
 
 procedure TDataFormFrame.NextRecActionExecute(Sender: TObject);
@@ -521,19 +497,19 @@ procedure TDataFormFrame.RecordEditEditingDone(Sender: TObject);
 var
   AValue, Code: integer;
 begin
-  Val(RecordEdit.Text, AValue, Code);
+{  Val(RecordEdit.Text, AValue, Code);
   if Code <> 0 then exit;
 
   Code := Min(AValue - 1, FLocalToDFIndex.Size - 1);
   if Code < 0 then exit;
 
   RecNo := Code;
-  FirstFieldAction.Execute;
+  FirstFieldAction.Execute;   }
 end;
 
 procedure TDataFormFrame.RecordEditEnter(Sender: TObject);
 begin
-  RecordEdit.SelectAll;
+  //RecordEdit.SelectAll;
 end;
 
 procedure TDataFormFrame.ShowFieldNotesActionExecute(Sender: TObject);
@@ -758,63 +734,6 @@ begin
   MainForm.EndUpdateForm;
 end;
 
-procedure TDataFormFrame.UpdateRecordEdit;
-var
-  S: String;
-begin
-  UpdateRecActionPanel;
-
-  if FLocalToDFIndex.Size = 0 then
-  begin
-    RecordEdit.Text := 'Empty';
-    Exit;
-  end;
-
-  if Modified then
-    S := '*'
-  else
-    S := '';
-
-  if RecNo = NewRecord then
-    S := Format('New / %d %s', [FLocalToDFIndex.Size, S])
-  else
-    S := Format('%d / %d %s', [RecNo + 1, FLocalToDFIndex.Size, S]);
-
-
-  RecordEdit.Text := Trim(S);
-{
-
-  if RecNo = NewRecord then
-  begin
-    if Modified then
-      RecordEdit.Text :=
-          Format('New / %d *', [FLocalToDFIndex.Size])
-    else
-      RecordEdit.Text :=
-        Format('New / %d', [FLocalToDFIndex.Size]);
-  end else begin
-    if Modified then
-      RecordEdit.Text :=
-          Format('%d / %d *', [RecNo + 1, FLocalToDFIndex.Size])
-    else
-      RecordEdit.Text :=
-        Format('%d / %d', [RecNo + 1, FLocalToDFIndex.Size]);
-  end;
-    }
-end;
-
-procedure TDataFormFrame.UpdateRecActionPanel;
-var
-  B: Boolean;
-begin
-  DeleteLabel.Caption := '';
-  if IndexedRecNo = NewRecord then exit;
-
-  B := FDataFile.Deleted[IndexedRecNo];
-  DeleteRecSpeedButton.Hint := BoolToStr(B, 'UnDelete', 'Delete');
-  DeleteLabel.Caption       := BoolToStr(B, 'DEL',      '');
-end;
-
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
   ): TControl;
 begin
@@ -1017,13 +936,11 @@ begin
 
   FRecNo := AValue;
   LoadRecord(RecNo);
-  UpdateRecordEdit;
   DoRecordChanged;
 end;
 
 procedure TDataFormFrame.UpdateModified;
 begin
-  UpdateRecordEdit;
   if Assigned(OnModified) then
     OnModified(Self);
 end;
@@ -1535,10 +1452,10 @@ begin
     if idx <> -1 then
     begin
       RecNo := idx;
-      ShowHintMsg('Wrapped search. Reached end of datafile', RecordEdit);
+      ShowHintMsg('Wrapped search. Reached end of datafile', FCurrentEdit);
     end;
   end else begin
-    ShowHintMsg('No records found', RecordEdit);
+    ShowHintMsg('No records found', FCurrentEdit);
   end;
 end;
 
@@ -2179,7 +2096,6 @@ begin
       (FLocalToDFIndex.Size = 0)
     );
 
-  UpdateRecordEdit;
   ChangeParentRecordState(ParentRecordState);
   UpdateActions;
 
@@ -2194,9 +2110,7 @@ begin
     end
   else if (DataFormScroolBox.Enabled)
   then
-    FirstFieldAction.Execute
-  else
-    UpdateFieldPanel(DataFile.KeyFields[0]);
+    FirstFieldAction.Execute;
 end;
 
 procedure TDataFormFrame.UpdateChildFocusShift(
@@ -2473,7 +2387,6 @@ begin
   end;
 
   FieldEdit.Color := EntrySettings.ActiveFieldColour;
-  UpdateFieldPanel(FieldEdit.Field);
   ShowNotes(FieldEdit);
   FCurrentEdit := FieldEdit;
 end;
@@ -2879,46 +2792,6 @@ var
   FE: TFieldEdit absolute Sender;
 begin
   ShowHintMsg(Msg, FE);
-end;
-
-procedure TDataFormFrame.UpdateFieldPanel(Field: TEpiField);
-var
-  S: String;
-  L: TEpiCustomList;
-begin
-  with Field do
-  begin
-    FieldNameLabel.Caption := Name;
-    FieldTypeLabel.Caption := EpiTypeNames[FieldType];
-    FieldInfoLabel.Caption := '';
-
-    // The three following if's should automatically be mutally exclusive... (date/time fields cannot have a valuelabel).
-    if FieldType in DateFieldTypes then
-      FieldInfoLabel.Caption := 'Current date: +';
-
-    if FieldType in TimeFieldTypes then
-      FieldInfoLabel.Caption := 'Current time: +';
-
-    if Assigned(ValueLabelSet) then
-      FieldInfoLabel.Caption := 'Label: +/F9';
-
-    S := 'Length: ';
-    if FieldType in FloatFieldTypes then
-      S += IntToStr(Length - Decimals - 1) + '.' + IntToStr(Decimals)
-    else
-      S += IntToStr(Length);
-    FieldLengthLabel.Caption := S;
-
-    if Assigned(Ranges) then
-      FieldRangeLabel.Caption := Ranges[0].AsString[true] + '-' + Ranges[0].AsString[false]
-    else
-      FieldRangeLabel.Caption := '';
-  end;
-
-  L := TEpiCustomList.Create(nil);
-  L.ItemOwner := false;
-  L.AddItem(Field);
-  TProjectFrame(Parent).StatusBar.Selection := L;
 end;
 
 function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
