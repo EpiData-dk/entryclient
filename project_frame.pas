@@ -509,7 +509,7 @@ begin
         mrYes:    Result := AllFieldsValidate(false);
         mrNo:     begin
                     Modified := false; // Do nothing
-                    RecNo := NewRecord;
+                    NewRecordAction.Execute;
                     Result := false;
                   end;
       end;
