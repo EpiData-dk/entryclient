@@ -1941,60 +1941,73 @@ var
   MasterField: TEpiField absolute Sender;
   KeyField: TEpiField;
   KeyDataRec: PEpiFieldDataEventRecord absolute Data;
-  OldData,
-  NewData: EpiVariant;
   i: Integer;
-  MasterIndex: Integer;
-
-  function IfThen(AValue: Boolean; Const IfTrue, IfFalse: EpiFloat): EpiFloat; overload;
-  begin
-    if AValue then
-      Result := IfTrue
-    else
-      Result := IfFalse;
-  end;
+  BVal: EpiBool;
+  IVal: EpiInteger;
+  FVal: EpiFloat;
+  DVal: EpiDate;
+  TVal: EpiTime;
+  SVal: EpiString;
 
 begin
   if (EventGroup <> eegFields) then exit;
   if (TEpiFieldsChangeEventType(EventType) <> efceData) then exit;
 
-  // Extract Old data to a conviniet Variant type.
+  KeyField := DataFile.KeyFields.FieldByName[MasterField.Name];
   with KeyDataRec^ do
   begin
-    MasterIndex := Index;
     case FieldType of
       ftBoolean:
-        OldData := BoolValue;
+        begin
+          BVal := MasterField.AsBoolean[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsBoolean[i] = BoolValue then
+              KeyField.AsBoolean[i] := BVal;
+        end;
       ftInteger,
       ftAutoInc:
-        OldData := IntValue;
+        begin
+          IVal := MasterField.AsInteger[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsInteger[i] = IntValue then
+              KeyField.AsInteger[i] := IVal;
+        end;
       ftFloat:
-        // IfThen needed because DefaultMissing = MaxExtended (on x86? systems) and
-        // passing that into a Variant f*cks up the stack!
-        OldData := IfThen(FloatValue = TEpiFloatField.DefaultMissing, MaxDouble, FloatValue);
+        begin
+          FVal := MasterField.AsFloat[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsFloat[i] = FloatValue then
+              KeyField.AsFloat[i] := FVal;
+        end;
       ftDMYDate,
       ftMDYDate,
       ftYMDDate,
       ftDMYAuto,
       ftMDYAuto,
       ftYMDAuto:
-        OldData := DateValue;
+        begin
+          DVal := MasterField.AsDate[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsDate[i] = DateValue then
+              KeyField.AsDate[i] := DVal;
+        end;
       ftTime,
       ftTimeAuto:
-        OldData := TimeValue;
+        begin
+          TVal := MasterField.AsTime[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsTime[i] = TimeValue then
+              KeyField.AsTime[i] := TVal;
+        end;
       ftString,
       ftUpperString:
-        OldData := StringValue^;
+        begin
+          SVal := MasterField.AsString[Index];
+          for i := 0 to KeyField.Size - 1 do
+            if KeyField.AsString[i] = StringValue^ then
+              KeyField.AsString[i] := SVal;
+        end;
     end;
-  end;
-  NewData := MasterField.AsValue[MasterIndex];
-
-  KeyField := DataFile.KeyFields.FieldByName[MasterField.Name];
-
-  for i := 0 to KeyField.Size - 1 do
-  begin
-    if KeyField.AsValue[i] = OldData then
-      KeyField.AsValue[i] := NewData;
   end;
 end;
 
