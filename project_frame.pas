@@ -1071,6 +1071,9 @@ end;
 procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
+  FStatusBar.LoadSettings;
+  FStatusBar.DocFile := FDocumentFile;
+
   FrameFromNode(FSelectedNode).UpdateSettings;
 end;
 

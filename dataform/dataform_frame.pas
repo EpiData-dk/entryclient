@@ -20,7 +20,6 @@ type
     DeleteRecordAction: TAction;
     BrowseAllAction: TAction;
     CopyToClipBoardAction: TAction;
-    ImageList1: TImageList;
     PrintDataFormWithDataAction: TAction;
     PrintDataFormAction: TAction;
     Label1: TLabel;
@@ -75,8 +74,6 @@ type
     procedure PrevRecActionExecute(Sender: TObject);
     procedure PrintDataFormActionExecute(Sender: TObject);
     procedure PrintDataFormWithDataActionExecute(Sender: TObject);
-    procedure RecordEditEditingDone(Sender: TObject);
-    procedure RecordEditEnter(Sender: TObject);
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure CopyFieldToClipboardActionExecute(Sender: TObject);
     procedure NoViewDataActionUpdate(Sender: TObject);
@@ -169,6 +166,10 @@ type
     procedure UpdateShortCuts;
     procedure UpdateNotesHints;
     function  IsDetailRelation: boolean;
+  { Statusbar }
+  private
+    procedure UpdateStatusbarSelection;
+    procedure UpdateStatusbarDataform;
   public
     constructor Create(TheOwner: TComponent); override;
     procedure CommitFields;
@@ -224,7 +225,7 @@ implementation
 {$R *.lfm}
 
 uses
-  epiv_datamodule,
+  epiv_datamodule, epiv_custom_statusbar,
   LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
@@ -491,25 +492,6 @@ end;
 procedure TDataFormFrame.PrintDataFormWithDataActionExecute(Sender: TObject);
 begin
   DoPrintDataForm(true);
-end;
-
-procedure TDataFormFrame.RecordEditEditingDone(Sender: TObject);
-var
-  AValue, Code: integer;
-begin
-{  Val(RecordEdit.Text, AValue, Code);
-  if Code <> 0 then exit;
-
-  Code := Min(AValue - 1, FLocalToDFIndex.Size - 1);
-  if Code < 0 then exit;
-
-  RecNo := Code;
-  FirstFieldAction.Execute;   }
-end;
-
-procedure TDataFormFrame.RecordEditEnter(Sender: TObject);
-begin
-  //RecordEdit.SelectAll;
 end;
 
 procedure TDataFormFrame.ShowFieldNotesActionExecute(Sender: TObject);
@@ -822,7 +804,6 @@ begin
   JumpNextRecAction.ShortCut := D_MoveSkipNextRec;
   LastRecAction.ShortCut := D_MoveLastRec;
   NewRecordAction.ShortCut := D_NewRec;
-//  GotoRecordAction.ShortCut := D_GotoRec;
   PageUpAction.ShortCut := D_SideUp;
   PageDownAction.ShortCut := D_SideDown;
   FindRecordAction.ShortCut := D_SearchRecordEmpty;
@@ -898,6 +879,25 @@ end;
 function TDataFormFrame.IsDetailRelation: boolean;
 begin
   result := Relation.InheritsFrom(TEpiDetailRelation);
+end;
+
+procedure TDataFormFrame.UpdateStatusbarSelection;
+var
+  FList: TEpiFields;
+begin
+  if (not Assigned(Parent)) then Exit;
+  if (not Assigned(FCurrentEdit)) then Exit;
+
+  FList := TEpiFields.Create(nil);
+  FList.AddItem(FCurrentEdit.Field);
+  TProjectFrame(Parent).StatusBar.Selection := FList;
+  FList.Free;
+end;
+
+procedure TDataFormFrame.UpdateStatusbarDataform;
+begin
+  if Assigned(Parent) then
+    TProjectFrame(Parent).StatusBar.DataForm := Self;
 end;
 
 procedure TDataFormFrame.SetRecNo(AValue: integer);
@@ -1502,23 +1502,11 @@ var
   Res: LongInt;
   idx: LongInt;
   List: TBoundArray;
-  L: TStringList;
   i: Integer;
   FieldList: TEpiFields;
 begin
   try
     SF := TSearchForm1.Create(Self, DataFile);
-
-    L := nil;
-    if Assigned(Search) then
-    begin
-      L := TStringList.Create;
-      for i := 0 to Search.List.Count - 1 do
-      with Search.SearchCondiction[i] do
-        L.AddObject(Text, Field);
-    end;
-
-//    SF.ActiveFields := L;
     SF.Search := Search;
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
@@ -1851,6 +1839,9 @@ var
 begin
   UpdateShortCuts;
   UpdateNotesHints;
+  UpdateStatusbarDataform;
+  UpdateStatusbarSelection;
+
 
   if Assigned(DataFile) then
     for i := 0 to DataFile.ControlItems.Count - 1 do
@@ -2402,6 +2393,8 @@ begin
   FieldEdit.Color := EntrySettings.ActiveFieldColour;
   ShowNotes(FieldEdit);
   FCurrentEdit := FieldEdit;
+
+  UpdateStatusbarSelection;
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);

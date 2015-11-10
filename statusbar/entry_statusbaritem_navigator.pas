@@ -24,13 +24,13 @@ type
     procedure RecordStatusEditDone(Sender: TObject);
     procedure UpdateRecordEdit;
   protected
-    procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
     procedure Update(Condition: TEntryClientStatusbarUpdateCondition); override;
     procedure IsShortCut(var Msg: TLMKey; var Handled: Boolean); override;
   public
     class function Caption: string; override;
     class function Name: string; override;
   public
+    procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
     function GetPreferedWidth: Integer; override;
   end;
@@ -41,22 +41,25 @@ implementation
 {$ *.rc}
 
 uses
-  Graphics, Controls, dataform_frame, LCLType, LCLIntf;
+  Graphics, Controls, dataform_frame, LCLType, LCLIntf, epiv_datamodule;
 
 { TEntryClientStatusBarNavigator }
 
 procedure TEntryClientStatusBarNavigator.UpdateSpeedBtns;
 begin
-  FFirstBtn.Action := DataForm.FirstRecAction;
-  FPrevBtn.Action  := DataForm.PrevRecAction;
-  FNextBtn.Action  := DataForm.NextRecAction;
-  FLastBtn.Action  := DataForm.LastRecAction;
+  if Assigned(DataForm) then
+    begin
+      FFirstBtn.Action := DataForm.FirstRecAction;
+      FPrevBtn.Action  := DataForm.PrevRecAction;
+      FNextBtn.Action  := DataForm.NextRecAction;
+      FLastBtn.Action  := DataForm.LastRecAction;
+    end;
 
   if FSpeedBtnBitmapInit then exit;
-  DataForm.ImageList1.GetBitmap(0, FFirstBtn.Glyph);
-  DataForm.ImageList1.GetBitmap(1, FLastBtn.Glyph);
-  DataForm.ImageList1.GetBitmap(2, FNextBtn.Glyph);
-  DataForm.ImageList1.GetBitmap(3, FPrevBtn.Glyph);
+  DM.Icons16.GetBitmap(46, FNextBtn.Glyph);
+  DM.Icons16.GetBitmap(47, FPrevBtn.Glyph);
+  DM.Icons16.GetBitmap(48, FLastBtn.Glyph);
+  DM.Icons16.GetBitmap(49, FFirstBtn.Glyph);
   FSpeedBtnBitmapInit := true;
 end;
 
@@ -118,6 +121,11 @@ begin
       UpdateRecordEdit;
     sucSelection: ;
     sucSave: ;
+    sucExample:
+      begin
+        UpdateSpeedBtns;
+        FRecordStatus.OnEditingDone := nil;
+      end;
   end;
 end;
 
@@ -126,7 +134,10 @@ procedure TEntryClientStatusBarNavigator.Update(
 begin
   case Condition of
     esucDataform:
-      UpdateSpeedBtns;
+      begin
+        UpdateSpeedBtns;
+        UpdateRecordEdit;
+      end;
   end;
 end;
 

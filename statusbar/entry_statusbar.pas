@@ -51,7 +51,7 @@ uses
   entry_statusbaritem_navigator,
   entry_statusbaritem_keyvalues, entry_statusbaritem_datafilecontent,
   epiv_statusbar_item_recordcount, epiv_statusbar_item_cycleno,
-  epiv_statusbar_item_currentuser, {epiv_statusbar_item_savetime,}
+  epiv_statusbar_item_currentuser, epiv_statusbar_item_savetime,
   epiv_statusbar_item_selectionnames;
 
 { TEntryClientStatusBar }
@@ -62,7 +62,10 @@ begin
   FDataForm := AValue;
   Update(esucDataform);
 
-  Datafile := FDataForm.DataFile;
+  if Assigned(FDataForm) then
+    Datafile := FDataForm.DataFile
+  else
+    Datafile := nil;
 end;
 
 procedure TEntryClientStatusBar.DoUpdateItems(
@@ -87,6 +90,9 @@ procedure TEntryClientStatusBar.Clear;
 begin
   inherited Clear;
   FEntryClientStatubarItems.Clear;
+
+  DocFile := nil;
+  DataForm := nil;
 end;
 
 constructor TEntryClientStatusBar.Create(TheOwner: TComponent);
@@ -134,7 +140,10 @@ end;
 
 function TEntryClientStatusBarItem.GetDataform: TDataFormFrame;
 begin
-  result := Statusbar.DataForm;
+  if Assigned(Statusbar) then
+    result := Statusbar.DataForm
+  else
+    result := nil;
 end;
 
 procedure TEntryClientStatusBarItem.Update(

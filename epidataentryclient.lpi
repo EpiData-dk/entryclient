@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="21"/>
+      <BuildNr Value="22"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="" SpecialBuild="ADMIN"/>
@@ -147,38 +147,41 @@
         <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/admin.ini -r=~/.config/epidata/recent.admin.ini"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="8">
+    <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="gradcontrols"/>
       </Item1>
       <Item2>
-        <PackageName Value="epidatacore_visuals"/>
-        <MaxVersion Major="2" Minor="1" Valid="True"/>
-        <MinVersion Major="2" Minor="1" Valid="True"/>
+        <PackageName Value="LazControls"/>
       </Item2>
       <Item3>
-        <PackageName Value="epidatacore"/>
+        <PackageName Value="epidatacore_visuals"/>
         <MaxVersion Major="2" Minor="1" Valid="True"/>
         <MinVersion Major="2" Minor="1" Valid="True"/>
       </Item3>
       <Item4>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="epidatacore"/>
+        <MaxVersion Major="2" Minor="1" Valid="True"/>
+        <MinVersion Major="2" Minor="1" Valid="True"/>
       </Item4>
       <Item5>
-        <PackageName Value="Printer4Lazarus"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item5>
       <Item6>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="Printer4Lazarus"/>
       </Item6>
       <Item7>
-        <PackageName Value="lnetbase"/>
+        <PackageName Value="LCLBase"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCL"/>
+        <PackageName Value="lnetbase"/>
       </Item8>
+      <Item9>
+        <PackageName Value="LCL"/>
+      </Item9>
     </RequiredPackages>
-    <Units Count="39">
+    <Units Count="40">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -386,6 +389,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit38>
+      <Unit39>
+        <Filename Value="statusbar/entry_statusbaritem_recordstate.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

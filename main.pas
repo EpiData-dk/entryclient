@@ -364,6 +364,7 @@ begin
   UpdateProcessToolPanel;
   UpdateShortCuts;
 
+
   if Assigned(FActiveFrame) then
     TProjectFrame(FActiveFrame).UpdateSettings;
 end;
