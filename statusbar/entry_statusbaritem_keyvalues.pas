@@ -5,7 +5,7 @@ unit entry_statusbaritem_keyvalues;
 interface
 
 uses
-  Classes, SysUtils, epiv_custom_statusbar, epidatafiles, Buttons, StdCtrls,
+  Classes, SysUtils, epiv_custom_statusbar, epidatafiles, StdCtrls,
   entry_statusbar, dataform_frame;
 
 type

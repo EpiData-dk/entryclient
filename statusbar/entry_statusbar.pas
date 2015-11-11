@@ -22,7 +22,7 @@ type
     procedure SetDataForm(AValue: TDataFormFrame);
     procedure DoUpdateItems(Condition: TEntryClientStatusbarUpdateCondition);
   protected
-    procedure AddItem(StatusBarItem: TEpiVCustomStatusBarItem); override;
+    procedure AddItem(AStatusBarItem: TEpiVCustomStatusBarItem); override;
     procedure Clear; override;
   public
     constructor Create(TheOwner: TComponent); override;
@@ -77,13 +77,13 @@ begin
     TEntryClientStatusBarItem(FEntryClientStatubarItems[i]).Update(Condition);
 end;
 
-procedure TEntryClientStatusBar.AddItem(StatusBarItem: TEpiVCustomStatusBarItem
+procedure TEntryClientStatusBar.AddItem(AStatusBarItem: TEpiVCustomStatusBarItem
   );
 begin
-  inherited AddItem(StatusBarItem);
+  inherited AddItem(AStatusBarItem);
 
-  if StatusBarItem.InheritsFrom(TEntryClientStatusBarItem) then
-    FEntryClientStatubarItems.Add(StatusBarItem);
+  if AStatusBarItem.InheritsFrom(TEntryClientStatusBarItem) then
+    FEntryClientStatubarItems.Add(AStatusBarItem);
 end;
 
 procedure TEntryClientStatusBar.Clear;

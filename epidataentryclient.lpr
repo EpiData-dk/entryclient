@@ -18,7 +18,7 @@ uses
   picklist2, admin_authenticator, entry_statusbar,
   entry_statusbaritem_navigator, entry_statusbaritem_keyvalues,
   entry_statusbaritem_datafilecontent, settings2_statusbar,
-  entry_statusbaritem_recordstate;
+  entry_statusbaritem_recordstate, entry_statusbaritem_extrafieldinfo;
 
 {$R *.res}
 

@@ -172,12 +172,14 @@ end;
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
 var
   SettingsForm: TSettings2Form;
+  mr: Integer;
 begin
   SettingsForm := TSettings2Form.Create(Self);
-  SettingsForm.ShowModal;
+  mr := SettingsForm.ShowModal;
   SettingsForm.Free;
 
-  UpdateSettings;
+  if (mr = mrOK) then
+    UpdateSettings;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
