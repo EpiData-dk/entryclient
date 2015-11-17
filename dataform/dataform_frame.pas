@@ -321,6 +321,7 @@ end;
 procedure TDataFormFrame.DeleteRecordActionUpdate(Sender: TObject);
 begin
   TAction(Sender).Enabled :=
+    (IndexedRecNo <> NewRecord) and
     (FParentRecordState <> rsDeleted) and
     (Authenticator.IsAuthorizedEntry(DataFile, [eerDelete]));
 end;
