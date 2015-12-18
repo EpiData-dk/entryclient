@@ -1818,6 +1818,7 @@ begin
   // Expand datafile so that current text can be commited...
   if RecNo = NewRecord then
   begin
+    DataFile.BeginCommitRecord(true);
     DataFile.NewRecords();
 
     // Add to IndexField!
@@ -1826,11 +1827,14 @@ begin
 
     FDFToLocalIndex.Size := DataFile.Size;
     FDFToLocalIndex.AsInteger[FDFToLocalIndex.Size - 1] := FLocalToDFIndex.Size - 1;
-  end;
+  end else
+    DataFile.BeginCommitRecord(false);
+
 
   for i := 0 to FFieldEditList.Count - 1 do
     TFieldEdit(FFieldEditList[i]).Commit;
 
+  DataFile.EndCommitRecord(RecNo);
   Modified := false;
 end;
 

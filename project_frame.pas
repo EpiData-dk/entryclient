@@ -626,6 +626,7 @@ begin
     RelateInit(RelateReason, GetRecordState(Node^.Parent));
   end;
   FStatusBar.DataForm := FrameFromNode(Node);
+  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
 
   Sender.Invalidate;
 end;
