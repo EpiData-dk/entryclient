@@ -53,7 +53,8 @@ begin
 
   S := '';
   if (RecNo <> NewRecord) and
-     (RecNo < MasterDataForm.DataFile.Size)
+     (RecNo < MasterDataForm.DataFile.Size) and
+     (RecNo >= 0)
   then
     begin
       for F in KFs do

@@ -692,11 +692,11 @@ begin
   for i := 0 to FFieldEditList.Count - 1 do
     TFieldEdit(FFieldEditList[i]).TabOrder := i;
 
-  // Todo : React to how users have define "new record" behaviour.
+{  // Todo : React to how users have define "new record" behaviour.
   if DataFile.Size = 0 then
     NewRecordActionExecute(nil)
   else
-    RecNo := (DataFile.Size - 1);
+    RecNo := (DataFile.Size - 1);   }
 
   FLoadingDatafile := false;
 end;
@@ -709,7 +709,11 @@ begin
     RecordNo := NewRecord;
 
   if RecordNo <> NewRecord then
+  begin
     RecordNo :=  FLocalToDFIndex.AsInteger[RecordNo];
+    // In order to log correctly
+    DataFile.LoadRecord(RecordNo);
+  end;
 
   MainForm.BeginUpdateForm;
   for i := 0 to FFieldEditList.Count - 1 do
@@ -1512,12 +1516,15 @@ begin
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 
+    TProjectFrame(Parent).EpiDocument.Logger.LogSearch(SF.Search);
+
     if Res = mrFind then
     begin
       // Find single record.
       FRecentSearch := SF.Search;
       DoPerformSearch(SF.Search, Min(RecNo, DataFile.Size), false);
     end;
+
     if res = mrList then
     begin
       FieldList := TEpiFields.Create(nil);
