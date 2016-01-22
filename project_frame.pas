@@ -284,6 +284,8 @@ begin
       end;
 
       Authenticator := TAuthenticator.Create(FDocumentFile);
+      if Assigned(Authenticator.AuthedUser) then
+        DoSaveProject(DocumentFile.FileName);
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened

@@ -713,6 +713,7 @@ begin
     RecordNo :=  FLocalToDFIndex.AsInteger[RecordNo];
     // In order to log correctly
     DataFile.LoadRecord(RecordNo);
+    TProjectFrame(Parent).SaveProjectAction.Execute;
   end;
 
   MainForm.BeginUpdateForm;
