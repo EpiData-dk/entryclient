@@ -704,6 +704,7 @@ end;
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
 var
   i: Integer;
+  A: TContainedAction;
 begin
   if RecordNo >= FLocalToDFIndex.Size then
     RecordNo := NewRecord;
@@ -720,6 +721,9 @@ begin
   for i := 0 to FFieldEditList.Count - 1 do
     TFieldEdit(FFieldEditList[i]).RecNo := RecordNo;
   MainForm.EndUpdateForm;
+
+  // Somehow we need to manually update the actionlist here....
+  for A in ActionList1 do A.Update;
 end;
 
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
