@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, epiv_custom_statusbar, entry_statusbar, ugradbtn,
-  epidatafilestypes;
+  epidatafilestypes, epicustombase;
 
 type
 
@@ -22,6 +22,9 @@ type
     procedure DoUpdate;
     procedure DoDatafileUpdate;
     procedure DeletedClick(Sender: TObject);
+    procedure RecordStataChangeHook(const Sender: TEpiCustomBase;
+      const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
+      EventType: Word; Data: Pointer);
   public
     class function Caption: string; override;
     class function Name: string; override;
@@ -34,7 +37,7 @@ type
 implementation
 
 uses
-  Controls, Graphics, dataform_frame, admin_authenticator, epirights;
+  Controls, Graphics, dataform_frame, admin_authenticator, epirights, epidatafiles;
 
 { TEntryClientStatusBarRecordState }
 
@@ -94,7 +97,10 @@ end;
 
 procedure TEntryClientStatusBarRecordState.DoDatafileUpdate;
 begin
-  FDeletedBtn.Enabled := Dataform.DeleteRecordAction.Enabled;
+  FDeletedBtn.Action := Dataform.DeleteRecordAction;
+  FDeletedBtn.Caption := 'DEL';
+
+  Dataform.DataFile.RegisterOnChangeHook(@RecordStataChangeHook, true);
 end;
 
 procedure TEntryClientStatusBarRecordState.DeletedClick(Sender: TObject);
@@ -102,6 +108,17 @@ begin
   if (not Assigned(Dataform)) then exit;
 
   Dataform.DeleteRecordAction.Execute;
+  DoUpdate;
+end;
+
+procedure TEntryClientStatusBarRecordState.RecordStataChangeHook(
+  const Sender: TEpiCustomBase; const Initiator: TEpiCustomBase;
+  EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
+begin
+  if (Initiator <> Dataform.DataFile) then Exit;
+  if (EventGroup <> eegDataFiles) then exit;
+  if (TEpiDataFileChangeEventType(EventType) <> edceRecordStatus) then exit;
+
   DoUpdate;
 end;
 
@@ -132,7 +149,7 @@ begin
     sucSelection: ;
     sucSave: ;
     sucExample:
-      FDeletedBtn.OnClick := nil;
+      FDeletedBtn.Action := nil;
   end;
 end;
 
@@ -158,7 +175,6 @@ begin
     BaseColor := clBtnFace;
     OverBlendColor := clRed;
     ClickColor := BaseColor;
-    OnClick := @DeletedClick;
   end;
 
   FVerifiedBtn := TGradButton.Create(AStatusBar);

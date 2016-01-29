@@ -714,7 +714,9 @@ begin
     RecordNo :=  FLocalToDFIndex.AsInteger[RecordNo];
     // In order to log correctly
     DataFile.LoadRecord(RecordNo);
-    TProjectFrame(Parent).SaveProjectAction.Execute;
+
+    if Assigned(Authenticator.AuthedUser) then
+      TProjectFrame(Parent).SaveProjectAction.Execute;
   end;
 
   MainForm.BeginUpdateForm;
@@ -722,8 +724,7 @@ begin
     TFieldEdit(FFieldEditList[i]).RecNo := RecordNo;
   MainForm.EndUpdateForm;
 
-  // Somehow we need to manually update the actionlist here....
-  for A in ActionList1 do A.Update;
+//  UpdateActions;
 end;
 
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem

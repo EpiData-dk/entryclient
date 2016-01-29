@@ -446,8 +446,6 @@ procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
 var
   Relation: TEpiMasterRelation;
   Node: PVirtualNode;
-  ND: PNodeData;
-  Frame: TDataFormFrame;
 begin
   Relation := TEpiMasterRelation(Msg.WParam);
   Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
