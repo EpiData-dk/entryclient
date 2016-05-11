@@ -137,8 +137,8 @@ uses
   epiv_datamodule, epiv_custom_statusbar,
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
-  epiadmin, admin_authenticator,
-  RegExpr, LazUTF8, entryprocs;
+  epiadmin, admin_authenticator, URIParser,
+  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd;
 
 type
 
@@ -888,14 +888,30 @@ begin
 end;
 
 procedure TProjectFrame.DoCloseProject;
+var
+  URI: TURI;
 begin
   if not Assigned(DocumentFile) then exit;
 
-  if FAllowForEndBackup and
-     EpiDocument.ProjectSettings.BackupOnShutdown then
+  if FAllowForEndBackup then
   begin
     try
-      DocumentFile.SaveEndBackupFile;
+      if EpiDocument.ProjectSettings.BackupOnShutdown then DocumentFile.SaveEndBackupFile;
+      if EpiDocument.ProjectSettings.EmailOnShutdown then
+        begin
+          Clipboard.Open;
+          Clipboard.AsText := DocumentFile.FileName;
+          Clipboard.Close;
+
+          URI.Protocol     := 'mailto';
+          URI.HasAuthority := false;
+          URI.Port         := 0;
+          URI.Path         := EpiDocument.ProjectSettings.EmailAddress;
+          URI.Params       := 'subject=' + EpiDocument.ProjectSettings.EmailSubject + '&' +
+                              'body='    + Trim(EpiDocument.ProjectSettings.EmailContent) + '&' +
+                              'attach='  + FilenameToURI(DocumentFile.FileName);
+          OpenURL(EncodeURI(URI));
+        end;
     except
       // TODO : Warn about not saving backup file?
     end;

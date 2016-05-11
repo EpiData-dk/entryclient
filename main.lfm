@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 449
+  Left = 2102
   Height = 642
-  Top = 252
+  Top = 261
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -15,7 +15,7 @@ object MainForm: TMainForm
   OnShortCut = FormShortCut
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.5'
+  LCLVersion = '1.7'
   object MainFormPageControl: TPageControl
     Left = 0
     Height = 577
@@ -41,7 +41,7 @@ object MainForm: TMainForm
       Left = 11
       Height = 27
       Top = 8
-      Width = 94
+      Width = 88
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'
