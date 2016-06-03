@@ -5,7 +5,7 @@ unit entry_statusbaritem_datafilecontent;
 interface
 
 uses
-  Classes, SysUtils, epiv_custom_statusbar, entry_statusbar,
+  Classes, SysUtils, epiv_custom_statusbar, entry_statusbar, dataform_frame,
   StdCtrls, epitools_statusbarparser, epidatafiles;
 
 type
@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  Controls;
+  Controls, strutils;
 
 { TEntryClientStatusBarDatafileContent }
 
@@ -53,14 +53,35 @@ procedure TEntryClientStatusBarDatafileContent.IdentFound(Sender: TObject;
   IdentType: TEpiSBSIdentType; const IdentName: string);
 var
   F: TEpiField;
+  DFName, FieldName: String;
+  DF: TDataFormFrame;
 begin
-  F := Dataform.DataFile.Fields.FieldByName[IdentName];
+  DF := Dataform;
+  F := nil;
+
+  if Pos('.', IdentName) > 0 then
+    begin
+      DFName := ExtractWord(1, IdentName, ['.']);
+      FieldName := ExtractWord(2, IdentName, ['.']);
+
+      while (Assigned(DF)) do
+        begin
+          if (DF.DataFile.Name = DFName) then break;
+          DF := Dataform.MasterDataform;
+        end;
+
+      if Assigned(DF) then
+        F := DF.DataFile.Fields.FieldByName[FieldName];
+    end
+  else
+    F := Dataform.DataFile.Fields.FieldByName[IdentName];
+
   if (not Assigned(F)) then
     Exit;
 
   case IdentType of
     esiData:
-      FLabel.Caption := FLabel.Caption + Dataform.FieldEditFromField(F).Text;
+      FLabel.Caption := FLabel.Caption + DF.FieldEditFromField(F).Text;
     esiField:
       FLabel.Caption := FLabel.Caption + F.Name;
     esiCaption:
