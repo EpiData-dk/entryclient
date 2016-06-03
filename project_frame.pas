@@ -618,6 +618,9 @@ begin
   FSelectedNode := Node;
   UpdateActionLinks;
 
+  FStatusBar.DataForm := FrameFromNode(Node);
+  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
+
   with FrameFromNode(Node) do
   begin
     ActionList1.State := asNormal;
@@ -625,8 +628,6 @@ begin
     UpdateSettings;
     RelateInit(RelateReason, GetRecordState(Node^.Parent));
   end;
-  FStatusBar.DataForm := FrameFromNode(Node);
-  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
 
   Sender.Invalidate;
 end;
