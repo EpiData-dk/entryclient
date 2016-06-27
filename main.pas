@@ -81,6 +81,9 @@ type
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
     CopyFieldToClpMenuItem: TMenuItem;
+    BetaPanel: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);

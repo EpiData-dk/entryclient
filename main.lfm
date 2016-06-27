@@ -50,6 +50,50 @@ object MainForm: TMainForm
       TabOrder = 0
     end
   end
+  object BetaPanel: TPanel
+    AnchorSideLeft.Control = MainFormPageControl
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = MainFormPageControl
+    AnchorSideTop.Side = asrCenter
+    Left = 335
+    Height = 87
+    Top = 287
+    Width = 306
+    ClientHeight = 87
+    ClientWidth = 306
+    Color = clYellow
+    ParentColor = False
+    TabOrder = 2
+    object Label1: TLabel
+      AnchorSideLeft.Control = BetaPanel
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Control = BetaPanel
+      Left = 23
+      Height = 15
+      Top = 21
+      Width = 261
+      BorderSpacing.Top = 20
+      Caption = 'Beta Version of EpiData EntryClient'
+      Font.Height = -13
+      Font.Name = 'Sans'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label2: TLabel
+      AnchorSideLeft.Control = BetaPanel
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Control = Label1
+      AnchorSideTop.Side = asrBottom
+      Left = 24
+      Height = 15
+      Top = 56
+      Width = 259
+      BorderSpacing.Top = 20
+      Caption = 'Confirm function on copies of your data. '
+      ParentColor = False
+    end
+  end
   object MainFormMenu: TMainMenu
     left = 328
     top = 176
