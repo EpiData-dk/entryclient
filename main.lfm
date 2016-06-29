@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 447
+  Left = 2119
   Height = 642
-  Top = 305
+  Top = 286
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -41,7 +41,7 @@ object MainForm: TMainForm
       Left = 11
       Height = 27
       Top = 8
-      Width = 94
+      Width = 88
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'
@@ -51,16 +51,16 @@ object MainForm: TMainForm
     end
   end
   object BetaPanel: TPanel
-    AnchorSideLeft.Control = MainFormPageControl
+    AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Control = MainFormPageControl
+    AnchorSideTop.Control = Owner
     AnchorSideTop.Side = asrCenter
-    Left = 335
-    Height = 87
-    Top = 287
-    Width = 306
-    ClientHeight = 87
-    ClientWidth = 306
+    Left = 343
+    Height = 204
+    Top = 207
+    Width = 291
+    ClientHeight = 204
+    ClientWidth = 291
     Color = clYellow
     ParentColor = False
     TabOrder = 2
@@ -68,30 +68,36 @@ object MainForm: TMainForm
       AnchorSideLeft.Control = BetaPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Control = BetaPanel
-      Left = 23
+      Left = 17
       Height = 15
       Top = 21
-      Width = 261
+      Width = 256
       BorderSpacing.Top = 20
-      Caption = 'Beta Version of EpiData EntryClient'
+      Caption = 'Test Version of EpiData EntryClient'
       Font.Height = -13
       Font.Name = 'Sans'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
-    object Label2: TLabel
-      AnchorSideLeft.Control = BetaPanel
-      AnchorSideLeft.Side = asrCenter
+    object StaticText1: TStaticText
+      AnchorSideLeft.Control = Label1
       AnchorSideTop.Control = Label1
       AnchorSideTop.Side = asrBottom
-      Left = 24
-      Height = 15
+      AnchorSideRight.Control = Label1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = BetaPanel
+      AnchorSideBottom.Side = asrBottom
+      Left = 17
+      Height = 127
       Top = 56
-      Width = 259
+      Width = 256
+      Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Top = 20
-      Caption = 'Confirm function on copies of your data. '
-      ParentColor = False
+      BorderSpacing.Bottom = 20
+      BorderStyle = sbsSunken
+      Caption = 'Do NOT use on routine data, work on copies of your data and send reports of testing to:'#10#10'- The EpiData-list   '#10'or'#10'- info@epidata.dk'
+      TabOrder = 0
     end
   end
   object MainFormMenu: TMainMenu

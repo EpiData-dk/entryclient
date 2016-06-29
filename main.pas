@@ -14,6 +14,7 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    BetaPanel: TPanel;
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
@@ -25,6 +26,7 @@ type
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
     AppleMenuItem: TMenuItem;
+    Label1: TLabel;
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -43,6 +45,7 @@ type
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
     RecentFilesSubMenu: TMenuItem;
+    StaticText1: TStaticText;
     WebTutorialsMenuItem: TMenuItem;
     TutorialSubMenu: TMenuItem;
     HelpMenuDivider3: TMenuItem;
@@ -81,9 +84,6 @@ type
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
     CopyFieldToClpMenuItem: TMenuItem;
-    BetaPanel: TPanel;
-    Label1: TLabel;
-    Label2: TLabel;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
