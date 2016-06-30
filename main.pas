@@ -272,6 +272,8 @@ begin
   // Close Old project
   if not DoCloseProject then exit;
 
+  BetaPanel.Visible :=  false;
+
   TabSheet := TTabSheet.Create(MainFormPageControl);
   TabSheet.PageControl := MainFormPageControl;
   TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
@@ -306,6 +308,8 @@ begin
   UpdateMainMenu;
   UpdateProcessToolPanel;
   SetCaption;
+
+  BetaPanel.Visible := true;
 end;
 
 procedure TMainForm.DoOpenProject(const AFileName: string);

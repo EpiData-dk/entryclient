@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 2119
+  Left = 439
   Height = 642
-  Top = 286
+  Top = 261
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -41,7 +41,7 @@ object MainForm: TMainForm
       Left = 11
       Height = 27
       Top = 8
-      Width = 88
+      Width = 94
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'
