@@ -1,4 +1,4 @@
     VersionNo: 2;
     MajorRev:  0;
-    MinorRev:  0;
-    BuildNo:   0;
+    MinorRev:  7;
+    BuildNo:   23;

@@ -148,7 +148,7 @@ uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
   shortcuts, epistringutils, epiadmin, entryprocs,
-  epiv_checkversionform;
+  epiv_checkversionform, LazFileUtils;
 
 { TMainForm }
 

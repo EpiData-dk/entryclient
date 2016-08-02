@@ -144,7 +144,7 @@ type
 implementation
 
 uses
-  Forms, epidatafilestypes, LCLProc, strutils,
+  Forms, epidatafilestypes, LCLProc, strutils, LazUTF8,
   epidocument, episettings, dataform_frame,
   epiconvertutils, settings, math;
 

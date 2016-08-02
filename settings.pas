@@ -130,7 +130,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLProc, IniFiles, entryprocs, FileUtil, LazFileUtils;
+  LCLProc, IniFiles, entryprocs, FileUtil, LazFileUtils, LazUTF8;
 
 const
   RecentIniFileName: string = '';
