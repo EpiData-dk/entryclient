@@ -19,6 +19,7 @@ procedure ShowResultListForm(
 
 procedure ResultListFormDefaultPosition();
 function  ResultListFormIsShowing: boolean;
+procedure ResultListFormClose;
 
 implementation
 
@@ -188,6 +189,12 @@ end;
 function ResultListFormIsShowing: boolean;
 begin
   result := Assigned(FResultListForm) and (FResultListForm.Showing);
+end;
+
+procedure ResultListFormClose;
+begin
+  if ResultListFormIsShowing then
+    FResultListForm.Close;
 end;
 
 end.

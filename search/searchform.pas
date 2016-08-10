@@ -100,7 +100,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils;
+  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils, LazUTF8;
 
 type
   TSearchConditions = record

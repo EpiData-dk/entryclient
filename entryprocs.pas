@@ -22,7 +22,7 @@ implementation
 
 uses
   lclproc, strutils, epidatafiles, FileUtil, settings, forms,
-  LCLVersion, Dialogs;
+  LCLVersion, Dialogs, LazUTF8, LazFileUtils;
 
 var
   IniFileName: string = '';
