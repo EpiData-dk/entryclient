@@ -1638,6 +1638,7 @@ begin
     if FE.CanFocus then
       FE.SetFocus;
   end;
+  ResultListFormClose;
 end;
 
 procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);

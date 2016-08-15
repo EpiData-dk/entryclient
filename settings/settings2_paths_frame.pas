@@ -33,7 +33,7 @@ implementation
 {$R *.lfm}
 
 uses
-  settings2, LCLProc, LazFileUtils;
+  settings2, LCLProc, LazFileUtils, LazUTF8;
 
 { TSettingsPathsFrame }
 
