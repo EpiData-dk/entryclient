@@ -2031,7 +2031,7 @@ var
   MasterField: TEpiField absolute Sender;
   KeyField: TEpiField;
   KeyDataRec: PEpiFieldDataEventRecord absolute Data;
-  i: Integer;
+  i, IdxSz: Integer;
   BVal: EpiBool;
   IVal: EpiInteger;
   FVal: EpiFloat;
@@ -2044,30 +2044,28 @@ begin
   if (TEpiFieldsChangeEventType(EventType) <> efceData) then exit;
 
   KeyField := DataFile.KeyFields.FieldByName[MasterField.Name];
+  IdxSz := GetIndexedSize;
   with KeyDataRec^ do
   begin
     case FieldType of
       ftBoolean:
         begin
           BVal := MasterField.AsBoolean[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsBoolean[i] = BoolValue then
-              KeyField.AsBoolean[i] := BVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsBoolean[FLocalToDFIndex.AsInteger[i]] := BVal;
         end;
       ftInteger,
       ftAutoInc:
         begin
           IVal := MasterField.AsInteger[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsInteger[i] = IntValue then
-              KeyField.AsInteger[i] := IVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsInteger[FLocalToDFIndex.AsInteger[i]] := IVal;
         end;
       ftFloat:
         begin
           FVal := MasterField.AsFloat[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsFloat[i] = FloatValue then
-              KeyField.AsFloat[i] := FVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsFloat[FLocalToDFIndex.AsInteger[i]] := FVal;
         end;
       ftDMYDate,
       ftMDYDate,
@@ -2077,25 +2075,22 @@ begin
       ftYMDAuto:
         begin
           DVal := MasterField.AsDate[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsDate[i] = DateValue then
-              KeyField.AsDate[i] := DVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsDate[FLocalToDFIndex.AsInteger[i]] := DVal;
         end;
       ftTime,
       ftTimeAuto:
         begin
           TVal := MasterField.AsTime[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsTime[i] = TimeValue then
-              KeyField.AsTime[i] := TVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsTime[FLocalToDFIndex.AsInteger[i]] := TVal;
         end;
       ftString,
       ftUpperString:
         begin
           SVal := MasterField.AsString[Index];
-          for i := 0 to KeyField.Size - 1 do
-            if KeyField.AsString[i] = StringValue^ then
-              KeyField.AsString[i] := SVal;
+          for i := 0 to IdxSz - 1 do
+            KeyField.AsString[FLocalToDFIndex.AsInteger[i]] := SVal;
         end;
     end;
   end;
