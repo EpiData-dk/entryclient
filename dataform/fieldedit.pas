@@ -146,7 +146,7 @@ implementation
 uses
   Forms, epidatafilestypes, LCLProc, strutils, LazUTF8,
   epidocument, episettings, dataform_frame,
-  epiconvertutils, settings, math, LazUTF8;
+  epiconvertutils, settings, math;
 
 { TFieldEdit }
 
