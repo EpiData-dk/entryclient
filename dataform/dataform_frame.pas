@@ -9,7 +9,7 @@ uses
   epidatafiles, epicustombase, StdCtrls, ExtCtrls, Buttons, ActnList, LCLType,
   ComCtrls, fieldedit, notes_form, LMessages, entry_messages,
   VirtualTrees, epitools_search, entry_globals, epidatafilerelations, epidatafilestypes,
-  epirelates;
+  epirelates, control_types, contnrs;
 
 type
 
@@ -81,7 +81,7 @@ type
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
     FDataFile: TEpiDataFile;
-    FFieldEditList: TFpList;
+    FCustomEditList: TObjectList;
     FRecNo: integer;
     FLoadingDatafile: boolean;
     procedure UpdateIndexFields;
@@ -95,7 +95,7 @@ type
     procedure DoPrintDataForm(WithData: boolean);
     procedure DoCopyToClipBoard(Const SingleField: Boolean);
   public
-    function  FieldEditFromField(Field: TEpiField): TFieldEdit;
+    function  CustomEditFromField(Field: TEpiField): TCustomEdit;
   private
     { Hint }
     FHintWindow: THintWindow;
@@ -119,18 +119,19 @@ type
     { Notes }
     FNotesForm: TNotesForm;
     FNotesHint: THintWindow;
-    procedure ShowNotes(FE: TFieldEdit; ForceShow: boolean = false);
+    procedure ShowNotes(CE: TCustomEdit; ForceShow: boolean = false);
     procedure UnShowNotes;
     procedure UnShowNotesAndHint;
   private
     { Field Enter/Exit Handling }
     // - Delayed key down handling.
-    FCurrentEdit: TFieldEdit;
-    function  NewOrNextRecord: TFieldEdit;
+    FCurrentEdit: TCustomEdit;
+    FCurrentDataCtrl: IEntryDataControl;
+    function  NewOrNextRecord: TCustomEdit;
     function  KeyDownData(Sender: TObject; Const Key: Word; Const Shift: TShiftState): PtrInt;
     procedure ASyncKeyDown(Data: PtrInt);
     procedure DoKeyFieldDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    function  NextFieldOnKeyDown(Const CurrentFieldEdit: TFieldEdit): TFieldEdit;
+    function  NextFieldOnKeyDown(Const CurrentEdit: TCustomEdit): TCustomEdit;
     function  NextUsableFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     function  PrevNonAutoFieldIndex(Const Index: integer; Const Wrap: boolean): integer;
     procedure FieldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -140,8 +141,8 @@ type
   private
     { Flow control/Validation/Script handling}
     FLastDataFileRelate: TEpiRelate;
-    procedure FieldEnterFlow(FE: TFieldEdit);
-    function  FieldExitFlow(FE: TFieldEdit; Out NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+    procedure FieldEnterFlow(DC: IEntryDataControl);
+    function  FieldExitFlow(CE: TCustomEdit; Out NewEdit: TCustomEdit): TFieldExitFlowType;
     function  DoValidateKeyFields: Boolean;
     function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
@@ -152,7 +153,7 @@ type
     { DataForm Control }
     function  NewSectionControl(EpiControl: TEpiCustomControlItem): TControl;
     function  NewFieldControl(EpiControl: TEpiCustomControlItem;
-      AParent: TWinControl): TControl;
+      AParent: TWinControl): TWinControl;
     function  NewHeadingControl(EpiControl: TEpiCustomControlItem;
       AParent: TWinControl): TControl;
   protected
@@ -182,7 +183,7 @@ type
     property  RecNo: integer read FRecNo write SetRecNo;
     property  IndexedRecNo: Integer read GetIndexedRecNo;
     property  Modified: boolean read FModified write SetModified;
-    property  FieldEditList: TFpList read FFieldEditList;
+    property  CustomEditList: TObjectList read FCustomEditList;
     property  IndexedSize: Integer read GetIndexedSize;
   public
     class procedure RestoreDefaultPos(F: TDataFormFrame);
@@ -229,11 +230,11 @@ uses
   LCLProc, settings,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
-  searchform, resultlist_form, shortcuts, control_types,
+  searchform, resultlist_form, shortcuts,
   Printers, OSPrinters, Clipbrd, setting_types,
   entrylabel, entrysection, project_frame,
   notes_report, epireport_generator_txt, admin_authenticator, epirights,
-  strutils;
+  strutils, epifields_helper;
 
 const
   Key_PrevFieldFlowKeys = [VK_UP];
@@ -280,7 +281,8 @@ end;
 procedure TDataFormFrame.FirstFieldActionExecute(Sender: TObject);
 var
   I: LongInt;
-  FE: TFieldEdit;
+  DC: IEntryDataControl;
+  CE: TCustomEdit;
 begin
   I := NextUsableFieldIndex(-1, false);
   if i = -1 then
@@ -293,14 +295,17 @@ begin
     Exit;
   end;
 
-  FE := TFieldEdit(FieldEditList[i]);
-  FieldEnterFlow(FE);
+//  FE := TFieldEdit(CustomEditList[i]);
+  CE := TCustomEdit(CustomEditList[i]);
+  DC := (CE as IEntryDataControl);
+
+  FieldEnterFlow(DC);
 
   // Line below:
   // Fixes bug where opening a single form, doesn't have a handle prior to
   // focusing the first field.
-  FE.HandleNeeded;
-  FE.SetFocus;
+  CE.HandleNeeded;
+  CE.SetFocus;
 end;
 
 procedure TDataFormFrame.DataFormScroolBoxMouseWheel(Sender: TObject;
@@ -368,13 +373,11 @@ begin
   begin
     SetLength(Lst, 1);
     Lst[0] := -1;
-//    ShowHintMsg('No records found', RecordEdit);
-//    exit;
   end;
 
   FieldList := TEpiFields.Create(nil);
-  for i := 0 to FieldEditList.Count - 1 do
-    FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+  for i := 0 to CustomEditList.Count - 1 do
+    FieldList.AddItem((CustomEditList[i] as IEntryDataControl).Field);
 
   ShowResultListForm(
     Self,
@@ -413,10 +416,10 @@ procedure TDataFormFrame.LastFieldActionExecute(Sender: TObject);
 var
   i: LongInt;
 begin
-  i := PrevNonAutoFieldIndex(FieldEditList.Count, false);
+  i := PrevNonAutoFieldIndex(CustomEditList.Count, false);
   if i = -1 then exit;
 
-  TFieldEdit(FieldEditList[i]).SetFocus;
+  TCustomEdit(CustomEditList[i]).SetFocus;
 end;
 
 procedure TDataFormFrame.LastRecActionExecute(Sender: TObject);
@@ -426,7 +429,7 @@ end;
 
 procedure TDataFormFrame.NewRecordActionExecute(Sender: TObject);
 var
-  FE: TFieldEdit;
+  CE: TCustomEdit;
   Idx: LongInt;
 begin
   if not DoNewRecord then exit;
@@ -434,9 +437,9 @@ begin
   Idx := NextUsableFieldIndex(-1, false);
   if Idx = -1 then exit;
 
-  FE := TFieldEdit(FieldEditList[Idx]);
-  FieldEnterFlow(FE);
-  FE.SetFocus;
+  CE := TCustomEdit(CustomEditList[Idx]);
+  FieldEnterFlow((CE as IEntryDataControl));
+  CE.SetFocus;
 end;
 
 procedure TDataFormFrame.NewRecordActionUpdate(Sender: TObject);
@@ -498,7 +501,7 @@ end;
 procedure TDataFormFrame.ShowFieldNotesActionExecute(Sender: TObject);
 begin
   if MainForm.ActiveControl is TFieldEdit then
-    ShowNotes(TFieldEdit(MainForm.ActiveControl), true);
+    ShowNotes(TCustomEdit(MainForm.ActiveControl), true);
 end;
 
 procedure TDataFormFrame.CopyFieldToClipboardActionExecute(Sender: TObject);
@@ -542,7 +545,6 @@ begin
 
         AddToIndex := AddToIndex and
           (MasterF.AsValue[MasterFrame.IndexedRecNo] = KF.AsValue[i]);
-//          (MasterF.AsValue[MasterFrame.RecNo] = KF.AsValue[i]);
         if (not AddToIndex) then
           break;
       end;
@@ -588,13 +590,13 @@ begin
 
   SC := TEpiSearchCondition.Create;
   SC.BinOp := boAnd;
-  SC.Field := FCurrentEdit.Field;
+  SC.Field := FCurrentDataCtrl.Field;
   SC.Text  := FCurrentEdit.Text;
   SC.CaseSensitive := false;
   if SC.Text = TEpiStringField.DefaultMissing then
     SC.MatchCriteria := mcIsSysMissing
   else
-    if FCurrentEdit.Field.FieldType in StringFieldTypes then
+    if FCurrentDataCtrl.Field.FieldType in StringFieldTypes then
       SC.MatchCriteria := mcContains
     else
       SC.MatchCriteria := mcEq;
@@ -605,8 +607,9 @@ end;
 
 function FieldSort(Item1, Item2: Pointer): Integer;
 var
-  F1: TFieldEdit absolute Item1;
-  F2: TFieldEdit absolute Item2;
+  F1: TCustomEdit absolute Item1;
+  F2: TCustomEdit absolute Item2;
+  D1, D2: IEntryDataControl;
   MainSection: TEpiSection;
 begin
   // Simple comparison
@@ -618,10 +621,13 @@ begin
     exit;
   end;
 
-  MainSection := F1.Field.DataFile.MainSection;
+  D1 := (F1 as IEntryDataControl);
+  D2 := (F2 as IEntryDataControl);
+
+  MainSection := D1.Field.DataFile.MainSection;
 
   // Cross section comparison.
-  if (F1.Field.Section <> MainSection) and (F2.Field.Section <> MainSection) then
+  if (D1.Field.Section <> MainSection) and (D2.Field.Section <> MainSection) then
   begin
     result := F1.Parent.Top - F2.Parent.Top;
     if result = 0 then
@@ -630,7 +636,7 @@ begin
   end;
 
   // Main <-> Section comparison
-  if (F1.Field.Section = MainSection) then
+  if (D1.Field.Section = MainSection) then
   begin
     result := F1.Top - F2.Parent.Top;
     if Result = 0 then
@@ -639,7 +645,7 @@ begin
   end;
 
   // Section <-> Main comparison
-  if (F2.Field.Section = MainSection) then
+  if (D2.Field.Section = MainSection) then
   begin
     result := F1.Parent.Top - F2.Top;
     if Result = 0 then
@@ -688,15 +694,9 @@ begin
   UpdateIndexFields;
 
   // Correct tab order of fields.
-  FFieldEditList.Sort(@FieldSort);
-  for i := 0 to FFieldEditList.Count - 1 do
-    TFieldEdit(FFieldEditList[i]).TabOrder := i;
-
-{  // Todo : React to how users have define "new record" behaviour.
-  if DataFile.Size = 0 then
-    NewRecordActionExecute(nil)
-  else
-    RecNo := (DataFile.Size - 1);   }
+  FCustomEditList.Sort(@FieldSort);
+  for i := 0 to FCustomEditList.Count - 1 do
+    TCustomEdit(FCustomEditList[i]).TabOrder := i;
 
   FLoadingDatafile := false;
 end;
@@ -704,7 +704,6 @@ end;
 procedure TDataFormFrame.LoadRecord(RecordNo: Integer);
 var
   i: Integer;
-  A: TContainedAction;
 begin
   if RecordNo >= FLocalToDFIndex.Size then
     RecordNo := NewRecord;
@@ -720,11 +719,9 @@ begin
   end;
 
   MainForm.BeginUpdateForm;
-  for i := 0 to FFieldEditList.Count - 1 do
-    TFieldEdit(FFieldEditList[i]).RecNo := RecordNo;
+  for i := 0 to FCustomEditList.Count - 1 do
+    (FCustomEditList[i] as IEntryDataControl).RecNo := RecordNo;
   MainForm.EndUpdateForm;
-
-//  UpdateActions;
 end;
 
 function TDataFormFrame.NewSectionControl(EpiControl: TEpiCustomControlItem
@@ -737,9 +734,10 @@ begin
 end;
 
 function TDataFormFrame.NewFieldControl(EpiControl: TEpiCustomControlItem;
-  AParent: TWinControl): TControl;
+  AParent: TWinControl): TWinControl;
 var
   Field: TEpiField absolute EpiControl;
+  DC: IEntryDataControl;
 begin
   case Field.FieldType of
     ftBoolean:  Result := TBoolEdit.Create(AParent);
@@ -761,6 +759,7 @@ begin
     ftTimeAuto,
     ftTime:     Result := TTimeEdit.Create(AParent);
   end;
+  DC := (Result as IEntryDataControl);
 
   //  This check is normal No-Entry mode
   if (Field.EntryMode = emNoEnter) or
@@ -776,17 +775,19 @@ begin
   EpiControl.AddCustomData(DataFormCustomDataKey, result);
   Result.Parent := AParent;
 
-  with TFieldEdit(Result) do
+//  with TFieldEdit(Result) do
+  with Result do
   begin
-    Field     := TEpiField(EpiControl);
     OnKeyDown := @FieldKeyDown;
     OnKeyUp   := @FieldKeyUp;
     OnEnter   := @FieldEnter;
     OnExit    := @FieldExit;
-    OnValidateError := @FieldValidateError;
   end;
 
-  FFieldEditList.Add(Result);
+  DC.Field := TEpiField(EpiControl);
+  DC.OnValidateError := @FieldValidateError;
+
+  FCustomEditList.Add(Result);
 end;
 
 function TDataFormFrame.NewHeadingControl(EpiControl: TEpiCustomControlItem;
@@ -900,7 +901,7 @@ begin
   if (not Assigned(FCurrentEdit)) then Exit;
 
   FList := TEpiFields.Create(nil);
-  FList.AddItem(FCurrentEdit.Field);
+  FList.AddItem(FCurrentDataCtrl.Field);
   TProjectFrame(Parent).StatusBar.Selection := FList;
   FList.Free;
 end;
@@ -1038,6 +1039,8 @@ var
   i: Integer;
   Res: LongInt;
   AVal: Int64;
+  CE: TCustomEdit;
+  DC: IEntryDataControl;
 begin
   if (Modified) and
      (not AllFieldsValidate(false))
@@ -1084,12 +1087,14 @@ begin
   // * Prepare system for new record  *
   // **********************************
   RecNo := NewRecord;
-  for i := 0 to FieldEditList.Count - 1 do
-  with TFieldEdit(FieldEditList[i]) do
+  for i := 0 to CustomEditList.Count - 1 do
   begin
+    CE := TCustomEdit(CustomEditList[i]);
+    DC := (CE as IEntryDataControl);
+
     // Check for AutoInc/Today fields.
-    if (Field.FieldType in AutoFieldTypes) then
-    with Field do
+    if (DC.Field.FieldType in AutoFieldTypes) then
+    with DC.Field do
     begin
       case FieldType of
         ftAutoInc:  begin
@@ -1108,11 +1113,14 @@ begin
 
     // Default Value
     if (Field.HasDefaultValue) then
-      Text := Field.DefaultValueAsString;
+      CE.Text := Field.DefaultValueAsString;
 
     // Repeat
-    if (Field.RepeatValue) and (FLocalToDFIndex.Size > 0) and (not Field.IsMissing[FLocalToDFIndex.AsInteger[FLocalToDFIndex.Size - 1]]) then
-      Text := Field.AsString[FLocalToDFIndex.AsInteger[FLocalToDFIndex.Size - 1]];
+    if (Field.RepeatValue) and
+       (FLocalToDFIndex.Size > 0) and
+       (not Field.IsMissing[FLocalToDFIndex.AsInteger[FLocalToDFIndex.Size - 1]])
+    then
+      CE.Text := Field.AsString[FLocalToDFIndex.AsInteger[FLocalToDFIndex.Size - 1]];
   end;
 
   // Finally fill all key fields with inherited data
@@ -1131,9 +1139,9 @@ begin
   result := TControl(EpiControl.FindCustomData(DataFormCustomDataKey));
 end;
 
-function TDataFormFrame.FieldEditFromField(Field: TEpiField): TFieldEdit;
+function TDataFormFrame.CustomEditFromField(Field: TEpiField): TCustomEdit;
 begin
-  result := TFieldEdit(ControlFromEpiControl(Field));
+  result := TCustomEdit(ControlFromEpiControl(Field));
 end;
 
 procedure TDataFormFrame.DoPrintDataForm(WithData: boolean);
@@ -1156,7 +1164,7 @@ var
   i: Integer;
   S: String;
   Sz: TSize;
-  FE: TFieldEdit;
+  CE: TCustomEdit;
 
   function RecursiveFindControl(Const EpiCtrl: TEpiCustomControlItem;
     Const WinControl: TWinControl): TControl;
@@ -1164,7 +1172,7 @@ var
     i: Integer;
   begin
     if EpiCtrl is TEpiField then
-      Exit(FieldEditFromField(TEpiField(EpiCtrl)));
+      Exit(CustomEditFromField(TEpiField(EpiCtrl)));
 
     for i := 0 to WinControl.ControlCount - 1 do
     with WinControl do
@@ -1214,6 +1222,7 @@ var
 
 begin
   IF NOT PrintDialog1.Execute THEN Exit;
+
   WITH Printer DO
   BEGIN
 //    FileName := '/tmp/tmp.ps';
@@ -1258,7 +1267,7 @@ begin
       if (CI is TEpiField) then
       begin
         SetFont(EntrySettings.FieldFont);
-        ABot := ATop + Round(FieldEditFromField(TEpiField(CI)).Height * yscale);  // Canvas.TextHeight(TEpiField(CI).Name);
+        ABot := ATop + Round(CustomEditFromField(TEpiField(CI)).Height * yscale);  // Canvas.TextHeight(TEpiField(CI).Name);
       end;
 
       // Check if we need to create a new page
@@ -1301,10 +1310,10 @@ begin
       if CI is TEpiField then
       with TEpiField(CI) do
       begin
-        FE := FieldEditFromField(TEpiField(CI));
+        CE := CustomEditFromField(TEpiField(CI));
 
         // Draw box
-        ARight := ALeft + Round(FieldEditFromField(TEpiField(CI)).Width * xscale);
+        ARight := ALeft + Round(CE.Width * xscale);
         ATop := ABot - ((ABot - ATop) div 2);
 
         Canvas.MoveTo(ALeft, ATop);
@@ -1314,13 +1323,13 @@ begin
 
         // DATA!
         if WithData and
-           (Trim(FE.Text) <> '')
+           (Trim(CE.Text) <> '')
         then
         begin
           Canvas.TextOut(
             ALeft + Round(2 * xscale),
-            ABot - Canvas.TextHeight(FE.Text) - Round(2 * yscale),
-            FE.Text
+            ABot - Canvas.TextHeight(CE.Text) - Round(2 * yscale),
+            CE.Text
             );
         end;
 
@@ -1341,11 +1350,11 @@ begin
         // VALUELABEL
         if WithData and
            (Assigned(ValueLabelSet)) and
-           (FE.Text <> '')
+           (CE.Text <> '')
         then
         begin
           Canvas.Font.Color := EntrySettings.ValueLabelColour;
-          S := ValueLabelSet.ValueLabelString[FE.Text];
+          S := ValueLabelSet.ValueLabelString[CE.Text];
           ALeft := ARight + Round(5 * xscale);
           ATop := ABot - Canvas.TextHeight(S);
           Canvas.TextOut(ALeft, ATop, S);
@@ -1383,7 +1392,7 @@ var
         case FuncType of
           gftIndexedString:
             Result += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
-          gftFieldEdit:
+          gftCustomEdit:
             Result += TGetFEFunction(FuncPtr)(FE);
         end;
   end;
@@ -1423,7 +1432,7 @@ begin
     begin
       S += 'KEY: ';
       for F in DataFile.KeyFields do
-        S += F.Name + '=' + FieldEditFromField(F).Text + ' ';
+        S += F.Name + '=' + CustomEditFromField(F).Text + ' ';
 
       TrimRight(S);
       S += LineEnding;
@@ -1434,7 +1443,7 @@ begin
   else
     for i := 0 to DataFile.Fields.Count -1 do
       begin
-        S += FunctionsCall(FieldEditFromField(DataFile.Field[i]));
+        S += FunctionsCall(CustomEditFromField(DataFile.Field[i]));
       end;
 
   S := TrimRight(S);
@@ -1474,6 +1483,8 @@ function TDataFormFrame.CreateSearchFromFieldEdits: TEpiSearch;
 var
   SC: TEpiSearchCondition;
   i: Integer;
+  CE: TCustomEdit;
+  Field: TEpiField;
 begin
   // Search is saved in FRecentSearch!
   Result := TEpiSearch.Create;
@@ -1481,19 +1492,21 @@ begin
   Result.Direction := sdForward;
   Result.Origin := soBeginning;
 
-  for i := 0 to FieldEditList.Count - 1 do
-  with TFieldEdit(FieldEditList[i]) do
+  for i := 0 to CustomEditList.Count - 1 do
   begin
+    CE := TCustomEdit(CustomEditList[i]);
+    Field := (CE as IEntryDataControl).Field;
+
     if (Field.FieldType in AutoFieldTypes) or
        (Field.RepeatValue) or
        (Field.HasDefaultValue) or
-       (Text = '')
+       (CE.Text = '')
        then continue;
 
     SC := TEpiSearchCondition.Create;
     SC.BinOp := boAnd;
     SC.Field := Field;
-    SC.Text := Text;
+    SC.Text  := CE.Text;
     SC.CaseSensitive := false;
     if (SC.Text = TEpiStringField.DefaultMissing) then
       SC.MatchCriteria := mcIsSysMissing
@@ -1534,8 +1547,8 @@ begin
     if res = mrList then
     begin
       FieldList := TEpiFields.Create(nil);
-      for i := 0 to FieldEditList.Count - 1 do
-        FieldList.AddItem(TFieldEdit(FieldEditList[i]).Field);
+      for i := 0 to CustomEditList.Count - 1 do
+        FieldList.AddItem((CustomEditList[i] as IEntryDataControl).Field);
 
       FRecentSearch := nil;
       List := SearchFindList(SF.Search, Min(RecNo, FDataFile.Size));
@@ -1604,7 +1617,7 @@ begin
   S.Origin := soBeginning;
   for F in DataFile.KeyFields do
   begin
-    Txt := FieldEditFromField(F).Text;
+    Txt := CustomEditFromField(F).Text;
     if Txt <> '' then
     begin
       C := TEpiSearchCondition.Create;
@@ -1624,7 +1637,7 @@ end;
 procedure TDataFormFrame.LMGotoRec(var Msg: TLMessage);
 var
   F: TEpiField;
-  FE: TFieldEdit;
+  CE: TCustomEdit;
 begin
   // WParam = RecordNo
   // LParam = Field (or nil)
@@ -1634,14 +1647,14 @@ begin
   F := TEpiField(Msg.LParam);
   if Assigned(F) then
   begin
-    FE := FieldEditFromField(F);
-    if FE.CanFocus then
-      FE.SetFocus;
+    CE := CustomEditFromField(F);
+    if CE.CanFocus then
+      CE.SetFocus;
   end;
   ResultListFormClose;
 end;
 
-procedure TDataFormFrame.ShowNotes(FE: TFieldEdit; ForceShow: boolean);
+procedure TDataFormFrame.ShowNotes(CE: TCustomEdit; ForceShow: boolean);
 var
   R: TRect;
   P: TPoint;
@@ -1649,11 +1662,15 @@ var
   Rep: TNotesReport;
   Lines: TStringList;
   I: Integer;
+  DC: IEntryDataControl;
 begin
-  NoteText := FE.Field.Notes.Text;
+  if (not Supports(CE, IEntryDataControl, DC) then
+    Exit;
+
+  NoteText := DC.Field.Notes.Text;
   if (NoteText = '') and
-//     Assigned(FE.Field.ValueLabelSet) and
-     (not FE.Field.ForcePickList) and
+     Assigned(DC.Field.ValueLabelSet) and
+     (not DC.Field.ForcePickList) and
      (EntrySettings.ValueLabelsAsNotes)
   then
   begin
@@ -1662,7 +1679,7 @@ begin
     Lines.Delimiter := #1;
 
     Rep := TNotesReport.Create(TEpiReportTXTGenerator);
-    Rep.Field := FE.Field;
+    Rep.Field := DC.Field;
     Rep.RunReport;
     Lines.DelimitedText := StringReplace(Trim(Rep.ReportText), LineEnding, #1, [rfReplaceAll]);
     Rep.Free;
@@ -1707,8 +1724,8 @@ begin
       FNotesHint.HideInterval := 5000;
     end;
     R := FNotesHint.CalcHintRect(0, NoteText, nil);
-    P := FE.ClientToScreen(Point(0,0));
-    OffsetRect(R, P.X + FE.Width + 2, P.Y);
+    P := CE.ClientToScreen(Point(0,0));
+    OffsetRect(R, P.X + CE.Width + 2, P.Y);
     FNotesHint.ActivateHint(R, NoteText);
   end else
   // Display in window
@@ -1734,7 +1751,7 @@ begin
   ShowHintMsg('', nil);
 end;
 
-function TDataFormFrame.NewOrNextRecord: TFieldEdit;
+function TDataFormFrame.NewOrNextRecord: TCustomEdit;
 var
   B: Boolean;
   CRecNo: Integer;
@@ -1790,7 +1807,7 @@ begin
       // shift focus field, etc...
       if CRecNo = RecNo then exit;
     end;
-  Result := TFieldEdit(FieldEditList[NextUsableFieldIndex(-1, false)]);
+  Result := TCustomEdit(CustomEditList[NextUsableFieldIndex(-1, false)]);
 end;
 
 function TDataFormFrame.KeyDownData(Sender: TObject; const Key: Word;
@@ -1808,11 +1825,15 @@ end;
 procedure TDataFormFrame.CommitFields;
 var
   i: Integer;
+  CE: TFieldEdit;
+  Field: TEpiField;
 begin
   // Add text to auto field with Update mode set.
-  for i := 0 to FieldEditList.Count - 1 do
-  with TFieldEdit(FieldEditList[i]) do
+  for i := 0 to CustomEditList.Count - 1 do
   begin
+    CE := TFieldEdit(CustomEditList[i]);
+    Field := (CE as IEntryDataControl).Field;
+
     // Check for AutoInc/Today fields.
     if (Field is TEpiCustomAutoField) and
        ((TEpiCustomAutoField(Field).AutoMode = umUpdated) or
@@ -1821,10 +1842,10 @@ begin
     then with Field do
     begin
       case FieldType of
-        ftDMYAuto: Text := FormatDateTime('DD/MM/YYYY', Date);
-        ftMDYAuto: Text := FormatDateTime('MM/DD/YYYY', Date);
-        ftYMDAuto: Text := FormatDateTime('YYYY/MM/DD', Date);
-        ftTimeAuto:  Text := FormatDateTime('HH:NN:SS',   Now);
+        ftDMYAuto:  CE.Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYAuto:  CE.Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDAuto:  CE.Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeAuto: CE.Text := FormatDateTime('HH:NN:SS',   Now);
       end;
     end;
   end;
@@ -1844,9 +1865,8 @@ begin
   end else
     DataFile.BeginCommitRecord(false);
 
-
-  for i := 0 to FFieldEditList.Count - 1 do
-    TFieldEdit(FFieldEditList[i]).Commit;
+  for i := 0 to FCustomEditList.Count - 1 do
+    (FCustomEditList[i] as IEntryDataControl).Commit;
 
   DataFile.EndCommitRecord(RecNo);
   Modified := false;
@@ -1855,17 +1875,17 @@ end;
 procedure TDataFormFrame.UpdateSettings;
 var
   i: Integer;
+  Intf: IEntryControl;
 begin
   UpdateShortCuts;
   UpdateNotesHints;
   UpdateStatusbarDataform;
   UpdateStatusbarSelection;
 
-
   if Assigned(DataFile) then
     for i := 0 to DataFile.ControlItems.Count - 1 do
-      if Supports(ControlFromEpiControl(DataFile.ControlItems[i]), IEntryControl) then
-        (ControlFromEpiControl(DataFile.ControlItems[i]) as IEntryControl).UpdateSettings;
+      if Supports(ControlFromEpiControl(DataFile.ControlItems[i]), IEntryControl, Intf) then
+        Intf.UpdateSettings;
 end;
 
 class procedure TDataFormFrame.RestoreDefaultPos(F: TDataFormFrame);
@@ -1885,9 +1905,9 @@ procedure TDataFormFrame.FillKeyFields;
 var
   ParentKeyFields: TEpiFields;
   ParentKeyField: TEpiField;
-  ParentFE: TFieldEdit;
+  ParentCE: TCustomEdit;
   F: TEpiField;
-  FE: TFieldEdit;
+  CE: TCustomEdit;
 begin
   if not IsDetailRelation then exit;
 
@@ -1895,12 +1915,12 @@ begin
 
   for ParentKeyField in ParentKeyFields do
   begin
-    ParentFE := FieldEditFromField(ParentKeyField);
+    ParentCE := CustomEditFromField(ParentKeyField);
 
     F := DataFile.KeyFields.FieldByName[ParentKeyField.Name];
-    FE := FieldEditFromField(F);
+    CE := CustomEditFromField(F);
 
-    FE.Text := ParentFE.Text;
+    CE.Text := ParentCE.Text;
   end;
 end;
 
@@ -2038,7 +2058,7 @@ end;
 procedure TDataFormFrame.RelateInit(Reason: TRelateReason;
   ParentRecordState: TEpiRecordState);
 var
-  FE: TFieldEdit;
+  CE: TCustomEdit;
 begin
   UpdateIndexFields;
 
@@ -2071,34 +2091,16 @@ begin
 
         if ResultListFormIsShowing then
           BrowseAllAction.Execute;
-{          ShowResultListForm(
-            Self,
-            'All',
-            DataFile,
-            DataFile.Fields,
-            nil,
-            FDFToLocalIndex,
-            FLocalToDFIndex
-          );        }
       end;
 
     rrReturnToParent:
       if ResultListFormIsShowing then
         BrowseAllAction.Execute;
-  {      ShowResultListForm(
-          Self,
-          'All',
-          DataFile,
-          DataFile.Fields,
-          nil,
-          FDFToLocalIndex,
-          FLocalToDFIndex
-        );     }
 
     rrRelateToNextDF:
       begin
-        FE := nil;
-        DoAfterRecord(FE);
+        CE := nil;
+        DoAfterRecord(CE);
         if ResultListFormIsShowing then
           BrowseAllAction.Execute;
         Exit;
@@ -2121,10 +2123,10 @@ begin
   if (Reason = rrReturnToParent)
   then
     begin
-      FE := NextFieldOnKeyDown(FCurrentEdit);
+      CE := NextFieldOnKeyDown(FCurrentEdit);
 
-      if (not Assigned(FE)) then
-        DoAfterRecord(FE);
+      if (not Assigned(CE)) then
+        DoAfterRecord(CE);
     end
   else if (DataFormScroolBox.Enabled)
   then
@@ -2189,37 +2191,37 @@ begin
   // Assume Index is always valid (or -1 to get the first field).
   Result := Index + 1;
 
-  if (Result >= FieldEditList.Count) and Wrap then
+  if (Result >= CustomEditList.Count) and Wrap then
     Result := 0;
 
-  while (Result <= (FieldEditList.Count - 1)) and
-        ((TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) or
-         (not TFieldEdit(FieldEditList[Result]).Enabled)) do
+  while (Result <= (CustomEditList.Count - 1)) and
+        (((CustomEditList[Result] as IEntryDataControl).Field.FieldType in AutoFieldTypes) or
+         (not TCustomEdit(CustomEditList[Result]).Enabled)) do
   begin
     inc(Result);
-    if (Result >= FieldEditList.Count) and Wrap then
+    if (Result >= CustomEditList.Count) and Wrap then
       Result := 0;
   end;
-  if Result >= FieldEditList.Count then
+  if Result >= CustomEditList.Count then
     Result := -1;
 end;
 
 function TDataFormFrame.PrevNonAutoFieldIndex(const Index: integer;
   const Wrap: boolean): integer;
 begin
-  // Assume Index is always valid (or FieldEditList.Count to get last field).
+  // Assume Index is always valid (or CustomEditList.Count to get last field).
   Result := Index - 1;
 
   if (Result < 0) and Wrap then
-    Result := FieldEditList.Count - 1;
+    Result := CustomEditList.Count - 1;
 
   while (Result >= 0) and
-        ((TFieldEdit(FieldEditList[Result]).Field.FieldType in AutoFieldTypes) or
-         (not TFieldEdit(FieldEditList[Result]).Enabled)) do
+        (((CustomEditList[Result] as IEntryDataControl).Field.FieldType in AutoFieldTypes) or
+         (not TCustomEdit(CustomEditList[Result]).Enabled)) do
   begin
     dec(Result);
     if (Result < 0) and Wrap then
-      Result := FieldEditList.Count - 1;
+      Result := CustomEditList.Count - 1;
   end;
 end;
 
@@ -2233,20 +2235,21 @@ end;
 procedure TDataFormFrame.DoKeyFieldDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
-  FieldEdit: TFieldEdit absolute Sender;
-  NextFieldEdit: TFieldEdit;
+  CE: TCustomEdit absolute Sender;
+  NextCE: TCustomEdit;
   Res: TFieldExitFlowType;
   CRecNo: Integer;
   B: Boolean;
+  DC: IEntryDataControl;
 
-  function PrevFieldOnKeyDown: TFieldEdit;
+  function PrevFieldOnKeyDown: TCustomEdit;
   var
     Idx: LongInt;
   begin
     Result := nil;
-    Idx := PrevNonAutoFieldIndex(FieldEditList.IndexOf(FieldEdit), false);
+    Idx := PrevNonAutoFieldIndex(CustomEditList.IndexOf(CE), false);
     if Idx = -1 then exit;
-    Result := TFieldEdit(FieldEditList[Idx]);
+    Result := TCustomEdit(CustomEditList[Idx]);
   end;
 
 begin
@@ -2255,11 +2258,11 @@ begin
      ((Key = VK_TAB) and (Shift = [ssShift]))
   then
   Begin
-    if not FieldValidate(FieldEdit) then exit;
+    if not FieldValidate(CE) then exit;
 
-    NextFieldEdit := PrevFieldOnKeyDown;
-    if Assigned(NextFieldEdit) then
-      NextFieldEdit.SetFocus;
+    NextCE := PrevFieldOnKeyDown;
+    if Assigned(NextCE) then
+      NextCE.SetFocus;
     Key := VK_UNKNOWN;
   end;
 
@@ -2273,78 +2276,81 @@ begin
     Exit;
   end;
 
+  DC := (CE as IEntryDataControl);
+
   // Leave field or see pick-list.
   if (Key in Key_FieldActKeys)
-  then begin
-    if (Key in Key_ShowPickListKeys) and
-       (not Assigned(FieldEdit.Field.ValueLabelSet)) then exit;
-
-    if (Key in Key_ShowPickListKeys) and
-       (Assigned(FieldEdit.Field.ValueLabelSet)) and
-       (not ShowValueLabelPickList(FieldEdit)) then
+  then
     begin
-      Key := VK_UNKNOWN;
-      exit;
-    end;
+      if (Key in Key_ShowPickListKeys) and
+         (not Assigned(DC.Field.ValueLabelSet)) then exit;
 
-    if not FieldValidate(FieldEdit, false) then
-    begin
-      Key := VK_UNKNOWN;
-      exit;
-    end;
-
-    // Field is validated - check for Valuelabels and update FieldEdit.
-    FieldEdit.UpdateSettings;
-
-    Res := FieldExitFlow(FieldEdit, NextFieldEdit);
-    case Res of
-      fxtOk:
-        NextFieldEdit := NextFieldOnKeyDown(FieldEdit);
-
-      fxtError:
-        begin
-          Key := VK_UNKNOWN;
-          Exit;
-        end;
-
-      fxtRelate:
-        begin
-          // A PostMessage() has been sent to Project Frame, so just exit!
-          Key := VK_UNKNOWN;
-          Exit;
-        end;
-
-      fxtJump:
-        ; // Do nothing - NextFieldEdit is set.
-    end;
-
-    if not Assigned(NextFieldEdit)
-    then
+      if (Key in Key_ShowPickListKeys) and
+         (Assigned(DC.Field.ValueLabelSet)) and
+         (not ShowValueLabelPickList(CE)) then
       begin
-        DoAfterRecord(NextFieldEdit);
-        if not Assigned(NextFieldEdit) then exit;
-      end
-    else
-      begin
-        FieldEnterFlow(NextFieldEdit);
-        NextFieldEdit.SetFocus;
+        Key := VK_UNKNOWN;
+        exit;
       end;
 
-    Key := VK_UNKNOWN;
-  end;
+      if not FieldValidate(CE, false) then
+      begin
+        Key := VK_UNKNOWN;
+        exit;
+      end;
+
+      // Field is validated - check for Valuelabels and update CE.
+      DC.UpdateSettings;
+
+      Res := FieldExitFlow(CE, NextCE);
+      case Res of
+        fxtOk:
+          NextCE := NextFieldOnKeyDown(CE);
+
+        fxtError:
+          begin
+            Key := VK_UNKNOWN;
+            Exit;
+          end;
+
+        fxtRelate:
+          begin
+            // A PostMessage() has been sent to Project Frame, so just exit!
+            Key := VK_UNKNOWN;
+            Exit;
+          end;
+
+        fxtJump:
+          ; // Do nothing - NextCE is set.
+      end;
+
+      if not Assigned(NextCE)
+      then
+        begin
+          DoAfterRecord(NextCE);
+          if not Assigned(NextCE) then exit;
+        end
+      else
+        begin
+          FieldEnterFlow((NextCE as IEntryDataControl));
+          NextCE.SetFocus;
+        end;
+
+      Key := VK_UNKNOWN;
+    end;
 
   // Needed to keep project updated on changes to key fields.
-  if (DataFile.KeyFields.IndexOf(FieldEdit.Field) > -1) then
+  if (DataFile.KeyFields.IndexOf(DC.Field) > -1) then
     UpdateModified;
 end;
 
-function TDataFormFrame.NextFieldOnKeyDown(const CurrentFieldEdit: TFieldEdit
-  ): TFieldEdit;
+function TDataFormFrame.NextFieldOnKeyDown(const CurrentEdit: TCustomEdit
+  ): TCustomEdit;
 var
   Idx: LongInt;
 begin
   Result := nil;
-  Idx := NextUsableFieldIndex(FieldEditList.IndexOf(CurrentFieldEdit), false);
+  Idx := NextUsableFieldIndex(CustomEditList.IndexOf(CurrentFieldEdit), false);
   if Idx = -1 then
   begin
     if (RecNo = NewRecord) or (RecNo = (FLocalToDFIndex.Size - 1))  then
@@ -2355,21 +2361,23 @@ begin
     end
   end;
   if Idx = -1 then ; // TODO : This should never happend?
-  result := TFieldEdit(FieldEditList[Idx]);
+  result := TCustomEdit(CustomEditList[Idx]);
 end;
 
 procedure TDataFormFrame.FieldKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
-  FieldEdit: TFieldEdit absolute Sender;
+  CE: TCustomEdit absolute Sender;
+  DC: IEntryDataControl;
 begin
-  if FieldEdit.Modified then Modified := true;
+  if CE.Modified then Modified := true;
+  DC := (CE as IEntryDataControl);
 
-  if (FieldEdit.JumpToNext) and (not FieldEdit.Field.ConfirmEntry) then
+  if (DC.JumpToNext) and (not DC.Field.ConfirmEntry) then
   begin
     Key := VK_RETURN;
-    FieldEdit.OnKeyDown(FieldEdit, Key, []);
-    FieldEdit.JumpToNext := false;
+    CE.OnKeyDown(CE, Key, []);
+    DC.JumpToNext := false;
     Exit;
   end;
 end;
@@ -2386,13 +2394,13 @@ end;
 
 procedure TDataFormFrame.FieldEnter(Sender: TObject);
 var
-  FieldEdit: TFieldEdit absolute sender;
+  CE: TFieldEdit absolute sender;
   FieldTop: LongInt;
   Delta: Integer;
 begin
   // Occurs whenever a field recieves focus
   // - eg. through mouseclik, tab or move.
-  FieldTop := FieldEditTop(FieldEdit);
+  FieldTop := FieldEditTop(CE);
   Delta := DataFormScroolBox.Height div 4;
 
   With DataFormScroolBox.VertScrollBar do
@@ -2401,30 +2409,34 @@ begin
       Position := FieldTop - Delta;
 
     if FieldTop > (Position + Page - Delta) then
-      Position := FieldTop - Page + FieldEdit.Height + Delta;
+      Position := FieldTop - Page + CE.Height + Delta;
   end;
 
-  FieldEdit.Color := EntrySettings.ActiveFieldColour;
-  ShowNotes(FieldEdit);
-  FCurrentEdit := FieldEdit;
+  CE.Color := EntrySettings.ActiveFieldColour;
+  ShowNotes(CE);
+  FCurrentEdit := CE;
+  FCurrentDataCtrl := (FCurrentEdit as IEntryDataControl);
 
   UpdateStatusbarSelection;
 end;
 
 procedure TDataFormFrame.FieldExit(Sender: TObject);
 var
-  FieldEdit: TFieldEdit absolute Sender;
+  CE: TCustomEdit absolute Sender;
+  DC: IEntryDataControl;
 begin
-  if (FieldEdit.Field.EntryMode = emMustEnter) or
-     (DataFile.KeyFields.IndexOf(FieldEdit.Field) >= 0)
+  DC := (CE as IEntryDataControl);
+
+  if (DC.Field.EntryMode = emMustEnter) or
+     (DataFile.KeyFields.IndexOf(DC.Field) >= 0)
   then
-    FieldEdit.Color := EntrySettings.MustEnterFieldColour
+    CE.Color := EntrySettings.MustEnterFieldColour
   else
-    FieldEdit.Color := EntrySettings.InactiveFieldColour;
-  FieldValidate(FieldEdit);
+    CE.Color := EntrySettings.InactiveFieldColour;
+  FieldValidate(CE);
 end;
 
-procedure TDataFormFrame.FieldEnterFlow(FE: TFieldEdit);
+procedure TDataFormFrame.FieldEnterFlow(DC: IEntryDataControl);
 var
   Field: TEpiField;
 begin
@@ -2435,7 +2447,7 @@ begin
   //   field is entered.
 
 
-  Field := FE.Field;
+  Field := DC.Field;
   // Before field script:
   // TODO : Before field script
 
@@ -2446,16 +2458,16 @@ begin
   // is being opened - else a bug occurs where the Picklist form is
   // shown before the Dataform is loaded.
   // Force Show Picklist.
-  if (FE.Text = '') and
+  if (DC.CustomEdit.Text = '') and
      (Assigned(Field.ValueLabelSet)) and
      (Field.ForcePickList)
   then
     if not FLoadingDatafile then
-      PostMessage(FE.Handle, CN_KEYDOWN, VK_F9, 0);
+      PostMessage(DC.CustomEdit.Handle, CN_KEYDOWN, VK_F9, 0);
 end;
 
-function TDataFormFrame.FieldExitFlow(FE: TFieldEdit; out
-  NewFieldEdit: TFieldEdit): TFieldExitFlowType;
+function TDataFormFrame.FieldExitFlow(CE: TCustomEdit; out NewEdit: TCustomEdit
+  ): TFieldExitFlowType;
 var
   Field: TEpiField;
   Jump: TEpiJump;
@@ -2464,11 +2476,12 @@ var
   EIdx: LongInt;
   NewField: TEpiField;
   Err: string;
-  ErrFieldEdit: TFieldEdit;
+  ErrEdit: TCustomEdit;
   Txt: String;
   OldText: TCaption;
   CheckUnique: Boolean;
   R: TEpiValueRelate;
+  DC: IEntryDataControl;
 
   procedure PerformJump(Const StartIdx, EndIdx: LongInt; ResetType: TEpiJumpResetType);
   var
@@ -2477,25 +2490,28 @@ var
     j: Integer;
     CachedVLS: TEpiValueLabelSet;
     CachedVL: TEpiCustomValueLabel;
+    lCE: TCustomEdit;
   begin
     if ResetType = jrLeaveAsIs then exit;
 
     CachedVLS := nil;
     for i := StartIdx to EndIdx do
-    with TFieldEdit(FieldEditList[i]) do
     begin
-      if Field.FieldType in AutoFieldTypes then continue;
+      lCE := TCustomEdit(CustomEditList[i]);
+      lField := (lCE as IEntryDataControl).Field;
+
+      if lField.FieldType in AutoFieldTypes then continue;
 
       case ResetType of
-        jrSystemMissing: Text := '.';
-        jrMaxMissing:    with Field do
+        jrSystemMissing: lCE.Text := '.';
+        jrMaxMissing:    with lField do
                          begin
                            if not Assigned(ValueLabelSet) then continue;
 
                            // A little cacheing make it faster, works well if
                            // lots of fields use the same VLSet.
                            if CachedVLS = ValueLabelSet then
-                             Text := CachedVL.ValueAsString
+                             lCE.Text := CachedVL.ValueAsString
                            else begin
                              for j := ValueLabelSet.Count - 1 downto 0 do
                              with ValueLabelSet[j] do
@@ -2504,20 +2520,20 @@ var
                                begin
                                  CachedVLS := ValueLabelSet;
                                  CachedVL := ValueLabelSet[j];
-                                 Text := ValueAsString;
+                                 lCE.Text := ValueAsString;
                                  Break;
                                end;
                              end;
                            end;
                          end;
-        jr2ndMissing:    with Field do
+        jr2ndMissing:    with lField do
                          begin
                            if not Assigned(ValueLabelSet) then continue;
 
                            // A little cacheing make it faster, works well if
                            // lots of fields use the same VLSet.
                            if CachedVLS = ValueLabelSet then
-                             Text := CachedVL.ValueAsString
+                             lCE.Text := CachedVL.ValueAsString
                            else begin
                              Cnt := 0;
                              for j := ValueLabelSet.Count - 1 downto 0 do
@@ -2528,7 +2544,7 @@ var
                                begin
                                  CachedVLS := ValueLabelSet;
                                  CachedVL := ValueLabelSet[j];
-                                 Text := ValueAsString;
+                                 lCE.Text := ValueAsString;
                                  Break;
                                end;
                              end;
@@ -2546,7 +2562,8 @@ begin
   // **    EpiData Flow Control (Post)   **
   // **************************************
   result := fxtOk;
-  Field := FE.Field;
+  DC := (CE as IEntryDataControl);
+  Field := DC.Field;
 
 
   // Key Unique
@@ -2555,7 +2572,7 @@ begin
   begin
     if not PerformKeyFieldsCheck then
     begin
-      FE.SelectAll;
+      CE.SelectAll;
       Exit(fxtError);
     end;
   end;
@@ -2563,15 +2580,15 @@ begin
   // Comparison
   if Assigned(Field.Comparison) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.Comparison.CompareField);
-    if not FE.CompareTo(NewFieldEdit.Text, Field.Comparison.CompareType) then
+    NewEdit := CustomEditFromField(Field.Comparison.CompareField);
+    if not DC.CompareTo(NewEdit.Text, Field.Comparison.CompareType) then
     begin
       Err := Format(
         'Comparison failed:' + LineEnding +
         '%s: %s  %s  %s: %s',
-        [Field.Name, FE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
-         NewFieldEdit.Field.Name, NewFieldEdit.Text]);
-      FieldValidateError(FE, Err);
+        [Field.Name, CE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
+         NewEdit.Field.Name, NewEdit.Text]);
+      FieldValidateError(CE, Err);
       Exit(fxtError);
     end;
   end;
@@ -2579,78 +2596,78 @@ begin
   // Type Comment
   if Assigned(Field.ValueLabelWriteField) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.ValueLabelWriteField);
-    OldText := NewFieldEdit.Text;
-    NewFieldEdit.Text := Field.ValueLabelSet.ValueLabelString[FE.Text];
-    if OldText <> NewFieldEdit.Text then
+    NewEdit := CustomEditFromField(Field.ValueLabelWriteField);
+    OldText := NewEdit.Text;
+    NewEdit.Text := Field.ValueLabelSet.ValueLabelString[CE.Text];
+    if OldText <> NewEdit.Text then
       Modified := true;
   end;
 
   // After Entry Script (Calculation)
   if Assigned(Field.Calculation) then
   begin
-    NewFieldEdit := FieldEditFromField(Field.Calculation.ResultField);
+    NewEdit := CustomEditFromField(Field.Calculation.ResultField);
     Err := '';
-    OldText := NewFieldEdit.Text;
+    OldText := NewEdit.Text;
     case Field.Calculation.CalcType of
       ctTimeDiff:      Txt := CalcTimeDiff(TEpiTimeCalc(Field.Calculation));
-      ctCombineDate:   Txt := CalcCombineDate(TEpiCombineDateCalc(Field.Calculation), Err, ErrFieldEdit);
+      ctCombineDate:   Txt := CalcCombineDate(TEpiCombineDateCalc(Field.Calculation), Err, ErrEdit);
       ctCombineString: Txt := CalcCombineString(TEpiCombineStringCalc(Field.Calculation));
     end;
     if (Txt <> TEpiStringField.DefaultMissing)
     then
-      NewFieldEdit.Text := Txt;
+      NewEdit.Text := Txt;
 
     if Err <> '' then
     begin
-      ErrFieldEdit.SetFocus;
-      FieldValidateError(ErrFieldEdit, Err);
+      ErrEdit.SetFocus;
+      FieldValidateError(ErrEdit, Err);
       Exit(fxtError);
     end;
-    if OldText <> NewFieldEdit.Text then
+    if OldText <> NewEdit.Text then
       Modified := true;
   end;
 
 
   // Jumps
-  NewFieldEdit := nil;
+  NewEdit := nil;
   if Assigned(Field.Jumps) then
   begin
-    Idx := FieldEditList.IndexOf(FE);
-    Txt := FE.Text;
+    Idx := CustomEditList.IndexOf(CE);
+    Txt := CE.Text;
     if Txt = '' then Txt := '.';
     Jump := Field.Jumps.JumpFromValue[Txt];
     if Assigned(Jump) then
     begin
       case Jump.JumpType of
         jtSaveRecord:    begin
-                           PerformJump(Idx + 1, FieldEditList.Count - 1, Jump.ResetType);
+                           PerformJump(Idx + 1, CustomEditList.Count - 1, Jump.ResetType);
                          end;
         jtExitSection:   begin
                            Section := Field.Section;
                            if Section = DataFile.MainSection then
                            begin
-                             EIdx := FieldEditList.Count;
+                             EIdx := CustomEditList.Count;
                              PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
                            end else begin
                              EIdx := Idx + 1;
-                             while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
-                                   (TFieldEdit(FieldEditList[EIdx]).Field.Section = Section) do
+                             while (EIdx < CustomEditList.Count) and (EIdx <> -1) and
+                                   ((CustomEditList[EIdx] as IEntryDataControl).Field.Section = Section) do
                                EIdx := NextUsableFieldIndex(EIdx, false);
-                             if EIdx = -1 then EIdx := FieldEditList.Count;
+                             if EIdx = -1 then EIdx := CustomEditList.Count;
                              PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                             // Making this check also forces a "new record" event since NewFieldEdit = nil;
-                             if EIdx < FieldEditList.Count then
-                               NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                             // Making this check also forces a "new record" event since NewEdit = nil;
+                             if EIdx < CustomEditList.Count then
+                               NewEdit := TCustomEdit(CustomEditList[EIdx]);
                            end;
                          end;
         jtSkipNextField: begin
                            EIdx := NextUsableFieldIndex(Idx + 1, false);
-                           if EIdx = -1 then EIdx := FieldEditList.Count;
+                           if EIdx = -1 then EIdx := CustomEditList.Count;
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           if EIdx < FieldEditList.Count then
-                             NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
-                           // A "DoNewRecord" is performed if no NewFieldEdit is assigned
+                           if EIdx < CustomEditList.Count then
+                             NewEdit := TCustomEdit(CustomEditList[EIdx]);
+                           // A "DoNewRecord" is performed if no NewEdit is assigned
                            // as is the case if SkipNextField is perform on second-last field.
                            {
                            else
@@ -2659,15 +2676,15 @@ begin
         jtToField:       begin
                            NewField := Jump.JumpToField;
                            EIdx := Idx + 1;
-                           while (EIdx < FieldEditList.Count) and (EIdx <> -1) and
-                                 (TFieldEdit(FieldEditList[EIdx]).Field <> NewField) do
+                           while (EIdx < CustomEditList.Count) and (EIdx <> -1) and
+                                 ((CustomEditList[EIdx] as IEntryDataControl).Field <> NewField) do
                              EIdx := NextUsableFieldIndex(EIdx, false);
 
-                           if EIdx = -1 then EIdx := FieldEditList.Count;
-                           if Eidx >= FieldEditList.Count then exit;
+                           if EIdx = -1 then EIdx := CustomEditList.Count;
+                           if Eidx >= CustomEditList.Count then exit;
 
                            PerformJump(Idx + 1, EIdx - 1, Jump.ResetType);
-                           NewFieldEdit := TFieldEdit(FieldEditList[EIdx]);
+                           NewEdit := TCustomEdit(CustomEditList[EIdx]);
                          end;
       end;
       Exit(fxtJump);
@@ -2677,7 +2694,7 @@ begin
   if Assigned(Field.Relates)
   then
   begin
-    R := Field.Relates.RelateFromValue[FE.Text];
+    R := Field.Relates.RelateFromValue[CE.Text];
 
     if Assigned(R) then
     begin
@@ -2720,8 +2737,8 @@ begin
   result := true;
 
   // Regular check on Syntax Etc.
-  for i := 0 to FieldEditList.Count - 1 do
-    if not FieldValidate(TFieldEdit(FieldEditList[i]), IgnoreMustEnter) then exit(false);
+  for i := 0 to CustomEditList.Count - 1 do
+    if not FieldValidate(TFieldEdit(CustomEditList[i]), IgnoreMustEnter) then exit(false);
 
   // Additional check for KeyFields consistency.
   Result := Result and
@@ -2886,7 +2903,9 @@ begin
   FDFToLocalIndex := TEpiField.CreateField(nil, ftInteger);
   FDFToLocalIndex.Size := 0;
 
-  FFieldEditList := TFPList.Create;
+  FCustomEditList := TObjectList.Create;
+  FCustomEditList.OwnsObjects := false;
+
   FHintWindow := nil;
   FRecNo := -1;
 
