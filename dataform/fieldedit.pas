@@ -198,7 +198,7 @@ begin
   TmpFont := TFont.Create;
   TmpFont.Assign(Cv.Font);
   Cv.Font.Assign(Self.Font);
-  //         Side buffer (pixel from controls left side to first character.
+  //         Side buffer pixel from controls left side to first character.
   Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * Min(FField.Length, 50);
   Cv.Font.Assign(TmpFont);
   TmpFont.Free;
@@ -769,9 +769,9 @@ begin
   CmpVal := AText;
 
   if Field.FieldType = ftUpperString then
-    StrCmp := AnsiCompareText(OwnVal, CmpVal)
+    StrCmp := UTF8CompareText(OwnVal, CmpVal)
   else
-    StrCmp := AnsiCompareStr(OwnVal, CmpVal);
+    StrCmp := UTF8CompareStr(OwnVal, CmpVal);
 
   case ct of
     fcEq:  result := StrCmp = 0;

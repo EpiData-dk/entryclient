@@ -72,7 +72,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-            <OtherUnitFiles Value="dataform;settings;search;utils"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils;admin;statusbar"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -105,7 +105,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);include/$(TargetOS);dataform"/>
-            <OtherUnitFiles Value="dataform;settings;search;utils"/>
+            <OtherUnitFiles Value="dataform;settings;search;utils;admin;statusbar"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -181,7 +181,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="41">
+    <Units Count="42">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -397,6 +397,10 @@
         <Filename Value="statusbar/entry_statusbaritem_extrafieldinfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit40>
+      <Unit41>
+        <Filename Value="dataform/fieldmemo.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit41>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

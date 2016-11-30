@@ -81,7 +81,7 @@ begin
 
   case IdentType of
     esiData:
-      FLabel.Caption := FLabel.Caption + DF.FieldEditFromField(F).Text;
+      FLabel.Caption := FLabel.Caption + DF.CustomEditFromField(F).Text;
     esiField:
       FLabel.Caption := FLabel.Caption + F.Name;
     esiCaption:

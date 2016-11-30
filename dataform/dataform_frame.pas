@@ -144,10 +144,10 @@ type
     procedure FieldEnterFlow(DC: IEntryDataControl);
     function  FieldExitFlow(CE: TCustomEdit; Out NewEdit: TCustomEdit): TFieldExitFlowType;
     function  DoValidateKeyFields: Boolean;
-    function  FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean = true): boolean;
+    function  FieldValidate(CE: TCustomEdit; IgnoreMustEnter: boolean = true): boolean;
     procedure FieldValidateError(Sender: TObject; const Msg: string);
-    function  ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
-    procedure DoAfterRecord(out NewFieldEdit: TFieldEdit);
+    function  ShowValueLabelPickList(ACustomEdit: TCustomEdit): boolean;
+    procedure DoAfterRecord(out NewEdit: TCustomEdit);
   private
     FModified: boolean;
     { DataForm Control }
@@ -227,7 +227,7 @@ implementation
 
 uses
   epiv_datamodule, epiv_custom_statusbar,
-  LCLProc, settings,
+  LCLProc, settings, fieldmemo,
   main, Menus, Dialogs, math, Graphics, epimiscutils,
   picklist2, epidocument, epivaluelabels, LCLIntf, dataform_field_calculations,
   searchform, resultlist_form, shortcuts,
@@ -749,6 +749,8 @@ begin
     ftUpperString,
     ftString:   Result := TStringEdit.Create(AParent);
 
+    ftMemo:     Result := TFieldMemo.Create(Parent);
+
     ftDMYDate,
     ftDMYAuto,
     ftMDYDate,
@@ -1041,6 +1043,7 @@ var
   AVal: Int64;
   CE: TCustomEdit;
   DC: IEntryDataControl;
+  Field: TEpiField;
 begin
   if (Modified) and
      (not AllFieldsValidate(false))
@@ -1090,11 +1093,11 @@ begin
   for i := 0 to CustomEditList.Count - 1 do
   begin
     CE := TCustomEdit(CustomEditList[i]);
-    DC := (CE as IEntryDataControl);
+    Field := (CE as IEntryDataControl).Field;
 
     // Check for AutoInc/Today fields.
-    if (DC.Field.FieldType in AutoFieldTypes) then
-    with DC.Field do
+    if (Field.FieldType in AutoFieldTypes) then
+    with Field do
     begin
       case FieldType of
         ftAutoInc:  begin
@@ -1104,10 +1107,10 @@ begin
                       else
                         Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
                     end;
-        ftDMYAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
-        ftMDYAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
-        ftYMDAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
-        ftTimeAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
+        ftDMYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
       end;
     end;
 
@@ -1381,7 +1384,7 @@ var
   F: TEpiField;
   S1: String;
 
-  function FunctionsCall(Const FE: TFieldEdit): String;
+  function FunctionsCall(Const CE: TCustomEdit): String;
   var
     j: Integer;
   begin
@@ -1393,7 +1396,7 @@ var
           gftIndexedString:
             Result += TGetIdxStrFunction(FuncPtr)(EntrySettings.CopyToClipBoardFormat, PGetIdxStrRec(FuncData)^.SIdx, PGetIdxStrRec(FuncData)^.EIdx);
           gftCustomEdit:
-            Result += TGetFEFunction(FuncPtr)(FE);
+            Result += TGetFEFunction(FuncPtr)(CE);
         end;
   end;
 
@@ -1664,7 +1667,7 @@ var
   I: Integer;
   DC: IEntryDataControl;
 begin
-  if (not Supports(CE, IEntryDataControl, DC) then
+  if (not Supports(CE, IEntryDataControl, DC)) then
     Exit;
 
   NoteText := DC.Field.Notes.Text;
@@ -2279,7 +2282,8 @@ begin
   DC := (CE as IEntryDataControl);
 
   // Leave field or see pick-list.
-  if (Key in Key_FieldActKeys)
+  if (Key in Key_FieldActKeys) and
+     (Shift = [])
   then
     begin
       if (Key in Key_ShowPickListKeys) and
@@ -2350,7 +2354,7 @@ var
   Idx: LongInt;
 begin
   Result := nil;
-  Idx := NextUsableFieldIndex(CustomEditList.IndexOf(CurrentFieldEdit), false);
+  Idx := NextUsableFieldIndex(CustomEditList.IndexOf(CurrentEdit), false);
   if Idx = -1 then
   begin
     if (RecNo = NewRecord) or (RecNo = (FLocalToDFIndex.Size - 1))  then
@@ -2491,6 +2495,7 @@ var
     CachedVLS: TEpiValueLabelSet;
     CachedVL: TEpiCustomValueLabel;
     lCE: TCustomEdit;
+    lField: TEpiField;
   begin
     if ResetType = jrLeaveAsIs then exit;
 
@@ -2587,7 +2592,7 @@ begin
         'Comparison failed:' + LineEnding +
         '%s: %s  %s  %s: %s',
         [Field.Name, CE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
-         NewEdit.Field.Name, NewEdit.Text]);
+         Field.Name, NewEdit.Text]);
       FieldValidateError(CE, Err);
       Exit(fxtError);
     end;
@@ -2738,7 +2743,7 @@ begin
 
   // Regular check on Syntax Etc.
   for i := 0 to CustomEditList.Count - 1 do
-    if not FieldValidate(TFieldEdit(CustomEditList[i]), IgnoreMustEnter) then exit(false);
+    if not FieldValidate(TCustomEdit(CustomEditList[i]), IgnoreMustEnter) then exit(false);
 
   // Additional check for KeyFields consistency.
   Result := Result and
@@ -2753,51 +2758,53 @@ begin
 
   for F in DataFile.KeyFields do
     Result := Result and
-              (FieldEditFromField(F).Text <> '');
+              (CustomEditFromField(F).Text <> '');
 end;
 
 function TDataFormFrame.GetCurrentKeyFieldValues: string;
 var
   F: TEpiField;
-  FE: TFieldEdit;
+  CE: TCustomEdit;
 begin
   Result := '';
 
   for F in DataFile.KeyFields do
   begin
-    FE := FieldEditFromField(F);
-    Result += F.Name + ' = ' + FE.Text + LineEnding;
+    CE := CustomEditFromField(F);
+    Result += F.Name + ' = ' + CE.Text + LineEnding;
   end;
 end;
 
-function TDataFormFrame.FieldValidate(FE: TFieldEdit; IgnoreMustEnter: boolean
+function TDataFormFrame.FieldValidate(CE: TCustomEdit; IgnoreMustEnter: boolean
   ): boolean;
 
-  procedure DoError(LocalFE: TFieldEdit);
+  procedure DoError(LocalCE: TCustomEdit);
   begin
-    LocalFE.Color := EntrySettings.ValidateErrorColour;
-    LocalFE.SelectAll;
-    if LocalFE.Enabled then
-      LocalFE.SetFocus;
+    LocalCE.Color := EntrySettings.ValidateErrorColour;
+    LocalCE.SelectAll;
+    if LocalCE.Enabled then
+      LocalCE.SetFocus;
     Beep;
   end;
 
   procedure NotifyFieldEditKeyDown;
   begin
-    Application.QueueAsyncCall(@ASyncKeyDown, KeyDownData(FE, VK_F9, []));
+    Application.QueueAsyncCall(@ASyncKeyDown, KeyDownData(CE, VK_F9, []));
   end;
 
 var
   F: TEpiField;
+  DC: IEntryDataControl;
 begin
-  FE.JumpToNext := false;
-  FE.SelLength := 0;
-  F := FE.Field;
+  DC := (CE as IEntryDataControl);
+  DC.JumpToNext := false;
+  F := DC.Field;
+  CE.SelLength := 0;
 
-  Result := FE.ValidateEntry;
+  Result := DC.ValidateEntry;
   if not Result then
   begin
-    DoError(FE);
+    DoError(CE);
     if Assigned(F.ValueLabelSet) and
        (not Assigned(F.Ranges))
     then
@@ -2811,10 +2818,10 @@ begin
      ((F.EntryMode = emMustEnter) or
       (DataFile.KeyFields.FieldExists(F))
      ) and
-     (FE.Text = '') then
+     (CE.Text = '') then
   begin
-    DoError(FE);
-    FieldValidateError(FE, 'Field cannot be empty!');
+    DoError(CE);
+    FieldValidateError(CE, 'Field cannot be empty!');
     if Assigned(F.ValueLabelSet) and
        (not Assigned(F.Ranges))
     then
@@ -2825,36 +2832,38 @@ end;
 
 procedure TDataFormFrame.FieldValidateError(Sender: TObject; const Msg: string
   );
-var
-  FE: TFieldEdit absolute Sender;
 begin
-  ShowHintMsg(Msg, FE);
+  ShowHintMsg(Msg, TControl(Sender));
 end;
 
-function TDataFormFrame.ShowValueLabelPickList(AFieldEdit: TFieldEdit): boolean;
+function TDataFormFrame.ShowValueLabelPickList(ACustomEdit: TCustomEdit
+  ): boolean;
 var
   VLForm: TValueLabelsPickListForm2;
   P: TPoint;
+  F: TEpiField;
 begin
   UnShowNotesAndHint;
 
-  VLForm := TValueLabelsPickListForm2.Create(Self, AFieldEdit.Field);
-  VLForm.SetInitialValue(AFieldEdit.Text);
-  P := AFieldEdit.Parent.ClientToScreen(Point(AFieldEdit.Left + AFieldEdit.Width + 2, AFieldEdit.Top));
+  F := (ACustomEdit as IEntryDataControl).Field;
+
+  VLForm := TValueLabelsPickListForm2.Create(Self, F);
+  VLForm.SetInitialValue(ACustomEdit.Text);
+  P := ACustomEdit.Parent.ClientToScreen(Point(ACustomEdit.Left + ACustomEdit.Width + 2, ACustomEdit.Top));
   VLForm.Top := P.Y;
   VLForm.Left := P.X;
   result := VLForm.ShowModal = mrOK;
 
   if Result then
   begin
-    AFieldEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
+    ACustomEdit.Text := VLForm.SelectedValueLabel.ValueAsString;
     Modified := true;
   end;
 
   VLForm.Free;
 end;
 
-procedure TDataFormFrame.DoAfterRecord(out NewFieldEdit: TFieldEdit);
+procedure TDataFormFrame.DoAfterRecord(out NewEdit: TCustomEdit);
 var
   Relate: TEpiRelate;
   Idx: Integer;
@@ -2881,13 +2890,13 @@ begin
     end;
   end;
 
-  NewFieldEdit := NewOrNextRecord;
+  NewEdit := NewOrNextRecord;
 
-  if not Assigned(NewFieldEdit) then
+  if not Assigned(NewEdit) then
     Exit;
 
-  FieldEnterFlow(NewFieldEdit);
-  NewFieldEdit.SetFocus;
+  FieldEnterFlow((NewEdit as IEntryDataControl));
+  NewEdit.SetFocus;
 end;
 
 constructor TDataFormFrame.Create(TheOwner: TComponent);

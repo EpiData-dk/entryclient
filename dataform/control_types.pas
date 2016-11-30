@@ -33,9 +33,6 @@ type
     function  GetOnValidateError: TFieldValidateErrorProc;
     procedure SetOnValidateError(AValue: TFieldValidateErrorProc);
 
-    function GetText: TCaption;
-    procedure SetText(const AValue: TCaption);
-
     function GetCustomEdit: TCustomEdit;
 
     function    ValidateEntry: boolean;

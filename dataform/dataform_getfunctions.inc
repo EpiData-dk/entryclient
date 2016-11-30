@@ -13,7 +13,7 @@ type
   end;
   TGetFunctions = array of TGetFunction;
 
-  TGetFEFunction = function (Const FE: TFieldEdit): string;
+  TGetFEFunction = function (Const CE: TCustomEdit): string;
 
   TGetIdxStrFunction = function (Const FmtStr: string; SIdx, EIdx: integer): string;
   TGetIdxStrRec = record
