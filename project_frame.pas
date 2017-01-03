@@ -8,8 +8,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  VirtualTrees, documentfile_ext, epicustombase, epirelations, Graphics,
-  StdCtrls, Menus, epidatafilestypes;
+  VirtualTrees, documentfile_ext, epicustombase, epidatafilerelations, Graphics,
+  StdCtrls, Menus, epidatafilestypes, entry_statusbar;
 
 type
 
@@ -108,6 +108,10 @@ type
     procedure LMDataFormGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
     procedure OpenRecentMenuItemClick(Sender: TObject);
     procedure UpdateRecentFilesDropDown;
+
+  { StatusBar}
+  private
+    FStatusBar: TEntryClientStatusBar;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -115,9 +119,11 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     function    OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
+    procedure   IsShortCut(var Msg: TLMKey; var Handled: Boolean);
     function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
     property    DocumentFile: TEntryDocumentFile read FDocumentFile;
     property    EpiDocument: TEpiDocument read GetEpiDocument;
+    property    StatusBar: TEntryClientStatusBar read FStatusBar;
   public
     { Default position }
     class procedure RestoreDefaultPos(F: TProjectFrame);
@@ -128,17 +134,18 @@ implementation
 {$R *.lfm}
 
 uses
-  epiv_datamodule,
+  epiv_datamodule, epiv_custom_statusbar,
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
-  RegExpr, LazUTF8, entryprocs;
+  epiadmin, admin_authenticator, URIParser,
+  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd;
 
 type
 
   TNodeData = record
     Frame: TDataFormFrame;
     Relation: TEpiMasterRelation;
-    RelationList: TEpiRelationList;
+    RelationList: TEpiDatafileRelationList;
   end;
   PNodeData = ^TNodeData;
 
@@ -269,11 +276,16 @@ begin
       FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
+
       if not FDocumentFile.OpenFile(AFileName) then
       begin
         FreeAndNil(FDocumentFile);
         Exit;
       end;
+
+      Authenticator := TAuthenticator.Create(FDocumentFile);
+      if Assigned(Authenticator.AuthedUser) then
+        DoSaveProject(DocumentFile.FileName);
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened
@@ -315,6 +327,7 @@ begin
 
 
     MainForm.BeginUpdateForm;
+    FStatusBar.DocFile := DocumentFile;
     try
       EpiDocument.OnModified := @EpiDocModified;
     except
@@ -345,6 +358,7 @@ begin
     Splitter1.Visible    := ProjectPanel.Visible;
 
     EpiDocument.Modified := false;
+    FStatusBar.Visible :=  true;
 
     AddToRecent(DocumentFile.FileName);
     UpdateMainCaption;
@@ -420,6 +434,7 @@ var
 begin
   // Invalidate updates the tree with new values/selectables
   DataFileTree.Invalidate;
+  FStatusBar.Update();
 
   Relation := TDataFormFrame(Sender).Relation;
 
@@ -431,8 +446,6 @@ procedure TProjectFrame.LM_ProjectRelate(var Msg: TLMessage);
 var
   Relation: TEpiMasterRelation;
   Node: PVirtualNode;
-  ND: PNodeData;
-  Frame: TDataFormFrame;
 begin
   Relation := TEpiMasterRelation(Msg.WParam);
   Node := PVirtualNode(Relation.FindCustomData(PROJECT_RELATION_NODE_KEY));
@@ -605,6 +618,9 @@ begin
   FSelectedNode := Node;
   UpdateActionLinks;
 
+  FStatusBar.DataForm := FrameFromNode(Node);
+  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
+
   with FrameFromNode(Node) do
   begin
     ActionList1.State := asNormal;
@@ -690,7 +706,7 @@ end;
 procedure TProjectFrame.DataFileTreeInitChildren(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var ChildCount: Cardinal);
 var
-  RelationList: TEpiRelationList;
+  RelationList: TEpiDatafileRelationList;
   MR: TEpiMasterRelation;
 begin
   RelationList := PNodeData(Sender.GetNodeData(Node))^.RelationList;
@@ -851,6 +867,7 @@ begin
   try
     DocumentFile.SaveFile(aFilename);
     AddToRecent(aFilename);
+    FStatusBar.Update(sucSave);
   finally
     Screen.Cursor := crDefault;
     Application.ProcessMessages;
@@ -872,14 +889,30 @@ begin
 end;
 
 procedure TProjectFrame.DoCloseProject;
+var
+  URI: TURI;
 begin
   if not Assigned(DocumentFile) then exit;
 
-  if FAllowForEndBackup and
-     EpiDocument.ProjectSettings.BackupOnShutdown then
+  if FAllowForEndBackup then
   begin
     try
-      DocumentFile.SaveEndBackupFile;
+      if EpiDocument.ProjectSettings.BackupOnShutdown then DocumentFile.SaveEndBackupFile;
+      if EpiDocument.ProjectSettings.EmailOnShutdown then
+        begin
+          Clipboard.Open;
+          Clipboard.AsText := DocumentFile.FileName;
+          Clipboard.Close;
+
+          URI.Protocol     := 'mailto';
+          URI.HasAuthority := false;
+          URI.Port         := 0;
+          URI.Path         := EpiDocument.ProjectSettings.EmailAddress;
+          URI.Params       := 'subject=' + EpiDocument.ProjectSettings.EmailSubject + '&' +
+                              'body='    + Trim(EpiDocument.ProjectSettings.EmailContent) + '&' +
+                              'attach='  + FilenameToURI(DocumentFile.FileName);
+          OpenURL(EncodeURI(URI));
+        end;
     except
       // TODO : Warn about not saving backup file?
     end;
@@ -947,6 +980,14 @@ end;
 constructor TProjectFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+
+  FStatusBar := TEntryClientStatusBar.Create(Self);
+  FStatusBar.Align := alBottom;
+  FStatusBar.Parent := Self;
+  FStatusBar.Visible := false;
+  FStatusBar.Height := 30;
+  FStatusBar.LoadSettings;
+
   FDocumentFile := nil;
   FAllowForEndBackup := false;
   FRelateToParent := false;
@@ -1040,13 +1081,32 @@ end;
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
 begin
   result := DoOpenProject(aFilename);
-  LoadSplitterPosition(Splitter1, 'ProjectSplitter');
+
+  if Result then
+    LoadSplitterPosition(Splitter1, 'ProjectSplitter');
 end;
 
 procedure TProjectFrame.UpdateSettings;
 begin
   UpdateShortCuts;
+  FStatusBar.LoadSettings;
+  FStatusBar.DocFile := FDocumentFile;
+
   FrameFromNode(FSelectedNode).UpdateSettings;
+end;
+
+procedure TProjectFrame.IsShortCut(var Msg: TLMKey; var Handled: Boolean);
+var
+  DF: TDataFormFrame;
+begin
+  if Assigned(FSelectedNode) then
+  begin
+    DF := FrameFromNode(FSelectedNode);
+    DF.IsShortCut(Msg, Handled);
+    if Handled then exit;
+  end;
+
+  FStatusBar.IsShortCut(Msg, Handled);
 end;
 
 function TProjectFrame.FrameFromRelation(Relation: TEpiMasterRelation

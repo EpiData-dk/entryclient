@@ -3,8 +3,8 @@ type
     gftIndexedString,   // Extracts text from format string that is NOT escaped:
                         //   Data = PGetIdxStrRec
 
-    gftFieldEdit        // Calls neded function based on format specifiers
-    );
+    gftCustomEdit        // Calls neded function based on format specifiers
+  );
 
   TGetFunction = record
     FuncType: TGetFunctionType;
@@ -13,7 +13,7 @@ type
   end;
   TGetFunctions = array of TGetFunction;
 
-  TGetFEFunction = function (Const FE: TFieldEdit): string;
+  TGetFEFunction = function (Const CE: TCustomEdit): string;
 
   TGetIdxStrFunction = function (Const FmtStr: string; SIdx, EIdx: integer): string;
   TGetIdxStrRec = record
@@ -32,44 +32,47 @@ type
   );
   TGetGlobalFuncSet = set of TGetGlobalFuncEnum;
 
-function GetF(Const FE: TFieldEdit): string;
+function GetF(Const CE: TCustomEdit): string;
 begin
-  result := FE.Field.Name;
+  result := (CE as IEntryDataControl).Field.Name;
 end;
 
-function GetQ(Const FE: TFieldEdit): string;
+function GetQ(Const CE: TCustomEdit): string;
 begin
-  Result := FE.Field.Question.Text;
+  Result := (CE as IEntryDataControl).Field.Question.Text;
 end;
 
-function GetD(Const FE: TFieldEdit): string;
+function GetD(Const CE: TCustomEdit): string;
 begin
-  Result := FE.Text;
+  Result := CE.Text;
 end;
 
-function GetV(Const FE: TFieldEdit): string;
+function GetV(Const CE: TCustomEdit): string;
+var
+  DC: IEntryDataControl;
 begin
   Result := '';
-  if Assigned(FE.Field.ValueLabelSet) and
-     (FE.Text <> '') and
-     (FE.Field.ValueLabelSet.ValueLabelExists[FE.Text])
+  DC := (CE as IEntryDataControl);
+  if Assigned(DC.Field.ValueLabelSet) and
+     (CE.Text <> '') and
+     (DC.Field.ValueLabelSet.ValueLabelExists[CE.Text])
   then
-    result := FE.Field.ValueLabelSet.ValueLabel[FE.Text].TheLabel.Text;
+    result := DC.Field.ValueLabelSet.ValueLabel[CE.Text].TheLabel.Text;
 end;
 
-function GetL(Const FE: TFieldEdit): string;
+function GetL(Const CE: TCustomEdit): string;
 begin
-  Result := GetV(FE);
+  Result := GetV(CE);
   if Result = '' then
-    Result := GetD(FE);
+    Result := GetD(CE);
 end;
 
-function GetN(Const FE: TFieldEdit): string;
+function GetN(Const CE: TCustomEdit): string;
 begin
   result := LineEnding;
 end;
 
-function GetT(Const FE: TFieldEdit): string;
+function GetT(Const CE: TCustomEdit): string;
 begin
   result := #9;
 end;
@@ -158,13 +161,13 @@ begin
 
     Inc(ChPos);
     case UpCase(FormatStr[ChPos]) of
-      'F': AddFunction(Result, gftFieldEdit, PtrUInt(@GetF), 0);
-      'Q': AddFunction(Result, gftFieldEdit, PtrUInt(@GetQ), 0);
-      'V': AddFunction(Result, gftFieldEdit, PtrUInt(@GetV), 0);
-      'L': AddFunction(Result, gftFieldEdit, PtrUInt(@GetL), 0);
-      'D': AddFunction(Result, gftFieldEdit, PtrUInt(@GetD), 0);
-      'T': AddFunction(Result, gftFieldEdit, PtrUInt(@GetT), 0);
-      'N': AddFunction(Result, gftFieldEdit, PtrUInt(@GetN), 0);
+      'F': AddFunction(Result, gftCustomEdit, PtrUInt(@GetF), 0);
+      'Q': AddFunction(Result, gftCustomEdit, PtrUInt(@GetQ), 0);
+      'V': AddFunction(Result, gftCustomEdit, PtrUInt(@GetV), 0);
+      'L': AddFunction(Result, gftCustomEdit, PtrUInt(@GetL), 0);
+      'D': AddFunction(Result, gftCustomEdit, PtrUInt(@GetD), 0);
+      'T': AddFunction(Result, gftCustomEdit, PtrUInt(@GetT), 0);
+      'N': AddFunction(Result, gftCustomEdit, PtrUInt(@GetN), 0);
       '%': CreateIndexedString(OldPos, ChPos);
       'G': begin
              Inc(ChPos);

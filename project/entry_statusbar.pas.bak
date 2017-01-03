@@ -1,0 +1,15 @@
+unit entry_statusbar;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, epiv_custom_statusbar;
+
+type
+
+implementation
+
+end.
+

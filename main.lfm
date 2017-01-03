@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 508
+  Left = 2502
   Height = 642
-  Top = 265
+  Top = 276
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -12,6 +12,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
+  OnShortCut = FormShortCut
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '1.7'
@@ -40,12 +41,62 @@ object MainForm: TMainForm
       Left = 11
       Height = 27
       Top = 8
-      Width = 94
+      Width = 88
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'
       OnClick = OpenProjectBtnClick
       PopupMenu = OpenProjectPopupMenu
+      TabOrder = 0
+    end
+  end
+  object BetaPanel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = Owner
+    AnchorSideTop.Side = asrCenter
+    Left = 343
+    Height = 204
+    Top = 207
+    Width = 291
+    ClientHeight = 204
+    ClientWidth = 291
+    Color = clYellow
+    ParentColor = False
+    TabOrder = 2
+    object Label1: TLabel
+      AnchorSideLeft.Control = BetaPanel
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Control = BetaPanel
+      Left = 17
+      Height = 15
+      Top = 21
+      Width = 256
+      BorderSpacing.Top = 20
+      Caption = 'Test Version of EpiData EntryClient'
+      Font.Height = -13
+      Font.Name = 'Sans'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object StaticText1: TStaticText
+      AnchorSideLeft.Control = Label1
+      AnchorSideTop.Control = Label1
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Label1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = BetaPanel
+      AnchorSideBottom.Side = asrBottom
+      Left = 17
+      Height = 127
+      Top = 56
+      Width = 256
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 20
+      BorderSpacing.Bottom = 20
+      BorderStyle = sbsSunken
+      Caption = 'Do NOT use on routine data, work on copies of your data and send reports of testing to:'#10#10'- The EpiData-list   '#10'or'#10'- info@epidata.dk'
       TabOrder = 0
     end
   end

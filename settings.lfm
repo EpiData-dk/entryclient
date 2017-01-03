@@ -1,7 +1,7 @@
 object SettingsForm: TSettingsForm
-  Left = 735
+  Left = 512
   Height = 413
-  Top = 363
+  Top = 225
   Width = 517
   Caption = 'Settings'
   ClientHeight = 413
@@ -40,10 +40,10 @@ object SettingsForm: TSettingsForm
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = BitBtn1
-      Left = 361
-      Height = 32
-      Top = 5
-      Width = 54
+      Left = 359
+      Height = 34
+      Top = 4
+      Width = 56
       Anchors = [akTop, akRight]
       AutoSize = True
       BorderSpacing.Right = 10

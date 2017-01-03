@@ -6,11 +6,11 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 634
   ClientWidth = 939
   TabOrder = 0
-  DesignLeft = 631
-  DesignTop = 326
+  DesignLeft = 535
+  DesignTop = 261
   object DataFormScroolBox: TScrollBox
     Left = 0
-    Height = 604
+    Height = 634
     Top = 0
     Width = 769
     HorzScrollBar.Page = 1
@@ -22,438 +22,21 @@ object DataFormFrame: TDataFormFrame
     OnMouseMove = Panel1MouseMove
     OnMouseWheel = DataFormScroolBoxMouseWheel
   end
-  object InformationPanel: TPanel
-    Left = 0
-    Height = 30
-    Top = 604
-    Width = 939
-    Align = alBottom
-    ClientHeight = 30
-    ClientWidth = 939
-    TabOrder = 1
-    object NavigationPanel: TPanel
-      AnchorSideLeft.Control = InformationPanel
-      Left = 1
-      Height = 24
-      Top = 3
-      Width = 216
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 216
-      TabOrder = 0
-      object FirstRecSpeedButton: TSpeedButton
-        Left = 1
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = FirstRecAction
-        Glyph.Data = {
-          66010000424D660100000000000076000000280000001E0000000F0000000100
-          040000000000F000000000000000000000000000000000000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333FF333333FFF3300300333333300333388F3333FF88F3300300333330000
-          333388F33FF8888F3300300333000000333388FFF888888F3300300300000000
-          333388F88888888F3300300000000000333388888888888F3300300300000000
-          333388F88888888F3300300333000000333388F33888888F3300300333330000
-          333388F33338888F330030033333330033338833333338833300333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-      object PrevRecSpeedButton: TSpeedButton
-        Left = 24
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = PrevRecAction
-        Glyph.Data = {
-          66010000424D660100000000000076000000280000001E0000000F0000000100
-          040000000000F000000000000000000000000000000000000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          3333333333333FFF330033333333330033333333333FF88F3300333333330000
-          333333333FF8888F33003333330000003333333FF888888F3300333300000000
-          333333F88888888F3300330000000000333338888888888F3300333300000000
-          333333388888888F3300333333000000333333333888888F3300333333330000
-          333333333338888F330033333333330033333333333338833300333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-      object RecordEdit: TEdit
-        Left = 47
-        Height = 21
-        Top = 2
-        Width = 120
-        Alignment = taCenter
-        AutoSize = False
-        AutoSelect = False
-        Font.Height = -9
-        Font.Name = 'Courier 10 Pitch'
-        OnEditingDone = RecordEditEditingDone
-        OnEnter = RecordEditEnter
-        ParentFont = False
-        TabStop = False
-        TabOrder = 0
-      end
-      object NextRecSpeedButton: TSpeedButton
-        Left = 167
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = NextRecAction
-        Glyph.Data = {
-          66010000424D660100000000000076000000280000001E0000000F0000000100
-          040000000000F000000000000000000000000000000000000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333FF33333333333003300333333333333388FF33333333300330000333333
-          333338888FF33333330033000000333333333888888FF3333300330000000033
-          3333388888888FF33300330000000000333338888888888F3300330000000033
-          3333388888888333330033000000333333333888888333333300330000333333
-          3333388883333333330033003333333333333883333333333300333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-      object LastRecSpeedButton: TSpeedButton
-        Left = 191
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = LastRecAction
-        Glyph.Data = {
-          66010000424D660100000000000076000000280000001E0000000F0000000100
-          040000000000F000000000000000000000000000000000000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333FF33333333FF3003300333333300333388FF3333388F300330000333330
-          033338888FF33388F30033000000333003333888888FF388F300330000000030
-          0333388888888F88F3003300000000000333388888888888F300330000000030
-          0333388888888388F3003300000033300333388888833388F300330000333330
-          0333388883333388F30033003333333003333883333333883300333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-    end
-    object RecActionPanel: TPanel
-      AnchorSideLeft.Control = NavigationPanel
-      AnchorSideLeft.Side = asrBottom
-      Left = 219
-      Height = 24
-      Top = 3
-      Width = 48
-      BorderSpacing.Left = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 48
-      TabOrder = 1
-      object NewRecSpeedButton: TSpeedButton
-        Left = 1
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = NewRecordAction
-        Flat = True
-        Glyph.Data = {
-          46010000424D460100000000000076000000280000001E0000000D0000000100
-          040000000000D000000000000000000000001000000010000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          3333333333FF33333300333333CC33333333333FF388FFF33300333CC3CC3CC3
-          333333388F88F88F33003333CCCCCC3333333333888888F3330033333CCCC333
-          33333333F8888F3333003333CCCCCC333333333F888888F33300333CC3CC3CC3
-          333333388F88F88F3300333333CC3333333333333388F3333300333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-      object DeleteRecSpeedButton: TSpeedButton
-        Left = 24
-        Height = 22
-        Top = 1
-        Width = 22
-        Action = DeleteRecordAction
-        Flat = True
-        Glyph.Data = {
-          46010000424D460100000000000076000000280000001E0000000D0000000100
-          040000000000D000000000000000000000001000000010000000000000000000
-          80000080000000808000800000008000800080800000C0C0C000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-          3333333333333333330033333333333333333333333333333300333333333333
-          3333333F333333F3330033993333399333333388F333388F3300333993339933
-          333333388F3388F333003333993993333333333388F88F333300333339993333
-          333333333888F3333300333339993333333333333888F3333300333399399333
-          3333333388F88F333300333993339933333333388F3388F33300339933333993
-          33333388F333388F330033333333333333333333333333333300333333333333
-          33333333333333333300
-        }
-        NumGlyphs = 2
-        Spacing = 0
-        ShowCaption = False
-        ShowHint = True
-        ParentShowHint = False
-      end
-    end
-    object FieldNamePanel: TPanel
-      AnchorSideLeft.Control = FieldRangePanel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = NavigationPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = FieldTypePanel
-      Left = 566
-      Height = 24
-      Top = 3
-      Width = 156
-      Alignment = taLeftJustify
-      Anchors = [akTop, akLeft, akRight]
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 156
-      Color = clWindow
-      Constraints.MinWidth = 80
-      ParentColor = False
-      TabOrder = 2
-      object FieldNameLabel: TLabel
-        AnchorSideLeft.Control = FieldNamePanel
-        AnchorSideTop.Control = FieldNamePanel
-        AnchorSideTop.Side = asrCenter
-        AnchorSideBottom.Control = FieldNamePanel
-        AnchorSideBottom.Side = asrCenter
-        Left = 6
-        Height = 15
-        Top = 4
-        Width = 101
-        Anchors = [akLeft, akBottom]
-        BorderSpacing.Left = 5
-        Caption = 'FieldNameLabel'
-        Color = clDefault
-        ParentColor = False
-        Transparent = False
-      end
-    end
-    object FieldTypePanel: TPanel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = NavigationPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = FieldLengthPanel
-      Left = 724
-      Height = 24
-      Top = 3
-      Width = 107
-      Alignment = taLeftJustify
-      Anchors = [akTop, akRight]
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 107
-      Color = clWindow
-      ParentColor = False
-      TabOrder = 3
-      object FieldTypeLabel: TLabel
-        AnchorSideTop.Control = FieldTypePanel
-        AnchorSideTop.Side = asrCenter
-        Left = 4
-        Height = 15
-        Top = 5
-        Width = 90
-        Caption = 'FieldTypeLabel'
-        Color = clDefault
-        ParentColor = False
-        Transparent = False
-      end
-    end
-    object FieldInfoPanel: TPanel
-      AnchorSideLeft.Control = DeletePanel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = NavigationPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = InformationPanel
-      AnchorSideRight.Side = asrBottom
-      Left = 306
-      Height = 24
-      Top = 3
-      Width = 113
-      Alignment = taLeftJustify
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 113
-      Color = clWindow
-      ParentColor = False
-      TabOrder = 4
-      object FieldInfoLabel: TLabel
-        AnchorSideTop.Control = FieldInfoPanel
-        AnchorSideTop.Side = asrCenter
-        Left = 4
-        Height = 15
-        Top = 5
-        Width = 85
-        Caption = 'FieldInfoLabel'
-        Color = clDefault
-        ParentColor = False
-        Transparent = False
-      end
-    end
-    object DeletePanel: TPanel
-      AnchorSideLeft.Control = RecActionPanel
-      AnchorSideLeft.Side = asrBottom
-      Left = 269
-      Height = 24
-      Top = 3
-      Width = 35
-      Alignment = taLeftJustify
-      BorderSpacing.Left = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 35
-      Color = clWindow
-      ParentColor = False
-      TabOrder = 5
-      object DeleteLabel: TLabel
-        AnchorSideLeft.Control = DeletePanel
-        AnchorSideLeft.Side = asrCenter
-        AnchorSideTop.Control = DeletePanel
-        AnchorSideTop.Side = asrCenter
-        AnchorSideBottom.Control = FieldNamePanel
-        AnchorSideBottom.Side = asrCenter
-        Left = -21
-        Height = 15
-        Top = 5
-        Width = 76
-        BorderSpacing.Left = 5
-        Caption = 'DeleteLabel'
-        Color = clDefault
-        Font.Color = clRed
-        ParentColor = False
-        ParentFont = False
-        Transparent = False
-      end
-    end
-    object FieldLengthPanel: TPanel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = NavigationPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = InformationPanel
-      AnchorSideRight.Side = asrBottom
-      Left = 833
-      Height = 24
-      Top = 3
-      Width = 103
-      Alignment = taLeftJustify
-      Anchors = [akTop, akRight]
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 103
-      Color = clWindow
-      Constraints.MinWidth = 80
-      ParentColor = False
-      TabOrder = 6
-      object FieldLengthLabel: TLabel
-        AnchorSideLeft.Control = FieldLengthPanel
-        AnchorSideTop.Control = FieldLengthPanel
-        AnchorSideTop.Side = asrCenter
-        AnchorSideBottom.Control = FieldLengthPanel
-        AnchorSideBottom.Side = asrCenter
-        Left = 6
-        Height = 15
-        Top = 4
-        Width = 106
-        Anchors = [akLeft, akBottom]
-        BorderSpacing.Left = 5
-        Caption = 'FieldLengthLabel'
-        Color = clDefault
-        ParentColor = False
-        Transparent = False
-      end
-    end
-    object FieldRangePanel: TPanel
-      AnchorSideLeft.Control = FieldInfoPanel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = NavigationPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = FieldTypePanel
-      Left = 421
-      Height = 24
-      Top = 3
-      Width = 143
-      Alignment = taLeftJustify
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
-      BevelOuter = bvLowered
-      ClientHeight = 24
-      ClientWidth = 143
-      Color = clWindow
-      Constraints.MinWidth = 80
-      ParentColor = False
-      TabOrder = 7
-      object FieldRangeLabel: TLabel
-        AnchorSideLeft.Control = FieldRangePanel
-        AnchorSideTop.Control = FieldRangePanel
-        AnchorSideTop.Side = asrCenter
-        AnchorSideBottom.Control = FieldRangePanel
-        AnchorSideBottom.Side = asrCenter
-        Left = 6
-        Height = 15
-        Top = 4
-        Width = 102
-        Anchors = [akLeft, akBottom]
-        BorderSpacing.Left = 5
-        Caption = 'FieldRangeLabel'
-        Color = clDefault
-        ParentColor = False
-        Transparent = False
-      end
-    end
-  end
   object Panel1: TPanel
     Left = 769
-    Height = 604
+    Height = 634
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 604
+    ClientHeight = 634
     ClientWidth = 170
-    TabOrder = 2
+    TabOrder = 1
     OnMouseMove = Panel1MouseMove
     object Label1: TLabel
       Left = 30
       Height = 15
       Top = 48
-      Width = 42
+      Width = 43
       Caption = 'Label1'
       ParentColor = False
     end
@@ -465,8 +48,9 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'First Record'
       Hint = 'First Record'
+      ImageIndex = 49
       OnExecute = FirstRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object FirstFieldAction: TAction
       Category = 'Field'
@@ -492,34 +76,37 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'Skip to prev records'
       OnExecute = JumpPrevRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object PrevRecAction: TAction
       Category = 'Record'
       Caption = 'Previous Record'
       Hint = 'Previous Record'
+      ImageIndex = 47
       OnExecute = PrevRecActionExecute
-      OnUpdate = FirstRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object NextRecAction: TAction
       Category = 'Record'
       Caption = 'Next Record'
       Hint = 'Next Record'
+      ImageIndex = 46
       OnExecute = NextRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object JumpNextRecAction: TAction
       Category = 'Record'
       Caption = 'JumpNextRecAction'
       OnExecute = JumpNextRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object LastRecAction: TAction
       Category = 'Record'
       Caption = 'Last Record'
       Hint = 'Last Record'
+      ImageIndex = 48
       OnExecute = LastRecActionExecute
-      OnUpdate = LastRecActionUpdate
+      OnUpdate = NoViewDataActionUpdate
     end
     object NewRecordAction: TAction
       Category = 'Record'
@@ -532,6 +119,7 @@ object DataFormFrame: TDataFormFrame
       Category = 'Record'
       Caption = 'Goto Record'
       OnExecute = GotoRecordActionExecute
+      OnUpdate = NoViewDataActionUpdate
     end
     object FindRecordAction: TAction
       Category = 'Browse'

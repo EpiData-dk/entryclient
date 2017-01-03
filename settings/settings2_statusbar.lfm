@@ -1,0 +1,224 @@
+object SettingsStatusbarFrame: TSettingsStatusbarFrame
+  Left = 0
+  Height = 480
+  Top = 0
+  Width = 636
+  ClientHeight = 480
+  ClientWidth = 636
+  TabOrder = 0
+  DesignLeft = 639
+  DesignTop = 391
+  object ScrollBox1: TScrollBox
+    Left = 0
+    Height = 480
+    Top = 0
+    Width = 636
+    HorzScrollBar.Page = 143
+    VertScrollBar.Page = 65
+    Align = alClient
+    ClientHeight = 478
+    ClientWidth = 634
+    Color = clForm
+    ParentColor = False
+    TabOrder = 0
+    object Bevel1: TBevel
+      AnchorSideLeft.Control = Bevel6
+      AnchorSideTop.Control = Bevel5
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Bevel6
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = ScrollBox1
+      AnchorSideBottom.Side = asrBottom
+      Left = 32
+      Height = 431
+      Top = 42
+      Width = 5
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 5
+      BorderSpacing.Bottom = 5
+    end
+    object Bevel2: TBevel
+      AnchorSideLeft.Control = Splitter1
+      AnchorSideTop.Control = Bevel5
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Splitter1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Bevel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 176
+      Height = 431
+      Top = 42
+      Width = 5
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 5
+    end
+    object Bevel3: TBevel
+      AnchorSideLeft.Control = Bevel8
+      AnchorSideTop.Control = Bevel5
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Bevel8
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Bevel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 562
+      Height = 431
+      Top = 42
+      Width = 5
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 5
+    end
+    object Bevel4: TBevel
+      AnchorSideLeft.Control = Bevel9
+      AnchorSideTop.Control = Bevel5
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Bevel9
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Bevel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 630
+      Height = 431
+      Top = 42
+      Width = 5
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 5
+      Visible = False
+    end
+    object Label1: TLabel
+      AnchorSideLeft.Control = Bevel6
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Splitter1
+      AnchorSideBottom.Control = SpeedButton1
+      AnchorSideBottom.Side = asrBottom
+      Left = 42
+      Height = 15
+      Top = 12
+      Width = 129
+      Alignment = taCenter
+      Anchors = [akLeft, akRight, akBottom]
+      BorderSpacing.Left = 5
+      BorderSpacing.Right = 5
+      Caption = 'Statubar Element'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      AnchorSideLeft.Control = Splitter1
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Bevel8
+      AnchorSideBottom.Control = SpeedButton1
+      AnchorSideBottom.Side = asrBottom
+      Left = 186
+      Height = 15
+      Top = 12
+      Width = 376
+      Alignment = taCenter
+      Anchors = [akLeft, akRight, akBottom]
+      BorderSpacing.Left = 5
+      Caption = 'Example'
+      ParentColor = False
+    end
+    object SpeedButton2: TSpeedButton
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Bevel9
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 601
+      Height = 24
+      Top = 3
+      Width = 24
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 5
+      Flat = True
+    end
+    object SpeedButton1: TSpeedButton
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = SpeedButton2
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 572
+      Height = 24
+      Top = 3
+      Width = 24
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 5
+      Flat = True
+    end
+    object Bevel5: TBevel
+      AnchorSideLeft.Control = ScrollBox1
+      AnchorSideRight.Control = ScrollBox1
+      AnchorSideRight.Side = asrBottom
+      Left = 5
+      Height = 5
+      Top = 32
+      Width = 624
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 5
+      BorderSpacing.Right = 5
+    end
+    object Bevel6: TBevel
+      AnchorSideTop.Control = ScrollBox1
+      AnchorSideBottom.Control = Bevel5
+      Left = 32
+      Height = 22
+      Top = 5
+      Width = 5
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Top = 5
+      BorderSpacing.Bottom = 5
+    end
+    object Bevel9: TBevel
+      AnchorSideTop.Control = Bevel6
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 630
+      Height = 22
+      Top = 5
+      Width = 5
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 5
+      Visible = False
+    end
+    object Bevel8: TBevel
+      AnchorSideTop.Control = Bevel6
+      AnchorSideRight.Control = SpeedButton1
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 562
+      Height = 22
+      Top = 5
+      Width = 5
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 5
+    end
+    object Splitter1: TSplitter
+      AnchorSideTop.Control = Bevel6
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 176
+      Height = 22
+      Top = 5
+      Width = 5
+      Align = alNone
+      Anchors = [akLeft, akBottom]
+      AutoSnap = False
+      Beveled = True
+    end
+    object MainCB: TCheckBoxThemed
+      AnchorSideLeft.Control = Bevel5
+      AnchorSideTop.Side = asrCenter
+      AnchorSideBottom.Control = Bevel6
+      AnchorSideBottom.Side = asrBottom
+      Left = 10
+      Height = 14
+      Top = 13
+      Width = 14
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Left = 5
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+      OnChange = MainCBChange
+    end
+  end
+end

@@ -84,6 +84,9 @@ type
     HeadingFont4:          TFont;
     HeadingFont5:          TFont;
 
+    // Statusbar
+    StatusBarItemNames:    string;
+
     // Relate
 //    RelateMaxRecsReached:  TSettingRelateMaxRecordReached;
 //    RelateChangeRecord:    TSettingRelateRecordChanged;
@@ -217,6 +220,9 @@ begin
       WriteInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style));
       WriteInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
 
+      sec := 'statusbar';
+      WriteString(sec, 'StatusBarItemNames', StatusBarItemNames);
+
       Sec := 'relate';
 //      WriteInteger(Sec, 'RelateMaxRecsReached', Integer(RelateMaxRecsReached));
 //      WriteInteger(Sec, 'RelateChangeRecord', Integer(RelateChangeRecord));
@@ -321,6 +327,9 @@ begin
     NotesHintFont.Size  := ReadInteger(sec, 'NotesHintFontSize', NotesHintFont.Size);
     NotesHintFont.Style := TFontStyles(ReadInteger(sec, 'NotesHintFontStyle', Integer(NotesHintFont.Style)));
     NotesHintFont.Color := ReadInteger(sec, 'NotesHintFontColour', NotesHintFont.Color);
+
+    sec := 'statusbar';
+    StatusBarItemNames  := ReadString(sec, 'StatusBarItemNames', StatusBarItemNames);
 
     // Relate
     Sec := 'relate';
@@ -493,6 +502,8 @@ const
     HeadingFont3:          nil;
     HeadingFont4:          nil;
     HeadingFont5:          nil;
+
+    StatusBarItemNames:    'Navigator,recordstate,KeyInfo,CurrentUser,SelectedNames,datafilecontent,LastSaved';
   );
 begin
   with EntrySettings do

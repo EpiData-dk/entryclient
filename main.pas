@@ -14,6 +14,7 @@ type
 
   TMainForm = class(TForm)
     AboutAction: TAction;
+    BetaPanel: TPanel;
     DefaultPosAction: TAction;
     EpiDataWebTutorialsMenuItem: TMenuItem;
     DefaultPosMenuItem: TMenuItem;
@@ -25,6 +26,7 @@ type
     FindListMenuItem: TMenuItem;
     CopyRecToClpMenuItem: TMenuItem;
     AppleMenuItem: TMenuItem;
+    Label1: TLabel;
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -43,6 +45,7 @@ type
     CloseProjectAction: TAction;
     CloseProjectMenuItem: TMenuItem;
     RecentFilesSubMenu: TMenuItem;
+    StaticText1: TStaticText;
     WebTutorialsMenuItem: TMenuItem;
     TutorialSubMenu: TMenuItem;
     HelpMenuDivider3: TMenuItem;
@@ -103,6 +106,7 @@ type
     procedure ShowIntroActionExecute(Sender: TObject);
     procedure ShowShortCutsActionExecute(Sender: TObject);
     procedure WebTutorialsMenuItemClick(Sender: TObject);
+    procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
   private
     { private declarations }
     FActiveFrame: TProjectFrame;
@@ -148,7 +152,7 @@ uses
   settings, about, Clipbrd, epimiscutils, epicustombase,
   epiversionutils, LCLIntf, settings2, searchform,
   shortcuts, epistringutils, epiadmin, entryprocs,
-  epiv_checkversionform, LazFileUtils;
+  epiv_checkversionform, LazUTF8, LazFileUtils;
 
 { TMainForm }
 
@@ -171,12 +175,14 @@ end;
 procedure TMainForm.SettingsActionExecute(Sender: TObject);
 var
   SettingsForm: TSettings2Form;
+  mr: Integer;
 begin
   SettingsForm := TSettings2Form.Create(Self);
-  SettingsForm.ShowModal;
+  mr := SettingsForm.ShowModal;
   SettingsForm.Free;
 
-  UpdateSettings;
+  if (mr = mrOK) then
+    UpdateSettings;
 end;
 
 procedure TMainForm.ShowIntroActionExecute(Sender: TObject);
@@ -216,6 +222,12 @@ end;
 procedure TMainForm.WebTutorialsMenuItemClick(Sender: TObject);
 begin
   OpenURL(EntrySettings.TutorialURLUTF8);
+end;
+
+procedure TMainForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+begin
+  if Assigned(FActiveFrame) then
+    FActiveFrame.IsShortCut(Msg, Handled);
 end;
 
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);
@@ -260,6 +272,8 @@ begin
   // Close Old project
   if not DoCloseProject then exit;
 
+  BetaPanel.Visible :=  false;
+
   TabSheet := TTabSheet.Create(MainFormPageControl);
   TabSheet.PageControl := MainFormPageControl;
   TabSheet.Name := 'TabSheet' + IntToStr(TabNameCount);
@@ -294,6 +308,8 @@ begin
   UpdateMainMenu;
   UpdateProcessToolPanel;
   SetCaption;
+
+  BetaPanel.Visible := true;
 end;
 
 procedure TMainForm.DoOpenProject(const AFileName: string);
@@ -356,6 +372,7 @@ begin
   LoadTutorials;
   UpdateProcessToolPanel;
   UpdateShortCuts;
+
 
   if Assigned(FActiveFrame) then
     TProjectFrame(FActiveFrame).UpdateSettings;

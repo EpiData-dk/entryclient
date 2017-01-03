@@ -10,12 +10,9 @@ uses
 
 type
 
-  TFieldValidateErrorProc = procedure (Sender: TObject; Const Msg: String) of object;
-  TFieldValidateResult = (fvrAccept, fvrReject, fvrNone);
-
   { TFieldEdit }
 
-  TFieldEdit = class(TEdit, IEntryControl)
+  TFieldEdit = class(TEdit, IEntryDataControl)
   private
     FField: TEpiField;
     FJumpToNext: boolean;
@@ -28,6 +25,13 @@ type
     FCommitingData: boolean;
     procedure   SetRecNo(const AValue: integer);
     procedure   FieldChange(Const Sender, Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
+    function    GetField: TEpiField;
+    function    GetRecNo: integer;
+    function    GetJumpToNext: boolean;
+    procedure   SetJumpToNext(AValue: boolean);
+    function    GetOnValidateError: TFieldValidateErrorProc;
+    procedure   SetOnValidateError(AValue: TFieldValidateErrorProc);
+    function    GetCustomEdit: TCustomEdit;
   protected
     WC:         WideChar;
     Caret:      Integer;
@@ -52,10 +56,11 @@ type
     procedure   Commit;
     procedure   UpdateSettings;
     function    CompareTo(Const AText: string; ct: TEpiComparisonType): boolean; virtual;
-    property    Field: TEpiField read FField write SetField;
-    property    RecNo: integer read FRecNo write SetRecNo;
-    property    JumpToNext: boolean read FJumpToNext write FJumpToNext;
-    property    OnValidateError: TFieldValidateErrorProc read FOnValidateError write FOnValidateError;
+    property    Field: TEpiField read GetField write SetField;
+    property    RecNo: integer read GetRecNo write SetRecNo;
+    property    JumpToNext: boolean read GetJumpToNext write SetJumpToNext;
+    property    OnValidateError: TFieldValidateErrorProc read GetOnValidateError write SetOnValidateError;
+    property    CustomEdit: TCustomEdit read GetCustomEdit;
   end;
 
   { TIntegerEdit }
@@ -141,6 +146,8 @@ type
     function    Characters: TCharSet; override;
   end;
 
+
+
 implementation
 
 uses
@@ -191,7 +198,7 @@ begin
   TmpFont := TFont.Create;
   TmpFont.Assign(Cv.Font);
   Cv.Font.Assign(Self.Font);
-  //         Side buffer (pixel from controls left side to first character.
+  //         Side buffer pixel from controls left side to first character.
   Width   := (SideBuf * 2) + Cv.GetTextWidth(S) * Min(FField.Length, 50);
   Cv.Font.Assign(TmpFont);
   TmpFont.Free;
@@ -263,6 +270,41 @@ begin
   begin
     UpdateText;
   end;
+end;
+
+function TFieldEdit.GetField: TEpiField;
+begin
+  result := FField;
+end;
+
+function TFieldEdit.GetJumpToNext: boolean;
+begin
+  result := FJumpToNext;
+end;
+
+function TFieldEdit.GetOnValidateError: TFieldValidateErrorProc;
+begin
+  result := FOnValidateError;
+end;
+
+function TFieldEdit.GetRecNo: integer;
+begin
+  result := FRecNo;
+end;
+
+procedure TFieldEdit.SetJumpToNext(AValue: boolean);
+begin
+  FJumpToNext := AValue;
+end;
+
+procedure TFieldEdit.SetOnValidateError(AValue: TFieldValidateErrorProc);
+begin
+  FOnValidateError := AValue;
+end;
+
+function TFieldEdit.GetCustomEdit: TCustomEdit;
+begin
+  result := self;
 end;
 
 procedure TFieldEdit.SetParent(NewParent: TWinControl);
@@ -727,9 +769,9 @@ begin
   CmpVal := AText;
 
   if Field.FieldType = ftUpperString then
-    StrCmp := AnsiCompareText(OwnVal, CmpVal)
+    StrCmp := UTF8CompareText(OwnVal, CmpVal)
   else
-    StrCmp := AnsiCompareStr(OwnVal, CmpVal);
+    StrCmp := UTF8CompareStr(OwnVal, CmpVal);
 
   case ct of
     fcEq:  result := StrCmp = 0;

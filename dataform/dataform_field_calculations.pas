@@ -5,10 +5,10 @@ unit dataform_field_calculations;
 interface
 
 uses
-  Classes, SysUtils, fieldedit, epidatafiles;
+  Classes, SysUtils, StdCtrls, epidatafiles;
 
 function CalcTimeDiff(Calculation: TEpiTimeCalc): string;
-function CalcCombineDate(Calculation: TEpiCombineDateCalc; Out ErrMsg: string; Out ErrFieldEdit: TFieldEdit): string;
+function CalcCombineDate(Calculation: TEpiCombineDateCalc; Out ErrMsg: string; Out ErrEdit: TCustomEdit): string;
 function CalcCombineString(Calculation: TEpiCombineStringCalc): string;
 
 implementation
@@ -16,9 +16,9 @@ implementation
 uses
   dateutils, epidatafilestypes, epiconvertutils, math, entry_globals;
 
-function GetFieldEditFromField(Const Field: TEpiField): TFieldEdit;
+function GetFieldEditFromField(Const Field: TEpiField): TCustomEdit;
 begin
-  result := TFieldEdit(Field.FindCustomData(DataFormCustomDataKey));
+  result := TCustomEdit(Field.FindCustomData(DataFormCustomDataKey));
 end;
 
 function CalcTimeDiff(Calculation: TEpiTimeCalc): string;
@@ -81,7 +81,7 @@ begin
 end;
 
 function CalcCombineDate(Calculation: TEpiCombineDateCalc; out ErrMsg: string;
-  Out ErrFieldEdit: TFieldEdit): string;
+  out ErrEdit: TCustomEdit): string;
 var
   D: String;
   M: String;
@@ -91,27 +91,27 @@ var
 
   function GetValueFromField(F: TEpiField): String;
   var
-    FE: TFieldEdit;
+    CE: TCustomEdit;
   begin
-    FE := GetFieldEditFromField(F);
+    CE := GetFieldEditFromField(F);
 
-    if (FE.Text = '') or
-       (FE.Text = TEpiStringField.DefaultMissing)
+    if (CE.Text = '') or
+       (CE.Text = TEpiStringField.DefaultMissing)
     then
       Exit(Mis);
 
     if Assigned(F.ValueLabelSet) and
-       F.ValueLabelSet.IsMissingValue[FE.Text]
+       F.ValueLabelSet.IsMissingValue[CE.Text]
     then
       Exit(Mis);
 
-    Result := FE.Text;
+    Result := CE.Text;
   end;
 
 begin
   Mis := TEpiStringField.DefaultMissing;
 
-  ErrFieldEdit := nil;
+  ErrEdit := nil;
   with Calculation do
   begin
     D := GetValueFromField(Day);
@@ -127,11 +127,11 @@ begin
     end else begin
       Result := '';
       if pos('day', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(Day);
+        ErrEdit := GetFieldEditFromField(Day);
       if pos('month', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(Month);
+        ErrEdit := GetFieldEditFromField(Month);
       if pos('year', ErrMsg) > 0 then
-        ErrFieldEdit := GetFieldEditFromField(Year);
+        ErrEdit := GetFieldEditFromField(Year);
     end;
   end;
 end;

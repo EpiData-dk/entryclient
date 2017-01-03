@@ -3,21 +3,23 @@ program epidataentryclient;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}
-  cwstring, clocale,
+  {$IFDEF UNIX}
+  cthreads, clocale,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, printer4lazarus, lnetbase, virtualtreeview_package, main,
-  project_frame, dataform_frame, fieldedit, entryprocs, settings, about,
-  sysutils, UniqueInstanceRaw, epidatacore, notes_form,
+  Forms, printer4lazarus, lazcontrols, lnetbase, virtualtreeview_package,
+  gradcontrols, main, project_frame, dataform_frame, fieldedit, entryprocs,
+  settings, about, sysutils, UniqueInstanceRaw, epidatacore, notes_form,
   dataform_field_calculations, settings2, settings2_interface,
   settings2_paths_frame, settings2_colours_frame, settings_general_frame,
-  searchform, resultlist_form, settings2_fonts_frame, shortcuts,
-  entry_messages, entrylabel, control_types, entrysection, entry_globals,
-  notes_report, documentfile_ext, new_record_form, settings2_relate_frame,
-  setting_types, picklist2;
+  searchform, resultlist_form, settings2_fonts_frame, shortcuts, entry_messages,
+  entrylabel, control_types, entrysection, entry_globals, notes_report,
+  documentfile_ext, new_record_form, settings2_relate_frame, setting_types,
+  picklist2, admin_authenticator, entry_statusbar,
+  entry_statusbaritem_navigator, entry_statusbaritem_keyvalues,
+  entry_statusbaritem_datafilecontent, settings2_statusbar,
+  entry_statusbaritem_recordstate, entry_statusbaritem_extrafieldinfo, 
+fieldmemo;
 
 {$R *.res}
 
