@@ -515,7 +515,7 @@ begin
     if Modified then
     begin
       Res := MessageDlg('Warning',
-               'Save record before change?',
+               'Save observation before change?',
                mtConfirmation, mbYesNoCancel, 0, DefaultBtn);
       case Res of
         mrCancel: Result := false;

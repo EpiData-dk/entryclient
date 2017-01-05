@@ -928,8 +928,8 @@ begin
   if (not (AValue = NewRecord)) and Modified then
   begin
     Res := MessageDlg('Warning',
-      'Current record is modified.' + LineEnding +
-      'Save record?',
+      'Current observation is modified.' + LineEnding +
+      'Save observation?',
       mtWarning, mbYesNoCancel, 0, mbCancel);
     case Res of
       mrCancel:
@@ -1064,8 +1064,8 @@ begin
     if (RecNo <> NewRecord) then
     begin
       Res := MessageDlg('Warning',
-               'Current record modified.' + LineEnding +
-               'Save record?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
+               'Current observation modified.' + LineEnding +
+               'Save observation?', mtConfirmation, mbYesNoCancel, 0, mbCancel);
       case Res of
         mrCancel: Exit;
         mrYes:    CommitFields;
@@ -1076,7 +1076,7 @@ begin
     if (RecNo = NewRecord) then
     begin
       Res := MessageDlg('Confirmation',
-               'Save Record?',
+               'Save Observation?',
                mtConfirmation, mbYesNoCancel, 0, mbYes);
       case Res of
         mrCancel: Exit;
@@ -1475,10 +1475,10 @@ begin
     if idx <> -1 then
     begin
       RecNo := idx;
-      ShowHintMsg('Wrapped search. Reached end of datafile', FCurrentEdit);
+      ShowHintMsg('Wrapped search. Reached end of dataset', FCurrentEdit);
     end;
   end else begin
-    ShowHintMsg('No records found', FCurrentEdit);
+    ShowHintMsg('No observations found', FCurrentEdit);
   end;
 end;
 
@@ -1587,7 +1587,7 @@ begin
     if MessageDlg(
         'Index Conflict',
         'Index key already found' + LineEnding +
-          'Goto record: ' + IntToStr(Idx + 1),
+          'Goto observation: ' + IntToStr(Idx + 1),
         mtWarning,
         mbYesNo,
         0,
@@ -2165,7 +2165,7 @@ begin
   if not Modified then exit;
 
   Res := MessageDlg('Warning',
-           'Save record before close?',
+           'Save observation before close?',
            mtConfirmation, mbYesNoCancel, 0, mbCancel);
   case Res of
     mrCancel: CanClose := false;
@@ -2821,7 +2821,7 @@ begin
      (CE.Text = '') then
   begin
     DoError(CE);
-    FieldValidateError(CE, 'Field cannot be empty!');
+    FieldValidateError(CE, 'Variable cannot be empty!');
     if Assigned(F.ValueLabelSet) and
        (not Assigned(F.Ranges))
     then

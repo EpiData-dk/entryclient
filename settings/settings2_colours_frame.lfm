@@ -14,19 +14,19 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 10
     Height = 15
     Top = 15
-    Width = 175
+    Width = 206
     BorderSpacing.Left = 10
-    Caption = 'Field colour on invalid entry:'
+    Caption = 'Variable colour on invalid entry:'
     ParentColor = False
   end
   object ValidateErrorColourBtn: TColorButton
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 199
+    Left = 224
     Height = 25
     Top = 10
-    Width = 456
+    Width = 431
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -40,10 +40,10 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 199
+    Left = 224
     Height = 25
     Top = 45
-    Width = 456
+    Width = 431
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -57,7 +57,7 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 10
     Height = 15
     Top = 50
-    Width = 120
+    Width = 123
     BorderSpacing.Left = 10
     Caption = 'Value Label colour:'
     ParentColor = False
@@ -69,9 +69,9 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 10
     Height = 15
     Top = 85
-    Width = 73
+    Width = 102
     BorderSpacing.Left = 10
-    Caption = 'Active field:'
+    Caption = 'Active variable:'
     ParentColor = False
   end
   object ActiveFieldClrBtn: TColorButton
@@ -80,10 +80,10 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 199
+    Left = 224
     Height = 25
     Top = 80
-    Width = 456
+    Width = 431
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -98,9 +98,9 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 10
     Height = 15
     Top = 120
-    Width = 83
+    Width = 113
     BorderSpacing.Left = 10
-    Caption = 'Inactive field:'
+    Caption = 'Inactive variable:'
     ParentColor = False
   end
   object InActiveFieldClrBtn: TColorButton
@@ -109,10 +109,10 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 199
+    Left = 224
     Height = 25
     Top = 115
-    Width = 456
+    Width = 431
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -127,9 +127,9 @@ object SettingsColourFrame: TSettingsColourFrame
     Left = 10
     Height = 15
     Top = 155
-    Width = 100
+    Width = 127
     BorderSpacing.Left = 10
-    Caption = 'Must-Enter field'
+    Caption = 'Must-Enter variable'
     ParentColor = False
   end
   object MustEnterFieldClrBtn: TColorButton
@@ -138,10 +138,10 @@ object SettingsColourFrame: TSettingsColourFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 199
+    Left = 224
     Height = 25
     Top = 150
-    Width = 456
+    Width = 431
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     BorderSpacing.Right = 10
@@ -170,19 +170,20 @@ object SettingsColourFrame: TSettingsColourFrame
     object NotesUseSystemRadioBtn: TRadioButton
       AnchorSideTop.Side = asrCenter
       Left = 12
-      Height = 22
+      Height = 18
       Top = 16
-      Width = 148
+      Width = 147
       Caption = 'Use system default'
       Checked = True
       OnClick = NotesUseSystemRadioBtnClick
       TabOrder = 0
+      TabStop = True
     end
     object RadioButton2: TRadioButton
       Left = 12
-      Height = 22
+      Height = 18
       Top = 40
-      Width = 74
+      Width = 70
       Caption = 'Custom'
       OnClick = NotesUseSystemRadioBtnClick
       TabOrder = 1
@@ -195,33 +196,33 @@ object SettingsColourFrame: TSettingsColourFrame
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = GroupBox1
       AnchorSideBottom.Side = asrBottom
-      Left = 180
+      Left = 179
       Height = 80
       Top = 0
-      Width = 461
+      Width = 462
       Anchors = [akTop, akLeft, akRight, akBottom]
       AutoSize = True
       BorderSpacing.Left = 20
       BevelOuter = bvNone
       ClientHeight = 80
-      ClientWidth = 461
+      ClientWidth = 462
       TabOrder = 2
       object NotesFontEdit: TEditButton
         AnchorSideLeft.Control = NotesBgColourBtn
         AnchorSideTop.Control = NotesBgColourBtn
         AnchorSideTop.Side = asrBottom
-        Left = 110
+        Left = 116
         Height = 25
         Top = 45
-        Width = 287
+        Width = 282
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Bottom = 10
         ButtonWidth = 23
-        CharCase = ecNormal
         MaxLength = 0
         NumGlyphs = 1
         OnButtonClick = NotesFontEditButtonClick
+        PasswordChar = #0
         TabOrder = 0
       end
       object NotesFontColourBtn: TColorButton
@@ -229,7 +230,7 @@ object SettingsColourFrame: TSettingsColourFrame
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Panel1
         AnchorSideRight.Side = asrBottom
-        Left = 424
+        Left = 425
         Height = 25
         Top = 45
         Width = 27
@@ -247,10 +248,10 @@ object SettingsColourFrame: TSettingsColourFrame
         AnchorSideTop.Control = Panel1
         AnchorSideRight.Control = Panel1
         AnchorSideRight.Side = asrBottom
-        Left = 110
+        Left = 116
         Height = 25
         Top = 10
-        Width = 341
+        Width = 336
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Left = 10
         BorderSpacing.Top = 10
@@ -280,7 +281,7 @@ object SettingsColourFrame: TSettingsColourFrame
         Left = 10
         Height = 15
         Top = 20
-        Width = 90
+        Width = 96
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 10
         BorderSpacing.Top = 10

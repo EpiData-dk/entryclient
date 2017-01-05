@@ -159,7 +159,7 @@ end;
 
 class function TEntryClientStatusBarNavigator.Caption: string;
 begin
-  Result := 'Records Navigation';
+  Result := 'Observations Navigation';
 end;
 
 class function TEntryClientStatusBarNavigator.Name: string;

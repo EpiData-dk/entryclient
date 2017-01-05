@@ -85,7 +85,7 @@ end;
 
 class function TEntryClientStatusBarExtraFieldInfo.Caption: string;
 begin
-  Result := 'Additional Field Information';
+  Result := 'Additional Variable Information';
 end;
 
 class function TEntryClientStatusBarExtraFieldInfo.Name: string;

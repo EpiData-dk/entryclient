@@ -14,10 +14,10 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 30
-    Top = 71
-    Width = 149
+    Top = 63
+    Width = 187
     BorderSpacing.Left = 10
-    Caption = 'Skip number of records'#10'(Ctrl+"<-"/Ctrl+"->"):'
+    Caption = 'Skip number of observations'#10'(Ctrl+"<-"/Ctrl+"->"):'
     ParentColor = False
   end
   object RecordsToSkipEdit: TMaskEdit
@@ -27,7 +27,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 25
-    Top = 74
+    Top = 66
     Width = 303
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -44,8 +44,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 114
-    Width = 213
+    Top = 106
+    Width = 215
     BorderSpacing.Left = 10
     Caption = 'Hint timeout on errors (seconds):'
     ParentColor = False
@@ -58,7 +58,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 256
     Height = 25
-    Top = 109
+    Top = 101
     Width = 303
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -74,9 +74,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Control = ShowProcessToolBarChkBox
     AnchorSideTop.Side = asrBottom
     Left = 10
-    Height = 22
-    Top = 42
-    Width = 235
+    Height = 18
+    Top = 38
+    Width = 239
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Allow multiple program instances'
@@ -86,9 +86,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 10
-    Height = 22
+    Height = 18
     Top = 10
-    Width = 141
+    Width = 143
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
     Caption = 'Show Work Toolbar'
@@ -100,8 +100,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 150
-    Width = 199
+    Top = 140
+    Width = 204
     BorderSpacing.Left = 10
     Caption = 'Associate filetypes (.epx, .epz):'
     ParentColor = False
@@ -109,10 +109,10 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
   object UnAssociateBtn: TButton
     AnchorSideTop.Control = AssociateBtn
     AnchorSideRight.Control = AssociateBtn
-    Left = 378
-    Height = 27
-    Top = 144
-    Width = 97
+    Left = 384
+    Height = 23
+    Top = 136
+    Width = 94
     Anchors = [akTop, akRight]
     AutoSize = True
     BorderSpacing.Right = 10
@@ -126,10 +126,10 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 485
-    Height = 27
-    Top = 144
-    Width = 74
+    Left = 488
+    Height = 23
+    Top = 136
+    Width = 71
     Anchors = [akTop, akRight]
     AutoSize = True
     BorderSpacing.Left = 5
@@ -147,7 +147,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 10
     Height = 96
-    Top = 176
+    Top = 164
     Width = 549
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
@@ -172,11 +172,11 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     TabOrder = 6
     object ShowValuelabelsAsNoteChkBox: TCheckBox
       Left = 6
-      Height = 22
+      Height = 21
       Hint = 'The extra information is:'#10' - Valuelabels'#10' - Range'
-      Top = 51
+      Top = 52
       Width = 533
-      Caption = 'Show extra field info in note'
+      Caption = 'Show extra variable info in note'
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
@@ -188,8 +188,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = FormatHlpBtn
     Left = 256
-    Height = 27
-    Top = 282
+    Height = 25
+    Top = 270
     Width = 269
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
@@ -207,8 +207,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideTop.Side = asrCenter
     Left = 10
     Height = 15
-    Top = 288
-    Width = 164
+    Top = 275
+    Width = 168
     Caption = 'Copy-to-clipboard format:'
     ParentColor = False
   end
@@ -219,7 +219,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 530
     Height = 28
-    Top = 281
+    Top = 268
     Width = 29
     Anchors = [akTop, akRight]
     BorderSpacing.Right = 10
@@ -310,7 +310,7 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     AnchorSideRight.Side = asrBottom
     Left = 10
     Height = 82
-    Top = 319
+    Top = 305
     Width = 549
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 10
@@ -322,9 +322,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
     TabOrder = 9
     object AutomaticUpdatesChkBox: TCheckBox
       Left = 8
-      Height = 22
+      Height = 18
       Top = 8
-      Width = 212
+      Width = 216
       Caption = 'Check for new versions online'
       TabOrder = 0
     end
@@ -333,9 +333,9 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       AnchorSideLeft.Side = asrBottom
       AnchorSideBottom.Control = Label4
       AnchorSideBottom.Side = asrBottom
-      Left = 158
+      Left = 162
       Height = 25
-      Top = 30
+      Top = 26
       Width = 32
       Anchors = [akLeft, akBottom]
       BorderSpacing.Left = 15
@@ -351,8 +351,8 @@ object SettingsGeneralFrame: TSettingsGeneralFrame
       AnchorSideTop.Side = asrBottom
       Left = 8
       Height = 15
-      Top = 40
-      Width = 135
+      Top = 36
+      Width = 139
       BorderSpacing.Top = 10
       Caption = 'Days between check:'
       ParentColor = False

@@ -17,10 +17,10 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     ButtonWidth = 23
-    CharCase = ecNormal
     MaxLength = 0
     NumGlyphs = 1
     OnButtonClick = FieldFontEditBtnButtonClick
+    PasswordChar = #0
     TabOrder = 0
   end
   object Label2: TLabel
@@ -30,10 +30,10 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Left = 10
     Height = 15
     Top = 18
-    Width = 158
+    Width = 154
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 10
-    Caption = 'Questions / Field Names:'
+    Caption = 'Label / Variable Names:'
     ParentColor = False
   end
   object SectionFontEditBtn: TEditButton
@@ -49,10 +49,10 @@ object SettingsFontsFrame: TSettingsFontsFrame
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 10
     ButtonWidth = 23
-    CharCase = ecNormal
     MaxLength = 0
     NumGlyphs = 1
     OnButtonClick = FieldFontEditBtnButtonClick
+    PasswordChar = #0
     TabOrder = 1
   end
   object Label10: TLabel
@@ -134,18 +134,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = GroupBox1
       AnchorSideRight.Control = HeadingColourBtn1
-      Left = 104
+      Left = 105
       Height = 25
       Top = 10
-      Width = 566
+      Width = 565
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
-      CharCase = ecNormal
       MaxLength = 0
       NumGlyphs = 1
       OnButtonClick = FieldFontEditBtnButtonClick
+      PasswordChar = #0
       TabOrder = 0
     end
     object HeadingColourBtn1: TColorButton
@@ -175,7 +175,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       Left = 10
       Height = 15
       Top = 15
-      Width = 69
+      Width = 70
       BorderSpacing.Left = 10
       Caption = 'Heading 1:'
       ParentColor = False
@@ -206,18 +206,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideTop.Control = HeadingFontEditBtn1
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = HeadingColourBtn2
-      Left = 104
+      Left = 105
       Height = 25
       Top = 45
-      Width = 566
+      Width = 565
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
-      CharCase = ecNormal
       MaxLength = 0
       NumGlyphs = 1
       OnButtonClick = FieldFontEditBtnButtonClick
+      PasswordChar = #0
       TabOrder = 1
     end
     object Label11: TLabel
@@ -227,7 +227,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       Left = 10
       Height = 15
       Top = 50
-      Width = 69
+      Width = 70
       BorderSpacing.Left = 10
       Caption = 'Heading 2:'
       ParentColor = False
@@ -239,7 +239,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       Left = 10
       Height = 15
       Top = 85
-      Width = 69
+      Width = 70
       BorderSpacing.Left = 10
       Caption = 'Heading 3:'
       ParentColor = False
@@ -250,18 +250,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideTop.Control = HeadingFontEditBtn2
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = HeadingColourBtn3
-      Left = 104
+      Left = 105
       Height = 25
       Top = 80
-      Width = 566
+      Width = 565
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
-      CharCase = ecNormal
       MaxLength = 0
       NumGlyphs = 1
       OnButtonClick = FieldFontEditBtnButtonClick
+      PasswordChar = #0
       TabOrder = 2
     end
     object HeadingColourBtn3: TColorButton
@@ -291,7 +291,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       Left = 10
       Height = 15
       Top = 120
-      Width = 69
+      Width = 70
       BorderSpacing.Left = 10
       Caption = 'Heading 4:'
       ParentColor = False
@@ -302,18 +302,18 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideTop.Control = HeadingFontEditBtn3
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = HeadingColourBtn4
-      Left = 104
+      Left = 105
       Height = 25
       Top = 115
-      Width = 566
+      Width = 565
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       ButtonWidth = 23
-      CharCase = ecNormal
       MaxLength = 0
       NumGlyphs = 1
       OnButtonClick = FieldFontEditBtnButtonClick
+      PasswordChar = #0
       TabOrder = 3
     end
     object HeadingColourBtn4: TColorButton
@@ -343,7 +343,7 @@ object SettingsFontsFrame: TSettingsFontsFrame
       Left = 10
       Height = 15
       Top = 155
-      Width = 69
+      Width = 70
       BorderSpacing.Left = 10
       Caption = 'Heading 5:'
       ParentColor = False
@@ -355,19 +355,19 @@ object SettingsFontsFrame: TSettingsFontsFrame
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = HeadingColourBtn5
       AnchorSideBottom.Control = GroupBox1
-      Left = 104
+      Left = 105
       Height = 25
       Top = 150
-      Width = 566
+      Width = 565
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 25
       BorderSpacing.Top = 10
       BorderSpacing.Bottom = 10
       ButtonWidth = 23
-      CharCase = ecNormal
       MaxLength = 0
       NumGlyphs = 1
       OnButtonClick = FieldFontEditBtnButtonClick
+      PasswordChar = #0
       TabOrder = 4
     end
     object HeadingColourBtn5: TColorButton

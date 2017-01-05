@@ -106,7 +106,7 @@ object ProjectFrame: TProjectFrame
       Left = 18
       Height = 15
       Top = 54
-      Width = 83
+      Width = 92
       Caption = 'GetTextCount:'
       ParentColor = False
     end
@@ -114,7 +114,7 @@ object ProjectFrame: TProjectFrame
       Left = 54
       Height = 15
       Top = 90
-      Width = 38
+      Width = 43
       Caption = 'Label2'
       ParentColor = False
     end
@@ -122,7 +122,7 @@ object ProjectFrame: TProjectFrame
       Left = 18
       Height = 15
       Top = 150
-      Width = 92
+      Width = 101
       Caption = 'PaintTextCount:'
       ParentColor = False
     end
@@ -130,7 +130,7 @@ object ProjectFrame: TProjectFrame
       Left = 54
       Height = 15
       Top = 192
-      Width = 38
+      Width = 43
       Caption = 'Label4'
       ParentColor = False
     end

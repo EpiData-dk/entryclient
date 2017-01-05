@@ -154,7 +154,7 @@ begin
   S := IntToStr(ADataFile.Size);
   if Length(ARecordList) > 0 then
     if ARecordList[0] = -1 then
-      S := 'no records found'
+      S := 'no observations found'
     else
       S := IntToStr(Length(ARecordList));
 

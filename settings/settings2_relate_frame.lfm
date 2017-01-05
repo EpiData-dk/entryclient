@@ -14,7 +14,7 @@ object RelateFrame: TRelateFrame
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 49
+    Height = 45
     Top = 20
     Width = 467
     Anchors = [akTop, akLeft, akRight]
@@ -24,7 +24,7 @@ object RelateFrame: TRelateFrame
     BorderSpacing.Top = 20
     BorderSpacing.Right = 10
     BorderSpacing.InnerBorder = 5
-    Caption = 'When maximum record count:'
+    Caption = 'When maximum observation count:'
     ChildSizing.LeftRightSpacing = 6
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -32,7 +32,7 @@ object RelateFrame: TRelateFrame
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 32
+    ClientHeight = 28
     ClientWidth = 463
     Items.Strings = (
       'Filling text...'
@@ -46,15 +46,15 @@ object RelateFrame: TRelateFrame
     AnchorSideRight.Control = RadioGroup1
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 49
-    Top = 89
+    Height = 45
+    Top = 85
     Width = 467
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     AutoSize = True
     BorderSpacing.Top = 20
     BorderSpacing.InnerBorder = 5
-    Caption = 'Changing a record at parent level:'
+    Caption = 'Changing a observation at parent level:'
     ChildSizing.LeftRightSpacing = 6
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -62,7 +62,7 @@ object RelateFrame: TRelateFrame
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 32
+    ClientHeight = 28
     ClientWidth = 463
     Items.Strings = (
       'Filling text...'
