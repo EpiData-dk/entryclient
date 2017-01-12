@@ -14,10 +14,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <BuildNr Value="41"/>
+      <BuildNr Value="42"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable SpecialBuild="TRUNK"/>
+      <StringTable SpecialBuild="TRUNK" ProductVersion="4.0.0.41"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -138,7 +138,6 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-i=~/.config/epidata/epidataentryclient/admin.ini -r=~/.config/epidata/recent.admin.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="9">
