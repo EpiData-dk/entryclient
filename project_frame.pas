@@ -67,6 +67,9 @@ type
     procedure AddToRecent(Const aFilename: string);
     procedure UpdateShortCuts;
     procedure UpdateActionLinks;
+    procedure DocumentChangeEvent(const Sender: TEpiCustomBase;
+      const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
+      EventType: Word; Data: Pointer);
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
@@ -273,6 +276,7 @@ begin
 
     try
       FDocumentFile := TEntryDocumentFile.Create;
+      FDocumentFile.OnDocumentChangeEvent := @DocumentChangeEvent;
       FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
@@ -420,6 +424,16 @@ begin
     FieldNotesMenuItem.Action  := Frame.ShowFieldNotesAction;
     FieldNotesMenuItem.Action.Update;
   end;
+end;
+
+procedure TProjectFrame.DocumentChangeEvent(const Sender: TEpiCustomBase;
+  const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup; EventType: Word;
+  Data: Pointer);
+begin
+  if (EventGroup <> eegCustomBase) then exit;
+  if (TEpiCustomChangeEventType(EventType) <> ecceIdCaseOnLoad) then exit;
+
+  PEpiIdCaseErrorRecord(Data)^.ReturnState := crsAbort;
 end;
 
 procedure TProjectFrame.FrameModified(Sender: TObject);
