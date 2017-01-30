@@ -272,7 +272,9 @@ begin
   // Close Old project
   if not DoCloseProject then exit;
 
-  BetaPanel.Visible :=  false;
+  {$IFDEF EPI_BETA}
+  BetaPanel.Visible := false;
+  {$ENDIF}
 
   TabSheet := TTabSheet.Create(MainFormPageControl);
   TabSheet.PageControl := MainFormPageControl;
@@ -309,7 +311,9 @@ begin
   UpdateProcessToolPanel;
   SetCaption;
 
+  {$IFDEF EPI_BETA}
   BetaPanel.Visible := true;
+  {$ENDIF}
 end;
 
 procedure TMainForm.DoOpenProject(const AFileName: string);
