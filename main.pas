@@ -521,6 +521,10 @@ begin
   UpdateSettings;
   UpdateRecentFiles;
 
+  {$IFDEF EPI_BETA}
+  BetaPanel.Visible := true;
+  {$ENDIF}
+
   Application.QueueAsyncCall(@CheckForUpdates, 0);
 end;
 

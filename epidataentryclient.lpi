@@ -421,6 +421,9 @@
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dEPI_BETA"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="4">
