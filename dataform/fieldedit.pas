@@ -170,7 +170,7 @@ begin
   Settings :=  TEpiDocument(Field.RootOwner).ProjectSettings;
 
   // Trick to avoid updaing "SetRealText" with the field.id;
-  Name := FField.Name; //  GetRandomComponentName;
+  Name := {FField.Name; //  }GetRandomComponentName;
   MaxLength := Field.Length;
 
   Text      := '';
