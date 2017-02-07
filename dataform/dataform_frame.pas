@@ -1103,14 +1103,14 @@ begin
         ftAutoInc:  begin
                       AVal := TEpiDocument(DataFile.RootOwner).ProjectSettings.AutoIncStartValue;
                       if DataFile.Size = 0 then
-                        Text := IntToStr(AVal)
+                        CE.Text := IntToStr(AVal)
                       else
-                        Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
+                        CE.Text := IntToStr(Max(AsInteger[DataFile.Size - 1] + 1, AVal));
                     end;
-        ftDMYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('DD/MM/YYYY', Date);
-        ftMDYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('MM/DD/YYYY', Date);
-        ftYMDAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('YYYY/MM/DD', Date);
-        ftTimeAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then Text := FormatDateTime('HH:NN:SS',   Now);
+        ftDMYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then CE.Text := FormatDateTime('DD/MM/YYYY', Date);
+        ftMDYAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then CE.Text := FormatDateTime('MM/DD/YYYY', Date);
+        ftYMDAuto:  if (TEpiCustomAutoField(Field).AutoMode = umCreated) then CE.Text := FormatDateTime('YYYY/MM/DD', Date);
+        ftTimeAuto: if (TEpiCustomAutoField(Field).AutoMode = umCreated) then CE.Text := FormatDateTime('HH:NN:SS',   Now);
       end;
     end;
 
