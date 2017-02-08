@@ -7,7 +7,6 @@ object MainForm: TMainForm
   Caption = 'epidataentryclient'
   ClientHeight = 619
   ClientWidth = 977
-  DesignTimePPI = 93
   Menu = MainFormMenu
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
