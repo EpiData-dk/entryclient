@@ -1591,7 +1591,7 @@ begin
          mtWarning,
          [
           // use values about 11 to avoid icons on the buttons
-          21, 'New obs',
+          21, 'Edit obs',
           20, 'Go to obs', 'isDefault'
          ],
          0
@@ -1606,7 +1606,6 @@ begin
     else
       begin
         Modified := false;
-        DoNewRecord;
         FirstFieldAction.Execute;
       end;
   end;
