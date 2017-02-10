@@ -152,7 +152,7 @@ implementation
 
 uses
   Forms, epidatafilestypes, LCLProc, strutils,
-  epidocument, episettings, dataform_frame,
+  epidocument, episettings, dataform_frame, epifields_helper,
   epiconvertutils, settings, math, LazUTF8;
 
 { TFieldEdit }
@@ -559,7 +559,9 @@ begin
 
   if Focused then
     Color := EntrySettings.ActiveFieldColour
-  else if Field.EntryMode = emMustEnter then
+  else if (Field.EntryMode = emMustEnter) or
+          (Field.IsKeyfield)
+  then
     Color := EntrySettings.MustEnterFieldColour
   else
     Color := EntrySettings.InactiveFieldColour;
