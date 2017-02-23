@@ -30,7 +30,9 @@ type
     class function Name: string; override;
   public
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
+    procedure Update(Condition: TEntryClientStatusbarUpdateCondition); overload; override;
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
+    destructor Destroy; override;
     function GetPreferedWidth: Integer; override;
   end;
 
@@ -153,6 +155,13 @@ begin
   end;
 end;
 
+procedure TEntryClientStatusBarRecordState.Update(
+  Condition: TEntryClientStatusbarUpdateCondition);
+begin
+  DoLocalState;
+  DoUpdate;
+end;
+
 constructor TEntryClientStatusBarRecordState.Create(
   AStatusBar: TEpiVCustomStatusBar);
 begin
@@ -197,6 +206,15 @@ begin
     NormalBlend := 0.5;
     Enabled := false;
   end;
+end;
+
+destructor TEntryClientStatusBarRecordState.Destroy;
+begin
+ { if Assigned(Dataform) and
+     Assigned(Dataform.DataFile)
+  then
+    Dataform.DataFile.UnRegisterOnChangeHook(@RecordStataChangeHook);}
+  inherited Destroy;
 end;
 
 function TEntryClientStatusBarRecordState.GetPreferedWidth: Integer;
