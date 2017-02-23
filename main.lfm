@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1976
+  Left = 2152
   Height = 642
-  Top = 142
+  Top = 97
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -64,6 +64,7 @@ object MainForm: TMainForm
     Color = clYellow
     ParentColor = False
     TabOrder = 2
+    Visible = False
     object Label1: TLabel
       AnchorSideLeft.Control = BetaPanel
       AnchorSideLeft.Side = asrCenter
