@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, epiv_custom_statusbar, entry_statusbar, ugradbtn,
-  epidatafilestypes, epicustombase;
+  epidatafilestypes, epicustombase, epidatafiles;
 
 type
 
@@ -22,6 +22,8 @@ type
     procedure DoUpdate;
     procedure DoDatafileUpdate;
     procedure DeletedClick(Sender: TObject);
+  private
+    FDataFile: TEpiDataFile;
     procedure RecordStataChangeHook(const Sender: TEpiCustomBase;
       const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
       EventType: Word; Data: Pointer);
@@ -30,14 +32,16 @@ type
     class function Name: string; override;
   public
     procedure Update(Condition: TEpiVCustomStatusbarUpdateCondition); override;
+    procedure Update(Condition: TEntryClientStatusbarUpdateCondition); overload; override;
     constructor Create(AStatusBar: TEpiVCustomStatusBar); override;
+    destructor Destroy; override;
     function GetPreferedWidth: Integer; override;
   end;
 
 implementation
 
 uses
-  Controls, Graphics, dataform_frame, admin_authenticator, epirights, epidatafiles;
+  Controls, Graphics, dataform_frame, admin_authenticator, epirights;
 
 { TEntryClientStatusBarRecordState }
 
@@ -100,7 +104,13 @@ begin
   FDeletedBtn.Action := Dataform.DeleteRecordAction;
   FDeletedBtn.Caption := 'DEL';
 
-  Dataform.DataFile.RegisterOnChangeHook(@RecordStataChangeHook, true);
+  if Assigned(FDataFile) then
+    FDataFile.UnRegisterOnChangeHook(@RecordStataChangeHook);
+
+  FDataFile := Statusbar.Datafile;
+
+  if Assigned(FDataFile) then
+    FDataFile.RegisterOnChangeHook(@RecordStataChangeHook, true);
 end;
 
 procedure TEntryClientStatusBarRecordState.DeletedClick(Sender: TObject);
@@ -115,7 +125,17 @@ procedure TEntryClientStatusBarRecordState.RecordStataChangeHook(
   const Sender: TEpiCustomBase; const Initiator: TEpiCustomBase;
   EventGroup: TEpiEventGroup; EventType: Word; Data: Pointer);
 begin
-  if (Initiator <> Dataform.DataFile) then Exit;
+  if (Initiator <> FDataFile) then Exit;
+
+  if (EventGroup = eegCustomBase) and
+     (TEpiCustomChangeEventType(EventType) = ecceDestroy)
+  then
+    begin
+      FDataFile.UnRegisterOnChangeHook(@RecordStataChangeHook);
+      FDataFile := nil;
+      Exit;
+    end;
+
   if (EventGroup <> eegDataFiles) then exit;
   if (TEpiDataFileChangeEventType(EventType) <> edceRecordStatus) then exit;
 
@@ -151,6 +171,13 @@ begin
     sucExample:
       FDeletedBtn.Action := nil;
   end;
+end;
+
+procedure TEntryClientStatusBarRecordState.Update(
+  Condition: TEntryClientStatusbarUpdateCondition);
+begin
+  DoLocalState;
+  DoUpdate;
 end;
 
 constructor TEntryClientStatusBarRecordState.Create(
@@ -197,6 +224,18 @@ begin
     NormalBlend := 0.5;
     Enabled := false;
   end;
+end;
+
+destructor TEntryClientStatusBarRecordState.Destroy;
+begin
+  if Assigned(FDataFile)
+  then
+    begin
+      FDataFile.UnRegisterOnChangeHook(@RecordStataChangeHook);
+      FDataFile := nil;
+    end;
+
+  inherited Destroy;
 end;
 
 function TEntryClientStatusBarRecordState.GetPreferedWidth: Integer;

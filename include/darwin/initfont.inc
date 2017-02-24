@@ -1,6 +1,6 @@
 procedure InitFont(Font: TFont);
 begin
-  Font.Name := 'FreeSans';
+  Font.Name := 'Verdana';
   Font.Size := 10;
   Font.Style := [];
 end;

@@ -1584,21 +1584,30 @@ begin
 
   if (Idx <> -1) then
   begin
-    if MessageDlg(
-        'Index Conflict',
-        'Index key already found' + LineEnding +
-          'Goto observation: ' + IntToStr(Idx + 1),
-        mtWarning,
-        mbYesNo,
-        0,
-        mbYes
-       ) = mrYes then
-    begin
-      // Trick to make system believe nothing has happened.
-      Modified := false;
-      RecNo := Idx;
-      Idx := -1;
-    end;
+    if QuestionDlg(
+         'Index Conflict',
+         'Index key already found at observation no. ' + IntToStr(Idx + 1) + LineEnding +
+           'What do you wish to do:',
+         mtWarning,
+         [
+          // use values about 11 to avoid icons on the buttons
+          21, 'Edit obs',
+          20, 'Go to obs', 'isDefault'
+         ],
+         0
+       ) = 20
+    then
+      begin
+        // Trick to make system believe nothing has happened.
+        Modified := false;
+        RecNo := Idx;
+        Idx := -1;
+      end
+    else
+      begin
+        Modified := false;
+        FirstFieldAction.Execute;
+      end;
   end;
 
   result := Idx = -1;
