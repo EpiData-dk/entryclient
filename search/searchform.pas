@@ -558,7 +558,7 @@ begin
   begin
     FHintWindow := THintWindow.Create(Self);
     FHintWindow.AutoHide := true;
-    FHintWindow.HideInterval := 5 * 1000;
+    FHintWindow.HideInterval := EntrySettings.HintTimeOut * 1000;
   end;
 
   if (Msg = '') or (Ctrl = nil) then

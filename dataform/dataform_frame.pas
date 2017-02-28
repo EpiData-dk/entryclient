@@ -1733,7 +1733,7 @@ begin
         FNotesHint.Color := EntrySettings.NotesHintBgColor;
       end;
       FNotesHint.AutoHide := true;
-      FNotesHint.HideInterval := 5000;
+      FNotesHint.HideInterval := EntrySettings.HintTimeOut * 1000;
     end;
     R := FNotesHint.CalcHintRect(0, NoteText, nil);
     P := CE.ClientToScreen(Point(0,0));
