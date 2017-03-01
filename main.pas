@@ -522,6 +522,10 @@ begin
   SetCaption;
   LoadFormPosition(Self, 'MainForm');
 
+  {$IFDEF EPI_BETA}
+  BetaPanel.Visible := true;
+  {$ENDIF}
+
   UpdateSettings;
   UpdateRecentFiles;
 
