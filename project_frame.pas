@@ -141,7 +141,8 @@ uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
   epiadmin, admin_authenticator, URIParser,
-  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd;
+  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd,
+  epicustomlist_helper;
 
 type
 
@@ -734,7 +735,7 @@ begin
       MR.Datafile := EpiDocument.DataFiles[0];
     end;
 
-  ChildCount := RelationList.Count;
+  ChildCount := RelationList.Count - RelationList.ProtectedCount;
 end;
 
 procedure TProjectFrame.DataFileTreeInitNode(Sender: TBaseVirtualTree;
@@ -1059,6 +1060,7 @@ begin
   CanClose := true;
 
   if not Assigned(EpiDocument) then exit;
+  if not Assigned(FSelectedNode) then exit;
 
   // Passes control to DataformFrame, which
   // ensures a potential modified record is commited.
