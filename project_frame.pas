@@ -13,7 +13,7 @@ uses
 
 type
 
-  EInvalidTimeStampException = class(Exception);
+//  EInvalidTimeStampException = class(Exception);
 
   { TProjectFrame }
 
@@ -259,9 +259,11 @@ end;
 
 procedure TProjectFrame.ToolButton1Click(Sender: TObject);
 var
-  A: TTimeEdit;
+  NewDoc: TEpiDocument;
 begin
-  A.Commit;
+{  NewDoc := TEpiDocument(EpiDocument.Clone);
+  NewDoc.SaveToFile('/tmp/copy.epx');
+  NewDoc.Free; }
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
