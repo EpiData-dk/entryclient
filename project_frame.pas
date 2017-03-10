@@ -636,7 +636,8 @@ begin
   UpdateActionLinks;
 
   FStatusBar.DataForm := FrameFromNode(Node);
-  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
+  if Assigned(EpiDocument.Logger) then
+    EpiDocument.Logger.Datafile := FStatusBar.Datafile;
 
   with FrameFromNode(Node) do
   begin
