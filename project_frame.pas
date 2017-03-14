@@ -341,7 +341,7 @@ begin
 
 
     MainForm.BeginUpdateForm;
-    FStatusBar.DocFile := DocumentFile;
+//    FStatusBar.DocFile := DocumentFile;
     try
       EpiDocument.OnModified := @EpiDocModified;
     except
