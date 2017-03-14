@@ -14,11 +14,11 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="45"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="52"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <StringTable SpecialBuild="TRUNK" ProductVersion="4.0.0.41"/>
+      <StringTable ProductVersion="4.0.0.41" SpecialBuild="SECURITYLOG"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>

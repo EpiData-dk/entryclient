@@ -711,11 +711,9 @@ begin
   if RecordNo <> NewRecord then
   begin
     RecordNo :=  FLocalToDFIndex.AsInteger[RecordNo];
+
     // In order to log correctly
     DataFile.LoadRecord(RecordNo);
-
-    if Assigned(Authenticator.AuthedUser) then
-      TProjectFrame(Parent).SaveProjectAction.Execute;
   end;
 
   MainForm.BeginUpdateForm;

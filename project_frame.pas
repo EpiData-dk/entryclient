@@ -198,6 +198,13 @@ Const
   LastUpdate: Cardinal = 0;
   ProgressUpdate: Cardinal = 0;
 begin
+  // If sender is missing, the call is comming from the saving thread.
+{  if (not Assigned(Sender)) then
+  begin
+    StatusBar.Update();
+    Exit;
+  end;   }
+
   case ProgressType of
     eptInit:
       begin
@@ -291,8 +298,8 @@ begin
       end;
 
       Authenticator := TAuthenticator.Create(FDocumentFile);
-      if Assigned(Authenticator.AuthedUser) then
-        DoSaveProject(DocumentFile.FileName);
+//      if Assigned(Authenticator.AuthedUser) then
+//        DoSaveProject(DocumentFile.FileName);
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened
