@@ -70,6 +70,8 @@ type
     procedure DocumentChangeEvent(const Sender: TEpiCustomBase;
       const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
       EventType: Word; Data: Pointer);
+    procedure DocumentCreated(const Sender: TObject;
+      const ADocument: TEpiDocument);
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
@@ -142,7 +144,7 @@ uses
   epistringutils, LCLType, shortcuts, entry_globals,
   epiadmin, admin_authenticator, URIParser,
   RegExpr, LazUTF8, entryprocs, strutils, Clipbrd,
-  epicustomlist_helper;
+  epicustomlist_helper, episervice_asynchandler;
 
 type
 
@@ -281,14 +283,18 @@ var
 begin
   Result := false;
   try
+    FStatusBar.Visible := true;
+
     Screen.Cursor := crHourGlass;
     Application.ProcessMessages;
 
     try
+
       FDocumentFile := TEntryDocumentFile.Create;
-      FDocumentFile.OnDocumentChangeEvent := @DocumentChangeEvent;
-      FDocumentFile.OnProgress := @EpiDocumentProgress;
+//      FDocumentFile.OnDocumentChangeEvent := @DocumentChangeEvent;
+//      FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
+      FDocumentFile.OnAfterDocumentCreated := @DocumentCreated;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
 
       if not FDocumentFile.OpenFile(AFileName) then
@@ -341,7 +347,7 @@ begin
 
 
     MainForm.BeginUpdateForm;
-//    FStatusBar.DocFile := DocumentFile;
+    FStatusBar.DocFile := DocumentFile;
     try
       EpiDocument.OnModified := @EpiDocModified;
     except
@@ -444,6 +450,14 @@ begin
   if (TEpiCustomChangeEventType(EventType) <> ecceIdCaseOnLoad) then exit;
 
   PEpiIdCaseErrorRecord(Data)^.ReturnState := crsAbort;
+end;
+
+procedure TProjectFrame.DocumentCreated(const Sender: TObject;
+  const ADocument: TEpiDocument);
+begin
+  ADocument.RegisterOnChangeHook(@DocumentChangeEvent, true);
+  FStatusBar.DocFile := FDocumentFile;
+  EpiAsyncHandlerGlobal.AddDocument(ADocument);
 end;
 
 procedure TProjectFrame.FrameModified(Sender: TObject);

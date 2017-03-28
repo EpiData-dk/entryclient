@@ -18,7 +18,7 @@ object MainForm: TMainForm
   LCLVersion = '1.7'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 600
+    Height = 577
     Top = 42
     Width = 977
     Align = alClient
@@ -40,7 +40,7 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrCenter
       Left = 11
       Height = 23
-      Top = 8
+      Top = 10
       Width = 91
       AutoSize = True
       BorderSpacing.Left = 10
@@ -57,7 +57,7 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     Left = 343
     Height = 204
-    Top = 219
+    Top = 207
     Width = 291
     ClientHeight = 204
     ClientWidth = 291
@@ -69,7 +69,7 @@ object MainForm: TMainForm
       AnchorSideLeft.Control = BetaPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Control = BetaPanel
-      Left = 15
+      Left = 17
       Height = 15
       Top = 21
       Width = 256
@@ -89,8 +89,8 @@ object MainForm: TMainForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = BetaPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 15
-      Height = 123
+      Left = 17
+      Height = 127
       Top = 56
       Width = 256
       Anchors = [akTop, akLeft, akRight, akBottom]
