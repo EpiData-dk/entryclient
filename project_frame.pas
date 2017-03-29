@@ -26,7 +26,6 @@ type
     Label4: TLabel;
     Panel1: TPanel;
     ProjectRecentFilesDropDownMenu: TPopupMenu;
-    ProgressBar1: TProgressBar;
     SaveProjectAction: TAction;
     ProjectActionList: TActionList;
     ProjectPanel: TPanel;
@@ -42,9 +41,6 @@ type
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
-    procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
-      ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
-      var Canceled: Boolean);
     procedure LoadError(const Sender: TEpiCustomBase; ErrorType: Word;
       Data: Pointer; out Continue: boolean);
     procedure OpenProjectActionExecute(Sender: TObject);
@@ -122,6 +118,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor  Destroy; override;
     procedure   CloseQuery(var CanClose: boolean);
+    procedure   CloseProject;
     function    OpenProject(Const aFilename: string): boolean;
     procedure   UpdateSettings;
     procedure   IsShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -193,51 +190,6 @@ begin
   PostMessage(MainForm.Handle, LM_CLOSE_PROJECT, WParam(Sender), 0);
 end;
 
-procedure TProjectFrame.EpiDocumentProgress(const Sender: TEpiCustomBase;
-  ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
-  var Canceled: Boolean);
-Const
-  LastUpdate: Cardinal = 0;
-  ProgressUpdate: Cardinal = 0;
-begin
-  // If sender is missing, the call is comming from the saving thread.
-{  if (not Assigned(Sender)) then
-  begin
-    StatusBar.Update();
-    Exit;
-  end;   }
-
-  case ProgressType of
-    eptInit:
-      begin
-        ProgressUpdate := MaxPos div 50;
-        ProgressBar1.Position := CurrentPos;
-        ProgressBar1.Visible := true;
-        ProgressBar1.Max := MaxPos;
-        if not (csDestroying in ComponentState) then
-          Application.ProcessMessages;
-      end;
-    eptFinish:
-      begin
-        ProgressBar1.Visible := false;
-        if not (csDestroying in ComponentState) then
-          Application.ProcessMessages;
-        LastUpdate := 0;
-      end;
-    eptRecords:
-      begin
-        if CurrentPos > (LastUpdate + ProgressUpdate) then
-        begin
-          ProgressBar1.Position := CurrentPos;
-          {$IFNDEF MSWINDOWS}
-          Application.ProcessMessages;
-          {$ENDIF}
-          LastUpdate := CurrentPos;
-        end;
-      end;
-  end;
-end;
-
 procedure TProjectFrame.LoadError(const Sender: TEpiCustomBase;
   ErrorType: Word; Data: Pointer; out Continue: boolean);
 var
@@ -289,10 +241,7 @@ begin
     Application.ProcessMessages;
 
     try
-
       FDocumentFile := TEntryDocumentFile.Create;
-//      FDocumentFile.OnDocumentChangeEvent := @DocumentChangeEvent;
-//      FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.OnAfterDocumentCreated := @DocumentCreated;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
@@ -986,8 +935,8 @@ begin
   if Assigned(EpiDocument) then
   begin
     S := S + ' - ' + ExtractFileName(DocumentFile.FileName);
-    if EpiDocument.Modified then
-      S := S + '*';
+  //  if EpiDocument.Modified then
+  //    S := S + '*';
 
     T := EpiDocument.Study.Version;
     if (T <> '') then
@@ -1090,9 +1039,9 @@ begin
   // ensures a potential modified record is commited.
   Frame := FrameFromNode(FSelectedNode);
   Frame.CloseQuery(CanClose);
-  if not CanClose then exit;
+//  if not CanClose then exit;
 
-  if (EpiDocument.Modified) {or (Frame.Modified)} then
+{  if (EpiDocument.Modified) {or (Frame.Modified)} then
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
@@ -1115,7 +1064,12 @@ begin
       mrYes:
         SaveProjectAction.Execute;
     end;
-  end;
+  end;  }
+end;
+
+procedure TProjectFrame.CloseProject;
+begin
+  DoCloseProject;
 end;
 
 function TProjectFrame.OpenProject(const aFilename: string): boolean;

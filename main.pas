@@ -304,6 +304,8 @@ begin
     FActiveFrame.CloseQuery(result);
     if not Result then exit;
 
+    FActiveFrame.CloseProject;
+
     MainFormPageControl.ActivePage.Free;
     FActiveFrame := nil;
   end;
