@@ -107,6 +107,7 @@ type
     procedure ShowShortCutsActionExecute(Sender: TObject);
     procedure WebTutorialsMenuItemClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { private declarations }
     FActiveFrame: TProjectFrame;
@@ -230,6 +231,11 @@ begin
     FActiveFrame.IsShortCut(Msg, Handled);
 end;
 
+procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  DoCloseProject;
+end;
+
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);
 begin
   OpenDocument(EntrySettings.TutorialDirUTF8 + DirectorySeparator + TMenuItem(Sender).Caption + '.pdf');
@@ -304,7 +310,13 @@ begin
     FActiveFrame.CloseQuery(result);
     if not Result then exit;
 
+    Screen.Cursor := crHourGlass;
+    Application.ProcessMessages;
+
     FActiveFrame.CloseProject;
+
+    Screen.Cursor := crDefault;
+    Application.ProcessMessages;
 
     MainFormPageControl.ActivePage.Free;
     FActiveFrame := nil;

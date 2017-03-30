@@ -503,7 +503,7 @@ const
     HeadingFont4:          nil;
     HeadingFont5:          nil;
 
-    StatusBarItemNames:    'Navigator,recordstate,KeyInfo,CurrentUser,SelectedNames,datafilecontent,LastSaved';
+    StatusBarItemNames:    'Navigator,recordstate,KeyInfo,CurrentUser,SelectedNames,datafilecontent,LastSaved,ProgressBar,SaveIcon';
   );
 begin
   with EntrySettings do
