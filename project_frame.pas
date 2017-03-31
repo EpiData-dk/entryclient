@@ -68,6 +68,8 @@ type
       EventType: Word; Data: Pointer);
     procedure DocumentCreated(const Sender: TObject;
       const ADocument: TEpiDocument);
+    procedure SaveThreadError(const FatalErrorObject: Exception);
+    procedure SaveThreadErrorAsyncHandler(Data: PtrInt);
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
@@ -141,7 +143,8 @@ uses
   epistringutils, LCLType, shortcuts, entry_globals,
   epiadmin, admin_authenticator, URIParser,
   RegExpr, LazUTF8, entryprocs, strutils, Clipbrd,
-  epicustomlist_helper, episervice_asynchandler;
+  epicustomlist_helper, episervice_asynchandler,
+  epiopenfile;
 
 type
 
@@ -245,6 +248,7 @@ begin
       FDocumentFile.OnLoadError := @LoadError;
       FDocumentFile.OnAfterDocumentCreated := @DocumentCreated;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
+      FDocumentFile.OnSaveThreadError := @SaveThreadError;
 
       if not FDocumentFile.OpenFile(AFileName) then
       begin
@@ -407,6 +411,27 @@ begin
   ADocument.RegisterOnChangeHook(@DocumentChangeEvent, true);
   FStatusBar.DocFile := FDocumentFile;
   EpiAsyncHandlerGlobal.AddDocument(ADocument);
+end;
+
+procedure TProjectFrame.SaveThreadError(const FatalErrorObject: Exception);
+begin
+  Application.QueueAsyncCall(@SaveThreadErrorAsyncHandler, PtrInt(FatalErrorObject));
+end;
+
+procedure TProjectFrame.SaveThreadErrorAsyncHandler(Data: PtrInt);
+var
+  S: String;
+begin
+  S := 'A fatal error has happened during the saving process' + LineEnding +
+       'and the project has not been save.' + LineEnding +
+       LineEnding +
+       EEpiThreadSaveExecption(Data).FileName;
+{       'In order to ensure futher functionality, use the Save As... option' + LineEnding +
+       'to save in another location';}
+
+  ShowMessage(S);
+
+
 end;
 
 procedure TProjectFrame.FrameModified(Sender: TObject);
