@@ -131,6 +131,9 @@ object MainForm: TMainForm
       object SaveProjectMenuItem: TMenuItem
         Caption = 'Save'
       end
+      object SaveProjectAsMenuItem: TMenuItem
+        Caption = 'SaveAs'
+      end
       object CloseProjectMenuItem: TMenuItem
         Action = CloseProjectAction
       end

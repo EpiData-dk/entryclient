@@ -1,20 +1,20 @@
 object ProjectFrame: TProjectFrame
   Left = 0
-  Height = 777
+  Height = 536
   Top = 0
-  Width = 1096
-  ClientHeight = 777
-  ClientWidth = 1096
+  Width = 730
+  ClientHeight = 536
+  ClientWidth = 730
   TabOrder = 0
-  DesignLeft = 2098
-  DesignTop = 158
+  DesignLeft = 485
+  DesignTop = 330
   object ProjectPanel: TPanel
     Left = 0
-    Height = 777
+    Height = 536
     Top = 0
     Width = 170
     Align = alLeft
-    ClientHeight = 777
+    ClientHeight = 536
     ClientWidth = 170
     TabOrder = 0
     Visible = False
@@ -71,18 +71,18 @@ object ProjectFrame: TProjectFrame
   end
   object Splitter1: TSplitter
     Left = 170
-    Height = 777
+    Height = 536
     Top = 0
     Width = 5
     Visible = False
   end
   object Panel1: TPanel
-    Left = 926
-    Height = 777
+    Left = 560
+    Height = 536
     Top = 0
     Width = 170
     Align = alRight
-    ClientHeight = 777
+    ClientHeight = 536
     ClientWidth = 170
     TabOrder = 2
     Visible = False
@@ -138,6 +138,11 @@ object ProjectFrame: TProjectFrame
       Caption = 'Close Project'
       ImageIndex = 42
       OnExecute = CloseProjectActionExecute
+    end
+    object SaveProjectAsAction: TAction
+      Caption = 'Save Project As...'
+      OnExecute = SaveProjectAsActionExecute
+      OnUpdate = SaveProjectActionUpdate
     end
   end
   object ProjectRecentFilesDropDownMenu: TPopupMenu

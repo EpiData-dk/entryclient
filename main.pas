@@ -84,6 +84,7 @@ type
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
     CopyFieldToClpMenuItem: TMenuItem;
+    SaveProjectAsMenuItem: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
@@ -298,6 +299,7 @@ begin
   UpdateProcessToolPanel;
 
   SaveProjectMenuItem.Action := FActiveFrame.SaveProjectAction;
+  SaveProjectAsMenuItem.Action := FActiveFrame.SaveProjectAsAction;
 
   Inc(TabNameCount);
 end;
@@ -327,6 +329,7 @@ begin
 
   {$IFDEF EPI_BETA}
   BetaPanel.Visible := true;
+  BetaPanel.BringToFront;
   {$ENDIF}
 end;
 
@@ -351,6 +354,7 @@ procedure TMainForm.UpdateMainMenu;
 begin
   // FILE:
   SaveProjectMenuItem.Visible   := Assigned(FActiveFrame);
+  SaveProjectAsMenuItem.Visible := Assigned(FActiveFrame);
   CloseProjectAction.Enabled    := Assigned(FActiveFrame);
   PrintMenuItem.Visible         := Assigned(FActiveFrame);
   PrintWithDataMenuItem.Visible := Assigned(FActiveFrame);
@@ -541,6 +545,7 @@ begin
 
   {$IFDEF EPI_BETA}
   BetaPanel.Visible := true;
+  BetaPanel.BringToFront;
   {$ENDIF}
 
   Application.QueueAsyncCall(@CheckForUpdates, 0);

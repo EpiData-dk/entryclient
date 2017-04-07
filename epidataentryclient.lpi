@@ -16,7 +16,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="56"/>
+      <BuildNr Value="57"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="4.0.0.41" SpecialBuild="SECURITYLOG"/>
@@ -56,7 +56,8 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dEPI_DEBUG1
--dEPI_RELEASE"/>
+-dEPI_RELEASE
+-dEPI_BETA"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -88,6 +89,9 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dEPI_BETA"/>
+          </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Win x86_64">
@@ -123,7 +127,8 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dEPI_DEBUG1
--dEPI_RELEASE"/>
+-dEPI_RELEASE
+-dEPI_BETA"/>
           </Other>
         </CompilerOptions>
       </Item4>
@@ -140,6 +145,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-r=~/.epidata.securitylog.recentfiles.ini -i=~/.entryclient.securitylog.cfg"/>
       </local>
     </RunParams>
     <RequiredPackages Count="9">

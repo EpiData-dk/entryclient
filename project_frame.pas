@@ -38,6 +38,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    SaveProjectAsAction: TAction;
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
@@ -47,6 +48,7 @@ type
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
+    procedure SaveProjectAsActionExecute(Sender: TObject);
   private
     { private declarations }
     DataFileTree: TVirtualStringTree;
@@ -70,6 +72,7 @@ type
       const ADocument: TEpiDocument);
     procedure SaveThreadError(const FatalErrorObject: Exception);
     procedure SaveThreadErrorAsyncHandler(Data: PtrInt);
+    procedure SaveDlgTypeChange(Sender: TObject);
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
@@ -122,6 +125,7 @@ type
     procedure   CloseQuery(var CanClose: boolean);
     procedure   CloseProject;
     function    OpenProject(Const aFilename: string): boolean;
+    function    SaveProject(ForceSaveAs: boolean): boolean;
     procedure   UpdateSettings;
     procedure   IsShortCut(var Msg: TLMKey; var Handled: Boolean);
     function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
@@ -144,7 +148,9 @@ uses
   epiadmin, admin_authenticator, URIParser,
   RegExpr, LazUTF8, entryprocs, strutils, Clipbrd,
   epicustomlist_helper, episervice_asynchandler,
-  epiopenfile;
+  epiopenfile
+  {$IFDEF LINUX},gtk2{$ENDIF}
+  ;
 
 type
 
@@ -163,20 +169,7 @@ var
 
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
-  try
-    DoSaveProject(DocumentFile.FileName);
-  except
-    on E: Exception do
-      begin
-        MessageDlg('Error',
-          'Unable to save project to:' + LineEnding +
-          DocumentFile.FileName + LineEnding +
-          'Error message: ' + E.Message,
-          mtError, [mbOK], 0);
-        Exit;
-      end;
-  end;
-  EpiDocument.Modified := false;
+  SaveProject(false);
 end;
 
 procedure TProjectFrame.EpiDocumentPassWord(Sender: TObject; var Login: string;
@@ -228,6 +221,11 @@ begin
 {  NewDoc := TEpiDocument(EpiDocument.Clone);
   NewDoc.SaveToFile('/tmp/copy.epx');
   NewDoc.Free; }
+end;
+
+procedure TProjectFrame.SaveProjectAsActionExecute(Sender: TObject);
+begin
+  SaveProject(true);
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
@@ -353,6 +351,7 @@ end;
 procedure TProjectFrame.UpdateShortCuts;
 begin
   SaveProjectAction.ShortCut := P_SaveProject;
+  SaveProjectAsAction.ShortCut := P_SaveAsProject;
 end;
 
 procedure TProjectFrame.UpdateActionLinks;
@@ -425,13 +424,33 @@ begin
   S := 'A fatal error has happened during the saving process' + LineEnding +
        'and the project has not been save.' + LineEnding +
        LineEnding +
-       EEpiThreadSaveExecption(Data).FileName;
-{       'In order to ensure futher functionality, use the Save As... option' + LineEnding +
-       'to save in another location';}
+       EEpiThreadSaveExecption(Data).FileName +
+       'In order to ensure futher functionality, use the Save As... option' + LineEnding +
+       'to save in another location';
 
   ShowMessage(S);
+end;
 
+procedure TProjectFrame.SaveDlgTypeChange(Sender: TObject);
+var
+  Dlg: TSaveDialog absolute Sender;
+  {$IFDEF LINUX}
+  Fn: String;
+  {$ENDIF}
+begin
+  case Dlg.FilterIndex of
+    1: Dlg.DefaultExt := 'epx';
+    2: Dlg.DefaultExt := 'epz';
+  end;
 
+  Dlg.FileName := ChangeFileExt(Dlg.FileName, Dlg.DefaultExt);
+
+  {$IFDEF LINUX}
+  Fn := ExtractFileName(Dlg.FileName);
+  gtk_file_chooser_set_current_name(
+    PGtkFileChooser(Dlg.Handle),
+    PChar(FN));
+  {$ENDIF}
 end;
 
 procedure TProjectFrame.FrameModified(Sender: TObject);
@@ -1103,6 +1122,56 @@ begin
 
   if Result then
     LoadSplitterPosition(Splitter1, 'ProjectSplitter');
+end;
+
+function TProjectFrame.SaveProject(ForceSaveAs: boolean): boolean;
+var
+  Dlg: TSaveDialog;
+  Fn: String;
+begin
+  if// (not DocumentFile.IsSaved) or
+     ForceSaveAs
+  then
+    begin
+      Dlg := TSaveDialog.Create(Self);
+      Dlg.Filter := GetEpiDialogFilter([dfEPX, dfEPZ]);
+      Dlg.DefaultExt := ExtractFileExt(DocumentFile.FileName);
+
+
+//      Dlg.FilterIndex := ManagerSettings.SaveType + 1;
+//      UpdateDefaultExtension(Dlg);
+
+//      if DocumentFile.IsSaved then
+  //    begin
+        Dlg.InitialDir := ExtractFilePath(DocumentFile.FileName);
+        Dlg.FileName := DocumentFile.FileName;
+//      end else
+//        Dlg.InitialDir := ManagerSettings.WorkingDirUTF8;
+
+      Dlg.OnTypeChange := @SaveDlgTypeChange;
+      Dlg.Options := Dlg.Options + [ofOverwritePrompt, ofExtensionDifferent];
+
+      if not Dlg.Execute then exit;
+      Fn := Dlg.FileName;
+      Dlg.Free;
+    end
+  else
+    Fn := DocumentFile.FileName;
+
+  try
+    DoSaveProject(Fn);
+  except
+    on E: Exception do
+      begin
+        MessageDlg('Error',
+          'Unable to save project to:' + LineEnding +
+          DocumentFile.FileName + LineEnding +
+          'Error message: ' + E.Message,
+          mtError, [mbOK], 0);
+        Exit;
+      end;
+  end;
+  EpiDocument.Modified := false;
 end;
 
 procedure TProjectFrame.UpdateSettings;
