@@ -1536,7 +1536,8 @@ begin
     Res := SF.ShowModal;
     if Res = mrCancel then exit;
 
-    TProjectFrame(Parent).EpiDocument.Logger.LogSearch(SF.Search);
+    if Assigned(TProjectFrame(Parent).EpiDocument.Logger) then
+      TProjectFrame(Parent).EpiDocument.Logger.LogSearch(SF.Search);
 
     if Res = mrFind then
     begin
