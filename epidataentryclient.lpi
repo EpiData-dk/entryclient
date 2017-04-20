@@ -15,8 +15,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <RevisionNr Value="2"/>
-      <BuildNr Value="58"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="59"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <StringTable ProductVersion="4.0.0.41" SpecialBuild="SECURITYLOG"/>
