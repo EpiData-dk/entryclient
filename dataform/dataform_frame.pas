@@ -898,10 +898,11 @@ var
   FList: TEpiFields;
 begin
   if (not Assigned(Parent)) then Exit;
-  if (not Assigned(FCurrentEdit)) then Exit;
+//  if (not Assigned(FCurrentEdit)) then Exit;
 
   FList := TEpiFields.Create(nil);
-  FList.AddItem(FCurrentDataCtrl.Field);
+  if Assigned(FCurrentEdit) then
+    FList.AddItem(FCurrentDataCtrl.Field);
   TProjectFrame(Parent).StatusBar.Selection := FList;
   FList.Free;
 end;
@@ -1765,7 +1766,7 @@ end;
 function TDataFormFrame.NewOrNextRecord: TCustomEdit;
 var
   B: Boolean;
-  CRecNo: Integer;
+  CRecNo, Idx: Integer;
 begin
   Result := nil;
 
@@ -1818,7 +1819,11 @@ begin
       // shift focus field, etc...
       if CRecNo = RecNo then exit;
     end;
-  Result := TCustomEdit(CustomEditList[NextUsableFieldIndex(-1, false)]);
+
+  result := nil;
+  Idx := NextUsableFieldIndex(-1, false);
+  if (Idx >= 0) then
+    Result := TCustomEdit(CustomEditList[Idx]);
 end;
 
 function TDataFormFrame.KeyDownData(Sender: TObject; const Key: Word;
