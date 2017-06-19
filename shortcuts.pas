@@ -22,7 +22,8 @@ var
     TShortCut;
 
   // Project
-  P_SaveProject:
+  P_SaveProject,
+  P_SaveAsProject:
     TShortCut;
 
   // Dataform

@@ -13,7 +13,7 @@ uses
 
 type
 
-  EInvalidTimeStampException = class(Exception);
+//  EInvalidTimeStampException = class(Exception);
 
   { TProjectFrame }
 
@@ -26,7 +26,6 @@ type
     Label4: TLabel;
     Panel1: TPanel;
     ProjectRecentFilesDropDownMenu: TPopupMenu;
-    ProgressBar1: TProgressBar;
     SaveProjectAction: TAction;
     ProjectActionList: TActionList;
     ProjectPanel: TPanel;
@@ -39,18 +38,17 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
+    SaveProjectAsAction: TAction;
     procedure CloseProjectActionExecute(Sender: TObject);
     procedure EpiDocumentPassWord(Sender: TObject; var Login: string;
       var Password: string);
-    procedure EpiDocumentProgress(const Sender: TEpiCustomBase;
-      ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
-      var Canceled: Boolean);
     procedure LoadError(const Sender: TEpiCustomBase; ErrorType: Word;
       Data: Pointer; out Continue: boolean);
     procedure OpenProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionExecute(Sender: TObject);
     procedure SaveProjectActionUpdate(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
+    procedure SaveProjectAsActionExecute(Sender: TObject);
   private
     { private declarations }
     DataFileTree: TVirtualStringTree;
@@ -70,6 +68,11 @@ type
     procedure DocumentChangeEvent(const Sender: TEpiCustomBase;
       const Initiator: TEpiCustomBase; EventGroup: TEpiEventGroup;
       EventType: Word; Data: Pointer);
+    procedure DocumentCreated(const Sender: TObject;
+      const ADocument: TEpiDocument);
+    procedure SaveThreadError(const FatalErrorObject: Exception);
+    procedure SaveThreadErrorAsyncHandler(Data: PtrInt);
+    procedure SaveDlgTypeChange(Sender: TObject);
   private
     { Relational handling (checking/updating/etc...) }
     FRelateToParent: boolean;
@@ -120,7 +123,9 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor  Destroy; override;
     procedure   CloseQuery(var CanClose: boolean);
+    procedure   CloseProject;
     function    OpenProject(Const aFilename: string): boolean;
+    function    SaveProject(ForceSaveAs: boolean): boolean;
     procedure   UpdateSettings;
     procedure   IsShortCut(var Msg: TLMKey; var Handled: Boolean);
     function    FrameFromRelation(Relation: TEpiMasterRelation): TDataFormFrame;
@@ -141,7 +146,11 @@ uses
   main, epimiscutils, settings, fieldedit, LCLIntf,
   epistringutils, LCLType, shortcuts, entry_globals,
   epiadmin, admin_authenticator, URIParser,
-  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd;
+  RegExpr, LazUTF8, entryprocs, strutils, Clipbrd,
+  epicustomlist_helper, episervice_asynchandler,
+  epiopenfile
+  {$IFDEF LINUX},gtk2{$ENDIF}
+  ;
 
 type
 
@@ -160,20 +169,7 @@ var
 
 procedure TProjectFrame.SaveProjectActionExecute(Sender: TObject);
 begin
-  try
-    DoSaveProject(DocumentFile.FileName);
-  except
-    on E: Exception do
-      begin
-        MessageDlg('Error',
-          'Unable to save project to:' + LineEnding +
-          DocumentFile.FileName + LineEnding +
-          'Error message: ' + E.Message,
-          mtError, [mbOK], 0);
-        Exit;
-      end;
-  end;
-  EpiDocument.Modified := false;
+  SaveProject(false);
 end;
 
 procedure TProjectFrame.EpiDocumentPassWord(Sender: TObject; var Login: string;
@@ -188,44 +184,6 @@ end;
 procedure TProjectFrame.CloseProjectActionExecute(Sender: TObject);
 begin
   PostMessage(MainForm.Handle, LM_CLOSE_PROJECT, WParam(Sender), 0);
-end;
-
-procedure TProjectFrame.EpiDocumentProgress(const Sender: TEpiCustomBase;
-  ProgressType: TEpiProgressType; CurrentPos, MaxPos: Cardinal;
-  var Canceled: Boolean);
-Const
-  LastUpdate: Cardinal = 0;
-  ProgressUpdate: Cardinal = 0;
-begin
-  case ProgressType of
-    eptInit:
-      begin
-        ProgressUpdate := MaxPos div 50;
-        ProgressBar1.Position := CurrentPos;
-        ProgressBar1.Visible := true;
-        ProgressBar1.Max := MaxPos;
-        if not (csDestroying in ComponentState) then
-          Application.ProcessMessages;
-      end;
-    eptFinish:
-      begin
-        ProgressBar1.Visible := false;
-        if not (csDestroying in ComponentState) then
-          Application.ProcessMessages;
-        LastUpdate := 0;
-      end;
-    eptRecords:
-      begin
-        if CurrentPos > (LastUpdate + ProgressUpdate) then
-        begin
-          ProgressBar1.Position := CurrentPos;
-          {$IFNDEF MSWINDOWS}
-          Application.ProcessMessages;
-          {$ENDIF}
-          LastUpdate := CurrentPos;
-        end;
-      end;
-  end;
 end;
 
 procedure TProjectFrame.LoadError(const Sender: TEpiCustomBase;
@@ -258,9 +216,16 @@ end;
 
 procedure TProjectFrame.ToolButton1Click(Sender: TObject);
 var
-  A: TTimeEdit;
+  NewDoc: TEpiDocument;
 begin
-  A.Commit;
+{  NewDoc := TEpiDocument(EpiDocument.Clone);
+  NewDoc.SaveToFile('/tmp/copy.epx');
+  NewDoc.Free; }
+end;
+
+procedure TProjectFrame.SaveProjectAsActionExecute(Sender: TObject);
+begin
+  SaveProject(true);
 end;
 
 function TProjectFrame.DoOpenProject(const aFilename: string): boolean;
@@ -271,15 +236,17 @@ var
 begin
   Result := false;
   try
+    FStatusBar.Visible := true;
+
     Screen.Cursor := crHourGlass;
     Application.ProcessMessages;
 
     try
       FDocumentFile := TEntryDocumentFile.Create;
-      FDocumentFile.OnDocumentChangeEvent := @DocumentChangeEvent;
-      FDocumentFile.OnProgress := @EpiDocumentProgress;
       FDocumentFile.OnLoadError := @LoadError;
+      FDocumentFile.OnAfterDocumentCreated := @DocumentCreated;
       FDocumentFile.DataDirectory   := EntrySettings.WorkingDirUTF8;
+      FDocumentFile.OnSaveThreadError := @SaveThreadError;
 
       if not FDocumentFile.OpenFile(AFileName) then
       begin
@@ -288,8 +255,8 @@ begin
       end;
 
       Authenticator := TAuthenticator.Create(FDocumentFile);
-      if Assigned(Authenticator.AuthedUser) then
-        DoSaveProject(DocumentFile.FileName);
+//      if Assigned(Authenticator.AuthedUser) then
+//        DoSaveProject(DocumentFile.FileName);
     except
       FreeAndNil(FDocumentFile);
       // If ever this happens then it is because something not right happened
@@ -384,6 +351,7 @@ end;
 procedure TProjectFrame.UpdateShortCuts;
 begin
   SaveProjectAction.ShortCut := P_SaveProject;
+  SaveProjectAsAction.ShortCut := P_SaveAsProject;
 end;
 
 procedure TProjectFrame.UpdateActionLinks;
@@ -434,6 +402,55 @@ begin
   if (TEpiCustomChangeEventType(EventType) <> ecceIdCaseOnLoad) then exit;
 
   PEpiIdCaseErrorRecord(Data)^.ReturnState := crsAbort;
+end;
+
+procedure TProjectFrame.DocumentCreated(const Sender: TObject;
+  const ADocument: TEpiDocument);
+begin
+  ADocument.RegisterOnChangeHook(@DocumentChangeEvent, true);
+  FStatusBar.DocFile := FDocumentFile;
+  EpiAsyncHandlerGlobal.AddDocument(ADocument);
+end;
+
+procedure TProjectFrame.SaveThreadError(const FatalErrorObject: Exception);
+begin
+  Application.QueueAsyncCall(@SaveThreadErrorAsyncHandler, PtrInt(FatalErrorObject));
+end;
+
+procedure TProjectFrame.SaveThreadErrorAsyncHandler(Data: PtrInt);
+var
+  S: String;
+begin
+  S := 'A fatal error has happened during the saving process' + LineEnding +
+       'and the project has not been save.' + LineEnding +
+       LineEnding +
+       EEpiThreadSaveExecption(Data).FileName +
+       'In order to ensure futher functionality, use the Save As... option' + LineEnding +
+       'to save in another location';
+
+  ShowMessage(S);
+end;
+
+procedure TProjectFrame.SaveDlgTypeChange(Sender: TObject);
+var
+  Dlg: TSaveDialog absolute Sender;
+  {$IFDEF LINUX}
+  Fn: String;
+  {$ENDIF}
+begin
+  case Dlg.FilterIndex of
+    1: Dlg.DefaultExt := 'epx';
+    2: Dlg.DefaultExt := 'epz';
+  end;
+
+  Dlg.FileName := ChangeFileExt(Dlg.FileName, Dlg.DefaultExt);
+
+  {$IFDEF LINUX}
+  Fn := ExtractFileName(Dlg.FileName);
+  gtk_file_chooser_set_current_name(
+    PGtkFileChooser(Dlg.Handle),
+    PChar(FN));
+  {$ENDIF}
 end;
 
 procedure TProjectFrame.FrameModified(Sender: TObject);
@@ -633,7 +650,8 @@ begin
   UpdateActionLinks;
 
   FStatusBar.DataForm := FrameFromNode(Node);
-  EpiDocument.Logger.Datafile := FStatusBar.Datafile;
+  if Assigned(EpiDocument.Logger) then
+    EpiDocument.Logger.Datafile := FStatusBar.Datafile;
 
   with FrameFromNode(Node) do
   begin
@@ -734,7 +752,7 @@ begin
       MR.Datafile := EpiDocument.DataFiles[0];
     end;
 
-  ChildCount := RelationList.Count;
+  ChildCount := RelationList.Count - RelationList.ProtectedCount;
 end;
 
 procedure TProjectFrame.DataFileTreeInitNode(Sender: TBaseVirtualTree;
@@ -961,8 +979,8 @@ begin
   if Assigned(EpiDocument) then
   begin
     S := S + ' - ' + ExtractFileName(DocumentFile.FileName);
-    if EpiDocument.Modified then
-      S := S + '*';
+  //  if EpiDocument.Modified then
+  //    S := S + '*';
 
     T := EpiDocument.Study.Version;
     if (T <> '') then
@@ -1059,14 +1077,15 @@ begin
   CanClose := true;
 
   if not Assigned(EpiDocument) then exit;
+  if not Assigned(FSelectedNode) then exit;
 
   // Passes control to DataformFrame, which
   // ensures a potential modified record is commited.
   Frame := FrameFromNode(FSelectedNode);
   Frame.CloseQuery(CanClose);
-  if not CanClose then exit;
+//  if not CanClose then exit;
 
-  if (EpiDocument.Modified) {or (Frame.Modified)} then
+{  if (EpiDocument.Modified) {or (Frame.Modified)} then
   begin
     Res := MessageDlg('Warning',
       'Project data content modified.' + LineEnding +
@@ -1089,7 +1108,12 @@ begin
       mrYes:
         SaveProjectAction.Execute;
     end;
-  end;
+  end;  }
+end;
+
+procedure TProjectFrame.CloseProject;
+begin
+  DoCloseProject;
 end;
 
 function TProjectFrame.OpenProject(const aFilename: string): boolean;
@@ -1098,6 +1122,56 @@ begin
 
   if Result then
     LoadSplitterPosition(Splitter1, 'ProjectSplitter');
+end;
+
+function TProjectFrame.SaveProject(ForceSaveAs: boolean): boolean;
+var
+  Dlg: TSaveDialog;
+  Fn: String;
+begin
+  if// (not DocumentFile.IsSaved) or
+     ForceSaveAs
+  then
+    begin
+      Dlg := TSaveDialog.Create(Self);
+      Dlg.Filter := GetEpiDialogFilter([dfEPX, dfEPZ]);
+      Dlg.DefaultExt := ExtractFileExt(DocumentFile.FileName);
+
+
+//      Dlg.FilterIndex := ManagerSettings.SaveType + 1;
+//      UpdateDefaultExtension(Dlg);
+
+//      if DocumentFile.IsSaved then
+  //    begin
+        Dlg.InitialDir := ExtractFilePath(DocumentFile.FileName);
+        Dlg.FileName := DocumentFile.FileName;
+//      end else
+//        Dlg.InitialDir := ManagerSettings.WorkingDirUTF8;
+
+      Dlg.OnTypeChange := @SaveDlgTypeChange;
+      Dlg.Options := Dlg.Options + [ofOverwritePrompt, ofExtensionDifferent];
+
+      if not Dlg.Execute then exit;
+      Fn := Dlg.FileName;
+      Dlg.Free;
+    end
+  else
+    Fn := DocumentFile.FileName;
+
+  try
+    DoSaveProject(Fn);
+  except
+    on E: Exception do
+      begin
+        MessageDlg('Error',
+          'Unable to save project to:' + LineEnding +
+          DocumentFile.FileName + LineEnding +
+          'Error message: ' + E.Message,
+          mtError, [mbOK], 0);
+        Exit;
+      end;
+  end;
+  EpiDocument.Modified := false;
 end;
 
 procedure TProjectFrame.UpdateSettings;

@@ -84,6 +84,7 @@ type
     SaveProjectMenuItem: TMenuItem;
     OpenProjectMenuItem: TMenuItem;
     CopyFieldToClpMenuItem: TMenuItem;
+    SaveProjectAsMenuItem: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
@@ -107,6 +108,7 @@ type
     procedure ShowShortCutsActionExecute(Sender: TObject);
     procedure WebTutorialsMenuItemClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { private declarations }
     FActiveFrame: TProjectFrame;
@@ -230,6 +232,11 @@ begin
     FActiveFrame.IsShortCut(Msg, Handled);
 end;
 
+procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  DoCloseProject;
+end;
+
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);
 begin
   OpenDocument(EntrySettings.TutorialDirUTF8 + DirectorySeparator + TMenuItem(Sender).Caption + '.pdf');
@@ -292,6 +299,7 @@ begin
   UpdateProcessToolPanel;
 
   SaveProjectMenuItem.Action := FActiveFrame.SaveProjectAction;
+  SaveProjectAsMenuItem.Action := FActiveFrame.SaveProjectAsAction;
 
   Inc(TabNameCount);
 end;
@@ -304,6 +312,14 @@ begin
     FActiveFrame.CloseQuery(result);
     if not Result then exit;
 
+    Screen.Cursor := crHourGlass;
+    Application.ProcessMessages;
+
+    FActiveFrame.CloseProject;
+
+    Screen.Cursor := crDefault;
+    Application.ProcessMessages;
+
     MainFormPageControl.ActivePage.Free;
     FActiveFrame := nil;
   end;
@@ -313,6 +329,7 @@ begin
 
   {$IFDEF EPI_BETA}
   BetaPanel.Visible := true;
+  BetaPanel.BringToFront;
   {$ENDIF}
 end;
 
@@ -337,6 +354,7 @@ procedure TMainForm.UpdateMainMenu;
 begin
   // FILE:
   SaveProjectMenuItem.Visible   := Assigned(FActiveFrame);
+  SaveProjectAsMenuItem.Visible := Assigned(FActiveFrame);
   CloseProjectAction.Enabled    := Assigned(FActiveFrame);
   PrintMenuItem.Visible         := Assigned(FActiveFrame);
   PrintWithDataMenuItem.Visible := Assigned(FActiveFrame);
@@ -527,6 +545,7 @@ begin
 
   {$IFDEF EPI_BETA}
   BetaPanel.Visible := true;
+  BetaPanel.BringToFront;
   {$ENDIF}
 
   Application.QueueAsyncCall(@CheckForUpdates, 0);

@@ -16,6 +16,7 @@ begin
 
   // Project
   P_SaveProject := KeyToShortCut(VK_S, [ssCtrl]);
+  P_SaveAsProject   := KeyToShortCut(VK_S, [ssCtrl, ssShift]);
 
   // Dataform
   D_BrowseData           := KeyToShortCut(VK_D, [ssCtrl]);
