@@ -85,6 +85,8 @@ type
     OpenProjectMenuItem: TMenuItem;
     CopyFieldToClpMenuItem: TMenuItem;
     SaveProjectAsMenuItem: TMenuItem;
+    MenuItem5: TMenuItem;
+    ShowChangeLogAction: TAction;
     procedure AboutActionExecute(Sender: TObject);
     procedure CheckVersionActionExecute(Sender: TObject);
     procedure CloseProjectActionExecute(Sender: TObject);
@@ -109,6 +111,7 @@ type
     procedure WebTutorialsMenuItemClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure ShowChangeLogActionExecute(Sender: TObject);
   private
     { private declarations }
     FActiveFrame: TProjectFrame;
@@ -235,6 +238,11 @@ end;
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   DoCloseProject;
+end;
+
+procedure TMainForm.ShowChangeLogActionExecute(Sender: TObject);
+begin
+  OpenURL('http://epidata.dk/epidataentryclient.changelog.txt');
 end;
 
 procedure TMainForm.OpenTutorialMenuItemClick(Sender: TObject);

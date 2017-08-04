@@ -1,29 +1,29 @@
 object AboutForm: TAboutForm
   Left = 653
-  Height = 370
+  Height = 383
   Top = 376
-  Width = 450
+  Width = 534
   ActiveControl = AboutPageControl
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'About EpiData Entry'
-  ClientHeight = 370
-  ClientWidth = 450
+  ClientHeight = 383
+  ClientWidth = 534
   Constraints.MinHeight = 370
   Constraints.MinWidth = 450
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.3'
+  LCLVersion = '1.9.0.0'
   object ButtonPanel: TPanel
     Left = 0
     Height = 50
-    Top = 320
-    Width = 450
+    Top = 333
+    Width = 534
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 450
+    ClientWidth = 534
     TabOrder = 0
     object CloseButton: TBitBtn
       AnchorSideLeft.Control = ButtonPanel
@@ -32,10 +32,10 @@ object AboutForm: TAboutForm
       AnchorSideTop.Side = asrCenter
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
-      Left = 189
-      Height = 34
-      Top = 8
-      Width = 73
+      Left = 232
+      Height = 30
+      Top = 10
+      Width = 70
       AutoSize = True
       BorderSpacing.Around = 6
       Cancel = True
@@ -47,22 +47,22 @@ object AboutForm: TAboutForm
   end
   object AboutPageControl: TPageControl
     Left = 0
-    Height = 320
+    Height = 333
     Top = 0
-    Width = 450
+    Width = 534
     ActivePage = VersionPage
     Align = alClient
     TabIndex = 0
     TabOrder = 1
     object VersionPage: TTabSheet
       Caption = 'Version'
-      ClientHeight = 287
-      ClientWidth = 444
+      ClientHeight = 306
+      ClientWidth = 532
       object Shape1: TShape
         Left = 0
-        Height = 287
+        Height = 306
         Top = 0
-        Width = 444
+        Width = 532
         Align = alClient
         Brush.Color = 15116678
       end
@@ -71,9 +71,9 @@ object AboutForm: TAboutForm
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = VersionPage
         AnchorSideRight.Side = asrBottom
-        Left = 188
+        Left = 276
         Height = 256
-        Top = 15
+        Top = 25
         Width = 256
         AntialiasingMode = amOn
         Anchors = [akTop, akRight]
@@ -380,9 +380,9 @@ object AboutForm: TAboutForm
         AnchorSideLeft.Control = PlatformLabel
         AnchorSideBottom.Control = CoreVersionLabel
         Left = 10
-        Height = 15
-        Top = 202
-        Width = 81
+        Height = 17
+        Top = 213
+        Width = 83
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 5
         Caption = 'VersionLabel'
@@ -394,10 +394,10 @@ object AboutForm: TAboutForm
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = VersionLabel
         AnchorSideBottom.Side = asrBottom
-        Left = 96
-        Height = 15
-        Top = 202
-        Width = 118
+        Left = 98
+        Height = 17
+        Top = 213
+        Width = 124
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'EntryRevisionLabel'
@@ -407,9 +407,9 @@ object AboutForm: TAboutForm
         AnchorSideLeft.Control = PlatformLabel
         AnchorSideBottom.Control = FPCVersionLabel
         Left = 10
-        Height = 15
-        Top = 222
-        Width = 111
+        Height = 17
+        Top = 235
+        Width = 113
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 5
         Caption = 'CoreVersionLabel'
@@ -419,9 +419,9 @@ object AboutForm: TAboutForm
         AnchorSideLeft.Control = PlatformLabel
         AnchorSideBottom.Control = PlatformLabel
         Left = 10
-        Height = 15
-        Top = 242
-        Width = 105
+        Height = 17
+        Top = 257
+        Width = 107
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 5
         Caption = 'FPCVersionLabel'
@@ -432,9 +432,9 @@ object AboutForm: TAboutForm
         AnchorSideBottom.Control = VersionPage
         AnchorSideBottom.Side = asrBottom
         Left = 10
-        Height = 15
-        Top = 262
-        Width = 88
+        Height = 17
+        Top = 279
+        Width = 91
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 10
         BorderSpacing.Bottom = 10
@@ -446,10 +446,10 @@ object AboutForm: TAboutForm
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = CoreVersionLabel
         AnchorSideBottom.Side = asrBottom
-        Left = 126
-        Height = 15
-        Top = 222
-        Width = 115
+        Left = 128
+        Height = 17
+        Top = 235
+        Width = 120
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'CoreRevisionLabel'
@@ -458,13 +458,13 @@ object AboutForm: TAboutForm
     end
     object AboutPage: TTabSheet
       Caption = 'About'
-      ClientHeight = 287
-      ClientWidth = 444
+      ClientHeight = 306
+      ClientWidth = 532
       object Memo1: TMemo
         Left = 0
-        Height = 395
+        Height = 293
         Top = 0
-        Width = 670
+        Width = 448
         Align = alClient
         Lines.Strings = (
           'For introduction to the software:'
