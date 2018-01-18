@@ -485,23 +485,31 @@ end;
 procedure TMainForm.UpdateRecentFiles;
 var
   Mi: TMenuItem;
-  i: Integer;
+  i, RecentFilesRunner: Integer;
   K: Word;
   Shift: TShiftState;
 begin
   ShortCutToKey(M_OpenRecent, K, Shift);
 
   LoadRecentFilesIni(GetRecentIniFileName);
-  RecentFilesSubMenu.Visible := RecentFiles.Count > 0;
   RecentFilesSubMenu.Clear;
-  RecentFilesPopupSubMenu.Visible := RecentFilesSubMenu.Visible;
   RecentFilesPopupSubMenu.Clear;
 
+  RecentFilesRunner := 0;
   for i := 0 to RecentFiles.Count - 1 do
   begin
+    while (RecentFilesRunner < RecentFiles.Count) and
+          (ExtractFileExt(RecentFiles[RecentFilesRunner]) <> '.epx')
+    do
+      Inc(RecentFilesRunner);
+
+    // Disable actions if the list of recentfiles is not long enough.
+    if (RecentFilesRunner >= RecentFiles.Count) then
+      break;
+
     Mi := TMenuItem.Create(RecentFilesSubMenu);
     Mi.Name := 'recent' + inttostr(i);
-    Mi.Caption := RecentFiles[i];
+    Mi.Caption := RecentFiles.ValueFromIndex[RecentFilesRunner];
     Mi.OnClick := @OpenRecentMenuItemClick;
     if i < 9 then
       Mi.ShortCut := ShortCut(VK_1 + i, Shift);
@@ -510,12 +518,17 @@ begin
     // Popup menu
     Mi := TMenuItem.Create(RecentFilesPopupSubMenu);
     Mi.Name := 'recent' + inttostr(i);
-    Mi.Caption := RecentFiles[i];
+    Mi.Caption := RecentFiles.ValueFromIndex[RecentFilesRunner];
     Mi.OnClick := @OpenRecentMenuItemClick;
     if i < 9 then
       Mi.ShortCut := KeyToShortCut(VK_1 + i, Shift);
     RecentFilesPopupSubMenu.Add(Mi);
+
+    Inc(RecentFilesRunner);
   end;
+
+  RecentFilesSubMenu.Visible := RecentFilesSubMenu.Count > 0;
+  RecentFilesPopupSubMenu.Visible := RecentFilesSubMenu.Visible;
 end;
 
 procedure TMainForm.ResoreDefaultPos;

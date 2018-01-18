@@ -140,16 +140,9 @@
       <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="-r=~/.epidata.securitylog.recentfiles.ini -i=~/.entryclient.securitylog.cfg"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="-r=~/.epidata.securitylog.recentfiles.ini -i=~/.entryclient.securitylog.cfg"/>
-          </local>
-        </Mode0>
+        <Mode0 Name="default"/>
       </Modes>
     </RunParams>
     <RequiredPackages Count="9">
@@ -438,7 +431,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="6">
+    <Exceptions Count="7">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -460,6 +453,9 @@
         <Name Value="EEpiThreadSaveExecption"/>
         <Enabled Value="False"/>
       </Item6>
+      <Item7>
+        <Name Value="EKeyNotFoundException"/>
+      </Item7>
     </Exceptions>
   </Debugging>
 </CONFIG>

@@ -40,9 +40,9 @@ object MainForm: TMainForm
       AnchorSideTop.Control = ProcessToolPanel
       AnchorSideTop.Side = asrCenter
       Left = 11
-      Height = 25
-      Top = 9
-      Width = 91
+      Height = 29
+      Top = 7
+      Width = 95
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'

@@ -351,7 +351,7 @@ begin
     Ini := GetIniFile(FileName);
 
     for i := 0 to RecentFiles.Count - 1 do
-      Ini.WriteString('Files', 'file'+inttostr(i), RecentFiles[i]);
+      Ini.WriteString('Files', RecentFiles.Names[i], RecentFiles.ValueFromIndex[i]);
   finally
     Ini.Free;
   end;
@@ -372,12 +372,13 @@ begin
 
     // Read recent files.
     Sec := 'Files';
-    for i := 0 to 9 do
+    Ini.ReadSectionValues(Sec, RecentFiles);
+{    for i := 0 to 9 do
     begin
       S := Ini.ReadString(sec, 'file'+inttostr(i), '');
       if S <> '' then
         RecentFiles.Add(S);
-    end;
+    end; }
   finally
     Ini.Free;
   end;
@@ -457,8 +458,8 @@ begin
     RecentFiles.Move(Idx, 0)
   else
     RecentFiles.Insert(0, Fn);
-  if RecentFiles.Count > 10 then
-    RecentFiles.Delete(10);
+  if RecentFiles.Count > 30 then
+    RecentFiles.Delete(30);
 
   SaveRecentFilesToIni(GetRecentIniFileName);
 end;
