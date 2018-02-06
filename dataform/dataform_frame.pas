@@ -14,7 +14,7 @@ uses
 type
 
   { TDataFormFrame }
-  TFieldExitFlowType = (fxtOk, fxtError, fxtJump, fxtRelate);
+  TFieldExitFlowType = (fxtOk, fxtError, fxtJump, fxtRelate, fxtKeyRecord);
 
   TDataFormFrame = class(TFrame)
     DeleteRecordAction: TAction;
@@ -111,7 +111,10 @@ type
     procedure DoPerformSearch(Search: TEpiSearch; Idx: Integer; Wrap: boolean);
     function  CreateSearchFromFieldEdits: TEpiSearch;
     function  DoSearchForm(Search: TEpiSearch): Word;
-    function  PerformKeyFieldsCheck: boolean;
+    // Returns 0 = Nothing found
+    //         1 = Move to existing record (if found)
+    //         2 = Stay on current record (if match found)
+    function  PerformKeyFieldsCheck: integer;
     function  DoSearchKeyFields: integer;
     // Search Messages:
     procedure LMGotoRec(var Msg: TLMessage); message LM_DATAFORM_GOTOREC;
@@ -1573,14 +1576,15 @@ begin
   end;
 end;
 
-function TDataFormFrame.PerformKeyFieldsCheck: boolean;
+function TDataFormFrame.PerformKeyFieldsCheck: integer;
 var
   Idx: Integer;
 begin
+  result := 0;
+
   Idx := DoSearchKeyFields;
   if Idx = RecNo then
     Idx := -1;
-
 
   if (Idx <> -1) then
   begin
@@ -1601,16 +1605,15 @@ begin
         // Trick to make system believe nothing has happened.
         Modified := false;
         RecNo := Idx;
-        Idx := -1;
+        Result := 1;
       end
     else
       begin
+        Result := 2;
         Modified := false;
         FirstFieldAction.Execute;
       end;
   end;
-
-  result := Idx = -1;
 end;
 
 function TDataFormFrame.DoSearchKeyFields: integer;
@@ -2321,7 +2324,8 @@ begin
 
       Res := FieldExitFlow(CE, NextCE);
       case Res of
-        fxtOk:
+        fxtOk,
+        fxtKeyRecord:
           NextCE := NextFieldOnKeyDown(CE);
 
         fxtError:
@@ -2588,10 +2592,19 @@ begin
   if (DataFile.KeyFields.Count > 0) and
      (DataFile.KeyFields.FieldExists(Field)) then
   begin
-    if not PerformKeyFieldsCheck then
-    begin
-      CE.SelectAll;
-      Exit(fxtError);
+    case PerformKeyFieldsCheck of
+      0:;  // Do nothing;
+
+      1:
+        begin
+          Exit(fxtKeyRecord);
+        end;
+
+      2:
+        begin
+          CE.SelectAll;
+          Exit(fxtError);
+        end;
     end;
   end;
 
