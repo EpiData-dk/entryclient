@@ -341,6 +341,9 @@ end;
 
 procedure TDataFormFrame.BrowseAllActionExecute(Sender: TObject);
 begin
+  if Assigned(TProjectFrame(Parent).EpiDocument.Logger) then
+    TProjectFrame(Parent).EpiDocument.Logger.LogSearch(nil);
+
   ShowResultListForm(
     Self,
     DataFile.Caption.Text,
@@ -370,6 +373,9 @@ var
   i: Integer;
 begin
   S := CreateSearchFromFieldEdits;
+
+  if Assigned(TProjectFrame(Parent).EpiDocument.Logger) then
+    TProjectFrame(Parent).EpiDocument.Logger.LogSearch(S);
 
   Lst := SearchFindList(S, 0);
   if Length(Lst) = 0 then

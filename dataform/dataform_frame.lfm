@@ -34,7 +34,7 @@ object DataFormFrame: TDataFormFrame
     OnMouseMove = Panel1MouseMove
     object Label1: TLabel
       Left = 30
-      Height = 15
+      Height = 17
       Top = 48
       Width = 43
       Caption = 'Label1'
