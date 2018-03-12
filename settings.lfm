@@ -160,7 +160,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 17
         Top = 52
-        Width = 101
+        Width = 103
         BorderSpacing.Left = 10
         Caption = 'Tutorials folder:'
         ParentColor = False
@@ -190,7 +190,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 17
         Top = 89
-        Width = 113
+        Width = 115
         BorderSpacing.Left = 10
         Caption = 'Tutorial web URL:'
         ParentColor = False
@@ -229,7 +229,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 17
         Top = 231
-        Width = 183
+        Width = 185
         BorderSpacing.Left = 10
         Caption = 'Field colour on invalid entry:'
         ParentColor = False
@@ -271,7 +271,7 @@ object SettingsForm: TSettingsForm
         Left = 10
         Height = 17
         Top = 266
-        Width = 123
+        Width = 124
         BorderSpacing.Left = 10
         Caption = 'Value Label colour:'
         ParentColor = False

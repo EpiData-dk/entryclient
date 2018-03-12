@@ -536,7 +536,7 @@ procedure TDataFormFrame.VerifiyRecordActionUpdate(Sender: TObject);
 begin
   TAction(Sender).Enabled :=
     (IndexedRecNo <> NewRecord) and
-    (FParentRecordState <> rsDeleted) and
+    (not FDataFile.Deleted[IndexedRecNo]) and
     (Authenticator.IsAuthorizedEntry(DataFile, [eerDelete]));
 end;
 
@@ -889,13 +889,13 @@ begin
 
   if not IsDetailRelation then exit;
 
-  // Create a hook for ALL keyfields in Master Datafile, such than when data
-  // is changed, all subsequent data is also changed.
   MasterDF := DetailRelation.MasterRelation.Datafile;
   MasterDF.RegisterOnChangeHook(@RecordStatusChange, true);
 
   MasterKFs := MasterDF.KeyFields;
 
+  // Create a hook for ALL keyfields in Master Datafile, such than when data
+  // is changed, all subsequent data is also changed.
   for MF in MasterKFs do
     MF.RegisterOnChangeHook(@KeyFieldDataChange, true);
 end;
@@ -1986,24 +1986,32 @@ procedure TDataFormFrame.RecordStatusChange(const Sender: TEpiCustomBase;
 var
   MasterDF: TEpiDataFile absolute Sender;
   NewStatus: TEpiRecordState;
-  i: Integer;
+  i, OldRecNo: Integer;
 begin
   if (EventGroup <> eegDataFiles) then exit;
   if (EventType <> Word(edceRecordStatus)) then exit;
 
   NewStatus := PEpiDataFileStatusRecord(Data)^.NewValue;
 
+  // Need to do a little cheating here:
+  // Since setting Deleted may result in cascading Deleted we need to make sure
+  //  that our RecNo correspons to the recno requested by child dataform.
+  // In order NOT to trigger a log event and changing records etc. we set FRecNo
+  //  directly and set it back once the process i done.
+
+  UpdateIndexFields;
+  OldRecNo := FRecNo;
   for i := 0 to FLocalToDFIndex.Size - 1 do
   begin
+    FRecNo := i;
     case NewStatus of
       rsNormal:
         DataFile.Deleted[FLocalToDFIndex.AsInteger[i]] := False;
-      rsVerified:
-        DataFile.Verified[FLocalToDFIndex.AsInteger[i]] := True;
       rsDeleted:
         DataFile.Deleted[FLocalToDFIndex.AsInteger[i]] := True;
     end;
   end;
+  FRecNo := OldRecNo;
 end;
 
 procedure TDataFormFrame.KeyFieldDataChange(const Sender: TEpiCustomBase;

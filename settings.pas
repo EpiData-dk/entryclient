@@ -342,7 +342,6 @@ end;
 function SaveRecentFilesToIni(const FileName: string): boolean;
 var
   Ini: TIniFile;
-  Fn: String;
   i: Integer;
 begin
   Result := false;
