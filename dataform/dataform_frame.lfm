@@ -186,6 +186,12 @@ object DataFormFrame: TDataFormFrame
       Caption = 'Copy Field To Clipboard'
       OnExecute = CopyFieldToClipboardActionExecute
     end
+    object VerifiyRecordAction: TAction
+      Category = 'Record'
+      Caption = 'VerifiyRecordAction'
+      OnExecute = VerifiyRecordActionExecute
+      OnUpdate = VerifiyRecordActionUpdate
+    end
   end
   object PrintDialog1: TPrintDialog
     left = 211

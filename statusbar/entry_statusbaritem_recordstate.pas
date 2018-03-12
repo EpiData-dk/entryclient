@@ -21,7 +21,6 @@ type
     procedure DoLocalState;
     procedure DoUpdate;
     procedure DoDatafileUpdate;
-    procedure DeletedClick(Sender: TObject);
   private
     FDataFile: TEpiDataFile;
     procedure RecordStataChangeHook(const Sender: TEpiCustomBase;
@@ -68,19 +67,19 @@ begin
        (Dataform.DataFile.Deleted[Dataform.IndexedRecNo])
     then
       begin
-        Font.Color := clBlack;
-        BaseColor := clRed;
+        Font.Color     := clBlack;
+        BaseColor      := clRed;
         OverBlendColor := clSilver;
-        ClickColor := BaseColor;
-        DisabledColor := BaseColor;
+        ClickColor     := BaseColor;
+        DisabledColor  := BaseColor;
       end
     else
       begin
-        Font.Color := clRed;
-        BaseColor := clBtnFace;
+        Font.Color     := clRed;
+        BaseColor      := clBtnFace;
         OverBlendColor := clRed;
-        ClickColor := BaseColor;
-        DisabledColor := BaseColor;
+        ClickColor     := BaseColor;
+        DisabledColor  := BaseColor;
       end;
 
 
@@ -89,13 +88,19 @@ begin
        (Dataform.DataFile.Verified[Dataform.IndexedRecNo])
     then
       begin
-        Font.Color := clBlack;
-        DisabledColor := clGreen;
+        Font.Color     := clBlack;
+        BaseColor      := clGreen;
+        OverBlendColor := clSilver;
+        ClickColor     := BaseColor;
+        DisabledColor  := BaseColor;
       end
     else
       begin
-        Font.Color := clGreen;
-        DisabledColor := clBtnFace;
+        Font.Color     := clGreen;
+        BaseColor      := clBtnFace;
+        OverBlendColor := clGreen;
+        ClickColor     := BaseColor;
+        DisabledColor  := BaseColor;
       end;
 end;
 
@@ -104,6 +109,9 @@ begin
   FDeletedBtn.Action := Dataform.DeleteRecordAction;
   FDeletedBtn.Caption := 'DEL';
 
+  FVerifiedBtn.Action := Dataform.VerifiyRecordAction;
+  FVerifiedBtn.Caption := 'VER';
+
   if Assigned(FDataFile) then
     FDataFile.UnRegisterOnChangeHook(@RecordStataChangeHook);
 
@@ -111,14 +119,6 @@ begin
 
   if Assigned(FDataFile) then
     FDataFile.RegisterOnChangeHook(@RecordStataChangeHook, true);
-end;
-
-procedure TEntryClientStatusBarRecordState.DeletedClick(Sender: TObject);
-begin
-  if (not Assigned(Dataform)) then exit;
-
-  Dataform.DeleteRecordAction.Execute;
-  DoUpdate;
 end;
 
 procedure TEntryClientStatusBarRecordState.RecordStataChangeHook(
@@ -198,10 +198,10 @@ begin
     OverBlend := 0.5;
     NormalBlend := 0.5;
 
-    Font.Color := clRed;
-    BaseColor := clBtnFace;
+    Font.Color     := clRed;
+    BaseColor      := clBtnFace;
     OverBlendColor := clRed;
-    ClickColor := BaseColor;
+    ClickColor     := BaseColor;
   end;
 
   FVerifiedBtn := TGradButton.Create(AStatusBar);
@@ -210,19 +210,17 @@ begin
     AnchorToNeighbour(akLeft, 0, FDeletedBtn);
     AnchorParallel(akTop, 0, Panel);
     AnchorParallel(akBottom, 0, Panel);
-    BorderSides := [];
     AutoWidth := true;
     AutoWidthBorderSpacing := 8;
     Caption := 'VER';
-    Font.Color := clGreen;
-    BaseColor := clBtnFace;
-    OverBlendColor := BaseColor;
-    ClickColor := BaseColor;
-    DisabledColor := clBtnFace;
     Parent := Panel;
     OverBlend := 0.5;
     NormalBlend := 0.5;
-    Enabled := false;
+
+    Font.Color     := clGreen;
+    BaseColor      := clBtnFace;
+    OverBlendColor := clGreen;
+    ClickColor     := BaseColor;
   end;
 end;
 

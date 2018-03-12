@@ -46,6 +46,7 @@ type
     ActionList1: TActionList;
     DataFormScroolBox: TScrollBox;
     CopyFieldToClipboardAction: TAction;
+    VerifiyRecordAction: TAction;
     procedure BrowseAllActionExecute(Sender: TObject);
     procedure CopyToClipBoardActionExecute(Sender: TObject);
     procedure DataFormScroolBoxMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -77,6 +78,8 @@ type
     procedure ShowFieldNotesActionExecute(Sender: TObject);
     procedure CopyFieldToClipboardActionExecute(Sender: TObject);
     procedure NoViewDataActionUpdate(Sender: TObject);
+    procedure VerifiyRecordActionExecute(Sender: TObject);
+    procedure VerifiyRecordActionUpdate(Sender: TObject);
   private
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
@@ -521,6 +524,20 @@ end;
 procedure TDataFormFrame.NoViewDataActionUpdate(Sender: TObject);
 begin
   TAction(Sender).Enabled := Authenticator.IsAuthorizedEntry(DataFile, [eerRead]);
+end;
+
+procedure TDataFormFrame.VerifiyRecordActionExecute(Sender: TObject);
+begin
+  FDataFile.Verified[IndexedRecNo] := not FDataFile.Verified[IndexedRecNo];
+  Modified := true;
+end;
+
+procedure TDataFormFrame.VerifiyRecordActionUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled :=
+    (IndexedRecNo <> NewRecord) and
+    (FParentRecordState <> rsDeleted) and
+    (Authenticator.IsAuthorizedEntry(DataFile, [eerDelete]));
 end;
 
 procedure TDataFormFrame.UpdateIndexFields;
