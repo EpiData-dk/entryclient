@@ -585,7 +585,9 @@ begin
         if FChangingRecNo = NewRecord then
         begin
           RelateReason := rrNewRecord;
-          RecNo := DataFile.Size - 1
+          // Setting recno here forces a log entry (if activated) of viewed record,
+          // which is not desirable, as we just created a NEW record - not viewed one
+//          RecNo := DataFile.Size - 1;
         end;
       end;
 
