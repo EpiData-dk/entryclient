@@ -537,7 +537,7 @@ begin
   TAction(Sender).Enabled :=
     (IndexedRecNo <> NewRecord) and
     (not FDataFile.Deleted[IndexedRecNo]) and
-    (Authenticator.IsAuthorizedEntry(DataFile, [eerDelete]));
+    (Authenticator.IsAuthorizedEntry(DataFile, [eerRead]));
 end;
 
 procedure TDataFormFrame.UpdateIndexFields;
