@@ -925,6 +925,7 @@ end;
 procedure TProjectFrame.DoCloseProject;
 var
   URI: TURI;
+  BodyText: UTF8String;
 begin
   if not Assigned(DocumentFile) then exit;
 
@@ -938,13 +939,18 @@ begin
           Clipboard.AsText := DocumentFile.FileName;
           Clipboard.Close;
 
+          BodyText := EpiDocument.ProjectSettings.EmailContent + LineEnding +
+                      LineEnding +
+                      'Attached file: ' + DocumentFile.FileName + LineEnding +
+                      '(If your system does not attach the file automatically, please do it manually – file name was copied to clipboard)';
+
           URI.Protocol     := 'mailto';
           URI.HasAuthority := false;
           URI.Port         := 0;
           URI.Path         := EpiDocument.ProjectSettings.EmailAddress;
           URI.Params       := 'subject=' + EpiDocument.ProjectSettings.EmailSubject + '&' +
-                              'body='    + Trim(EpiDocument.ProjectSettings.EmailContent) + '&' +
-                              'attach='  + FilenameToURI(DocumentFile.FileName);
+                              'attach='  + FilenameToURI(DocumentFile.FileName) + '&' +
+                              'body='    + BodyText;
           OpenURL(EncodeURI(URI));
         end;
     except
