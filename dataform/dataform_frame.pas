@@ -80,6 +80,7 @@ type
     procedure NoViewDataActionUpdate(Sender: TObject);
     procedure VerifiyRecordActionExecute(Sender: TObject);
     procedure VerifiyRecordActionUpdate(Sender: TObject);
+    procedure RelateUpActionExecute(Sender: TObject);
   private
     FLocalToDFIndex: TEpiField;
     FDFToLocalIndex: TEpiField;
@@ -540,6 +541,15 @@ begin
     (Authenticator.IsAuthorizedEntry(DataFile, [eerRead]));
 end;
 
+procedure TDataFormFrame.RelateUpActionExecute(Sender: TObject);
+var
+  Key: Word;
+begin
+  Key := VK_F10;
+  if IsDetailRelation then
+    DoKeyFieldDown(nil, Key, []);
+end;
+
 procedure TDataFormFrame.UpdateIndexFields;
 var
   MasterKFs: TEpiFields;
@@ -787,14 +797,18 @@ begin
   end;
   DC := (Result as IEntryDataControl);
 
-  //  This check is normal No-Entry mode
+  // Security setup
+  TCustomEdit(Result).ReadOnly := (not Authenticator.IsAuthorizedEntry(DataFile, [eerUpdate]));
+
+  // This check is normal No-Entry mode
   if (Field.EntryMode = emNoEnter) or
-     // This check is for Parent-Child related key fields.
-     (IsDetailRelation and
-      (DataFile.KeyFields.IndexOf(Field) >= 0) and
+  // This check is for Parent-Child related key fields.
+     (
+      IsDetailRelation and
+      Field.IsKeyfield and
       (Assigned(GetMasterDataForm.DataFile.KeyFields.FieldByName[Field.Name]))
-     ) or
-     (not Authenticator.IsAuthorizedEntry(DataFile, [eerUpdate]))
+     ) {or
+     (not Authenticator.IsAuthorizedEntry(DataFile, [eerUpdate]))}
   then
     Result.Enabled := false;
 
