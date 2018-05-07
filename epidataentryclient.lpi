@@ -14,8 +14,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="3"/>
-      <BuildNr Value="7"/>
+      <MinorVersionNr Value="4"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
     </VersionInfo>
@@ -148,14 +147,14 @@
     </RunParams>
     <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="epidatacore"/>
-        <MaxVersion Major="4" Minor="3" Valid="True"/>
-        <MinVersion Major="4" Minor="3" Valid="True"/>
+        <PackageName Value="epidatacore_visuals"/>
+        <MaxVersion Major="4" Minor="4" Valid="True"/>
+        <MinVersion Major="4" Minor="4" Valid="True"/>
       </Item1>
       <Item2>
-        <PackageName Value="epidatacore_visuals"/>
-        <MaxVersion Major="4" Minor="3" Valid="True"/>
-        <MinVersion Major="4" Minor="3" Valid="True"/>
+        <PackageName Value="epidatacore"/>
+        <MaxVersion Major="4" Minor="4" Valid="True"/>
+        <MinVersion Major="4" Minor="4" Valid="True"/>
       </Item2>
       <Item3>
         <PackageName Value="gradcontrols"/>
