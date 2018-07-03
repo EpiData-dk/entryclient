@@ -2920,7 +2920,7 @@ begin
 
   VLForm := TValueLabelsPickListForm2.Create(Self, F);
   VLForm.SetInitialValue(ACustomEdit.Text);
-  P := ACustomEdit.Parent.ClientToScreen(Point(ACustomEdit.Left + ACustomEdit.Width + 2, ACustomEdit.Top));
+  P := ACustomEdit.ClientToScreen(Point(ACustomEdit.Width + 2, 0));
   VLForm.Top := P.Y;
   VLForm.Left := P.X;
   result := VLForm.ShowModal = mrOK;
