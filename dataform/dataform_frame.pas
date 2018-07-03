@@ -445,12 +445,9 @@ var
   CE: TCustomEdit;
   Idx: LongInt;
 begin
-  if not DoNewRecord then exit;
+  CE := NewOrNextRecord;
+  if (not Assigned(CE)) then Exit;
 
-  Idx := NextUsableFieldIndex(-1, false);
-  if Idx = -1 then exit;
-
-  CE := TCustomEdit(CustomEditList[Idx]);
   FieldEnterFlow((CE as IEntryDataControl));
   CE.SetFocus;
 end;
