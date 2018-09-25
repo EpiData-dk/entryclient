@@ -127,7 +127,6 @@ type
     procedure UpdateProcessToolPanel;
     procedure SetCaption;
     procedure LoadGlyphs;
-    procedure CheckForUpdates(Data: PtrInt);
     procedure OpenRecentMenuItemClick(Sender: TObject);
   { messages }
     procedure LMCLoseProject(var Msg: TLMessage); message LM_CLOSE_PROJECT;
@@ -566,8 +565,6 @@ begin
   BetaPanel.Visible := true;
   BetaPanel.BringToFront;
   {$ENDIF}
-
-  Application.QueueAsyncCall(@CheckForUpdates, 0);
 end;
 
 procedure TMainForm.EpiDataWebTutorialsMenuItemClick(Sender: TObject);
@@ -666,30 +663,13 @@ begin
   Frm.Free;
 end;
 
-procedure TMainForm.CheckForUpdates(Data: PtrInt);
-begin
-  // User does not want to show updates.
-  if not EntrySettings.CheckForUpdates then exit;
-
-  // Check if it is time to search for updates.
-  if (EntrySettings.LastUpdateCheck + EntrySettings.DaysBetweenChecks) >= Now
-  then
-    Exit;
-
-  CheckVersionAction.Execute;
-
-  EntrySettings.LastUpdateCheck := Now;
-end;
-
 procedure TMainForm.CheckVersionActionExecute(Sender: TObject);
 var
   F: TCheckVersionForm;
 begin
   F := TCheckVersionForm.Create(Self);
   F.Caption := 'EpiData EntryClient';
-  F.CheckBoxValue := EntrySettings.CheckForUpdates;
   F.ShowModal;
-  EntrySettings.CheckForUpdates := F.CheckBoxValue;
   F.Free;
 end;
 

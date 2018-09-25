@@ -52,10 +52,6 @@ type
     NotesDisplay:   byte;   // 0 = Show as hint, 1 = Show in window.
     CopyToClipBoardFormat: string;
     ValueLabelsAsNotes: boolean;
-    CheckForUpdates: boolean;
-    DaysBetweenChecks: byte;
-    LastUpdateCheck: TDateTime;
-
 
     // Paths:
     WorkingDirUTF8: string;
@@ -170,9 +166,6 @@ begin
       WriteInteger(Sec, 'NotesDisplay', NotesDisplay);
       WriteString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
       WriteBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
-      WriteBool(Sec, 'CheckForUpdates', CheckForUpdates);
-      WriteInteger(Sec, 'DaysBetweenChecks', DaysBetweenChecks);
-      WriteDateTime(Sec, 'LastUpdateCheck', LastUpdateCheck);
 
       Sec := 'fonts';
       WriteString(sec, 'FieldFontName', FieldFont.Name);
@@ -270,9 +263,6 @@ begin
     NotesDisplay      := ReadInteger(Sec, 'NotesDisplay', NotesDisplay);
     CopyToClipBoardFormat := ReadString(Sec, 'CopyToClipBoardFormat', CopyToClipBoardFormat);
     ValueLabelsAsNotes := ReadBool(Sec, 'ValueLabelsAsNotes', ValueLabelsAsNotes);
-    CheckForUpdates    := ReadBool(Sec, 'CheckForUpdates', CheckForUpdates);
-    DaysBetweenChecks  := ReadInteger(Sec, 'DaysBetweenChecks', DaysBetweenChecks);
-    LastUpdateCheck    := ReadDateTime(Sec, 'LastUpdateCheck', LastUpdateCheck);
 
     // Fonts
     Sec := 'fonts';
@@ -474,9 +464,6 @@ const
     NotesDisplay:           0;
     CopyToClipBoardFormat: '%f%t%q%t%d%t%v%n';
     ValueLabelsAsNotes:    true;
-    CheckForUpdates:       true;
-    DaysBetweenChecks:     7;
-    LastUpdateCheck:       0;
 
     WorkingDirUTF8:        '';
     TutorialDirUTF8:       '';
