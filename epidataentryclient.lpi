@@ -16,10 +16,9 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="3"/>
+      <BuildNr Value="1"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
-      <Attributes pvaSpecialBuild="True"/>
-      <StringTable SpecialBuild="TRUNK"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
