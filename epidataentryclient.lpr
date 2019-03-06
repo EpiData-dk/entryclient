@@ -19,7 +19,7 @@ uses
   entry_statusbaritem_navigator, entry_statusbaritem_keyvalues,
   entry_statusbaritem_datafilecontent, settings2_statusbar,
   entry_statusbaritem_recordstate, entry_statusbaritem_extrafieldinfo, 
-fieldmemo;
+  fieldmemo, wizard_form;
 
 {$R *.res}
 
@@ -46,6 +46,10 @@ begin
 
   // Parse commandline options!
   ParseCommandLineOpts;
+
+  // Check if this is first run.
+  if (not CheckAndStartWizard(GetIniFileName)) then
+    Exit;
 
   // Load ini before anything else - it contains start-up info.
   LoadIniFiles;
