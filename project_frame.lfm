@@ -6,8 +6,8 @@ object ProjectFrame: TProjectFrame
   ClientHeight = 536
   ClientWidth = 730
   TabOrder = 0
-  DesignLeft = 485
-  DesignTop = 330
+  DesignLeft = 2355
+  DesignTop = 241
   object ProjectPanel: TPanel
     Left = 0
     Height = 536
@@ -88,15 +88,15 @@ object ProjectFrame: TProjectFrame
     Visible = False
     object Label1: TLabel
       Left = 18
-      Height = 17
+      Height = 15
       Top = 54
-      Width = 94
+      Width = 92
       Caption = 'GetTextCount:'
       ParentColor = False
     end
     object Label2: TLabel
       Left = 54
-      Height = 17
+      Height = 15
       Top = 90
       Width = 43
       Caption = 'Label2'
@@ -104,15 +104,15 @@ object ProjectFrame: TProjectFrame
     end
     object Label3: TLabel
       Left = 18
-      Height = 17
+      Height = 15
       Top = 150
-      Width = 104
+      Width = 102
       Caption = 'PaintTextCount:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 54
-      Height = 17
+      Height = 15
       Top = 192
       Width = 43
       Caption = 'Label4'

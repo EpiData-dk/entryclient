@@ -1200,7 +1200,7 @@ var
   ARight: Integer;
   ATop: Integer;
   ABot: Integer;
-  i: Integer;
+  i, InitialPageNum: Integer;
   S: String;
   Sz: TSize;
   CE: TCustomEdit;
@@ -1265,7 +1265,7 @@ begin
   WITH Printer DO
   BEGIN
 //    FileName := '/tmp/tmp.ps';
-    Title    := 'EpiData Manager - ' + TEpiDocument(DataFile.RootOwner).Study.Title.Text;
+    Title    := 'EpiData EntryClient - ' + TEpiDocument(DataFile.RootOwner).Study.Title.Text;
     ppix     := XDPI;                    //pixels pr inch X
     ppiy     := YDPI;                    //pixels pr inch Y
     ppmmx    := Round(ppix/25.4);        //pixels pr mm X
@@ -1281,6 +1281,7 @@ begin
     BeginDoc;
 
     i := 0;
+    InitialPageNum := PageNumber;
     while i < DataFile.ControlItems.Count - 1 do
     begin
       CI := DataFile.ControlItem[i];
@@ -1290,7 +1291,7 @@ begin
         continue;
       end;
 
-      ATop := (Round(ControlItemTop(CI) * yscale) - (PageNumber - 1) * pClientHeight) + TopMarg;
+      ATop := (Round(ControlItemTop(CI) * yscale) - (PageNumber - InitialPageNum) * pClientHeight) + TopMarg;
       ALeft := Round(ControlItemLeft(CI) * xscale) + LeftMarg;
 
       if (CI is TEpiSection) then

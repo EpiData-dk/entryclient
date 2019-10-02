@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 447
+  Left = 2585
   Height = 642
-  Top = 264
+  Top = 255
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
@@ -16,7 +16,7 @@ object MainForm: TMainForm
   OnShortCut = FormShortCut
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.0.0.4'
   object MainFormPageControl: TPageControl
     Left = 0
     Height = 575
@@ -71,9 +71,9 @@ object MainForm: TMainForm
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Control = BetaPanel
       Left = 17
-      Height = 17
+      Height = 15
       Top = 21
-      Width = 257
+      Width = 256
       BorderSpacing.Top = 20
       Caption = 'Test Version of EpiData EntryClient'
       Font.Height = -13
@@ -91,9 +91,9 @@ object MainForm: TMainForm
       AnchorSideBottom.Control = BetaPanel
       AnchorSideBottom.Side = asrBottom
       Left = 17
-      Height = 125
-      Top = 58
-      Width = 257
+      Height = 127
+      Top = 56
+      Width = 256
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Top = 20
       BorderSpacing.Bottom = 20
