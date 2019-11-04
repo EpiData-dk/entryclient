@@ -446,6 +446,11 @@ begin
   begin
     SC               := TEpiSearchCondition.Create;
     SC.BinOp         := TSearchBinOp(PtrUInt(BinOpCmb.Items.Objects[BinOpCmb.ItemIndex]));
+    //  Not the best way to trap unset match criteria for text fields when the
+    //  search if created using values on a record
+    //    if (MatchCriteriaCmb.ItemIndex < 0) then
+    //      SC.MatchCriteria := mcEq
+    //    else
     SC.MatchCriteria := TMatchCriteria(PtrUInt(MatchCriteriaCmb.Items.Objects[MatchCriteriaCmb.ItemIndex]));
     SC.Text          := ValueEdit.Text;
     SC.Field         := TEpiField(FieldListCmb.Items.Objects[FieldListCmb.ItemIndex]);
