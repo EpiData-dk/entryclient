@@ -445,6 +445,10 @@ var
   CE: TCustomEdit;
   Idx: LongInt;
 begin
+  // unless we are on a new record, go to last record
+  // so that NewOrNextRecord will create new record
+  if (RecNo <> NewRecord) then
+    RecNo := FLocalToDFIndex.Size - 1;
   CE := NewOrNextRecord;
   if (not Assigned(CE)) then Exit;
 
