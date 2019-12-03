@@ -383,6 +383,7 @@ begin
 
     // Browse Menu
     FindMenuItem.Action        := Frame.FindRecordAction;
+    FindMenuExItem.Action      := Frame.FindRecordExAction;
     FindNextMenuItem.Action    := Frame.FindNextAction;
     FindPrevMenuItem.Action    := Frame.FindPrevAction;
     FindListMenuItem.Action    := Frame.FindFastListAction;

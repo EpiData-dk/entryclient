@@ -31,8 +31,8 @@ begin
   D_GotoRec := KeyToShortCut(VK_G, [ssCtrl]);
   D_SideUp := KeyToShortCut(VK_PRIOR, []);
   D_SideDown := KeyToShortCut(VK_NEXT, []);
-  D_SearchRecordEmpty := KeyToShortCut(VK_F, [ssShift, ssCtrl]);
-  D_SearchRecordFilled := KeyToShortCut(VK_F, [ssCtrl]);
+  D_SearchRecordEmpty := KeyToShortCut(VK_F, [ssCtrl]);
+  D_SearchRecordFilled := KeyToShortCut(VK_F, [ssShift, ssCtrl]);
   D_SearchRepeatForward := KeyToShortCut(VK_F3, []);
   D_SearchRepeatBackward := KeyToShortCut(VK_F3, [ssShift]);
   D_SearchRecordList := KeyToShortCut(VK_L, [ssCtrl]);

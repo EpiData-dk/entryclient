@@ -171,22 +171,25 @@ object MainForm: TMainForm
     object BrowseMenu: TMenuItem
       Caption = '&Browse Data'
       object FindMenuItem: TMenuItem
-        Caption = 'New Item35'
+        Caption = 'FindMenuItem'
+      end
+      object FindMenuExItem: TMenuItem
+        Caption = 'FindMenuExItem'
       end
       object FindNextMenuItem: TMenuItem
-        Caption = 'New Item36'
+        Caption = 'FindNextMenuItem'
       end
       object FindPrevMenuItem: TMenuItem
-        Caption = 'New Item37'
+        Caption = 'FindPrevMenuItem'
       end
       object FindListMenuItem: TMenuItem
-        Caption = 'New Item40'
+        Caption = 'FindListMenuItem'
       end
       object MenuItem2: TMenuItem
         Caption = '-'
       end
       object BrowseAllMenuItem: TMenuItem
-        Caption = 'BrowseAll'
+        Caption = 'BrowseAllMenuItem'
       end
     end
     object GotoMenu: TMenuItem
