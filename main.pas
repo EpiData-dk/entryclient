@@ -30,6 +30,7 @@ type
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
+    FindMenuExItem: TMenuItem;
     OpenProjectBtn: TBitBtn;
     RecentFilesPopupSubMenu: TMenuItem;
     OpenProjectPopupMenuItem: TMenuItem;

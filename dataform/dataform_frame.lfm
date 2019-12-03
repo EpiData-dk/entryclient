@@ -123,8 +123,14 @@ object DataFormFrame: TDataFormFrame
     end
     object FindRecordAction: TAction
       Category = 'Browse'
-      Caption = 'Find...'
+      Caption = 'Find (current variable)...'
       OnExecute = FindRecordActionExecute
+    end
+    object FindRecordExAction: TAction
+      Category = 'Browse'
+      Caption = 'Find (all variables)'
+      Hint = 'Find record matching current entry'
+      OnExecute = FindRecordExActionExecute
     end
     object FindNextAction: TAction
       Category = 'Browse'
@@ -135,12 +141,6 @@ object DataFormFrame: TDataFormFrame
       Category = 'Browse'
       Caption = 'Find Backwards'
       OnExecute = FindPrevActionExecute
-    end
-    object FindRecordExAction: TAction
-      Category = 'Browse'
-      Caption = 'Lookup'
-      Hint = 'Find record matching current entry'
-      OnExecute = FindRecordExActionExecute
     end
     object FindFastListAction: TAction
       Category = 'Browse'

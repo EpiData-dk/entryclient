@@ -1000,9 +1000,16 @@ begin
 end;
 
 procedure TDataFormFrame.SetModified(const AValue: boolean);
+var
+  i: Integer;
 begin
   if FModified = AValue then exit;
   FModified := AValue;
+
+  if (not AValue) then
+    for i := 0 to FCustomEditList.Count -1 do
+      TCustomEdit(FCustomEditList[i]).Modified := false;
+
   UpdateModified;
 end;
 
@@ -1541,11 +1548,12 @@ begin
     CE := TCustomEdit(CustomEditList[i]);
     Field := (CE as IEntryDataControl).Field;
 
-    if (Field.FieldType in AutoFieldTypes) or
+    // Removed on request of JL: email 2019-12-03
+{    if (Field.FieldType in AutoFieldTypes) or
        (Field.RepeatValue) or
        (Field.HasDefaultValue) or
        (CE.Text = '')
-       then continue;
+       then continue;                         }
 
     SC := TEpiSearchCondition.Create;
     SC.BinOp := boAnd;
