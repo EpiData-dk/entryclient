@@ -34,7 +34,6 @@ type
     MatchBevel: TBevel;
     Panel1: TPanel;
     AddBtn: TSpeedButton;
-    DelBtn: TSpeedButton;
     Panel2: TPanel;
     ValueBevel: TBevel;
     Label1: TLabel;
@@ -66,7 +65,7 @@ type
     procedure SetActiveFields(const AValue: TStringList);
     procedure SetActiveText(const AValue: String);
     procedure SetDataFile(const AValue: TEpiDataFile);
-    function  DoAddNewSearchCondition: Pointer;
+    function  DoAddNewSearchCondition(InsertIndex: integer = -1): Pointer;
     procedure AddBinOpToCombo(Combo: TComboBox);
     procedure AddFieldsToCombo(Combo: TComboBox);
     procedure AddMatchCriteriaToCombo(Combo: TComboBox; Ft: TEpiFieldType);
@@ -81,6 +80,7 @@ type
     procedure DoError(Const Msg: string; Const Ctrl: TControl);
     procedure UpdateSearchLabel;
     procedure SetSearch(AValue: TEpiSearch);
+    procedure UpdateTags;
   public
     { public declarations }
     constructor Create(TheOwner: TComponent; Const DataFile: TEpiDataFile);
@@ -100,7 +100,8 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils, LazUTF8;
+  LCLIntf, math, LCLProc, epiconvertutils, strutils, settings, epistringutils, LazUTF8,
+  epiv_datamodule;
 
 type
   TSearchConditions = record
@@ -108,6 +109,8 @@ type
     FieldListCmb: TComboBox;
     MatchCriteriaCmb: TComboBox;
     ValueEdit: TEdit;
+    AddBtn: TSpeedButton;
+    DelBtn: TSpeedButton;
   end;
   PSearchConditions = ^TSearchConditions;
 
@@ -115,26 +118,41 @@ type
 
 procedure TSearchForm1.DelBtnClick(Sender: TObject);
 var
-  MRec: PSearchConditions;
+  CurrentRec, NextRec, PrevRec: PSearchConditions;
   Idx: Integer;
 begin
   BeginFormUpdate;
 
-  Idx := FSearchConditionList.Count - 1;
-  MRec := PSearchConditions(FSearchConditionList[Idx]);
+  Idx := TComponent(Sender).Tag;
+  CurrentRec := PSearchConditions(FSearchConditionList[Idx]);
 
-  DelBtn.AnchorVerticalCenterTo(PSearchConditions(FSearchConditionList[Idx-1])^.BinOpCmb);
-
-  with MRec^ do
+  with CurrentRec^ do
   begin
     BinOpCmb.Free;
     FieldListCmb.Free;
     MatchCriteriaCmb.Free;
     ValueEdit.Free;
+    AddBtn.Free;
+    DelBtn.Free;
   end;
-  FSearchConditionList.Remove(MRec);
+  FSearchConditionList.Remove(CurrentRec);
 
-  DelBtn.Enabled := FSearchConditionList.Count > 1;
+  // This was the last search condition, so no need to update anchors
+  if (Idx < FSearchConditionList.Count) then
+    begin
+      NextRec := PSearchConditions(FSearchConditionList[Idx]);
+      if (Idx = 0) then
+        begin
+          NextRec^.BinOpCmb.AnchorToNeighbour(akTop, 3, TopBevel)
+        end
+      else
+        begin
+          PrevRec := PSearchConditions(FSearchConditionList[Idx - 1]);
+          NextRec^.BinOpCmb.AnchorToNeighbour(akTop, 3, PrevRec^.BinOpCmb);
+        end;
+    end;
+
+  UpdateTags;
   EndFormUpdate;
 
   UpdateSearchLabel;
@@ -157,6 +175,9 @@ var
   SCs: PSearchConditions;
   VE: TEdit;
 begin
+  AddBtn.Images := DM.Icons16;
+  AddBtn.ImageIndex := epiv_iiAddElem;
+
   LoadFormPosition(Self, 'SearchForm');
 
   SCs := PSearchConditions(FSearchConditionList.Last);
@@ -173,7 +194,7 @@ end;
 
 procedure TSearchForm1.AddBtnClick(Sender: TObject);
 begin
-  DoAddNewSearchCondition;
+  DoAddNewSearchCondition(TComponent(Sender).Tag + 1);
 end;
 
 procedure TSearchForm1.AddSearchActionExecute(Sender: TObject);
@@ -249,28 +270,48 @@ begin
     Text := AValue;
 end;
 
-function TSearchForm1.DoAddNewSearchCondition: Pointer;
+function TSearchForm1.DoAddNewSearchCondition(InsertIndex: integer): Pointer;
 var
   BinOpCmb: TComboBox;
   FieldListCmb: TComboBox;
   MatchCriteriaCmb: TComboBox;
   ValueEdit: TEdit;
-  MRec: PSearchConditions;
+  MRec, PrevRec, NextRec: PSearchConditions;
+  AddButton, DelButton: TSpeedButton;
 begin
+  BeginFormUpdate;
+
   BinOpCmb := TComboBox.Create(ScrollBox1);
   FieldListCmb := TComboBox.Create(ScrollBox1);
   MatchCriteriaCmb := TComboBox.Create(ScrollBox1);
   ValueEdit := TEdit.Create(ScrollBox1);
+  AddButton := TSpeedButton.Create(ScrollBox1);
+  DelButton := TSpeedButton.Create(ScrollBox1);
+
+  PrevRec := nil;
+  if (InsertIndex > 0) then
+    PrevRec := PSearchConditions(FSearchConditionList[InsertIndex - 1]);
+
+  NextRec := nil;
+  if (InsertIndex > -1) and
+     (InsertIndex < FSearchConditionList.Count)
+  then
+    NextRec := PSearchConditions(FSearchConditionList[InsertIndex]);
 
   with BinOpCmb do
   begin
     Style := csDropDownList;
     AnchorParallel(akLeft, 0, TopBevel);
     AnchorToNeighbour(akRight, 5, BinOpBevel);
-    if FSearchConditionList.Count = 0 then
-      AnchorToNeighbour(akTop, 3, TopBevel)
+
+    if (Assigned(PrevRec)) then
+      AnchorToNeighbour(akTop, 3, PrevRec^.BinOpCmb)
     else
-      AnchorToNeighbour(akTop, 3, PSearchConditions(FSearchConditionList[FSearchConditionList.Count-1])^.BinOpCmb);
+      AnchorToNeighbour(akTop, 3, TopBevel);
+
+    if (Assigned(NextRec)) then
+      NextRec^.BinOpCmb.AnchorToNeighbour(akTop, 3, BinOpCmb);
+
     Enabled := FSearchConditionList.Count > 0;
     AddBinOpToCombo(BinOpCmb);
     ItemIndex := 0;
@@ -319,17 +360,41 @@ begin
     Parent := ScrollBox1;
   end;
 
-  DelBtn.AnchorVerticalCenterTo(BinOpCmb);
-  DelBtn.Enabled := FSearchConditionList.Count > 0;
+  with AddButton do
+  begin
+    AnchorToNeighbour(akLeft, 5, ValueBevel);
+    AnchorVerticalCenterTo(BinOpCmb);
+    OnClick := @AddBtnClick;
+    Images := DM.Icons16;
+    ImageIndex := epiv_iiAddElem;
+    Parent := ScrollBox1;
+    Tag := FSearchConditionList.Count;
+  end;
+
+  with DelButton do
+  begin
+    AnchorToNeighbour(akLeft, 5, AddButton);
+    AnchorVerticalCenterTo(BinOpCmb);
+    OnClick := @DelBtnClick;
+    Images := DM.Icons16;
+    ImageIndex := epiv_iiRemoveElem;
+    Parent := ScrollBox1;
+    Tag := FSearchConditionList.Count;
+  end;
 
   MRec := New(PSearchConditions);
   MRec^.BinOpCmb         := BinOpCmb;
   MRec^.FieldListCmb     := FieldListCmb;
   MRec^.MatchCriteriaCmb := MatchCriteriaCmb;
   MRec^.ValueEdit        := ValueEdit;
-  FSearchConditionList.Add(MRec);
+  MRec^.AddBtn           := AddButton;
+  MRec^.DelBtn           := DelButton;
+  FSearchConditionList.Insert(InsertIndex, MRec);
   Result := MRec;
 
+  EndFormUpdate;
+
+  UpdateTags;
   UpdateSearchLabel;
 end;
 
@@ -612,7 +677,7 @@ begin
 
   for I := 0 to AValue.ConditionCount - 1 do
   begin
-    PRec := PSearchConditions(DoAddNewSearchCondition);
+    PRec := PSearchConditions(DoAddNewSearchCondition(FSearchConditionList.Count));
     SC := AValue.SearchCondiction[i];
 
     with PRec^.BinOpCmb         do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.BinOp)));
@@ -620,6 +685,23 @@ begin
     with PRec^.MatchCriteriaCmb do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.MatchCriteria)));
     with PRec^.ValueEdit        do Text      := SC.Text;
   end;
+end;
+
+procedure TSearchForm1.UpdateTags;
+var
+  CurrentRec: PSearchConditions;
+  i: Integer;
+begin
+  for i := 0 to FSearchConditionList.Count - 1 do
+    begin
+      CurrentRec := PSearchConditions(FSearchConditionList[i]);
+      CurrentRec^.BinOpCmb.Tag         := i;
+      CurrentRec^.FieldListCmb.Tag     := i;
+      CurrentRec^.MatchCriteriaCmb.Tag := i;
+      CurrentRec^.ValueEdit.Tag        := i;
+      CurrentRec^.AddBtn.Tag           := i;
+      CurrentRec^.DelBtn.Tag           := i;
+    end;
 end;
 
 constructor TSearchForm1.Create(TheOwner: TComponent;
