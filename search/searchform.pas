@@ -340,7 +340,8 @@ begin
     AnchorToNeighbour(akLeft, 5, FieldBevel);
     AnchorToNeighbour(akRight, 5, MatchBevel);
     AnchorVerticalCenterTo(BinOpCmb);
-    AddMatchCriteriaToCombo(MatchCriteriaCmb, TEpiField(FieldListCmb.Items.Objects[0]).FieldType);
+// use ActiveField to determine which Match Criteria combo set to use
+    AddMatchCriteriaToCombo(MatchCriteriaCmb, FActiveField.FieldType);
     OnChange := @MatchChange;
     ItemIndex := 0;
     Tag := FSearchConditionList.Count;
@@ -677,9 +678,9 @@ begin
 
   for I := 0 to AValue.ConditionCount - 1 do
   begin
-    PRec := PSearchConditions(DoAddNewSearchCondition(FSearchConditionList.Count));
     SC := AValue.SearchCondiction[i];
-
+    FActiveField := SC.Field;          // Must set active field BEFORE calling AddNewSearch
+    PRec := PSearchConditions(DoAddNewSearchCondition(FSearchConditionList.Count));
     with PRec^.BinOpCmb         do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.BinOp)));
     with PRec^.FieldListCmb     do ItemIndex := Items.IndexOfObject(SC.Field);
     with PRec^.MatchCriteriaCmb do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.MatchCriteria)));
