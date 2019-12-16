@@ -686,6 +686,7 @@ begin
     with PRec^.MatchCriteriaCmb do ItemIndex := Items.IndexOfObject(TObject(PtrInt(SC.MatchCriteria)));
     with PRec^.ValueEdit        do Text      := SC.Text;
   end;
+  UpdateSearchLabel;
 end;
 
 procedure TSearchForm1.UpdateTags;
