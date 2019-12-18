@@ -21,9 +21,6 @@
       <Attributes pvaSpecialBuild="True"/>
       <StringTable SpecialBuild="TRUNK"/>
     </VersionInfo>
-    <MacroValues Count="1">
-      <Macro2 Name="LCLWidgetType" Value="cocoa"/>
-    </MacroValues>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Win i386">
@@ -135,10 +132,8 @@
           </Other>
         </CompilerOptions>
       </Item4>
-      <SharedMatrixOptions Count="3">
+      <SharedMatrixOptions Count="1">
         <Item1 ID="072259323512" Modes="Win i386,Win x86_64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
-        <Item2 ID="019999092580" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
-        <Item3 ID="450793617324" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>

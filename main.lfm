@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 1583
+  Left = 2585
   Height = 642
   Top = 255
   Width = 977
   AllowDropFiles = True
   Caption = 'epidataentryclient'
-  ClientHeight = 642
+  ClientHeight = 617
   ClientWidth = 977
   Menu = MainFormMenu
   OnClose = FormClose
@@ -19,7 +19,7 @@ object MainForm: TMainForm
   LCLVersion = '2.0.0.4'
   object MainFormPageControl: TPageControl
     Left = 0
-    Height = 600
+    Height = 575
     Top = 42
     Width = 977
     Align = alClient
@@ -40,9 +40,9 @@ object MainForm: TMainForm
       AnchorSideTop.Control = ProcessToolPanel
       AnchorSideTop.Side = asrCenter
       Left = 11
-      Height = 28
-      Top = 7
-      Width = 98
+      Height = 25
+      Top = 9
+      Width = 91
       AutoSize = True
       BorderSpacing.Left = 10
       Caption = 'Open Project'
@@ -58,7 +58,7 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     Left = 343
     Height = 204
-    Top = 219
+    Top = 206
     Width = 291
     ClientHeight = 204
     ClientWidth = 291
@@ -70,10 +70,10 @@ object MainForm: TMainForm
       AnchorSideLeft.Control = BetaPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Control = BetaPanel
-      Left = 31
-      Height = 16
+      Left = 17
+      Height = 15
       Top = 21
-      Width = 228
+      Width = 256
       BorderSpacing.Top = 20
       Caption = 'Test Version of EpiData EntryClient'
       Font.Height = -13
@@ -90,10 +90,10 @@ object MainForm: TMainForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = BetaPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 31
-      Height = 126
-      Top = 57
-      Width = 228
+      Left = 17
+      Height = 127
+      Top = 56
+      Width = 256
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Top = 20
       BorderSpacing.Bottom = 20

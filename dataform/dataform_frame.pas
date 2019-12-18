@@ -1684,10 +1684,7 @@ begin
     begin
       C := TEpiSearchCondition.Create;
       C.BinOp := boAnd;
-//      if (F.FieldType in StringFieldTypes) then
-//        C.MatchCriteria := mcContains
-//      else
-        C.MatchCriteria := mcEq;
+      C.MatchCriteria := mcEq;
       C.Text := Txt;
       C.Field := F;
       S.List.Add(C);

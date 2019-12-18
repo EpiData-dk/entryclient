@@ -670,9 +670,7 @@ var
 begin
   F := TCheckVersionForm.Create(Self);
   F.Caption := 'EpiData EntryClient';
-  //F.CheckBoxValue := EntrySettings.CheckForUpdates;
   F.ShowModal;
-  //EntrySettings.CheckForUpdates := F.CheckBoxValue;
   F.Free;
 end;
 

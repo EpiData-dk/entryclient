@@ -6,8 +6,8 @@ object DataFormFrame: TDataFormFrame
   ClientHeight = 634
   ClientWidth = 939
   TabOrder = 0
-  DesignLeft = 1296
-  DesignTop = 193
+  DesignLeft = 2312
+  DesignTop = 217
   object DataFormScroolBox: TScrollBox
     Left = 0
     Height = 634
@@ -34,9 +34,9 @@ object DataFormFrame: TDataFormFrame
     OnMouseMove = Panel1MouseMove
     object Label1: TLabel
       Left = 30
-      Height = 16
+      Height = 15
       Top = 48
-      Width = 42
+      Width = 43
       Caption = 'Label1'
       ParentColor = False
     end

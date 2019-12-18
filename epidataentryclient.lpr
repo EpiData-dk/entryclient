@@ -35,7 +35,7 @@ begin
 end;
 
 begin
-  Application.Title:='EpiData EntryClient';
+  Application.Title := 'EpiData EntryClient';
   OnGetApplicationName := @EpiDataApplicationName;
   OnGetVendorName := @EpiDataVendorName;
 
