@@ -14,8 +14,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="5"/>
-      <BuildNr Value="3"/>
+      <MinorVersionNr Value="7"/>
       <Language Value="0809"/>
       <CharSet Value="04B0"/>
       <Attributes pvaSpecialBuild="True"/>
@@ -23,10 +22,7 @@
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
-      <Item2 Name="Win i386">
-        <MacroValues Count="1">
-          <Macro1 Name="LCLWidgetType" Value="win32"/>
-        </MacroValues>
+      <Item2 Name="win32">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -61,7 +57,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Linux i386">
+      <Item3 Name="linux32">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -94,10 +90,7 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <Item4 Name="Win x86_64">
-        <MacroValues Count="1">
-          <Macro1 Name="LCLWidgetType" Value="win32"/>
-        </MacroValues>
+      <Item4 Name="win64">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -133,7 +126,7 @@
         </CompilerOptions>
       </Item4>
       <SharedMatrixOptions Count="1">
-        <Item1 ID="072259323512" Modes="Win i386,Win x86_64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item1 ID="072259323512" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
