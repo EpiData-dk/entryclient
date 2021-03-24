@@ -120,7 +120,6 @@ begin
   // Happens before the change...
   if csDestroying in ComponentState then exit;
 
-  FActiveFrame := TFrame(Node.Data);
   AllowChange := (FActiveFrame as ISettingsFrame).ApplySettings;
   if not AllowChange then exit;
 
