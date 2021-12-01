@@ -7,7 +7,7 @@
     <parent>
         <groupId>dk.epidata.parent</groupId>
         <artifactId>epidata-parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.3</version>
     </parent>
 
     <groupId>dk.epidata.entryclient</groupId>
@@ -131,7 +131,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>/fpc/bin/fpc</executable>
+                            <executable>fpc</executable>
                             <arguments>
                                 <!--                                    <argument>-vi</argument>-->
                                 <argument>-P${fpc.arch}</argument>

@@ -1,179 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <ProjectOptions>
+  <ProjectSession>
     <Version Value="11"/>
-    <General>
-      <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
-      <AutoCreateForms Value="False"/>
-      <Title Value="EpiData EntryClient"/>
-      <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
-    </General>
-    <VersionInfo>
-      <UseVersionInfo Value="True"/>
-      <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="7"/>
-      <Language Value="0809"/>
-      <CharSet Value="04B0"/>
-      <Attributes pvaSpecialBuild="True"/>
-      <StringTable SpecialBuild="TRUNK"/>
-    </VersionInfo>
-    <BuildModes Count="4">
-      <Item1 Name="Default" Default="True"/>
-      <Item2 Name="win32">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <Target>
-            <Filename Value="epidataentryclient"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);src/include/$(TargetOS);src/dataform"/>
-            <OtherUnitFiles Value="src/dataform;src/settings;src/search;src/utils;src/admin;src/statusbar"/>
-            <UnitOutputDirectory Value="target/units/$(TargetCPU)-$(TargetOS)"/>
-          </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <CStyleMacros Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
-          <CodeGeneration>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
-            <Optimizations>
-              <OptimizationLevel Value="0"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-            </Debugging>
-          </Linking>
-          <Other>
-            <CustomOptions Value="-dEPI_DEBUG1
--dEPI_RELEASE
--dEPI_BETA"/>
-          </Other>
-        </CompilerOptions>
-      </Item2>
-      <Item3 Name="linux32">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <Target>
-            <Filename Value="epidataentryclient"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);src/include/$(TargetOS);src/dataform"/>
-            <OtherUnitFiles Value="src/dataform;src/settings;src/search;src/utils;src/admin;src/statusbar"/>
-            <UnitOutputDirectory Value="target/units/$(TargetCPU)-$(TargetOS)"/>
-          </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <CStyleMacros Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
-          <CodeGeneration>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="linux"/>
-            <Optimizations>
-              <OptimizationLevel Value="0"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-            </Debugging>
-          </Linking>
-          <Other>
-            <CustomOptions Value="-dEPI_BETA"/>
-          </Other>
-        </CompilerOptions>
-      </Item3>
-      <Item4 Name="win64">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <Target>
-            <Filename Value="epidataentryclient"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);src/include/$(TargetOS);src/dataform"/>
-            <OtherUnitFiles Value="src/dataform;src/settings;src/search;src/utils;src/admin;src/statusbar"/>
-            <UnitOutputDirectory Value="target/units/$(TargetCPU)-$(TargetOS)"/>
-          </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <CStyleMacros Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
-          <CodeGeneration>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="win64"/>
-            <Optimizations>
-              <OptimizationLevel Value="0"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-            </Debugging>
-          </Linking>
-          <Other>
-            <CustomOptions Value="-dEPI_DEBUG1
--dEPI_RELEASE
--dEPI_BETA"/>
-          </Other>
-        </CompilerOptions>
-      </Item4>
-      <SharedMatrixOptions Count="1">
-        <Item1 ID="072259323512" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
-      </SharedMatrixOptions>
-    </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
-    <RunParams>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
-      </Modes>
-    </RunParams>
-    <RequiredPackages Count="9">
-      <Item1>
-        <PackageName Value="epidatacore_visuals"/>
-        <MinVersion Major="4" Minor="7" Valid="True"/>
-      </Item1>
-      <Item2>
-        <PackageName Value="epidatacore"/>
-        <MinVersion Major="4" Minor="7" Valid="True"/>
-      </Item2>
-      <Item3>
-        <PackageName Value="gradcontrols"/>
-      </Item3>
-      <Item4>
-        <PackageName Value="LazControls"/>
-      </Item4>
-      <Item5>
-        <PackageName Value="virtualtreeview_package"/>
-      </Item5>
-      <Item6>
-        <PackageName Value="Printer4Lazarus"/>
-      </Item6>
-      <Item7>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item7>
-      <Item8>
-        <PackageName Value="lnetbase"/>
-      </Item8>
-      <Item9>
-        <PackageName Value="LCL"/>
-      </Item9>
-    </RequiredPackages>
+    <BuildModes Active="Default"/>
     <Units Count="42">
       <Unit0>
         <Filename Value="epidataentryclient.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="74" Y="17"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="src/main.pas"/>
@@ -181,6 +19,10 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <CursorPos X="58" Y="15"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="src/project_frame.pas"/>
@@ -188,6 +30,7 @@
         <ComponentName Value="ProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit2>
       <Unit3>
         <Filename Value="src/dataform/dataform_frame.pas"/>
@@ -195,14 +38,17 @@
         <ComponentName Value="DataFormFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit3>
       <Unit4>
         <Filename Value="src/dataform/fieldedit.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit4>
       <Unit5>
         <Filename Value="src/entryprocs.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit5>
       <Unit6>
         <Filename Value="src/settings.pas"/>
@@ -210,6 +56,7 @@
         <ComponentName Value="SettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit6>
       <Unit7>
         <Filename Value="src/about.pas"/>
@@ -217,6 +64,7 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit7>
       <Unit8>
         <Filename Value="src/dataform/notes_form.pas"/>
@@ -224,10 +72,12 @@
         <ComponentName Value="NotesForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit8>
       <Unit9>
         <Filename Value="src/dataform/dataform_field_calculations.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit9>
       <Unit10>
         <Filename Value="src/settings/settings2.pas"/>
@@ -235,10 +85,12 @@
         <ComponentName Value="Settings2Form"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit10>
       <Unit11>
         <Filename Value="src/settings/settings2_interface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit11>
       <Unit12>
         <Filename Value="src/settings/settings2_paths_frame.pas"/>
@@ -246,6 +98,7 @@
         <ComponentName Value="SettingsPathsFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit12>
       <Unit13>
         <Filename Value="src/settings/settings2_colours_frame.pas"/>
@@ -253,6 +106,7 @@
         <ComponentName Value="SettingsColourFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit13>
       <Unit14>
         <Filename Value="src/settings/settings_general_frame.pas"/>
@@ -260,6 +114,7 @@
         <ComponentName Value="SettingsGeneralFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit14>
       <Unit15>
         <Filename Value="src/search/searchform.pas"/>
@@ -267,6 +122,7 @@
         <ComponentName Value="SearchForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit15>
       <Unit16>
         <Filename Value="src/search/resultlist_form.pas"/>
@@ -274,6 +130,7 @@
         <ComponentName Value="ResultListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit16>
       <Unit17>
         <Filename Value="src/settings/settings2_fonts_frame.pas"/>
@@ -281,50 +138,62 @@
         <ComponentName Value="SettingsFontsFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit17>
       <Unit18>
         <Filename Value="src/shortcuts.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit18>
       <Unit19>
         <Filename Value="src/include/linux/shortcuts.inc"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit19>
       <Unit20>
         <Filename Value="src/entry_messages.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit20>
       <Unit21>
         <Filename Value="src/include/linux/initfont.inc"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit21>
       <Unit22>
         <Filename Value="src/dataform/dataform_getfunctions.inc"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit22>
       <Unit23>
         <Filename Value="src/dataform/entrylabel.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit23>
       <Unit24>
         <Filename Value="src/dataform/control_types.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit24>
       <Unit25>
         <Filename Value="src/dataform/entrysection.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit25>
       <Unit26>
         <Filename Value="src/entry_globals.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit26>
       <Unit27>
         <Filename Value="src/dataform/notes_report.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit27>
       <Unit28>
         <Filename Value="src/utils/documentfile_ext.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit28>
       <Unit29>
         <Filename Value="src/dataform/new_record_form.pas"/>
@@ -332,6 +201,7 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit29>
       <Unit30>
         <Filename Value="src/settings/settings2_relate_frame.pas"/>
@@ -339,10 +209,12 @@
         <ComponentName Value="RelateFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit30>
       <Unit31>
         <Filename Value="src/settings/setting_types.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit31>
       <Unit32>
         <Filename Value="src/dataform/picklist2.pas"/>
@@ -350,26 +222,32 @@
         <ComponentName Value="ValueLabelsPickListForm2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="20"/>
       </Unit32>
       <Unit33>
         <Filename Value="src/admin/admin_authenticator.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit33>
       <Unit34>
         <Filename Value="src/statusbar/entry_statusbar.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit34>
       <Unit35>
         <Filename Value="src/statusbar/entry_statusbaritem_navigator.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit35>
       <Unit36>
         <Filename Value="src/statusbar/entry_statusbaritem_keyvalues.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit36>
       <Unit37>
         <Filename Value="src/statusbar/entry_statusbaritem_datafilecontent.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit37>
       <Unit38>
         <Filename Value="src/settings/settings2_statusbar.pas"/>
@@ -377,76 +255,33 @@
         <ComponentName Value="SettingsStatusbarFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UsageCount Value="20"/>
       </Unit38>
       <Unit39>
         <Filename Value="src/statusbar/entry_statusbaritem_recordstate.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit39>
       <Unit40>
         <Filename Value="src/statusbar/entry_statusbaritem_extrafieldinfo.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit40>
       <Unit41>
         <Filename Value="src/dataform/fieldmemo.pas"/>
         <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
       </Unit41>
     </Units>
-  </ProjectOptions>
-  <CompilerOptions>
-    <Version Value="11"/>
-    <Target>
-      <Filename Value="epidataentryclient"/>
-    </Target>
-    <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);src/include/$(TargetOS);src/dataform"/>
-      <OtherUnitFiles Value="src;src/dataform;src/settings;src/search;src/utils;src/admin;src/statusbar"/>
-      <UnitOutputDirectory Value="target/units/$(TargetCPU)-$(TargetOS)"/>
-    </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <CStyleMacros Value="True"/>
-      </SyntaxOptions>
-    </Parsing>
-    <CodeGeneration>
-      <Optimizations>
-        <OptimizationLevel Value="0"/>
-      </Optimizations>
-    </CodeGeneration>
-    <Linking>
-      <Debugging>
-        <DebugInfoType Value="dsDwarf2Set"/>
-      </Debugging>
-    </Linking>
-    <Other>
-      <CustomOptions Value="-dEPI_BETA"/>
-    </Other>
-  </CompilerOptions>
-  <Debugging>
-    <Exceptions Count="7">
-      <Item1>
-        <Name Value="EAbort"/>
-      </Item1>
-      <Item2>
-        <Name Value="ECodetoolError"/>
-      </Item2>
-      <Item3>
-        <Name Value="EFOpenError"/>
-      </Item3>
-      <Item4>
-        <Name Value="EConvertError"/>
-        <Enabled Value="False"/>
-      </Item4>
-      <Item5>
-        <Name Value="EEpiTooManyFailedLogins"/>
-        <Enabled Value="False"/>
-      </Item5>
-      <Item6>
-        <Name Value="EEpiThreadSaveExecption"/>
-        <Enabled Value="False"/>
-      </Item6>
-      <Item7>
-        <Name Value="EKeyNotFoundException"/>
-      </Item7>
-    </Exceptions>
-  </Debugging>
+    <JumpHistory Count="1">
+      <Position1>
+        <Filename Value="src/main.pas"/>
+        <Caret Line="15" Column="58"/>
+      </Position1>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode="default"/>
+    </RunParams>
+  </ProjectSession>
 </CONFIG>

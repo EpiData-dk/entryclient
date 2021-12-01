@@ -12,13 +12,13 @@
 -FU%TARGET_PATH/units/$fpctarget
 
 # Units:
--Fu.
--Fu./admin
--Fu./dataform
--Fu./search
--Fu./settings
--Fu./statusbar
--Fu./utils
+-Fu./src
+-Fu./src/admin
+-Fu./src/dataform
+-Fu./src/search
+-Fu./src/settings
+-Fu./src/statusbar
+-Fu./src/utils
 
 # Includes
--Fi./include/$fpcos
+-Fi./src/include/$fpcos
