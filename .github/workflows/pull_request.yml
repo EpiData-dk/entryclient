@@ -10,23 +10,40 @@ env:
 
 jobs:
   setup:
-    name: Checkout Source
-    runs-on: self-hosted
+    name: Compile EntryClient
+    runs-on: ubuntu-latest
+    container:
+      image: epidata/fpcbuild:3.2.0-13
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-  build:
-    name: Building the artifact
-    runs-on: self-hosted
-    container:
-      image: epidata/fpcbuild:3.2.0-12
-      volumes:
-        - /etc/maven/settings.xml:/etc/maven/settings.xml
-    needs: setup
+      - name: Generate Maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          output_file: "/etc/maven/settings.xml"
+          servers:
+            '[{
+            "id": "github",
+            "username": "${{ secrets.CI_USER }}",
+            "password": "${{ secrets.CI_PASSWORD }}"
+            }]'
+          repositories:
+            '[
+              {
+                "id": "central",
+                "url": "https://repo1.maven.org/maven2"
+              },
+              {
+                "id": "github",
+                "url": "https://maven.pkg.github.com/epidata-dk/parent/",
+                "snapshots": {
+                  "enabled": "true"
+                }                
+              }
+            ]'
 
-    steps:
       - name: Compile Linux
         run:  mvn compile -Plinux64
 
