@@ -5,3 +5,5 @@ backup/
 *.resolved
 epidataentryclient
 epidataentryclient.exe
+lib/
+.DS_Store

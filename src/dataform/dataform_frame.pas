@@ -2671,10 +2671,10 @@ begin
     if not DC.CompareTo(NewEdit.Text, Field.Comparison.CompareType) then
     begin
       Err := Format(
-        'Comparison failed:' + LineEnding +
+        'Comparison failed, expected' + LineEnding +
         '%s: %s  %s  %s: %s',
         [Field.Name, CE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
-         Field.Name, NewEdit.Text]);
+         Field.Comparison.CompareField.Name, NewEdit.Text]); // Field.Name, NewEdit.Text]);
       FieldValidateError(CE, Err);
       Exit(fxtError);
     end;
