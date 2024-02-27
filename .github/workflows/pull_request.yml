@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  ENTRYCLIENT_VERSION: "4.6"
+  ENTRYCLIENT_VERSION: "1.0"
 
 jobs:
   setup:
@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Generate Maven settings.xml
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           output_file: "/etc/maven/settings.xml"
           servers:
