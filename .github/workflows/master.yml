@@ -6,14 +6,14 @@ on:
       - master
 
 env:
-  ENTRYCLIENT_VERSION: "1.0"
+  ENTRYCLIENT_VERSION: "1.1"
 
 jobs:
   setup:
     name: Compile EntryClient
     runs-on: ubuntu-latest
     container:
-      image: epidata/fpcbuild:3.2.0-13
+      image: epidata/fpcbuild:3.2.2
 
     steps:
       - name: Checkout code
