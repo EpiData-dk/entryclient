@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  ENTRYCLIENT_VERSION: "1.1"
+  ENTRYCLIENT_VERSION: "2.0"
 
 jobs:
   setup:

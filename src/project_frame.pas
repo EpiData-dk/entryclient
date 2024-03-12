@@ -8,7 +8,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ComCtrls, ActnList,
   Dialogs, epidocument, epidatafiles, dataform_frame, entry_messages, LMessages,
-  VirtualTrees, documentfile_ext, epicustombase, epidatafilerelations, Graphics,
+  laz.VirtualTrees, documentfile_ext, epicustombase, epidatafilerelations, Graphics,
   StdCtrls, Menus, epidatafilestypes, entry_statusbar;
 
 type
@@ -51,7 +51,7 @@ type
     procedure SaveProjectAsActionExecute(Sender: TObject);
   private
     { private declarations }
-    DataFileTree: TVirtualStringTree;
+    DataFileTree: TLazVirtualStringTree;
     FDocumentFile: TEntryDocumentFile;
     FBackupTimer: TTimer;
     FAllowForEndBackup: boolean;  // Indicates if the BackupOnShutdown is activated. Is set to true first time content of EpiDocument is modified.
@@ -1035,7 +1035,7 @@ begin
 
   FChangingRecNo := NewRecord;
 
-  DataFileTree := TVirtualStringTree.Create(Self);
+  DataFileTree := TLazVirtualStringTree.Create(Self);
   with DataFileTree do
   begin
     Align := alClient;

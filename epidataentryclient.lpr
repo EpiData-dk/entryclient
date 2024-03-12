@@ -7,7 +7,7 @@ uses
   cthreads, clocale,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, printer4lazarus, lazcontrols, lnetbase, virtualtreeview_package,
+  Forms, printer4lazarus, lazcontrols, lnetbase,
   gradcontrols, main, project_frame, dataform_frame, fieldedit, entryprocs,
   settings, about, sysutils, UniqueInstanceRaw, epidatacore, notes_form,
   dataform_field_calculations, settings2, settings2_interface,
