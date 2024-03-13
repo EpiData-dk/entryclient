@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <AutoCreateForms Value="False"/>
       <Title Value="EpiData EntryClient"/>
       <ResourceType Value="res"/>
@@ -140,21 +142,21 @@
     </RunParams>
     <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="epidatacore_visuals"/>
-        <MinVersion Major="4" Minor="7" Valid="True"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="epidatacore"/>
+        <PackageName Value="epidatacore_visuals"/>
         <MinVersion Major="4" Minor="7" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="gradcontrols"/>
+        <PackageName Value="epidatacore"/>
+        <MinVersion Major="4" Minor="7" Valid="True"/>
       </Item3>
       <Item4>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="gradcontrols"/>
       </Item4>
       <Item5>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="LazControls"/>
       </Item5>
       <Item6>
         <PackageName Value="Printer4Lazarus"/>

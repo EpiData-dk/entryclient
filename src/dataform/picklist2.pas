@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, VirtualTrees, epidatafiles, epivaluelabels, epicustombase;
+  StdCtrls, laz.VirtualTrees, epidatafiles, epivaluelabels, epicustombase;
 
 type
 
@@ -25,7 +25,7 @@ type
     procedure UpdateFilter;
   private
     { VST }
-    VST: TVirtualStringTree;
+    VST: TLazVirtualStringTree;
     procedure SelectNode(Node: PVirtualNode);
     procedure VSTDblClick(Sender: TObject);
     procedure VSTFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -237,7 +237,7 @@ begin
     OnExit     := @FilterEditExit;
   end;
 
-  VST := TVirtualStringTree.Create(self);
+  VST := TLazVirtualStringTree.Create(self);
   with VST do
   begin
     BeginUpdate;
