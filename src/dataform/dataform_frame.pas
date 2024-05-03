@@ -2674,7 +2674,7 @@ begin
         'Comparison failed, expected' + LineEnding +
         '%s: %s  %s  %s: %s',
         [Field.Name, CE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
-         Field.Comparison.CompareField.Name, NewEdit.Text]); // Field.Name, NewEdit.Text]);
+         Field.Comparison.CompareField.Name, NewEdit.Text]);
       FieldValidateError(CE, Err);
       Exit(fxtError);
     end;
