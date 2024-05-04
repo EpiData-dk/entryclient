@@ -2672,7 +2672,7 @@ begin
     begin
       Err := Format(
         'Comparison failed, expected' + LineEnding +
-        '%s: %s  %s  %s: %s',
+        '%s: %s is not %s  %s: %s',
         [Field.Name, CE.Text, ComparisonTypeToString(Field.Comparison.CompareType),
          Field.Comparison.CompareField.Name, NewEdit.Text]);
       FieldValidateError(CE, Err);
