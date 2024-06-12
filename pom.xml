@@ -7,7 +7,7 @@
     <parent>
         <groupId>dk.epidata.parent</groupId>
         <artifactId>epidata-parent</artifactId>
-        <version>1.0.3</version>
+        <version>2.0.1</version>
     </parent>
 
     <groupId>dk.epidata.entryclient</groupId>
@@ -25,81 +25,29 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>unpack-dependencies</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>libs</classifier>
-                            <type>tar.gz</type>
-                            <includes>*</includes>
-                            <outputDirectory>${project.build.directory}/</outputDirectory>
-                            <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>maven-replacer-plugin</artifactId>
-                <version>1.4.1</version>
                 <executions>
                     <execution>
                         <id>replace-output-path</id>
                         <phase>initialize</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
                         <configuration>
-                            <basedir>${project.basedir}/</basedir>
-                            <file>${fpc.config}</file>
-                            <outputFile>${fpc.config}.resolved</outputFile>
-                            <token>%TARGET_PATH</token>
                             <value>${project.build.directory}</value>
                         </configuration>
                     </execution>
                     <execution>
                         <id>replace-lazarus-path</id>
                         <phase>initialize</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <basedir>${project.build.directory}/lazarus/</basedir>
-                            <file>lazarus.cfg</file>
-                            <token>%PATH%</token>
-                            <value>${project.build.directory}/lazarus</value>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>replace-components-path</id>
                         <phase>initialize</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <basedir>${project.build.directory}/components/</basedir>
-                            <file>components.cfg</file>
-                            <token>%PATH%</token>
-                            <value>${project.build.directory}/components</value>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>replace-core-path</id>
                         <phase>initialize</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <basedir>${project.build.directory}/core/</basedir>
-                            <file>core.cfg</file>
-                            <token>%PATH%</token>
-                            <value>${project.build.directory}/core</value>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -107,19 +55,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>create-units-dir</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
                         <configuration>
-                            <executable>mkdir</executable>
-                            <arguments>
-                                <argument>-p</argument>
-                                <argument>${project.build.directory}/units/${fpc.arch}-${fpc.os}</argument>
+                            <arguments combine.children="append">
                                 <argument>${project.build.directory}/binary/${fpc.arch}-${fpc.os}</argument>
                             </arguments>
                         </configuration>
@@ -127,17 +67,8 @@
                     <execution>
                         <id>compile-sources</id>
                         <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
                         <configuration>
-                            <executable>fpc</executable>
-                            <arguments>
-                                <!--                                    <argument>-vi</argument>-->
-                                <argument>-P${fpc.arch}</argument>
-                                <argument>-T${fpc.os}</argument>
-                                <argument>@${fpc.config}.resolved</argument>
-                                <argument>${main.source}</argument>
+                            <arguments combine.children="append">
                                 <argument>@${project.build.directory}/lazarus/lazarus.cfg</argument>
                                 <argument>@${project.build.directory}/components/components.cfg</argument>
                                 <argument>@${project.build.directory}/core/core.cfg</argument>
