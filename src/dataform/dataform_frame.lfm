@@ -17,6 +17,7 @@ object DataFormFrame: TDataFormFrame
     VertScrollBar.Page = 1
     Align = alClient
     Color = clWindow
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     OnMouseMove = Panel1MouseMove
@@ -42,8 +43,8 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object ActionList1: TActionList
-    left = 432
-    top = 183
+    Left = 432
+    Top = 183
     object FirstRecAction: TAction
       Category = 'Record'
       Caption = 'First Record'
@@ -194,7 +195,7 @@ object DataFormFrame: TDataFormFrame
     end
   end
   object PrintDialog1: TPrintDialog
-    left = 211
-    top = 183
+    Left = 211
+    Top = 183
   end
 end

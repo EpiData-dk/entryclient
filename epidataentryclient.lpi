@@ -22,7 +22,10 @@
       <Attributes pvaSpecialBuild="True"/>
       <StringTable SpecialBuild="TRUNK"/>
     </VersionInfo>
-    <BuildModes Count="4">
+    <MacroValues Count="1">
+      <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+    </MacroValues>
+    <BuildModes Count="5">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="win32">
         <CompilerOptions>
@@ -127,8 +130,44 @@
           </Other>
         </CompilerOptions>
       </Item4>
-      <SharedMatrixOptions Count="1">
+      <Item5 Name="AppleSilicon">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="epidataentryclient"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);src/include/$(TargetOS);src/dataform"/>
+            <OtherUnitFiles Value="src;src/dataform;src/settings;src/search;src/utils;src/admin;src/statusbar"/>
+            <UnitOutputDirectory Value="target/units/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <CStyleMacros Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dEPI_BETA
+-WM10.15"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
+      <SharedMatrixOptions Count="2">
         <Item1 ID="072259323512" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="457695401351" Modes="AppleSilicon,Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
