@@ -2540,7 +2540,7 @@ begin
      (Field.ForcePickList)
   then
     if not FLoadingDatafile then
-      PostMessage(DC.CustomEdit.Handle, CN_KEYDOWN, VK_F9, 0);
+      Application.QueueAsyncCall(@ASyncKeyDown, KeyDownData(DC.CustomEdit, VK_F9, []));
 end;
 
 function TDataFormFrame.FieldExitFlow(CE: TCustomEdit; out NewEdit: TCustomEdit
